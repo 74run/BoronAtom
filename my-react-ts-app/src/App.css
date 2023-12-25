@@ -1,0 +1,56 @@
+/* index.css or App.css */
+/* index.css or App.css */
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+
+/* Add this to your styles.css or App.css file */
+body {
+
+  height: 100vh;
+    background-size: cover;
+    
+    background-color: black;
+    overflow:auto;
+    
+    background-attachment: fixed;
+    
+    
+
+}
+
+
+
+.custom-modal {
+  overflow: auto;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .logo img {
+    max-height: 40px;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    align-items: center;
+  }
+  
+  
+  .nav-buttons a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+  }
+  
+ 
+  
+  

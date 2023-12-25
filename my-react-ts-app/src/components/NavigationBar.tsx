@@ -1,0 +1,68 @@
+// Navbar.tsx
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
+import pic from './Gold.png';
+
+interface NavbarProps {
+  // Add any props you need
+}
+
+const Navbar: React.FC<NavbarProps> = () => {
+  const [activeItem, setActiveItem] = useState<string>('home');
+
+  const handleItemClick = (itemName: string) => {
+    setActiveItem(itemName);
+    // You can add additional logic here if needed
+  };
+
+  return (
+    <BootstrapNavbar bg="dark" variant="dark">
+      <BootstrapNavbar.Brand>
+        <Link to="/">
+          
+        </Link>
+      </BootstrapNavbar.Brand>
+      <BootstrapNav className="mr-auto">
+        <Link
+          to="/"
+          className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
+          onClick={() => handleItemClick('home')}
+        >
+          Home
+        </Link>
+        <Link
+          to="/notifications"
+          className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
+          onClick={() => handleItemClick('notifications')}
+        >
+          Notifications
+        </Link>
+        <Link
+          to="/add-friends"
+          className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
+          onClick={() => handleItemClick('add-friends')}
+        >
+          Add Friends
+        </Link>
+      </BootstrapNav>
+      <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle style={{ width: '30px', height: '30px' }} />} style={{position:'absolute'}} id="basic-nav-dropdown">
+        <NavDropdown.Item>
+          <Image src={pic} alt="Profile" roundedCircle style={{ width: '30px', height: '30px', marginRight: '10px' }} />
+          Your Profile
+        </NavDropdown.Item>
+        <NavDropdown.Divider />
+        <NavDropdown.Item>Notifications</NavDropdown.Item>
+        <NavDropdown.Item>Add Friends</NavDropdown.Item>
+        <NavDropdown.Divider />
+        <NavDropdown.Item>Settings</NavDropdown.Item>
+        <NavDropdown.Item>Privacy</NavDropdown.Item>
+        <NavDropdown.Item>Sign Out</NavDropdown.Item>
+      </NavDropdown>
+    </BootstrapNavbar>
+  );
+};
+
+export default Navbar;
