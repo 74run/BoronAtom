@@ -1,34 +1,86 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+// import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface Education {
   _id: string;
   university: string;
   degree: string;
-  graduationYear: string;
+  graduationyear: string;
   isEditing?: boolean;
 }
 
-const EducationSection: React.FC = () => {
-  const [universities, setUniversities] = useState<string[]>([]);
-  const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
+interface EducationProps {
+  Educations: Education[];
+  onEdit: (id: string, data: {university: string; degree: string; graduationyear: string })=> void;
+  onDelete :(id: string)=> void;
+}
+
+
+const EducationSection: React.FC<EducationProps>= ({Educations, onEdit,onDelete}) => {
+  const [editData, setEditData] = useState<{id: string; university: string; degree: string; graduationyear: string} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
+  
+  const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
     degree: '',
-    graduationYear: '',
+    graduationyear: '',
   });
+
   const [isAdding, setIsAdding] = useState(false);
-  const [newEducationSearchTerm, setNewEducationSearchTerm] = useState('');
+
+
+
+  const handleEditClick = (id: string, university: string, degree: string, graduationyear:string) => {
+    setEditData({ id, university, degree, graduationyear });
+  };
+
+  const handleCancelEdit = () => {
+    setEditData(null);
+  };
+
+  const handleUpdate = () => {
+    if (editData) {
+      onEdit(editData.id, { university: editData.university, degree: editData.degree, graduationyear: editData.graduationyear });
+      
+      const updatedItems = educations.map((education) =>
+      education._id === editData.id
+        ? { ...education, university: editData.university, degree: editData.degree, graduationyear: editData.graduationyear }
+        : education
+    );
+
+    setEducations(updatedItems);
+      
+      setEditData(null);
+    }
+  };
+
+  const handleDelete = (id: string) => {
+    fetch(`http://localhost:3001/api/items/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        // Update the state to remove the deleted education
+        const updatedEducations = educations.filter((education) => education._id !== id);
+        setEducations(updatedEducations);
+
+        // Reset the editData state
+        setEditData(null);
+      })
+      .catch((error) => {
+        console.error('Error deleting education:', error);
+      });
+  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/api/universities');
-        setUniversities(response.data.universities);
+        // setUniversities(response.data.universities);
         setFilteredUniversities(response.data.universities);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -36,94 +88,89 @@ const EducationSection: React.FC = () => {
     };
 
     fetchData();
-    fetchEducations();
+    
   }, []);
 
-  const fetchEducations = () => {
-    axios.get('/api/educations')
-      .then(response => setEducations(response.data))
-      .catch(error => console.error('Error fetching educations:', error));
-  };
+  // const fetchEducations = () => {
+  //   axios.get('http://localhost:3001/api/educations')
+  //     .then(response => setEducations(response.data))
+  //     .catch(error => console.error('Error fetching educations:', error));
+  // };
 
-  const handleSaveClick = () => {
-    axios.post('/api/educations', newEducation)
-      .then(response => {
-        setEducations([...educations, response.data]);
-        setNewEducation({ _id: '', university: '', degree: '', graduationYear: '' });
-        setIsAdding(false);
-      })
-      .catch(error => console.error('Error saving education:', error));
-  };
+  useEffect(() => {
+    fetch('/api/items')
+      .then((res) => res.json())
+      .then((data) => setEducations(data));
+  }, []);
 
-  const handleEditClick = (id: string) => {
-    setEducations(prevEducations =>
-      prevEducations.map(edu =>
-        edu._id === id ? { ...edu, isEditing: true } : edu
-      )
-    );
-  };
 
-  const handleEditSaveClick = async (id: string) => {
-    try {
-      const editedEducation = educations.find(edu => edu._id === id);
 
-      const response = await axios.put(`/api/educations/${id}`, {
-        university: editedEducation?.university,
-        degree: editedEducation?.degree,
-        graduationYear: editedEducation?.graduationYear,
-      });
+const handleSaveClick = () => {
+  fetch('http://localhost:3001/api/items', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newEducation),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((newEducationFromServer) => {
+      // Update the educations state with the new education
+      setEducations([...educations, newEducationFromServer]);
 
-      const updatedEducation = response.data;
+      // Reset the newEducation state
+      setNewEducation({ _id: '', university: '', degree: '', graduationyear: '' });
 
-      setEducations(prevEducations =>
-        prevEducations.map(edu =>
-          edu._id === id ? { ...edu, ...updatedEducation, isEditing: false } : edu
-        )
-      );
-    } catch (error) {
-      console.error('Error updating education entry:', error);
-    }
-  };
+      // Set isAdding to false
+      setIsAdding(false);
+    })
+    .catch((error) => {
+      // Handle errors by logging them to the console
+      console.error('Error saving education:', error.message);
+    });
+};
 
-  const handleDeleteClick = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this education entry?')) {
-      axios.delete(`/api/educations/${id}`)
-        .then(() => {
-          const updatedEducations = educations.filter(edu => edu._id !== id);
-          setEducations(updatedEducations);
-        })
-        .catch(error => console.error('Error deleting education:', error));
-    }
-  };
+
 
   const handleAddClick = () => {
-    setNewEducation({ _id: '', university: '', degree: '', graduationYear: '' });
+    setNewEducation({ _id: '', university: '', degree: '', graduationyear: '' });
     setIsAdding(true);
-    setNewEducationSearchTerm('');
+    // setNewEducationSearchTerm('');
   };
 
   return (
-    <div className="container">
+ 
+    <div 
+    style={{
+      border: '2px solid #ddd',
+      borderRadius: '8px',
+      padding: '16px',
+      marginBottom: '20px',
+    }}
+    className="container">
       <h2>Education</h2>
       {educations.map(education => (
         <div key={education._id} className="mb-3">
-          {education.isEditing ? (
+          {editData && editData.id === education._id ? (
             <div className="editing-form">
               <input
                 list="universities"
                 type="text"
                 className="form-control mb-2"
                 placeholder="University Name"
-                value={education.university}
+                value={editData.university}
                 onChange={(e) =>
-                  setEducations(prevEducations =>
-                    prevEducations.map(edu =>
-                      edu._id === education._id ? { ...edu, university: e.target.value } : edu
+                  setEditData({ ...editData, university: e.target.value } 
                     )
-                  )
+                  
                 }
               />
-              <datalist id="universities" style={{ background: '#fff', width: '100%' }}>
+              <datalist id="universities" style={{ background: 'white', width: '100%', color:'black'  }}>
                 {filteredUniversities.map((name, index) => (
                   <option key={index} value={name} />
                 ))}
@@ -132,43 +179,34 @@ const EducationSection: React.FC = () => {
                 type="text"
                 className="form-control mb-2"
                 placeholder="Degree"
-                value={education.degree}
+                value={editData.degree}
                 onChange={(e) =>
-                  setEducations(prevEducations =>
-                    prevEducations.map(edu =>
-                      edu._id === education._id ? { ...edu, degree: e.target.value } : edu
+                  setEditData({ ...editData, degree: e.target.value } 
                     )
-                  )
+                  
                 }
               />
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Graduation Year"
-                value={education.graduationYear}
+                value={editData.graduationyear}
                 onChange={(e) =>
-                  setEducations(prevEducations =>
-                    prevEducations.map(edu =>
-                      edu._id === education._id ? { ...edu, graduationYear: e.target.value } : edu
+                  setEditData( { ...editData, graduationyear: e.target.value } 
                     )
-                  )
+                  
                 }
               />
               <button
+                
                 className="btn btn-primary me-2"
-                onClick={() => handleEditSaveClick(education._id)}
+                onClick={handleUpdate}
               >
-                Save
+                Update
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() =>
-                  setEducations(prevEducations =>
-                    prevEducations.map(edu =>
-                      edu._id === education._id ? { ...edu, isEditing: false } : edu
-                    )
-                  )
-                }
+                onClick={handleCancelEdit}
               >
                 Cancel
               </button>
@@ -177,16 +215,16 @@ const EducationSection: React.FC = () => {
             <div className="display-info">
               <h3>{education.university}</h3>
               <p>{education.degree}</p>
-              <p>{education.graduationYear}</p>
+              <p>{education.graduationyear}</p>
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleEditClick(education._id)}
+                onClick={() => handleEditClick(education._id, education.university, education.degree, education.graduationyear)}
               >
                 Edit
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => handleDeleteClick(education._id)}
+                onClick={() => handleDelete(education._id)}
               >
                 Delete
               </button>
@@ -204,7 +242,7 @@ const EducationSection: React.FC = () => {
             onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
             value={newEducation.university}
           />
-          <datalist id="universities" style={{ background: '#fff', width: '100%' }}>
+          <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
             {filteredUniversities.map((name, index) => (
               <option key={index} value={name} />
             ))}
@@ -220,12 +258,12 @@ const EducationSection: React.FC = () => {
             type="text"
             className="form-control mb-2"
             placeholder="Graduation Year"
-            value={newEducation.graduationYear}
+            value={newEducation.graduationyear}
             onChange={(e) =>
-              setNewEducation({ ...newEducation, graduationYear: e.target.value })
+              setNewEducation({ ...newEducation, graduationyear: e.target.value })
             }
           />
-          <button className="btn btn-primary" onClick={handleSaveClick}>
+          <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
             Save
           </button>
           <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)}>
