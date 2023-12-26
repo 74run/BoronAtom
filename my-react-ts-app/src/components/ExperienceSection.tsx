@@ -13,18 +13,8 @@ interface Experience {
 }
 
 function ExperienceSection() {
-  const [experiences, setExperiences] = useState<Experience[]>([
-    {
-      id: 1,
-      jobTitle: 'Job Title',
-      company: 'XYZ Corporation',
-      location: 'City, Country',
-      duration: 'January 2020 - Present',
-      description: 'Responsibilities and achievements in the role.',
-    },
-    // Add more experience entries as needed
-  ]);
-
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  
   const [newExperience, setNewExperience] = useState<Experience>({
     id: 0,
     jobTitle: '',

@@ -16,23 +16,69 @@ import SectionWrapper from './components/SectionWrapper';
 import './index.css';
 import './App.css';
 
+import React, { useEffect, useState } from 'react';
 
+interface Education {
+  _id: string;
+  university: string;
+  degree: string;
+  graduationyear: string;
+}
 
 
 const Profile: React.FC = () => {
+  const [educations, setEducations] = useState<Education[]>([]);
 
+  useEffect(() => {
+    fetch('/api/items')
+      .then((res) => res.json())
+      .then((data) => setEducations(data));
+  }, []);
+
+  const handleEdit = (id: string, data: { university: string; degree: string; graduationyear:string}) => {
+    fetch(`http://localhost:3001/api/items/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = educations.map((education) =>
+          education._id === id ? { ...education, ...data } : education
+        );
+        setEducations(updatedItems);
+      });
+  };
+  
+  // Update onDelete in App.tsx or where you render ItemList
+  const handleDelete = (id: string) => {
+    fetch(`http://localhost:3001/api/items/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = educations.filter((education) => education._id !== id);
+        setEducations(updatedItems);
+      });
+  };
+  
+  
+  
 
   return (
     <>
-      <Router>
+      <Router >
         {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
-        <NavigationBar
+        <NavigationBar 
+        
     
         />
       </Router>
 
       {/* Three Sections Layout */}
-      <div style={{ display: 'flex', height: '100vh', position: 'relative' }}>
+      <div style={{ display: 'flex', height: '100vh', position: 'relative',  }}>
         {/* Left Section (20%) */}
         <div  style={{ flex: '0 0 20%'}}>
           {/* Add content for the left section */}
@@ -53,7 +99,8 @@ const Profile: React.FC = () => {
             
             <Projects />
             <Skills />
-            <EducationSection />
+            <EducationSection Educations={educations} onEdit={handleEdit}
+              onDelete= {handleDelete}  />
             <ExperienceSection />
             <CertificationSection />
             <InvolvementSection />
