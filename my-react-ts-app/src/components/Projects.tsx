@@ -1,68 +1,116 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 interface Project {
-  id: number;
+  _id: string;
   name: string;
   description: string;
   isEditing?: boolean;
 }
 
-function ProjectsSection() {
-  const [projects, setProjects] = useState<Project[]>([
-    { id: 1, name: 'Project 1', description: 'Description of Project 1' },
-    // Add more project entries as needed
-  ]);
+interface ProjectsSectionProps {
+  Projects: Project[];
+  onEdit: (id: string, data: { name: string; description: string }) => void;
+  onDelete: (id: string) => void;
+}
 
+const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onDelete }) => {
+  const [editData, setEditData] = useState<{ id: string; name: string; description: string } | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [newProject, setNewProject] = useState<Project>({
-    id: 0,
+    _id: '',
     name: '',
     description: '',
   });
-
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleEditClick = (id: number) => {
-    setProjects(prevProjects =>
-      prevProjects.map(project =>
-        project.id === id ? { ...project, isEditing: true } : project
-      )
-    );
+  const handleEditClick = (id: string, name: string, description: string) => {
+    setEditData({ id, name, description });
   };
 
-  const handleSaveClick = (id?: number) => {
-    if (id !== undefined) {
-      // Editing an existing project entry
-      setProjects(prevProjects =>
-        prevProjects.map(proj => (proj.id === id ? { ...proj, isEditing: false } : proj))
+  const handleCancelEdit = () => {
+    setEditData(null);
+  };
+
+  const handleUpdate = () => {
+    if (editData) {
+      onEdit(editData.id, { name: editData.name, description: editData.description });
+
+      const updatedItems = projects.map((project) =>
+        project._id === editData.id
+          ? { ...project, name: editData.name, description: editData.description }
+          : project
       );
-    } else {
-      // Adding a new project entry
-      setNewProject(prevProject => ({
-        ...prevProject,
-        id: Date.now(), // Use a timestamp as a unique identifier
-      }));
-      setProjects(prevProjects => [...prevProjects, newProject]);
-      setNewProject({ id: 0, name: '', description: '' });
-      setIsAdding(false);
+
+      setProjects(updatedItems);
+
+      setEditData(null);
     }
   };
 
-  const handleDeleteClick = (id: number) => {
-    // Deleting a project entry
-    setProjects(prevProjects => prevProjects.filter(proj => proj.id !== id));
+  const handleSaveClick = () => {
+    fetch('http://localhost:3001/api/projects', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newProject),
+    })
+      .then((response) => response.json())
+      .then((newProjectFromServer) => {
+
+        // Update the projects state with the new project
+        setProjects([...projects, newProjectFromServer]);
+
+        // Reset the newProject state
+        setNewProject({ _id: '', name: '', description: '' });
+
+        // Set isAdding to false
+        setIsAdding(false);
+      })
+      .catch((error) => {
+        // Handle errors by logging them to the console
+        console.error('Error saving project:', error.message);
+      });
+  };
+
+  const handleDelete = (id: string) => {
+    fetch(`http://localhost:3001/api/projects/${id}`, {
+      method: 'DELETE',
+    })
+      .then(() => {
+        // Update the state to remove the deleted project
+        const updatedProjects = projects.filter((project) => project._id !== id);
+        setProjects(updatedProjects);
+
+        // Reset the editData state
+        setEditData(null);
+      })
+      .catch((error) => {
+        console.error('Error deleting project:', error);
+      });
   };
 
   const handleAddClick = () => {
-    setNewProject({ id: 0, name: '', description: '' });
+    setNewProject({
+      _id: '',
+      name: '',
+      description: '',
+    });
     setIsAdding(true);
   };
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>, id?: number) => {
-    if (event.key === 'Enter') {
-      handleSaveClick(id);
-    }
-  };
+
+  // useEffect(() => {
+  //   fetch('http://localhost:3001/api/projects')
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setProjects(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching projects:', error);
+  //     });
+  // }, []);
 
   return (
     <div
@@ -74,44 +122,35 @@ function ProjectsSection() {
       }}
     >
       <h2><b>Projects</b></h2>
-      {projects.map(project => (
-        <div key={project.id} className="mb-3">
-          {project.isEditing ? (
+      {projects.map((project) => (
+        <div key={project._id} className="mb-3">
+          {editData && editData.id === project._id ? (
             // Edit mode
             <div>
               <input
-          type="text"
-          className="form-control mb-2"
-          placeholder="Project Name"
-          value={project.name}
-          onChange={(e) => setProjects((prevProjects) =>
-            prevProjects.map((proj) => (proj.id === project.id ? { ...proj, name: e.target.value } : proj))
-          )}
-          onKeyPress={(e) => handleKeyPress(e, project.id)} // Add this line
-          />
-
-          <input
-          type="text"
-          className="form-control mb-2"
-          placeholder="Description"
-          value={project.description}
-          onChange={(e) => setProjects((prevProjects) =>
-            prevProjects.map((proj) => (proj.id === project.id ? { ...proj, description: e.target.value } : proj))
-          )}
-          onKeyPress={(e) => handleKeyPress(e, project.id)} // Add this line
-          />
+                type="text"
+                className="form-control mb-2"
+                placeholder="Project Name"
+                value={editData.name}
+                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+              />
+              <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="Description"
+                value={editData.description}
+                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+              />
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleSaveClick(project.id)}
+                onClick={handleUpdate}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
-                Save
+                Update
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() => setProjects(prevProjects =>
-                  prevProjects.map(proj => (proj.id === project.id ? { ...proj, isEditing: false } : proj))
-                )}
+                onClick={handleCancelEdit}
               >
                 Cancel
               </button>
@@ -120,17 +159,17 @@ function ProjectsSection() {
             // View mode
             <div>
               <h3>{project.name}</h3>
-              <p>Description: {project.description}</p>
+              <p>{project.description}</p>
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleEditClick(project.id)}
+                onClick={() => handleEditClick(project._id, project.name, project.description)}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => handleDeleteClick(project.id)}
+                onClick={() => handleDelete(project._id)}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
@@ -147,20 +186,18 @@ function ProjectsSection() {
             className="form-control mb-2"
             placeholder="Project Name"
             value={newProject.name}
-            onChange={e => setNewProject({ ...newProject, name: e.target.value })}
-            onKeyPress={(e) => handleKeyPress(e)}
+            onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
           />
           <input
             type="text"
             className="form-control mb-2"
             placeholder="Description"
             value={newProject.description}
-            onChange={e => setNewProject({ ...newProject, description: e.target.value })}
-            onKeyPress={(e) => handleKeyPress(e)}
+            onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
           />
           <button
             className="btn btn-primary"
-            onClick={() => handleSaveClick()}
+            onClick={handleSaveClick}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -185,6 +222,6 @@ function ProjectsSection() {
       )}
     </div>
   );
-}
+};
 
 export default ProjectsSection;

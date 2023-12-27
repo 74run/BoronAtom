@@ -1,12 +1,18 @@
 const express = require('express');
-const Edu = require('../models/EduModel');
+const Inv = require('../models/InvModel');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { university, degree, graduationyear } = req.body;
-    const newItem = new Edu({ university, degree, graduationyear });
+    const {   organization,
+    role,
+    duration,
+    description} = req.body;
+    const newItem = new Inv({ organization,
+        role,
+        duration,
+        description });
     await newItem.save();
     res.json(newItem);
   } catch (error) {
@@ -18,13 +24,19 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { university, degree, graduationyear } = req.body;
+    const { organization,
+        role,
+        duration,
+        description } = req.body;
 
-    const updatedEducation = await Edu.findByIdAndUpdate(id, { university, degree, graduationyear }, { new: true });
+    const updatedInvolvement = await Inv.findByIdAndUpdate(id, { organization,
+        role,
+        duration,
+        description }, { new: true });
 
-    res.json(updatedEducation);
+    res.json(updatedInvolvement);
   } catch (error) {
-    console.error('Error updating education entry:', error);
+    console.error('Error updating Involvement entry:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -32,8 +44,8 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await Edu.findByIdAndDelete(id);
-    res.json({ message: 'Education entry deleted successfully' });
+    await Inv.findByIdAndDelete(id);
+    res.json({ message: 'Involvement entry deleted successfully' });
   } catch (error) {
     console.error('Error deleting education entry:', error);
     res.status(500).json({ error: 'Internal Server Error' });

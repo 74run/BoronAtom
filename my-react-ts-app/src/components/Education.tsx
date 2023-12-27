@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
+
 interface Education {
   _id: string;
   university: string;
@@ -28,6 +29,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
   } | null>(null);
+
   const [educations, setEducations] = useState<Education[]>([]);
   const [universities, setUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
@@ -119,13 +121,44 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
       });
   };
 
-  const handleSaveClick = () => {
-    fetch('http://localhost:3001/api/items', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newEducation),
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/universities');
+        // setUniversities(response.data.universities);
+        setFilteredUniversities(response.data.universities);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+    
+  }, []);
+
+
+
+  useEffect(() => {
+    fetch('/api/items')
+      .then((res) => res.json())
+      .then((data) => setEducations(data));
+  }, []);
+
+
+
+const handleSaveClick = () => {
+  fetch('http://localhost:3001/api/items', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newEducation),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
     })
       .then((response) => {
         if (!response.ok) {
@@ -149,6 +182,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
         console.error('Error saving education:', error.message);
       });
   };
+
 
   const handleAddClick = () => {
     setNewEducation({
@@ -190,6 +224,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
                   <option key={uni} value={uni} />
                 ))}
               </datalist>
+
               <input
                 type="text"
                 className="form-control mb-2"
