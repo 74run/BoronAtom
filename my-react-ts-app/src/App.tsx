@@ -74,8 +74,13 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEditEdu = (id: string, data: { university: string; degree: string; startDate: { month: string; year: string };
-    endDate: { month: string; year: string }}) => {
+
+  const handleEditEdu = (id: string, data: {   university: string;
+    degree: string;
+    major: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };}) => {
+
     fetch(`http://localhost:3001/api/items/${id}`, {
       method: 'PUT',
       headers: {
