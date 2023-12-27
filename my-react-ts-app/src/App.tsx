@@ -22,7 +22,9 @@ interface Education {
   _id: string;
   university: string;
   degree: string;
-  graduationyear: string;
+  major: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
 }
 
 
@@ -35,7 +37,8 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEdit = (id: string, data: { university: string; degree: string; graduationyear:string}) => {
+  const handleEdit = (id: string, data: { university: string; degree: string; startDate: { month: string; year: string };
+    endDate: { month: string; year: string }}) => {
     fetch(`http://localhost:3001/api/items/${id}`, {
       method: 'PUT',
       headers: {
