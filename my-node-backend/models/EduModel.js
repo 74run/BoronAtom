@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
-const itemSchema = new mongoose.Schema({
+const EduSchema = new mongoose.Schema({
   university: String,
   degree: String,
   graduationyear: String,
 });
 
-const Item = mongoose.model('Item', itemSchema);
+const Edu = mongoose.model('Edu', EduSchema);
 
-module.exports = Item;
+module.exports = Edu;

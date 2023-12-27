@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
+
+
+
 
 interface Education {
   _id: string;
@@ -18,7 +19,7 @@ interface EducationProps {
 }
 
 
-const EducationSection: React.FC<EducationProps>= ({Educations, onEdit,onDelete}) => {
+const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete}) => {
   const [editData, setEditData] = useState<{id: string; university: string; degree: string; graduationyear: string} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   
@@ -91,11 +92,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit,onDelete}
     
   }, []);
 
-  // const fetchEducations = () => {
-  //   axios.get('http://localhost:3001/api/educations')
-  //     .then(response => setEducations(response.data))
-  //     .catch(error => console.error('Error fetching educations:', error));
-  // };
+
 
   useEffect(() => {
     fetch('/api/items')
@@ -137,6 +134,7 @@ const handleSaveClick = () => {
 
 
 
+
   const handleAddClick = () => {
     setNewEducation({ _id: '', university: '', degree: '', graduationyear: '' });
     setIsAdding(true);
@@ -158,23 +156,35 @@ const handleSaveClick = () => {
         <div key={education._id} className="mb-3">
           {editData && editData.id === education._id ? (
             <div className="editing-form">
-              <input
-                list="universities"
-                type="text"
-                className="form-control mb-2"
-                placeholder="University Name"
-                value={editData.university}
-                onChange={(e) =>
-                  setEditData({ ...editData, university: e.target.value } 
-                    )
-                  
-                }
-              />
-              <datalist id="universities" style={{ background: 'white', width: '100%', color:'black'  }}>
-                {filteredUniversities.map((name, index) => (
-                  <option key={index} value={name} />
-                ))}
-              </datalist>
+          
+            <input
+              list="universities"
+              type="text"
+              className="form-control mb-2"
+              placeholder="University Name"
+              value={editData.university}
+              onChange={(e) => setEditData({ ...editData, university: e.target.value })}
+            />
+          <datalist
+            id="universities"
+            style={{
+              position: "absolute",
+              width: "100%",
+              background: 'white',
+              borderRadius: '0 0 0.25rem 0.25rem',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              padding: '8px', // Add padding for better spacing
+              maxHeight: '200px', // Set your desired max height
+              overflowY: 'auto', // Add scrollbar if content exceeds maxHeight
+            }}
+          >
+            {filteredUniversities.map((name, index) => (
+              <option key={index} value={name} />
+            ))}
+          </datalist>
+
+
+       
               <input
                 type="text"
                 className="form-control mb-2"

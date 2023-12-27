@@ -25,9 +25,19 @@ interface Education {
   graduationyear: string;
 }
 
+interface Experience {
+  _id: string;
+  jobTitle: string;
+  company: string;
+  location: string;
+  duration: string;
+  description: string;
+}
+
 
 const Profile: React.FC = () => {
   const [educations, setEducations] = useState<Education[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
 
   useEffect(() => {
     fetch('/api/items')
@@ -51,6 +61,23 @@ const Profile: React.FC = () => {
         setEducations(updatedItems);
       });
   };
+
+  const handleEditExp = (id: string, data: {  jobTitle: string; company: string; location: string; duration: string; description: string }) => {
+    fetch(`http://localhost:3001/api/experiences/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = experiences.map((experience) =>
+          experience._id === id ? { ...experience, ...data } : experience
+        );
+        setExperiences(updatedItems);
+      });
+  };
   
   // Update onDelete in App.tsx or where you render ItemList
   const handleDelete = (id: string) => {
@@ -64,6 +91,16 @@ const Profile: React.FC = () => {
       });
   };
   
+  const handleDeleteExp = (id: string) => {
+    fetch(`http://localhost:3001/api/experiences/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = experiences.filter((experience) => experience._id !== id);
+        setExperiences(updatedItems);
+      });
+  };
   
   
 
@@ -101,7 +138,8 @@ const Profile: React.FC = () => {
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEdit}
               onDelete= {handleDelete}  />
-            <ExperienceSection />
+            <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
+              onDelete= {handleDeleteExp}/>
             <CertificationSection />
             <InvolvementSection />
           </SectionWrapper>
