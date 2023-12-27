@@ -34,10 +34,37 @@ interface Experience {
   description: string;
 }
 
+interface Involvement {
+  _id: string;
+  organization: string;
+  role: string;
+  duration: string;
+  description: string;
+ 
+}
+
+interface Certification {
+  _id: string;
+  name: string;
+  issuedBy: string;
+  issuedDate: string;
+  expirationDate?: string;
+  
+}
+
+interface Project {
+  _id: string;
+  name: string;
+  description: string;
+}
+
 
 const Profile: React.FC = () => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [involvements, setInvolvements] = useState<Involvement[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     fetch('/api/items')
@@ -45,7 +72,7 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEdit = (id: string, data: { university: string; degree: string; graduationyear:string}) => {
+  const handleEditEdu = (id: string, data: { university: string; degree: string; graduationyear:string}) => {
     fetch(`http://localhost:3001/api/items/${id}`, {
       method: 'PUT',
       headers: {
@@ -78,9 +105,67 @@ const Profile: React.FC = () => {
         setExperiences(updatedItems);
       });
   };
+
+  const handleEditCert = (id: string, data: {  name: string;
+    issuedBy: string;
+    issuedDate: string;
+    expirationDate?: string; }) => {
+    fetch(`http://localhost:3001/api/certifications/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = certifications.map((certification) =>
+          certification._id === id ? { ...certification, ...data } : certification
+        );
+        setCertifications(updatedItems);
+      });
+  };
+
+  const handleEditInv = (id: string, data: {    organization: string;
+    role: string;
+    duration: string;
+    description: string; }) => {
+    fetch(`http://localhost:3001/api/involvements/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = involvements.map((involvement) =>
+          involvement._id === id ? { ...involvement, ...data } : involvement
+        );
+        setInvolvements(updatedItems);
+      });
+  };
+
+  const handleEditPro = (id: string, data: {     name: string;
+    description: string; }) => {
+    fetch(`http://localhost:3001/api/projects/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = projects.map((project) =>
+          project._id === id ? { ...project, ...data } : project
+        );
+        setProjects(updatedItems);
+      });
+  };
   
   // Update onDelete in App.tsx or where you render ItemList
-  const handleDelete = (id: string) => {
+  const handleDeleteEdu = (id: string) => {
     fetch(`http://localhost:3001/api/items/${id}`, {
       method: 'DELETE',
     })
@@ -99,6 +184,40 @@ const Profile: React.FC = () => {
       .then(() => {
         const updatedItems = experiences.filter((experience) => experience._id !== id);
         setExperiences(updatedItems);
+      });
+  };
+  
+
+  const handleDeleteCert = (id: string) => {
+    fetch(`http://localhost:3001/api/certifications/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = certifications.filter((certification) => certification._id !== id);
+        setCertifications(updatedItems);
+      });
+  };
+
+  const handleDeleteInv = (id: string) => {
+    fetch(`http://localhost:3001/api/involvements/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = involvements.filter((involvement) => involvement._id !== id);
+        setInvolvements(updatedItems);
+      });
+  };
+
+  const handleDeletePro = (id: string) => {
+    fetch(`http://localhost:3001/api/projects/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = projects.filter((project) => project._id !== id);
+        setProjects(updatedItems);
       });
   };
   
@@ -134,14 +253,17 @@ const Profile: React.FC = () => {
             <div style={{ marginTop: '150px' }} />
             <SummarySection />
             
-            <Projects />
+            <Projects Projects={projects} onEdit={handleEditPro}
+              onDelete= {handleDeletePro} />
             <Skills />
-            <EducationSection Educations={educations} onEdit={handleEdit}
-              onDelete= {handleDelete}  />
+            <EducationSection Educations={educations} onEdit={handleEditEdu}
+              onDelete= {handleDeleteEdu}  />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
               onDelete= {handleDeleteExp}/>
-            <CertificationSection />
-            <InvolvementSection />
+            <CertificationSection Certifications={certifications} onEdit={handleEditCert}
+              onDelete= {handleDeleteCert}/>
+            <InvolvementSection Involvements={involvements} onEdit={handleEditInv}
+              onDelete= {handleDeleteInv} />
           </SectionWrapper>
         </div>
 

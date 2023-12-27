@@ -8,6 +8,9 @@ const bodyParser = require('body-parser');
 const EduRoutes = require('./routes/EduRoute');
 const UniRoutes = require('./routes/UniRoute');
 const ExpRoutes = require('./routes/ExpRoute');
+const CertRoutes = require('./routes/CertRoute');
+const InvRoutes = require('./routes/InvRoute');
+const ProRoutes = require('./routes/ProRoute');
 
 const app = express();
 const port = 3001;
@@ -28,6 +31,9 @@ db.once('open', () => {
 
 app.use('/api/items', EduRoutes);
 app.use('/api/experiences', ExpRoutes);
+app.use('/api/certifications',CertRoutes);
+app.use('/api/involvements',InvRoutes);
+app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
 
 
