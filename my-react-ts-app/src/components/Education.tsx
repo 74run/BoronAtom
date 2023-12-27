@@ -126,7 +126,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
       try {
         const response = await axios.get('http://localhost:3001/api/universities');
         // setUniversities(response.data.universities);
-        setFilteredUniversities(response.data.universities);
+        setUniversities(response.data.universities);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -426,3 +426,5 @@ const handleSaveClick = () => {
 };
 
 export default EducationSection;
+
+
