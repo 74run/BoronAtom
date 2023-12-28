@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 interface Experience {
-  id: number;
+  _id: string;
   jobTitle: string;
   company: string;
   location: string;
@@ -12,61 +13,102 @@ interface Experience {
   isEditing?: boolean;
 }
 
-function ExperienceSection() {
+interface ExperienceProps {
+  Experiences: Experience[]; // Rename from Experiences to experiences
+  onEdit: (id: string, data: { jobTitle: string; company: string; location: string; duration: string; description: string }) => void;
+  onDelete: (id: string) => void;
+}
+
+const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onDelete }) => {
+  const [editData, setEditData] = useState<{ id: string; jobTitle: string; company: string; location: string; duration: string; description: string} | null>(null);
   const [experiences, setExperiences] = useState<Experience[]>([]);
-  
   const [newExperience, setNewExperience] = useState<Experience>({
-    id: 0,
+    _id: '',
     jobTitle: '',
     company: '',
     location: '',
     duration: '',
     description: '',
   });
-
   const [isAdding, setIsAdding] = useState(false);
 
-  const handleEditClick = (id: number) => {
-    setExperiences((prevExperiences) =>
-      prevExperiences.map((experience) =>
-        experience.id === id ? { ...experience, isEditing: true } : experience
-      )
-    );
+  const handleEditClick = (id: string, jobTitle: string, company: string, location: string, duration: string, description: string) => {
+    setEditData({ id, jobTitle, company, location, duration, description });
   };
 
-  const handleSaveClick = (id?: number) => {
-    if (id !== undefined) {
-      // Editing an existing experience entry
-      setExperiences((prevExperiences) =>
-        prevExperiences.map((exp) => (exp.id === id ? { ...exp, isEditing: false } : exp))
-      );
-    } else {
-      // Adding a new experience entry
-      setNewExperience((prevExperience) => ({
-        ...prevExperience,
-        id: Date.now(), // Use a timestamp as a unique identifier
-      }));
-      setExperiences((prevExperiences) => [...prevExperiences, newExperience]);
-      setNewExperience({
-        id: 0,
-        jobTitle: '',
-        company: '',
-        location: '',
-        duration: '',
-        description: '',
-      });
-      setIsAdding(false);
+  const handleCancelEdit = () => {
+    setEditData(null);
+  };
+
+  const handleUpdate = () => {
+    if (editData) {
+      onEdit(editData.id, { jobTitle: editData.jobTitle, company: editData.company, location: editData.location, duration: editData.duration, description: editData.description});
+       
+      
+      const updatedItems = experiences.map((experience) =>
+      experience._id === editData.id
+        ? { ...experience, jobTitle: editData.jobTitle, company: editData.company, location: editData.location, duration: editData.duration, description: editData.description }
+        : experience
+    );
+
+    setExperiences(updatedItems);
+      
+      setEditData(null);
     }
   };
 
-  const handleDeleteClick = (id: number) => {
-    // Deleting an experience entry
-    setExperiences((prevExperiences) => prevExperiences.filter((exp) => exp.id !== id));
+  const handleSaveClick = () => {
+    fetch('http://localhost:3001/api/experiences', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newExperience),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((newExperienceFromServer) => {
+        // Update the educations state with the new education
+        setExperiences([...experiences, newExperienceFromServer]);
+  
+        // Reset the newEducation state
+        setNewExperience({ _id: '', jobTitle: '', company: '', location: '', duration:'', description:'' });
+  
+        // Set isAdding to false
+        setIsAdding(false);
+      })
+      .catch((error) => {
+        // Handle errors by logging them to the console
+        console.error('Error saving experience:', error.message);
+      });
+  };
+  
+
+  const handleDelete = (id: string) => {
+    fetch(`http://localhost:3001/api/experiences/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        // Update the state to remove the deleted education
+        const updatedExperiences = experiences.filter((experience) => experience._id !== id);
+        setExperiences(updatedExperiences);
+
+        // Reset the editData state
+        setEditData(null);
+      })
+      .catch((error) => {
+        console.error('Error deleting experience:', error);
+      });
   };
 
   const handleAddClick = () => {
     setNewExperience({
-      id: 0,
+      _id: '',
       jobTitle: '',
       company: '',
       location: '',
@@ -87,91 +129,65 @@ function ExperienceSection() {
     >
       <h2>Experience</h2>
       {experiences.map((experience) => (
-        <div key={experience.id} className="mb-3">
-          {experience.isEditing ? (
+        <div key={experience._id} className="mb-3">
+          {editData && editData.id === experience._id ? (
             // Edit mode
             <div>
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Job Title"
-                value={experience.jobTitle}
+                value={editData.jobTitle}
                 onChange={(e) =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, jobTitle: e.target.value } : exp
-                    )
-                  )
+                  setEditData({ ...editData, jobTitle: e.target.value })
                 }
               />
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Company"
-                value={experience.company}
+                value={editData.company}
                 onChange={(e) =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, company: e.target.value } : exp
-                    )
-                  )
+                  setEditData({ ...editData, company: e.target.value })
                 }
               />
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Location"
-                value={experience.location}
+                value={editData.location}
                 onChange={(e) =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, location: e.target.value } : exp
-                    )
-                  )
+                  setEditData({ ...editData, location: e.target.value })
                 }
               />
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Duration"
-                value={experience.duration}
+                value={editData.duration}
                 onChange={(e) =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, duration: e.target.value } : exp
-                    )
-                  )
+                  setEditData({ ...editData, duration: e.target.value })
                 }
               />
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Description"
-                value={experience.description}
+                value={editData.description}
                 onChange={(e) =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, description: e.target.value } : exp
-                    )
-                  )
+                  setEditData({ ...editData, description: e.target.value })
                 }
               />
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleSaveClick(experience.id)}
+                onClick={handleUpdate}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
-                Save
+                Update
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() =>
-                  setExperiences((prevExperiences) =>
-                    prevExperiences.map((exp) =>
-                      exp.id === experience.id ? { ...exp, isEditing: false } : exp
-                    )
-                  )
-                }
+                onClick={handleCancelEdit}
               >
                 Cancel
               </button>
@@ -180,20 +196,20 @@ function ExperienceSection() {
             // View mode
             <div>
               <h3>{experience.jobTitle}</h3>
-              <p>Company: {experience.company}</p>
-              <p>Location: {experience.location}</p>
-              <p>Duration: {experience.duration}</p>
-              <p>Description: {experience.description}</p>
+              <p>{experience.company}</p>
+              <p>{experience.location}</p>
+              <p>{experience.duration}</p>
+              <p>{experience.description}</p>
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleEditClick(experience.id)}
+                onClick={() => handleEditClick(experience._id, experience.jobTitle, experience.company, experience.location, experience.duration, experience.description)}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
               </button>
               <button
                 className="btn btn-danger"
-                onClick={() => handleDeleteClick(experience.id)}
+                onClick={() => handleDelete(experience._id)}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
@@ -252,7 +268,7 @@ function ExperienceSection() {
           />
           <button
             className="btn btn-primary"
-            onClick={() => handleSaveClick()}
+            onClick={handleSaveClick}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
