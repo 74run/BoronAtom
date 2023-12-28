@@ -29,7 +29,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     endDate: { month: string; year: string };
   } | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
-  const [universities, setUniversities] = useState<string[]>([]);
+  const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
@@ -51,7 +51,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/api/universities');
-        setUniversities(response.data.universities);
+        setFilteredUniversities(response.data.universities);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -186,7 +186,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
                 onChange={(e) => setEditData({ ...editData, university: e.target.value })}
               />
               <datalist id="universities">
-                {universities.map((uni) => (
+                {filteredUniversities.map((uni) => (
                   <option key={uni} value={uni} />
                 ))}
               </datalist>
@@ -301,7 +301,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
             onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
           />
           <datalist id="universities">
-            {universities.map((uni) => (
+            {filteredUniversities.map((uni) => (
               <option key={uni} value={uni} />
             ))}
           </datalist>
