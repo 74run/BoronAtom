@@ -20,17 +20,13 @@ interface EducationProps {
   onDelete: (id: string) => void;
 }
 
-const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDelete }) => {
-  const [editData, setEditData] = useState<{
-    id: string;
-    university: string;
-    degree: string;
-    major: string;
-    startDate: { month: string; year: string };
-    endDate: { month: string; year: string };
-  } | null>(null);
+const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete}) => {
+  const [editData, setEditData] = useState<{id: string; university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
 
+																					   
+																																																			   
   const [educations, setEducations] = useState<Education[]>([]);
+  
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
@@ -40,6 +36,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
   });
+
   const [isAdding, setIsAdding] = useState(false);
 
   const months = [
@@ -53,6 +50,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:3001/api/universities');
+        // setUniversities(response.data.universities);
         setFilteredUniversities(response.data.universities);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -60,13 +58,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     };
 
     fetchData();
+    
   }, []);
+
+
 
   useEffect(() => {
     fetch('/api/items')
       .then((res) => res.json())
       .then((data) => setEducations(data));
   }, []);
+
 
   const handleEditClick = (
     id: string,
@@ -82,6 +84,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
   const handleCancelEdit = () => {
     setEditData(null);
   };
+
 
   const handleUpdate = () => {
     if (editData) {
@@ -112,8 +115,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
     })
       .then((res) => res.json())
       .then(() => {
+														   
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
+
+								   
         setEditData(null);
       })
       .catch((error) => {
@@ -121,28 +127,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, onEdit, onDele
       });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/api/universities');
-        // setUniversities(response.data.universities);
-        setFilteredUniversities(response.data.universities);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
 
-    fetchData();
-    
-  }, []);
-
-
-
-  useEffect(() => {
-    fetch('/api/items')
-      .then((res) => res.json())
-      .then((data) => setEducations(data));
-  }, []);
 
 
 
@@ -192,11 +177,32 @@ const handleSaveClick = () => {
       major: '',
       startDate: { month: '', year: '' },
       endDate: { month: '', year: '' },
+
+							  
+						 
+	  
+					   
+													 
+															  
     });
+  
+
+
+
+
+								
+								  
+				   
+			   
+			  
+									   
+										 
     setIsAdding(true);
+									 
   };
 
   return (
+ 
     <div
       style={{
         border: '2px solid #ddd',
@@ -210,42 +216,54 @@ const handleSaveClick = () => {
       {educations.map((education) => (
         <div key={education._id} className="mb-3">
           {editData && editData.id === education._id ? (
-            <div className="editing-form">
+            <><div className="editing-form">
+		  
               <input
                 type="text"
                 list="universities"
+						 
                 className="form-control mb-2"
                 placeholder="University Name"
                 value={editData.university}
-                onChange={(e) => setEditData({ ...editData, university: e.target.value })}
-              />
+                onChange={(e) => setEditData({ ...editData, university: e.target.value })} />
+			  
+				   
               <datalist id="universities">
-                {filteredUniversities.map((uni) => (
-                  <option key={uni} value={uni} />
-                ))}
+		   
+              {filteredUniversities.map((name, index) => (
+              <option key={index} value={name} />
+            ))}
               </datalist>
 
+
+	   
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Degree"
                 value={editData.degree}
-                onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
-              />
+                onChange={(e) => setEditData({ ...editData, degree: e.target.value })} />
+				
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Major"
                 value={editData.major}
-                onChange={(e) => setEditData({ ...editData, major: e.target.value })}
-              />
-              <div className="date-dropdowns">
-                <label>Start Date:</label>
+                onChange={(e) => setEditData({ ...editData, major: e.target.value })} />
+
+            <div className="date-dropdowns">
+              <label>Start Date:</label>
+              <div className="flex-container">
                 <select
                   className="form-control mb-2"
                   value={editData.startDate.month}
                   onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
                 >
+                  {!editData.startDate.month && (
+                    <option value="" disabled>
+                      Select Month
+                    </option>
+                  )}
                   {months.map((month) => (
                     <option key={month} value={month}>
                       {month}
@@ -257,6 +275,11 @@ const handleSaveClick = () => {
                   value={editData.startDate.year}
                   onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
                 >
+                  {!editData.startDate.year && (
+                    <option value="" disabled>
+                      Select Year
+                    </option>
+                  )}
                   {graduationYears.map((year) => (
                     <option key={year} value={year}>
                       {year}
@@ -264,13 +287,22 @@ const handleSaveClick = () => {
                   ))}
                 </select>
               </div>
-              <div className="date-dropdowns">
+            </div>
+
+
+            </div><div className="date-dropdowns">
                 <label>End Date:</label>
+                <div className="flex-container">
                 <select
                   className="form-control mb-2"
                   value={editData.endDate.month}
                   onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
                 >
+                  {!editData.endDate.month && (
+                    <option value="" disabled>
+                      Select Month
+                    </option>
+                  )}
                   {months.map((month) => (
                     <option key={month} value={month}>
                       {month}
@@ -282,6 +314,11 @@ const handleSaveClick = () => {
                   value={editData.endDate.year}
                   onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
                 >
+                  {!editData.endDate.year && (
+                    <option value="" disabled>
+                      Select Year
+                    </option>
+                  )}
                   {graduationYears.map((year) => (
                     <option key={year} value={year}>
                       {year}
@@ -289,21 +326,23 @@ const handleSaveClick = () => {
                   ))}
                 </select>
               </div>
-              <button
+              </div><button
+				
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
               >
                 Update
-              </button>
-              <button
+              </button><button
+					 
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
               >
                 Cancel
-              </button>
-            </div>
+              </button></>
+				  
           ) : (
             <div className="display-info">
+			
               <h3>{education.university}</h3>
               <p>Degree: {education.degree}</p>
               <p>Major: {education.major}</p>
@@ -328,16 +367,18 @@ const handleSaveClick = () => {
       {isAdding && (
         <div className="adding-form">
           <input
+							   
             type="text"
             list="universities"
             className="form-control mb-2 input-university"
             placeholder="University Name"
+																							  
             value={newEducation.university}
             onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
           />
           <datalist id="universities">
-            {filteredUniversities.map((uni) => (
-              <option key={uni} value={uni} />
+            {filteredUniversities.map((name, index) => (
+              <option key={index} value={name} />
             ))}
           </datalist>
           <input
@@ -356,53 +397,78 @@ const handleSaveClick = () => {
           />
           <div className="date-dropdowns">
             <label>Start Date:</label>
-            <select
-              className="form-control mb-2"
-              value={newEducation.startDate.month}
-              onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
-            >
-              {months.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className="form-control mb-2"
-              value={newEducation.startDate.year}
-              onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
-            >
-              {graduationYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
+            <div className="flex-container">
+              <select
+                className="form-control mb-2"
+                value={newEducation.startDate.month}
+                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
+              >
+                {!newEducation.startDate.month && (
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="form-control mb-2"
+                value={newEducation.startDate.year}
+                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
+              >
+                {!newEducation.startDate.year && (
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+
           <div className="date-dropdowns">
             <label>End Date:</label>
-            <select
-              className="form-control mb-2"
-              value={newEducation.endDate.month}
-              onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
-            >
-              {months.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className="form-control mb-2"
-              value={newEducation.endDate.year}
-              onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
-            >
-              {graduationYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
+            <div className="flex-container">
+              <select
+                className="form-control mb-2"
+                value={newEducation.endDate.month}
+                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
+              >
+                {!newEducation.endDate.month && (
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="form-control mb-2"
+                value={newEducation.endDate.year}
+                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
+              >
+                {!newEducation.endDate.year && (
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
             Save
@@ -426,3 +492,4 @@ const handleSaveClick = () => {
 };
 
 export default EducationSection;
+

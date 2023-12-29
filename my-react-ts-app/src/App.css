@@ -85,6 +85,25 @@ body {
   box-shadow: 0 0 8px rgba(0, 123, 255, 0.6); /* Change to your desired focus shadow */
 }
 
+/* .date-dropdowns {
+  display: flex;
+  align-items: center;
+} */
+
+.flex-container {
+  display: flex;
+  gap: 50px; /* Adjust this value to control the space between the month and year dropdowns */
+}
+
+.date-dropdowns label {
+  margin-bottom: 8px; /* Adjust this value to control the space between the label and the dropdown */
+}
+
+.date-dropdowns select {
+  margin-bottom: 8px; /* Adjust this value to control the space between the dropdowns */
+}
+
+
   
  
 
