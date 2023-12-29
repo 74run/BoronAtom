@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { university, degree, graduationyear } = req.body;
-    const newItem = new Edu({ university, degree, graduationyear });
+    const { university, degree, major, startDate, endDate } = req.body;
+    const newItem = new Edu({ university, degree, major, startDate, endDate });
     await newItem.save();
     res.json(newItem);
   } catch (error) {
@@ -18,9 +18,13 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { university, degree, graduationyear } = req.body;
+    const { university, degree, major, startDate, endDate } = req.body;
 
-    const updatedEducation = await Edu.findByIdAndUpdate(id, { university, degree, graduationyear }, { new: true });
+    const updatedEducation = await Edu.findByIdAndUpdate(
+      id,
+      { university, degree, major, startDate, endDate },
+      { new: true }
+    );
 
     res.json(updatedEducation);
   } catch (error) {
