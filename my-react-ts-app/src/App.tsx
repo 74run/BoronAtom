@@ -32,7 +32,8 @@ interface Experience {
   jobTitle: string;
   company: string;
   location: string;
-  duration: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
   description: string;
 }
 
@@ -49,8 +50,9 @@ interface Certification {
   _id: string;
   name: string;
   issuedBy: string;
-  issuedDate: string;
-  expirationDate?: string;
+  issuedDate: { month: string; year: string };
+  expirationDate: { month: string; year: string };
+  url: string;
   
 }
 
@@ -74,8 +76,13 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEditEdu = (id: string, data: { university: string; degree: string; startDate: { month: string; year: string };
-    endDate: { month: string; year: string }}) => {
+
+  const handleEditEdu = (id: string, data: {   university: string;
+    degree: string;
+    major: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };}) => {
+
     fetch(`http://localhost:3001/api/items/${id}`, {
       method: 'PUT',
       headers: {
@@ -92,7 +99,8 @@ const Profile: React.FC = () => {
       });
   };
 
-  const handleEditExp = (id: string, data: {  jobTitle: string; company: string; location: string; duration: string; description: string }) => {
+  const handleEditExp = (id: string, data: {  jobTitle: string; company: string; location: string; startDate: { month: string; year: string };
+    endDate: { month: string; year: string }; description: string }) => {
     fetch(`http://localhost:3001/api/experiences/${id}`, {
       method: 'PUT',
       headers: {
@@ -111,8 +119,8 @@ const Profile: React.FC = () => {
 
   const handleEditCert = (id: string, data: {  name: string;
     issuedBy: string;
-    issuedDate: string;
-    expirationDate?: string; }) => {
+    issuedDate: { month: string; year: string };
+    expirationDate?: { month: string; year: string }; }) => {
     fetch(`http://localhost:3001/api/certifications/${id}`, {
       method: 'PUT',
       headers: {
