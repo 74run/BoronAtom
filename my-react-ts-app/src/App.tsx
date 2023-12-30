@@ -9,10 +9,10 @@ import ExperienceSection from './components/ExperienceSection';
 import CertificationSection from './components/CertificationSection';
 import InvolvementSection from './components/InvolvementSection';
 import SummarySection from './components/SummarySection';
-import ProfilePhotoWithUpload from './components/ProfilePhotoWithUpload';
+import ProfilePhoto from './components/ProfilePhotoWithUpload';
 import NavigationBar from './components/NavigationBar';
 import SectionWrapper from './components/SectionWrapper';
-
+import axios from 'axios';
 import './index.css';
 import './App.css';
 
@@ -67,6 +67,39 @@ const Profile: React.FC = () => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [involvements, setInvolvements] = useState<Involvement[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [imageUrl, setImageUrl] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    // Fetch the current profile photo URL from the server on component mount
+    axios.get('http://localhost:3001/api/profile-photo')
+      .then((response) => {
+        setImageUrl(response.data.imageUrl);
+      })
+      .catch((error) => {
+        console.error('Error fetching profile photo:', error);
+      });
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  const handleFileChange = (newFile: File | null) => {
+    setFile(newFile);
+
+    if (newFile) {
+      const formData = new FormData();
+      formData.append('photo', newFile);
+
+      // Upload the new photo and update the profile photo URL
+      axios.post('http://localhost:3001/upload', formData)
+        .then((response) => {
+          setImageUrl(response.data.imageUrl);
+        })
+        .catch((error) => {
+          console.error('Error uploading photo:', error);
+        });
+    }
+  };
+
+
 
   useEffect(() => {
     fetch('/api/items')
@@ -253,8 +286,7 @@ const Profile: React.FC = () => {
           <CoverPage onUpload={(file: File): void => { } 
            } />
            <div>
-          <ProfilePhotoWithUpload   onUpload={(file: File): void => { } 
-          }  /></div>
+          <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} /></div>
           <SectionWrapper>
             <div style={{ marginTop: '150px' }} />
             <SummarySection />
