@@ -26,7 +26,15 @@ const Skills: React.FC = () => {
   );
 
   return (
-    <div className="border rounded p-4 mb-4">
+    <div 
+    
+    style={{
+      border: '2px solid #ddd',
+      borderRadius: '8px',
+      padding: '16px',
+      marginBottom: '20px',
+    }}
+  >
       <h2 className="mb-4">Skills</h2>
       <div className="mb-3">
         <div className="input-group">
