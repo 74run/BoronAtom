@@ -43,14 +43,32 @@ router.get('/api/profile-photo', async (req, res) => {
 // API endpoint to upload a new photo
 router.post('/upload', upload.single('photo'), async (req, res) => {
   try {
-    const imageUrl = `http://localhost:${port}/uploads/${req.file.filename}`;
+    const newImageUrl = `http://localhost:${port}/uploads/${req.file.filename}`;
 
-    // Save the new photo URL to the database
-    const newProfilePhoto = new ProfilePhoto({ imageUrl });
-    await newProfilePhoto.save();
+    // Find the old profile photo and delete it from 'uploads'
+    const oldProfilePhoto = await ProfilePhoto.findOne();
+    if (oldProfilePhoto) {
+      const oldImagePath = path.join(__dirname, 'uploads', path.basename(oldProfilePhoto.imageUrl));
+      fs.unlinkSync(oldImagePath);
+    }
 
-    res.json({ success: true, imageUrl: newProfilePhoto.imageUrl });
+    // Replace the old photo URL with the new one
+    let updatedProfilePhoto;
+    if (oldProfilePhoto) {
+      updatedProfilePhoto = await ProfilePhoto.findByIdAndUpdate(
+        oldProfilePhoto._id,
+        { imageUrl: newImageUrl },
+        { new: true }
+      );
+    } else {
+      // If no old photo exists, create a new one
+      updatedProfilePhoto = new ProfilePhoto({ imageUrl: newImageUrl });
+      await updatedProfilePhoto.save();
+    }
+
+    res.json({ success: true, imageUrl: updatedProfilePhoto.imageUrl });
   } catch (error) {
+    console.error('Error uploading image:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
