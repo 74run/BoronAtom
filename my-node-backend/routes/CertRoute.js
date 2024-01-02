@@ -8,11 +8,13 @@ router.post('/', async (req, res) => {
     const {  name,
     issuedBy,
     issuedDate,
-    expirationDate } = req.body;
+    expirationDate,
+    url } = req.body;
     const newItem = new Cert({ name,
         issuedBy,
         issuedDate,
-        expirationDate });
+        expirationDate,
+        url });
     await newItem.save();
     res.json(newItem);
   } catch (error) {
@@ -27,12 +29,14 @@ router.put('/:id', async (req, res) => {
     const { name,
         issuedBy,
         issuedDate,
-        expirationDate } = req.body;
+        expirationDate,
+        url } = req.body;
 
     const updatedCertificate = await Cert.findByIdAndUpdate(id, { name,
         issuedBy,
         issuedDate,
-        expirationDate }, { new: true });
+        expirationDate,
+        url }, { new: true });
 
     res.json(updatedCertificate);
   } catch (error) {
