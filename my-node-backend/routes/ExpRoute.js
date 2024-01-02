@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { jobTitle, company, location, duration, description } = req.body;
-    const newItem = new Exp({ jobTitle, company, location, duration, description });
+    const { jobTitle, company, location, startDate, endDate, description } = req.body;
+    const newItem = new Exp({ jobTitle, company, location, startDate, endDate, description });
     await newItem.save();
     res.json(newItem);
   } catch (error) {
@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { jobTitle, company, location, duration, description } = req.body;
+    const { jobTitle, company, location, startDate, endDate, description } = req.body;
 
-    const updatedExperience = await Exp.findByIdAndUpdate(id, { jobTitle, company, location, duration, description }, { new: true });
+    const updatedExperience = await Exp.findByIdAndUpdate(id, { jobTitle, company, location, startDate, endDate, description }, { new: true });
 
     res.json(updatedExperience);
   } catch (error) {

@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
   try {
-    const { name, description } = req.body;
-    const newItem = new Pro({ name, description });
+    const { name,startDate, endDate, skills, description } = req.body;
+    const newItem = new Pro({ name, startDate, endDate, skills, description });
     await newItem.save();
     res.json(newItem);
   } catch (error) {
@@ -18,9 +18,9 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description } = req.body;
+    const { name,startDate, endDate, skills, description } = req.body;
 
-    const updatedProject = await Pro.findByIdAndUpdate(id, { name, description }, { new: true });
+    const updatedProject = await Pro.findByIdAndUpdate(id, { name, startDate, endDate, skills, description }, { new: true });
 
     res.json(updatedProject);
   } catch (error) {
