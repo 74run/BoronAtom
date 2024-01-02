@@ -2,7 +2,7 @@
 import { BrowserRouter as Router } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CoverPage from './components/CoverPage';
-import Projects from './components/Projects';
+import ProjectsSection from './components/Projects';
 import Skills from './components/Skills';
 import EducationSection from './components/Education';
 import ExperienceSection from './components/ExperienceSection';
@@ -32,7 +32,8 @@ interface Experience {
   jobTitle: string;
   company: string;
   location: string;
-  duration: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
   description: string;
 }
 
@@ -49,14 +50,18 @@ interface Certification {
   _id: string;
   name: string;
   issuedBy: string;
-  issuedDate: string;
-  expirationDate?: string;
+  issuedDate: { month: string; year: string };
+  expirationDate: { month: string; year: string };
+  url: string;
   
 }
 
 interface Project {
   _id: string;
   name: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  skills: string;
   description: string;
 }
 
@@ -128,7 +133,12 @@ const Profile: React.FC = () => {
       });
   };
 
-  const handleEditExp = (id: string, data: {  jobTitle: string; company: string; location: string; duration: string; description: string }) => {
+  const handleEditExp = (id: string, data: {  jobTitle: string;
+    company: string;
+    location: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    description: string; }) => {
     fetch(`http://localhost:3001/api/experiences/${id}`, {
       method: 'PUT',
       headers: {
@@ -147,8 +157,9 @@ const Profile: React.FC = () => {
 
   const handleEditCert = (id: string, data: {  name: string;
     issuedBy: string;
-    issuedDate: string;
-    expirationDate?: string; }) => {
+    issuedDate: { month: string; year: string };
+    expirationDate: { month: string; year: string };
+    url: string; }) => {
     fetch(`http://localhost:3001/api/certifications/${id}`, {
       method: 'PUT',
       headers: {
@@ -185,7 +196,10 @@ const Profile: React.FC = () => {
       });
   };
 
-  const handleEditPro = (id: string, data: {     name: string;
+  const handleEditPro = (id: string, data: {      name: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    skills: string;
     description: string; }) => {
     fetch(`http://localhost:3001/api/projects/${id}`, {
       method: 'PUT',
@@ -289,8 +303,8 @@ const Profile: React.FC = () => {
             <div style={{ marginTop: '150px' }} />
             <SummarySection />
             
-            <Projects Projects={projects} onEdit={handleEditPro}
-              onDelete= {handleDeletePro} />
+            <ProjectsSection  onEdit={handleEditPro}
+            onDelete={handleDeletePro} Projects={projects} />
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
               onDelete= {handleDeleteEdu}  />
