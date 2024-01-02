@@ -59,6 +59,9 @@ interface Certification {
 interface Project {
   _id: string;
   name: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  skills: string;
   description: string;
 }
 
@@ -157,7 +160,9 @@ const Profile: React.FC = () => {
       });
   };
 
-  const handleEditPro = (id: string, data: {     name: string;
+  const handleEditPro = (id: string, data: {     name: string; startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    skills: string;
     description: string; }) => {
     fetch(`http://localhost:3001/api/projects/${id}`, {
       method: 'PUT',
