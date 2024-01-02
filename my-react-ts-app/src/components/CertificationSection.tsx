@@ -6,32 +6,50 @@ interface Certification {
   _id: string;
   name: string;
   issuedBy: string;
-  issuedDate: string;
-  expirationDate?: string;
+  issuedDate: { month: string; year: string };
+  expirationDate: { month: string; year: string };
+  url: string;
   isEditing?: boolean;
 }
 
 interface CertificationProps {
   Certifications: Certification[];
-  onEdit: (id: string, data: { name: string; issuedBy: string; issuedDate: string; expirationDate?: string }) => void;
+  onEdit: (id: string, data: { name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string }) => void;
   onDelete: (id: string) => void;
 }
 
 const CertificationSection: React.FC<CertificationProps> = ({ Certifications, onEdit, onDelete }) => {
-  const [editData, setEditData] = useState<{ id: string; name: string; issuedBy: string; issuedDate: string; expirationDate?: string } | null>(null);
+  const [editData, setEditData] = useState<{ id: string; name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string } | null>(null);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [newCertification, setNewCertification] = useState<Certification>({
     _id: '',
     name: '',
     issuedBy: '',
-    issuedDate: '',
-    expirationDate: '',
+    issuedDate: { month: '', year: '' },
+    expirationDate: { month: '', year: '' },
+    url: '',
   });
   const [isAdding, setIsAdding] = useState(false);
+  const months = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
 
-  const handleEditClick = (id: string, name: string, issuedBy: string, issuedDate: string, expirationDate?: string) => {
-    setEditData({ id, name, issuedBy, issuedDate, expirationDate });
+  const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
+
+  const handleEditClick = (
+    id: string,
+    name: string,
+    issuedBy: string,
+    issuedDate: { month: string; year: string },
+    expirationDate: { month: string; year: string },
+    url: string
+  ) => {
+    setEditData({ id, name, issuedBy, issuedDate, expirationDate, url });
   };
+  
+
+  
 
   const handleCancelEdit = () => {
     setEditData(null);
@@ -39,11 +57,11 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate });
+      onEdit(editData.id, { name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate, url: editData.url });
       
       const updatedItems = certifications.map((certification) =>
         certification._id === editData.id
-          ? { ...certification, name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate }
+          ? { ...certification, name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate, url: editData.url }
           : certification
       );
 
@@ -54,21 +72,40 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   };
 
   const handleSaveClick = () => {
+    const formattedCertification = {
+      ...newCertification,
+      issuedDate: {
+        month: newCertification.issuedDate.month,
+        year: newCertification.issuedDate.year,
+      },
+      expirationDate: {
+        month: newCertification.expirationDate.month,
+        year: newCertification.expirationDate.year,
+      },
+    };
+  
     fetch('http://localhost:3001/api/certifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(newCertification),
+      body: JSON.stringify(formattedCertification),
     })
       .then((response) => response.json())
       .then((newCertificationFromServer: Certification) => {
         // Update the certifications state with the new certification
         setCertifications([...certifications, newCertificationFromServer]);
-
+  
         // Reset the newCertification state
-        setNewCertification({ _id: '', name: '', issuedBy: '', issuedDate: '', expirationDate: '' });
-
+        setNewCertification({
+          _id: '',
+          name: '',
+          issuedBy: '',
+          issuedDate: { month: '', year: '' },
+          expirationDate: { month: '', year: '' },
+          url: '',
+        });
+  
         // Set isAdding to false
         setIsAdding(false);
       })
@@ -77,6 +114,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         console.error('Error saving certification:', error.message);
       });
   };
+  
 
   const handleDelete = (id: string) => {
     fetch(`http://localhost:3001/api/certifications/${id}`, {
@@ -100,8 +138,9 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       _id: '',
       name: '',
       issuedBy: '',
-      issuedDate: '',
-      expirationDate: '',
+      issuedDate: { month: '', year: '' },
+      expirationDate: { month: '', year: '' },
+      url: '',
     });
     setIsAdding(true);
   };
@@ -146,19 +185,87 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 value={editData.issuedBy}
                 onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
               />
+              <div className="date-dropdowns">
+                <label>Issued Date:</label>
+                <div className="flex-container">
+                  <select
+                    className="form-control mb-2"
+                    value={editData.issuedDate.month}
+                    onChange={(e) => setEditData({ ...editData, issuedDate: { ...editData.issuedDate, month: e.target.value } })}
+                  >
+                    {!editData.issuedDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="form-control mb-2"
+                    value={editData.issuedDate.year}
+                    onChange={(e) => setEditData({ ...editData, issuedDate: { ...editData.issuedDate, year: e.target.value } })}
+                  >
+                    {!editData.issuedDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                    {graduationYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="date-dropdowns">
+                <label>Expiration Date:</label>
+                <div className="flex-container">
+                  <select
+                    className="form-control mb-2"
+                    value={editData.expirationDate.month}
+                    
+                    onChange={(e) => setEditData({ ...editData, expirationDate: { ...editData.expirationDate, month: e.target.value } })}
+                  >
+                    {!editData.expirationDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="form-control mb-2"
+                    value={editData.expirationDate.year}
+                    onChange={(e) => setEditData({ ...editData, expirationDate: { ...editData.expirationDate, year: e.target.value } })}
+                  >
+                    {!editData.expirationDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                    {graduationYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
               <input
                 type="text"
                 className="form-control mb-2"
-                placeholder="Issued Date"
-                value={editData.issuedDate}
-                onChange={(e) => setEditData({ ...editData, issuedDate: e.target.value })}
-              />
-              <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Expiration Date (if applicable)"
-                value={editData.expirationDate}
-                onChange={(e) => setEditData({ ...editData, expirationDate: e.target.value })}
+                placeholder="Certificate URL"
+                value={editData.url}
+                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
               />
               <button
                 className="btn btn-primary me-2"
@@ -179,13 +286,13 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             <div>
               <h3>{certification.name}</h3>
               <p>Issued By: {certification.issuedBy}</p>
-              <p>Issued Date: {certification.issuedDate}</p>
-              {certification.expirationDate && (
-                <p>Expiration Date: {certification.expirationDate}</p>
-              )}
+              <p>Issued Date: {certification.issuedDate.month} {certification.issuedDate.year}</p>
+              <p>Expiration Date: {certification.expirationDate.month} {certification.expirationDate.year}</p>
+              
+              <p>Certificate URL: {certification.url}</p>
               <button
                 className="btn btn-primary me-2"
-                onClick={() => handleEditClick(certification._id, certification.name, certification.issuedBy, certification.issuedDate, certification.expirationDate)}
+                onClick={() => handleEditClick(certification._id, certification.name, certification.issuedBy, certification.issuedDate, certification.expirationDate, certification.url)}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
@@ -218,20 +325,87 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             value={newCertification.issuedBy}
             onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
           />
+          <div className="date-dropdowns">
+                <label>Issued Date:</label>
+                <div className="flex-container">
+                  <select
+                    className="form-control mb-2"
+                    value={newCertification.issuedDate.month}
+                    onChange={(e) => setNewCertification({ ...newCertification, issuedDate: { ...newCertification.issuedDate, month: e.target.value } })}
+                  >
+                    {!newCertification.issuedDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="form-control mb-2"
+                    value={newCertification.issuedDate.year}
+                    onChange={(e) => setNewCertification({ ...newCertification, issuedDate: { ...newCertification.issuedDate, year: e.target.value } })}
+                  >
+                    {!newCertification.issuedDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                    {graduationYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="date-dropdowns">
+                <label>Expiration Date:</label>
+                <div className="flex-container">
+                  <select
+                    className="form-control mb-2"
+                    value={newCertification.expirationDate.month}
+                    onChange={(e) => setNewCertification({ ...newCertification, expirationDate: { ...newCertification.expirationDate, month: e.target.value } })}
+                  >
+                    {!newCertification.expirationDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                    {months.map((month) => (
+                      <option key={month} value={month}>
+                        {month}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="form-control mb-2"
+                    value={newCertification.expirationDate.year}
+                    onChange={(e) => setNewCertification({ ...newCertification, expirationDate: { ...newCertification.expirationDate, year: e.target.value } })}
+                  >
+                    {!newCertification.expirationDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                    {graduationYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
           <input
-            type="text"
-            className="form-control mb-2"
-            placeholder="Issued Date"
-            value={newCertification.issuedDate}
-            onChange={(e) => setNewCertification({ ...newCertification, issuedDate: e.target.value })}
-          />
-          <input
-            type="text"
-            className="form-control mb-2"
-            placeholder="Expiration Date (if applicable)"
-            value={newCertification.expirationDate}
-            onChange={(e) => setNewCertification({ ...newCertification, expirationDate: e.target.value })}
-          />
+                type="text"
+                className="form-control mb-2"
+                placeholder="Certificate URL"
+                value={newCertification.url}
+                onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
+              />
           <button
             className="btn btn-primary"
             onClick={handleSaveClick}

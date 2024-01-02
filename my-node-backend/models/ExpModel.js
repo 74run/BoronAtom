@@ -4,7 +4,8 @@ const expSchema = new mongoose.Schema({
   jobTitle: String,
   company: String,
   location: String,
-  duration: String,
+  startDate: { month: String, year: String },
+  endDate: { month: String, year: String },
   description: String,
 });
 
