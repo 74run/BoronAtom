@@ -3,3 +3,111 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 
+
+
+/* Add this to your styles.css or App.css file */
+body {
+
+  height: 100vh;
+    background-size: cover;
+    
+    background-color: black;
+    overflow:auto;
+    
+    background-attachment: fixed;
+    
+    
+
+}
+
+
+
+.custom-modal {
+  overflow: auto;
+}
+
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+  }
+  
+  .logo img {
+    max-height: 40px;
+  }
+  
+  .nav-buttons {
+    display: flex;
+    justify-content: flex-end; /* Align items to the right */
+    align-items: center;
+  }
+  
+  
+  .nav-buttons a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+  }
+
+  /* Add this CSS to your stylesheet or in your component */
+/* Customize the styles as needed */
+
+/* Style for the datalist */
+#universities {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the input field */
+.input-university {
+  width: 100%; /* Adjust the width as needed */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the dropdown options */
+#universities option {
+  padding: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Optionally, you can add hover and focus styles for better user experience */
+.input-university:hover,
+.input-university:focus {
+  border-color: #007bff; /* Change to your desired focus color */
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.6); /* Change to your desired focus shadow */
+}
+
+/* .date-dropdowns {
+  display: flex;
+  align-items: center;
+} */
+
+.flex-container {
+  display: flex;
+  gap: 50px; /* Adjust this value to control the space between the month and year dropdowns */
+}
+
+.date-dropdowns label {
+  margin-bottom: 8px; /* Adjust this value to control the space between the label and the dropdown */
+}
+
+.date-dropdowns select {
+  margin-bottom: 8px; /* Adjust this value to control the space between the dropdowns */
+}
+
+
+  
+ 
+
+  
+
