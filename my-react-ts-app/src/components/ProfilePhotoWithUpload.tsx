@@ -98,7 +98,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange }) =
       )}
 
       {/* Modal to view the full photo */}
-      <Modal show={showModal} onHide={handleHideModal} class="custom-modal">
+      <Modal show={showModal} onHide={handleHideModal} className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>View Full Photo</Modal.Title>
         </Modal.Header>

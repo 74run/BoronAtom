@@ -14,7 +14,7 @@ const ExpRoutes = require('./routes/ExpRoute');
 const CertRoutes = require('./routes/CertRoute');
 const InvRoutes = require('./routes/InvRoute');
 const ProRoutes = require('./routes/ProRoute');
-// const profileRoutes = require('./routes/ProfilePhotoRoute')
+// const profileRoutes = require('./routes/ProfilePhotoRoute');
 
 const app = express();
 const port = 3001;
@@ -37,8 +37,12 @@ db.once('open', () => {
 app.use(express.json());
 
 
+require('./routes/UserRoute')(app);
+
+
+
 app.use('/api/items', EduRoutes);
-// app.use('/api/profile-photo', profileRoutes);
+// app.use('/', profileRoutes);
 app.use('/api/experiences', ExpRoutes);
 app.use('/api/certifications',CertRoutes);
 app.use('/api/involvements',InvRoutes);

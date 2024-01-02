@@ -1,0 +1,60 @@
+/* frontend/src/components/RegisterForm.css */
+.register-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #28a745; /* Bootstrap success color */
+    border-radius: 8px;
+    margin-top: 180px;
+  }
+  
+  .form-label {
+    font-weight: bold;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+  }
+  
+
+  .login-link {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .login-link p {
+    margin: 0;
+  }
+  
+  .btn-link {
+    cursor: pointer;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  
+  .btn-link:hover {
+    color: #0056b3;
+  }
+  
+
+  .password-input-group {
+    position: relative;
+  }
+  
+  .password-input-group button {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    width: 70px; /* Set a fixed width for both buttons */
+  }
+
+.password-input-group button.btn-light,
+.password-input-group button.btn-primary {
+  width: 70px;
+}
