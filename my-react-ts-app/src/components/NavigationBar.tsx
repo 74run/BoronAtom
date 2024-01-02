@@ -19,6 +19,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   };
 
   return (
+    <div style={{ position:'sticky'}}>
     <BootstrapNavbar bg="dark" variant="dark">
       <BootstrapNavbar.Brand>
         <Link to="/">
@@ -62,6 +63,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         <NavDropdown.Item>Sign Out</NavDropdown.Item>
       </NavDropdown>
     </BootstrapNavbar>
+    </div>
   );
 };
 

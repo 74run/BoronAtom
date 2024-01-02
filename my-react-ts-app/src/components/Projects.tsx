@@ -43,12 +43,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
-  const handleEditClick = (id: string, name: string, startDate: { month: string; year: string },
+  const handleEditClick = (id: string, name: string,
+
+    startDate: { month: string; year: string },
     endDate: { month: string; year: string },
-    skills: string, description: string) => {
-    setEditData({ id, name, startDate: { month: '', year: '' },
-    endDate: { month: '', year: '' },
-    skills: '', description });
+    skills: string, 
+    description: string) => {
+    setEditData({ id, name, startDate,
+    endDate,
+    skills, description });
   };
 
   const handleCancelEdit = () => {
@@ -72,27 +75,22 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleSaveClick = () => {
-    const formattedProject = {
-      ...newProject,
-      startDate: {
-        month: newProject.startDate.month,
-        year: newProject.startDate.year,
-      },
-      endDate: {
-        month: newProject.endDate.month,
-        year: newProject.endDate.year,
-      },
-    };
+  
   
     fetch('http://localhost:3001/api/projects', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(formattedProject),
+      body: JSON.stringify(newProject),
     })
-      .then((response) => response.json())
-      .then((newProjectFromServer: Project) => {
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((newProjectFromServer) => {
 
         // Update the projects state with the new project
         setProjects([...projects, newProjectFromServer]);

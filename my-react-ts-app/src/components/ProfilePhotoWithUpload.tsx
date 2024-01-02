@@ -1,13 +1,34 @@
-import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+// ProfilePhoto.tsx
+import React, { useRef , useState} from 'react';
+import styled from 'styled-components';
 import profileImage from './Gold.png';
+import { Modal, Button } from 'react-bootstrap';
 
-interface ProfilePhotoWithUploadProps {
-  onUpload: (file: File) => void;
+interface ProfilePhotoProps {
+  imageUrl: string;
+  onFileChange: (file: File | null) => void;
 }
 
-const ProfilePhotoWithUpload: React.FC<ProfilePhotoWithUploadProps> = ({ onUpload }) => {
+const ProfilePhotoWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+`;
+
+const Photo = styled.img`
+  
+  width: 150px; /* Adjust the size as needed */
+  height: 150px; /* Adjust the size as needed */
+  cursor: pointer;
+`;
+
+const HiddenFileInput = styled.input`
+  display: none;
+`;
+
+const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -26,30 +47,31 @@ const ProfilePhotoWithUpload: React.FC<ProfilePhotoWithUploadProps> = ({ onUploa
     }
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files && files.length > 0) {
-      setIsUploading(true);
-      const selectedFile = files[0];
-      onUpload(selectedFile);
+  const handlePhotoClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    onFileChange(file);
+  };
+
   return (
-    <div
-      style={{
-        position: 'absolute',
+    <div 
+    style={{
+      position: 'absolute',
         
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        borderRadius: '50%',
-        overflow: 'auto',
-        width: '150px',
-        height: '150px',
-        border: '2px solid #fff',
-        cursor: 'pointer',
-      }}
-    >
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      borderRadius: '50%',
+      overflow: 'auto',
+      width: '150px',
+      height: '150px',
+      border: '2px solid #fff',
+      cursor: 'pointer',
+    }}> 
       <input
         type="file"
         id="profilePhotoInput"
@@ -62,7 +84,7 @@ const ProfilePhotoWithUpload: React.FC<ProfilePhotoWithUploadProps> = ({ onUploa
       ) : (
         <>
           <img
-            src={profileImage}
+            src={imageUrl||profileImage}
             alt="Profile"
             style={{
               width: '100%',
@@ -76,21 +98,22 @@ const ProfilePhotoWithUpload: React.FC<ProfilePhotoWithUploadProps> = ({ onUploa
       )}
 
       {/* Modal to view the full photo */}
-      <Modal show={showModal} onHide={handleHideModal} class="custom-modal">
+      <Modal show={showModal} onHide={handleHideModal} className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>View Full Photo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img
-            src={profileImage}
-            alt="Full Profile"
-            style={{
+        
+
+        <Photo style={{
               width: '100%',
               height: '100%',
               objectFit: 'contain',
               overflow: 'auto',
             }}
-          />
+           src={ imageUrl ||profileImage} alt="Profile" onClick={handlePhotoClick} />
+        <HiddenFileInput type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
+
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleHideModal}>
@@ -101,8 +124,8 @@ const ProfilePhotoWithUpload: React.FC<ProfilePhotoWithUploadProps> = ({ onUploa
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+   </div>
   );
 };
 
-export default ProfilePhotoWithUpload;
+export default ProfilePhoto;
