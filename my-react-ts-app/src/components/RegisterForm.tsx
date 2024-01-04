@@ -27,19 +27,26 @@ const RegisterForm: React.FC = () => {
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/register', { username, password });
-      console.log('User registered successfully.');
-      console.log('User Data:', logdata);
+        const response = await axios.post('http://localhost:3001/api/register', { username, password });
+        const { success, message, userID } = response.data;
 
-      // Fetch login details after registration
-      const loginDetails = await axios.post('http://localhost:3001/api/login', { username, password });
+        if (success) {
+            console.log(message);
+            console.log('User ID:', userID);
 
-      navigate(`/`);
-      // Now you have loginDetails.data.userId or loginDetails.data._id that you can use in the dashboard
+            // Fetch login details after registration (if needed)
+            // ...
+
+            // Now you have the userID that you can use in the dashboard
+            navigate(`/`);
+        } else {
+            console.error('Registration error:', message);
+        }
     } catch (error) {
-      console.error('Registration error:', 'Unknown error');
+        console.error('Registration error:', 'Unknown error');
     }
-  };
+};
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevents the default form submission behavior

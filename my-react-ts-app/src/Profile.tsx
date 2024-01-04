@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CoverPage from './components/CoverPage';
 import ProjectsSection from './components/Projects';
@@ -15,6 +16,7 @@ import SectionWrapper from './components/SectionWrapper';
 import axios from 'axios';
 import './index.css';
 import './css/profile.css';
+import './App.css';
 
 import React, { useEffect, useState } from 'react';
 
@@ -74,6 +76,7 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  const { userID } = useParams();
 
   useEffect(() => {
     // Fetch the current profile photo URL from the server on component mount
@@ -307,7 +310,7 @@ const Profile: React.FC = () => {
             onDelete={handleDeletePro} Projects={projects} />
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
-              onDelete= {handleDeleteEdu}  />
+            onDelete={handleDeleteEdu} userID={userID}  />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
               onDelete= {handleDeleteExp}/>
             <CertificationSection Certifications={certifications} onEdit={handleEditCert}

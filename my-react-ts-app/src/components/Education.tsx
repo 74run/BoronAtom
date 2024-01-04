@@ -20,10 +20,11 @@ interface EducationProps {
   Educations: Education[];
   onEdit: (id: string, data: {university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
   onDelete :(id: string)=> void;
+  userID?: string;
 }
 
 
-const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete}) => {
+const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete, userID}) => {
   const [editData, setEditData] = useState<{id: string; university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   
@@ -126,41 +127,43 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
 
 
-const handleSaveClick = () => {
-  fetch('http://localhost:3001/api/items', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newEducation),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
+  const handleSaveClick = () => {
+    fetch('http://localhost:3001/api/items', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...newEducation, userID }), // Include userID in the JSON object
     })
-    .then((newEducationFromServer) => {
-      // Update the educations state with the new education
-      setEducations([...educations, newEducationFromServer]);
-
-      // Reset the newEducation state
-      setNewEducation({   _id: '',
-      university: '',
-      degree: '',
-      major: '',
-      startDate: { month: '', year: '' },
-      endDate: { month: '', year: '' }, });
-
-      // Set isAdding to false
-      setIsAdding(false);
-    })
-    .catch((error) => {
-      // Handle errors by logging them to the console
-      console.error('Error saving education:', error.message);
-    });
-};
-
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((newEducationFromServer) => {
+        // Update the educations state with the new education
+        setEducations([...educations, newEducationFromServer]);
+  
+        // Reset the newEducation state
+        setNewEducation({
+          _id: '',
+          university: '',
+          degree: '',
+          major: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+        });
+  
+        // Set isAdding to false
+        setIsAdding(false);
+      })
+      .catch((error) => {
+        // Handle errors by logging them to the console
+        console.error('Error saving education:', error.message);
+      });
+  };
+  
 
 
 

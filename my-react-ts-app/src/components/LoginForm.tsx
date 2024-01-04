@@ -8,16 +8,21 @@ import '../css/LoginForm.css'; // Import your custom CSS file
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState('');
   const [showPassword, setShowPassword] = useState(false); // State to track password visibility
   const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/api/login', { username, password });
-      console.log(response.data.message);
+      const { success, message, userID } = response.data;
+      setUserId(userID);
+
+      console.log('User ID:', userID);
+      console.log('Server Response:', message);
 
       // Dynamically navigate to the dashboard with the username as a parameter
-      navigate(`/profile`);
+      navigate(`/profile/${userID}`);
     } catch (error) {
       console.error('Login error:', 'Unknown error');
     }
