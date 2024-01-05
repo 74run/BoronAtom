@@ -65,7 +65,8 @@ const RegisterForm: React.FC = () => {
       // Explicitly specify the type of 'error' as 'any'
       console.error('Registration error:', error.message || 'Unknown error');
     }
-  };
+};
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // Prevents the default form submission behavior

@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   confirmPassword: String,
+  userProfile: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'UserProfile',
+  },
 });
 
 const User = mongoose.model('User', userSchema);

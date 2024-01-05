@@ -20,7 +20,7 @@ const App: React.FC = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/verifyotp" element={<VerifyOTP />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:userID" element={<Profile />} />
       </Routes>
     </Router>
   );

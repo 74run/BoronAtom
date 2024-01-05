@@ -1,5 +1,6 @@
 
 import { BrowserRouter as Router } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CoverPage from './components/CoverPage';
 import ProjectsSection from './components/Projects';
@@ -15,6 +16,7 @@ import SectionWrapper from './components/SectionWrapper';
 import axios from 'axios';
 import './index.css';
 import './css/profile.css';
+import './App.css';
 
 import React, { useEffect, useState } from 'react';
 
@@ -74,6 +76,7 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  const { userID } = useParams();
 
   useEffect(() => {
     // Fetch the current profile photo URL from the server on component mount
@@ -107,7 +110,7 @@ const Profile: React.FC = () => {
 
 
   useEffect(() => {
-    fetch('/api/items')
+    fetch('/api/profile')
       .then((res) => res.json())
       .then((data) => setEducations(data));
   }, []);
@@ -117,7 +120,8 @@ const Profile: React.FC = () => {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };}) => {
-    fetch(`http://localhost:3001/api/items/${id}`, {
+      // console.log('Sending data to server:', data);
+    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -219,7 +223,7 @@ const Profile: React.FC = () => {
   
   // Update onDelete in App.tsx or where you render ItemList
   const handleDeleteEdu = (id: string) => {
-    fetch(`http://localhost:3001/api/items/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -307,7 +311,7 @@ const Profile: React.FC = () => {
             onDelete={handleDeletePro} Projects={projects} />
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
-              onDelete= {handleDeleteEdu}  />
+            onDelete={handleDeleteEdu} />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
               onDelete= {handleDeleteExp}/>
             <CertificationSection Certifications={certifications} onEdit={handleEditCert}
