@@ -53,6 +53,10 @@
   .password-input-group {
     position: relative;
   }
+
+  .button-gap {
+    margin: 0 10px; /* Adjust the margin as needed */
+  }
   
   .password-input-group button {
     position: absolute;

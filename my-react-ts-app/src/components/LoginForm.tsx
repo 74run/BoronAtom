@@ -13,13 +13,14 @@ const LoginForm: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/login', { username, password });
-      console.log(response.data.message);
+      const resp = await axios.post('http://localhost:3001/api/login', { username, password });
+      console.log(resp);
+      console.log('hi');
 
       // Dynamically navigate to the dashboard with the username as a parameter
       navigate(`/profile`);
-    } catch (error) {
-      console.error('Login error:', 'Unknown error');
+    } catch (error: any) {
+      console.error('Login error:', error.response.data.message || 'Unknown error');
     }
   };
 
@@ -39,39 +40,48 @@ const LoginForm: React.FC = () => {
     navigate('/register');
   };
 
+  const handleForgotPasswordClick = () => {
+    navigate('/forgotpassword');
+  };
+
   return (
     <div className="login-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label className="form-label">Username:</label>
           <input
             type="text"
             className="form-control"
+            placeholder="Username*"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
         </div>
         <div className="mb-3">
-          <label className="form-label">Password:</label>
           <div className="password-input-group">
             <input
               type={showPassword ? 'text' : 'password'}
               className="form-control"
               value={password}
+              placeholder='Password*'
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <button
               type="button"
-              className={`btn ${showPassword ? 'btn-primary' : 'btn-light'}`}
+              className="btn eye-icon-btn"
               onClick={togglePasswordVisibility}
             >
-              {showPassword ? 'Hide' : 'Show'}
+              <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
             </button>
           </div>
         </div>
         <button type="submit" className="btn btn-success">
           Login
+        </button>
+        <button type="button" className="btn btn-primary btn button-gap" onClick={handleForgotPasswordClick}>
+          Forgot Password
         </button>
       </form>
       {/* Register button */}

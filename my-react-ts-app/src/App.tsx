@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Profile from './Profile';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
+import VerifyOTP from './components/VerifyOTP';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 
 
@@ -14,6 +17,9 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<LoginForm />}></Route>
         <Route path="/register" element={<RegisterForm />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/verifyotp" element={<VerifyOTP />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </Router>
