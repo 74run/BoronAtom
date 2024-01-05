@@ -118,11 +118,33 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
 
   useEffect(() => {
-    fetch('/api/items')
-      .then((res) => res.json())
-      .then((data) => setEducations(data));
-  }, []);
-
+    const fetchData = async () => {
+      try {
+        const storageKey = `educations_${userID}`;
+  
+        // Check if data exists in local storage
+        const storedData = localStorage.getItem(storageKey);
+        if (storedData) {
+          setEducations(JSON.parse(storedData));
+        } else {
+          // If not, fetch data from the server
+          const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+          const fetchedEducations = response.data.educations;
+  
+          // Update state
+          setEducations(fetchedEducations);
+  
+          // Store the fetched data in local storage
+          localStorage.setItem(storageKey, JSON.stringify(fetchedEducations));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+  
+    fetchData();
+  }, [userID]);
+  
 
 
   const handleSaveClick = () => {
@@ -145,29 +167,36 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
       },
     };
   
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
-      .then((response) => {
-        const newEducationFromServer = response.data.education;
-        const newEduData = newEducationFromServer[newEducationFromServer.length-1]
-        // console.log('Data Is:',newEducationFromServer[newEducationFromServer.length-1])
-        setEducations([...educations, newEduData]);
-        setNewEducation({
-          _id: '',
-          university: '',
-          degree: '',
-          major: '',
-          startDate: { month: '', year: '' },
-          endDate: { month: '', year: '' },
-        });
-  
-        setIsAdding(false);
-      })
-      .catch((error) => {
-        console.error('Error saving education:', error.message);
-        // Handle errors by displaying an error message to the user or logging it as appropriate
+    const storageKey = `educations_${userID}`;
+
+  axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
+    .then((response) => {
+      const newEducationFromServer = response.data.education;
+      const newEduData = newEducationFromServer[newEducationFromServer.length - 1];
+
+      // Update state
+      setEducations([...educations, newEduData]);
+
+      // Update local storage
+      const updatedEducations = [...educations, newEduData];
+      localStorage.setItem(storageKey, JSON.stringify(updatedEducations));
+
+      setNewEducation({
+        _id: '',
+        university: '',
+        degree: '',
+        major: '',
+        startDate: { month: '', year: '' },
+        endDate: { month: '', year: '' },
       });
-  };
-  
+
+      setIsAdding(false);
+    })
+    .catch((error) => {
+      console.error('Error saving education:', error.message);
+      // Handle errors by displaying an error message to the user or logging it as appropriate
+    });
+};
   
 
 
