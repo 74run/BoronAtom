@@ -42,7 +42,7 @@ require('./routes/UserRoute')(app);
 
 
 
-app.use('/api/items', EduRoutes);
+// app.use('/api/items', EduRoutes);
 // app.use('/', profileRoutes);
 app.use('/api/experiences', ExpRoutes);
 app.use('/api/certifications',CertRoutes);

@@ -110,7 +110,7 @@ const Profile: React.FC = () => {
 
 
   useEffect(() => {
-    fetch('/api/items')
+    fetch('/api/profile')
       .then((res) => res.json())
       .then((data) => setEducations(data));
   }, []);
@@ -120,7 +120,8 @@ const Profile: React.FC = () => {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };}) => {
-    fetch(`http://localhost:3001/api/items/${id}`, {
+      // console.log('Sending data to server:', data);
+    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -222,7 +223,7 @@ const Profile: React.FC = () => {
   
   // Update onDelete in App.tsx or where you render ItemList
   const handleDeleteEdu = (id: string) => {
-    fetch(`http://localhost:3001/api/items/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -310,7 +311,7 @@ const Profile: React.FC = () => {
             onDelete={handleDeletePro} Projects={projects} />
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
-            onDelete={handleDeleteEdu} userID={userID}  />
+            onDelete={handleDeleteEdu} />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
               onDelete= {handleDeleteExp}/>
             <CertificationSection Certifications={certifications} onEdit={handleEditCert}

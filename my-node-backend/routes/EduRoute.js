@@ -3,6 +3,8 @@ const Edu = require('../models/EduModel');
 
 const router = express.Router();
 
+
+
 router.post('/', async (req, res) => {
   try {
     const { userID, university, degree, major, startDate, endDate } = req.body;

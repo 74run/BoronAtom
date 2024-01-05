@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 
 const EduSchema = new mongoose.Schema({
-  
     university: String,
     degree: String,
     major: String,
@@ -14,6 +13,7 @@ const UserProfileSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        required: true 
       }, 
     education: [EduSchema]
 });
