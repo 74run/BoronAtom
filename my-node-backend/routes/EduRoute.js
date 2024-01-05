@@ -3,10 +3,12 @@ const Edu = require('../models/EduModel');
 
 const router = express.Router();
 
+
+
 router.post('/', async (req, res) => {
   try {
-    const { university, degree, major, startDate, endDate } = req.body;
-    const newItem = new Edu({ university, degree, major, startDate, endDate });
+    const { userID, university, degree, major, startDate, endDate } = req.body;
+    const newItem = new Edu({ userID, university, degree, major, startDate, endDate });
     await newItem.save();
     res.json(newItem);
   } catch (error) {

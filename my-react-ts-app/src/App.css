@@ -3,8 +3,6 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 
 
-
-
 /* Add this to your styles.css or App.css file */
 body {
 
@@ -52,6 +50,11 @@ body {
     text-decoration: none;
     margin-left: 10px;
   }
+
+  
+ 
+
+
 
   /* Add this CSS to your stylesheet or in your component */
 /* Customize the styles as needed */
@@ -110,4 +113,5 @@ body {
  
 
   
+
 

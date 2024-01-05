@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-
+import { useParams } from 'react-router-dom';
 
 
 
@@ -20,6 +20,7 @@ interface EducationProps {
   Educations: Education[];
   onEdit: (id: string, data: {university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
   onDelete :(id: string)=> void;
+  
 }
 
 
@@ -36,6 +37,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
   });
+  const { userID } = useParams();
 
   const [isAdding, setIsAdding] = useState(false);
 
@@ -84,15 +86,12 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
   };
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/items/${id}`, {
-      method: 'DELETE',
-    })
-      .then((res) => res.json())
-      .then(() => {
+    axios.delete(`http://localhost:3001/api/userprofile/${userID}/education/${id}`)
+      .then((res) => {
         // Update the state to remove the deleted education
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
-
+  
         // Reset the editData state
         setEditData(null);
       })
@@ -126,42 +125,50 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
 
 
-const handleSaveClick = () => {
-  fetch('http://localhost:3001/api/items', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newEducation),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((newEducationFromServer) => {
-      // Update the educations state with the new education
-      setEducations([...educations, newEducationFromServer]);
-
-      // Reset the newEducation state
-      setNewEducation({   _id: '',
-      university: '',
-      degree: '',
-      major: '',
-      startDate: { month: '', year: '' },
-      endDate: { month: '', year: '' }, });
-
-      // Set isAdding to false
-      setIsAdding(false);
-    })
-    .catch((error) => {
-      // Handle errors by logging them to the console
-      console.error('Error saving education:', error.message);
-    });
-};
-
-
+  const handleSaveClick = () => {
+    // Form validation check
+    if (!newEducation.university || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
+      console.error('Please fill in all required fields');
+      // You can display an error message to the user or handle it as appropriate
+      return;
+    }
+  
+    const formattedEducation = {
+      ...newEducation,
+      startDate: {
+        month: newEducation.startDate.month,
+        year: newEducation.startDate.year,
+      },
+      endDate: {
+        month: newEducation.endDate.month,
+        year: newEducation.endDate.year,
+      },
+    };
+  
+    axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
+      .then((response) => {
+        const newEducationFromServer = response.data.education;
+        const newEduData = newEducationFromServer[newEducationFromServer.length-1]
+        // console.log('Data Is:',newEducationFromServer[newEducationFromServer.length-1])
+        setEducations([...educations, newEduData]);
+        setNewEducation({
+          _id: '',
+          university: '',
+          degree: '',
+          major: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+        });
+  
+        setIsAdding(false);
+      })
+      .catch((error) => {
+        console.error('Error saving education:', error.message);
+        // Handle errors by displaying an error message to the user or logging it as appropriate
+      });
+  };
+  
+  
 
 
   const handleAddClick = () => {
@@ -321,8 +328,9 @@ const handleSaveClick = () => {
               <h3>{education.university}</h3>
               <p>Degree: {education.degree}</p>
               <p>Major: {education.major}</p>
-              <p>Start Date: {education.startDate.month} {education.startDate.year}</p>
-              <p>End Date: {education.endDate.month} {education.endDate.year}</p>
+              <p>Start Date: {education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
+              <p>End Date: {education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
+
               <button
                 className="btn btn-primary me-2"
                 onClick={() => handleEditClick(education._id, education.university, education.degree, education.major, education.startDate, education.endDate)}
