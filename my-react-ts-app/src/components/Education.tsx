@@ -86,8 +86,17 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
   };
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/education/${id}`)
+    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
       .then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to delete education. Status: ${res.status}`);
+        }
+  
         // Update the state to remove the deleted education
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
@@ -96,9 +105,10 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
         setEditData(null);
       })
       .catch((error) => {
-        console.error('Error deleting education:', error);
+        console.error('Error deleting education:', error.message);
       });
   };
+  
 
   useEffect(() => {
     const fetchData = async () => {
