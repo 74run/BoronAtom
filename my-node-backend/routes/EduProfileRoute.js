@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { ObjectId } = require('mongodb');
-
 
 const UserProfile = require('../models/UserprofileModel');
 const User = require('../models/UserModel');
-
-const mongoose = require('mongoose');
-
 
 
 router.post('/:userID/education', async (req, res) => {

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const expSchema = new mongoose.Schema({
+const invSchema = new mongoose.Schema({
     organization: String,
     role: String,
     duration: String,
     description: String
 });
 
-const Inv = mongoose.model('Inv', expSchema);
+const Inv = mongoose.model('Inv', invSchema);
 
-module.exports = Inv;
+module.exports = invSchema;

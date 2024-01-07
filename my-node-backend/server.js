@@ -16,7 +16,12 @@ const CertRoutes = require('./routes/CertRoute');
 const InvRoutes = require('./routes/InvRoute');
 const ProRoutes = require('./routes/ProRoute');
 // const profileRoutes = require('./routes/ProfilePhotoRoute');
-const UserProfileRoutes = require('./routes/UserProfileRoute');
+const UserProfileRoutes = require('./routes/EduProfileRoute');
+
+const ExpUserRoutes = require('./routes/ExpUserRoute');
+const CertUserRoutes = require('./routes/CertUserRoute');
+const ProUserRoutes = require('./routes/ProUserRoute');
+const SumUserRoutes = require('./routes/SumUserRoute');
 
 const app = express();
 const port = 3001;
@@ -50,8 +55,13 @@ app.use('/api/certifications',CertRoutes);
 app.use('/api/involvements',InvRoutes);
 app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
-app.use('/api/userprofile', UserProfileRoutes)
 
+
+app.use('/api/userprofile', UserProfileRoutes);
+app.use('/api/userprofile', ExpUserRoutes);
+app.use('/api/userprofile', CertUserRoutes);
+app.use('/api/userprofile', ProUserRoutes);
+app.use('/api/userprofile', SumUserRoutes);
 
 
 
