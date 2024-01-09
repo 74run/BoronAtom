@@ -1,38 +1,24 @@
 // ProfilePhoto.tsx
-import React, { useRef , useState} from 'react';
-import styled from 'styled-components';
-import profileImage from './Gold.png';
+import React, { useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+import profileImage from './Gold.png';
 interface ProfilePhotoProps {
   imageUrl: string;
   onFileChange: (file: File | null) => void;
+  onDelete: () => void; // Function to handle image deletion
 }
 
-const ProfilePhotoWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-`;
-
-const Photo = styled.img`
-  
-  width: 150px; /* Adjust the size as needed */
-  height: 150px; /* Adjust the size as needed */
-  cursor: pointer;
-`;
-
-const HiddenFileInput = styled.input`
-  display: none;
-`;
-
-const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange }) => {
+const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange, onDelete }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showUploadButton, setShowUploadButton] = useState(false);
 
   const handleViewPhotoClick = () => {
+    setShowUploadButton(false);
     setShowModal(true);
   };
 
@@ -41,90 +27,93 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange }) =
   };
 
   const handleUploadClick = () => {
-    if (!isUploading) {
-      const fileInput = document.getElementById('profilePhotoInput');
-      fileInput?.click();
+    if (!isUploading && selectedFile) {
+      setIsUploading(true);
+      // Simulate upload process (replace with your actual upload logic)
+      setTimeout(() => {
+        onFileChange(selectedFile);
+        setIsUploading(false);
+        setShowModal(false);
+      }, 2000);
     }
   };
 
-  const handlePhotoClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const handleCancelClick = () => {
+    setSelectedFile(null);
+    setShowModal(false);
+    setShowUploadButton(false);
+  };
+
+  const handleEditImageClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
-    onFileChange(file);
+    setSelectedFile(file);
+  };
+
+  const handleDeleteClick = () => {
+    // Simulate server-side deletion (replace with your actual deletion logic)
+    setIsUploading(true);
+    setTimeout(() => {
+      onDelete();
+      setIsUploading(false);
+      setShowModal(false);
+    }, 2000);
   };
 
   return (
-    <div 
-    style={{
-      position: 'absolute',
-        
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      borderRadius: '50%',
-      overflow: 'auto',
-      width: '150px',
-      height: '150px',
-      border: '2px solid #fff',
-      cursor: 'pointer',
-    }}> 
-      <input
-        type="file"
-        id="profilePhotoInput"
-        accept="image/*"
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
-      {isUploading ? (
-        <div>Uploading...</div>
-      ) : (
-        <>
-          <img
-            src={imageUrl||profileImage}
-            alt="Profile"
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'fill',
-              overflow: 'auto',
-            }}
-            onClick={handleViewPhotoClick}
-          />
-        </>
-      )}
+    <div style={{ position: 'absolute', top: '150px', left: '50%', transform: 'translateX(-50%)' }}>
+      <div className="position-relative" style={{ width: '150px', height: '150px', borderRadius: '50%', overflow: 'hidden', cursor: 'pointer' }}>
+        <input
+          type="file"
+          id="profilePhotoInput"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+          ref={fileInputRef}
+        />
+        <img
+          src={imageUrl || profileImage}
+          alt="Profile"
+          onClick={handleViewPhotoClick}
+          className="img-fluid"
+        />
+      </div>
 
-      {/* Modal to view the full photo */}
+      {/* Modal to view and change the photo */}
       <Modal show={showModal} onHide={handleHideModal} className="custom-modal">
         <Modal.Header closeButton>
           <Modal.Title>View Full Photo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-        
-
-        <Photo style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain',
-              overflow: 'auto',
-            }}
-           src={ imageUrl ||profileImage} alt="Profile" onClick={handlePhotoClick} />
-        <HiddenFileInput type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} />
-
+          <img
+            src={selectedFile ? URL.createObjectURL(selectedFile) : imageUrl || profileImage}
+            alt="Profile"
+            onClick={handleEditImageClick}
+            className="img-fluid"
+          />
+          <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleHideModal}>
-            Close
+          <Button variant="secondary" onClick={handleCancelClick}>
+            Cancel
           </Button>
-          <Button variant="primary" onClick={handleUploadClick}>
-            Upload Photo
+          {selectedFile && (
+            <Button variant="primary" onClick={handleUploadClick}>
+              {isUploading ? 'Uploading...' : 'Upload Photo'}
+            </Button>
+          )}
+          <Button variant="secondary" onClick={handleEditImageClick}>
+            Edit Image
+          </Button>
+          <Button variant="danger" onClick={handleDeleteClick}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
-   </div>
+    </div>
   );
 };
 
