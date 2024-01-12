@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const ProfilePhoto = require('../models/ProfilePhotoModel');
 
-port = 3001;
+const port = 3001;
 
 // Define the destination folder and storage for Multer
 const storage = multer.diskStorage({
@@ -22,7 +22,7 @@ const upload = multer({ storage });
 
 router.use(express.json());
 
-// // Serve static files from the 'uploads' folder
+// Serve static files from the 'uploads' folder
 router.use('/uploads', express.static('uploads'));
 
 // API endpoint to get the current profile photo URL
@@ -73,5 +73,26 @@ router.post('/upload', upload.single('photo'), async (req, res) => {
   }
 });
 
+// API endpoint to delete the profile photo
+router.delete('/delete-profile-photo', async (req, res) => {
+  try {
+    const profilePhoto = await ProfilePhoto.findOne();
+    if (profilePhoto) {
+      // Delete the image from 'uploads'
+      const imagePath = path.join(__dirname, 'uploads', path.basename(profilePhoto.imageUrl));
+      fs.unlinkSync(imagePath);
+
+      // Delete the profile photo document from the database
+      await ProfilePhoto.findByIdAndRemove(profilePhoto._id);
+
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, message: 'No profile photo found' });
+    }
+  } catch (error) {
+    console.error('Error deleting profile photo:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 module.exports = router;

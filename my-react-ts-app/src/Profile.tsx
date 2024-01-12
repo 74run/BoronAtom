@@ -12,7 +12,10 @@ import InvolvementSection from './components/InvolvementSection';
 import SummarySection from './components/SummarySection';
 import ProfilePhoto from './components/ProfilePhotoWithUpload';
 import NavigationBar from './components/NavigationBar';
+import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
+import ProfileNew from './components/ProfilePhoto';
+import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
 import './css/profile.css';
@@ -27,6 +30,11 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+}
+
+interface Summary {
+  _id: string;
+content: string;
 }
 
 interface Experience {
@@ -70,12 +78,14 @@ interface Project {
 
 const Profile: React.FC = () => {
   const [educations, setEducations] = useState<Education[]>([]);
+  const [summarys, setSummarys] = useState<Summary[]>([]);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [involvements, setInvolvements] = useState<Involvement[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  
   const { userID } = useParams();
 
   useEffect(() => {
@@ -107,6 +117,27 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleDeleteProfile = () => {
+    // Implement logic for image deletion on the client side
+    // This example simply sets the profile photo URL to an empty string
+    setImageUrl('');
+
+    // Optional: You can also send a request to the server to delete the image from the server-side storage
+    fetch('/delete-profile-photo', {
+      method: 'DELETE',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('Image deleted successfully on the server');
+        } else {
+          console.error('Error deleting image on the server:', data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting image on the server:', error);
+      });
+  };
 
 
   useEffect(() => {
@@ -137,13 +168,31 @@ const Profile: React.FC = () => {
       });
   };
 
+  const handleEditSum = (id: string, data: {content: string;}) => {
+      // console.log('Sending data to server:', data);
+    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = summarys.map((summary) =>
+          summary._id === id ? { ...summary, ...data } : summary
+        );
+        setSummarys(updatedItems);
+      });
+  };
+
   const handleEditExp = (id: string, data: {  jobTitle: string;
     company: string;
     location: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/experiences/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -164,7 +213,7 @@ const Profile: React.FC = () => {
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
     url: string; }) => {
-    fetch(`http://localhost:3001/api/certifications/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -205,7 +254,7 @@ const Profile: React.FC = () => {
     endDate: { month: string; year: string };
     skills: string;
     description: string; }) => {
-    fetch(`http://localhost:3001/api/projects/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -234,7 +283,7 @@ const Profile: React.FC = () => {
   };
   
   const handleDeleteExp = (id: string) => {
-    fetch(`http://localhost:3001/api/experiences/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -246,7 +295,7 @@ const Profile: React.FC = () => {
   
 
   const handleDeleteCert = (id: string) => {
-    fetch(`http://localhost:3001/api/certifications/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -268,7 +317,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeletePro = (id: string) => {
-    fetch(`http://localhost:3001/api/projects/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -277,6 +326,18 @@ const Profile: React.FC = () => {
         setProjects(updatedItems);
       });
   };
+
+  const handleDeleteSum = (id: string) => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = summarys.filter((summary) => summary._id !== id);
+        setSummarys(updatedItems);
+      });
+  };
+  
   
   
 
@@ -302,10 +363,14 @@ const Profile: React.FC = () => {
           <CoverPage onUpload={(file: File): void => { } 
            } />
            <div>
-          <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} /></div>
+           <div className="bg-gray-900 text-gray-400 min-h-screen p-4">
+      <ProfileNew />
+    </div>
+          {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
+          </div>
           <SectionWrapper>
             <div style={{ marginTop: '150px' }} />
-            <SummarySection />
+            <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
             <ProjectsSection  onEdit={handleEditPro}
             onDelete={handleDeletePro} Projects={projects} />
@@ -318,16 +383,22 @@ const Profile: React.FC = () => {
               onDelete= {handleDeleteCert}/>
             <InvolvementSection Involvements={involvements} onEdit={handleEditInv}
               onDelete= {handleDeleteInv} />
-          </SectionWrapper>
-        </div>
 
+
+          </SectionWrapper>
+          
+        </div>
+         
         {/* Right Section (20%) */}
         <div style={{ flex: '0 0 20%' ,position: 'relative'}}>
           {/* Add content for the right section */}
           {/* For example: */}
         </div>
+       
       </div>
-    </>
+      
+      <Footer /> </>
+    
   );
 };
 

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+
+import { useParams } from 'react-router-dom';
+
 
 interface Experience {
   _id: string;
@@ -15,7 +18,7 @@ interface Experience {
 }
 
 interface ExperienceProps {
-  Experiences: Experience[]; // Rename from Experiences to experiences
+  Experiences: Experience[]; 
   onEdit: (id: string, data: { jobTitle: string; company: string; location: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; description: string }) => void;
   onDelete: (id: string) => void;
 }
@@ -33,6 +36,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     description: '',
   });
   const [isAdding, setIsAdding] = useState(false);
+
+  const { userID } = useParams();
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -69,22 +74,24 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   };
 
   const handleSaveClick = () => {
-    fetch('http://localhost:3001/api/experiences', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+
+    const formattedExperience = {
+      ...newExperience,
+      startDate: {
+        month: newExperience.startDate.month,
+        year: newExperience.startDate.year,
       },
-      body: JSON.stringify(newExperience),
-    })
+      endDate: {
+        month: newExperience.endDate.month,
+        year: newExperience.endDate.year,
+      },
+    };
+ 
+    axios.post(`http://localhost:3001/api/userprofile/${userID}/experience`, formattedExperience)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((newExperienceFromServer) => {
-        // Update the educations state with the new experience
-        setExperiences([...experiences, newExperienceFromServer]);
+        const newExperienceFromServer = response.data.experience;
+        const newExpData = newExperienceFromServer[newExperienceFromServer.length-1]
+        setExperiences([...experiences, newExpData]);
   
         // Reset the newExperience state
         setNewExperience({ _id: '', jobTitle: '', company: '', location: '', startDate: { month: '', year: '' },
@@ -101,20 +108,16 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/experiences/${id}`, {
-      method: 'DELETE',
-    })
-      .then((res) => res.json())
-      .then(() => {
-        // Update the state to remove the deleted experience
+    axios.delete(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`)
+      .then((response) => {
         const updatedExperiences = experiences.filter((experience) => experience._id !== id);
         setExperiences(updatedExperiences);
-
+  
         // Reset the editData state
         setEditData(null);
       })
       .catch((error) => {
-        console.error('Error deleting experience:', error);
+        console.error('Error deleting experience:', error.message);
       });
   };
 
@@ -276,8 +279,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
               <h3>{experience.jobTitle}</h3>
               <p>{experience.company}</p>
               <p>{experience.location}</p>
-              <p>Start Date: {experience.startDate.month} {experience.startDate.year}</p>
-              <p>End Date: {experience.endDate.month} {experience.endDate.year}</p>
+              <p>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
+              <p>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
               <p>{experience.description}</p>
               <button
                 className="btn btn-primary me-2"
