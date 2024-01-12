@@ -83,6 +83,7 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  
   const { userID } = useParams();
 
   useEffect(() => {
@@ -114,6 +115,27 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleDeleteProfile = () => {
+    // Implement logic for image deletion on the client side
+    // This example simply sets the profile photo URL to an empty string
+    setImageUrl('');
+
+    // Optional: You can also send a request to the server to delete the image from the server-side storage
+    fetch('/delete-profile-photo', {
+      method: 'DELETE',
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          console.log('Image deleted successfully on the server');
+        } else {
+          console.error('Error deleting image on the server:', data.message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error deleting image on the server:', error);
+      });
+  };
 
 
   useEffect(() => {
@@ -339,7 +361,7 @@ const Profile: React.FC = () => {
           <CoverPage onUpload={(file: File): void => { } 
            } />
            <div>
-          <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} /></div>
+          <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /></div>
           <SectionWrapper>
             <div style={{ marginTop: '150px' }} />
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />

@@ -139,6 +139,27 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
   }
 });
 
+// router.delete('/delete-profile-photo', async (req, res) => {
+//   try {
+//     const profilePhoto = await ProfilePhoto.findOne();
+//     if (profilePhoto) {
+//       // Delete the image from 'uploads'
+//       const imagePath = path.join(__dirname, 'uploads', path.basename(profilePhoto.imageUrl));
+//       fs.unlinkSync(imagePath);
+
+//       // Delete the profile photo document from the database
+//       await ProfilePhoto.findByIdAndRemove(profilePhoto._id);
+
+//       res.json({ success: true });
+//     } else {
+//       res.json({ success: false, message: 'No profile photo found' });
+//     }
+//   } catch (error) {
+//     console.error('Error deleting profile photo:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
+
 
 ////////////////////////////Profile Photo Code///////////////////////////////////////
 
