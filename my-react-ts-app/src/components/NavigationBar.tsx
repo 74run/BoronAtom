@@ -29,11 +29,6 @@ const Navbar: React.FC<NavbarProps> = () => {
   return (
     <div >
     <BootstrapNavbar bg="dark" variant="dark" fixed="top">
-      <BootstrapNavbar.Brand>
-        <Link to="/">
-          
-        </Link>
-      </BootstrapNavbar.Brand>
       <BootstrapNav className="mr-auto" >
         <Link
           to="/"
@@ -56,8 +51,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         >
           Add Friends
         </Link>
-      </BootstrapNav>
-      <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle style={{ width: '30px', height: '30px' }} />} style={{position:'absolute'}} id="basic-nav-dropdown">
+        <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle style={{ width: '30px', height: '30px' }} />}  id="basic-nav-dropdown">
         <NavDropdown.Item>
           <Image src={pic} alt="Profile" roundedCircle style={{ width: '30px', height: '30px', marginRight: '10px' }} />
           Your Profile
@@ -65,11 +59,16 @@ const Navbar: React.FC<NavbarProps> = () => {
         <NavDropdown.Divider />
         <NavDropdown.Item>Notifications</NavDropdown.Item>
         <NavDropdown.Item>Add Friends</NavDropdown.Item>
-        <NavDropdown.Divider />A
+        <NavDropdown.Divider />
         <NavDropdown.Item>Settings</NavDropdown.Item>
         <NavDropdown.Item>Privacy</NavDropdown.Item>
         <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
       </NavDropdown>
+      </BootstrapNav>
+
+
+
+      
     </BootstrapNavbar>
     </div>
   );
