@@ -10,4 +10,4 @@ const proSchema = new mongoose.Schema({
 
 const Pro = mongoose.model('Pro', proSchema);
 
-module.exports = Pro;
+module.exports = proSchema;

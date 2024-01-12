@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
 
 interface Project {
   _id: string;
@@ -36,6 +39,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     description: '',
   });
   const [isAdding, setIsAdding] = useState(false);
+  const { userID } = useParams();
+
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
@@ -75,25 +80,26 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleSaveClick = () => {
-  
-  
-    fetch('http://localhost:3001/api/projects', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newProject),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((newProjectFromServer) => {
 
+    const formattedExperience = {
+      ...newProject,
+      startDate: {
+        month: newProject.startDate.month,
+        year: newProject.startDate.year,
+      },
+      endDate: {
+        month: newProject.endDate.month,
+        year: newProject.endDate.year,
+      },
+    };
+  
+  
+    axios.post(`http://localhost:3001/api/userprofile/${userID}/project`, formattedExperience)
+      .then((response) => {
+        const newProjectFromServer = response.data.project;
+        const newProData = newProjectFromServer[newProjectFromServer.length-1]
         // Update the projects state with the new project
-        setProjects([...projects, newProjectFromServer]);
+        setProjects([...projects, newProData]);
 
         // Reset the newProject state
         setNewProject({ _id: '', name: '', startDate: { month: '', year: '' },
@@ -110,11 +116,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/projects/${id}`, {
-      method: 'DELETE',
-    })
-      .then(() => {
-        // Update the state to remove the deleted project
+    axios.delete(`http://localhost:3001/api/userprofile/${userID}/project/${id}`)
+    .then((response) => {
+      // Update the state to remove the deleted certification
         const updatedProjects = projects.filter((project) => project._id !== id);
         setProjects(updatedProjects);
 
@@ -122,7 +126,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         setEditData(null);
       })
       .catch((error) => {
-        console.error('Error deleting project:', error);
+        console.error('Error deleting project:', error.message);
       });
   };
 
@@ -171,8 +175,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 value={editData.name}
                 onChange={(e) => setEditData({ ...editData, name: e.target.value })}
               />
-              <input
-                type="text"
+              <textarea
+                
                 className="form-control mb-2"
                 placeholder="Description"
                 value={editData.description}
@@ -309,8 +313,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             value={newProject.name}
             onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
           />
-          <input
-            type="text"
+          <textarea
+            
             className="form-control mb-2"
             placeholder="Description"
             value={newProject.description}

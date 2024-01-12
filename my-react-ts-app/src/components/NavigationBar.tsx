@@ -28,13 +28,13 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   return (
     <div >
-    <BootstrapNavbar bg="dark" variant="dark">
+    <BootstrapNavbar bg="dark" variant="dark" fixed="top">
       <BootstrapNavbar.Brand>
         <Link to="/">
           
         </Link>
       </BootstrapNavbar.Brand>
-      <BootstrapNav className="mr-auto">
+      <BootstrapNav className="mr-auto" >
         <Link
           to="/"
           className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
@@ -65,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = () => {
         <NavDropdown.Divider />
         <NavDropdown.Item>Notifications</NavDropdown.Item>
         <NavDropdown.Item>Add Friends</NavDropdown.Item>
-        <NavDropdown.Divider />
+        <NavDropdown.Divider />A
         <NavDropdown.Item>Settings</NavDropdown.Item>
         <NavDropdown.Item>Privacy</NavDropdown.Item>
         <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>

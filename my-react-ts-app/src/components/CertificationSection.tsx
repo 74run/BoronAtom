@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
 
 interface Certification {
   _id: string;
@@ -30,6 +33,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
     url: '',
   });
   const [isAdding, setIsAdding] = useState(false);
+  const { userID } = useParams();
+
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
@@ -83,18 +88,11 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         year: newCertification.expirationDate.year,
       },
     };
-  
-    fetch('http://localhost:3001/api/certifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formattedCertification),
-    })
-      .then((response) => response.json())
-      .then((newCertificationFromServer: Certification) => {
-        // Update the certifications state with the new certification
-        setCertifications([...certifications, newCertificationFromServer]);
+    axios.post(`http://localhost:3001/api/userprofile/${userID}/certification`, formattedCertification)
+    .then((response) => {
+      const newCertificationFromServer = response.data.certification;
+      const newCertData = newCertificationFromServer[newCertificationFromServer.length-1]
+        setCertifications([...certifications, newCertData]);
   
         // Reset the newCertification state
         setNewCertification({
@@ -117,10 +115,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/certifications/${id}`, {
-      method: 'DELETE',
-    })
-      .then(() => {
+    axios.delete(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`)
+      .then((response) => {
         // Update the state to remove the deleted certification
         const updatedCertifications = certifications.filter((certification) => certification._id !== id);
         setCertifications(updatedCertifications);
@@ -129,7 +125,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         setEditData(null);
       })
       .catch((error) => {
-        console.error('Error deleting certification:', error);
+        console.error('Error deleting certification:', error.message);
       });
   };
 

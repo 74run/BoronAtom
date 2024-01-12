@@ -127,11 +127,11 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
 
 
-  useEffect(() => {
-    fetch('/api/items')
-      .then((res) => res.json())
-      .then((data) => setEducations(data));
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/items')
+  //     .then((res) => res.json())
+  //     .then((data) => setEducations(data));
+  // }, []);
 
 
 
