@@ -16,7 +16,12 @@ const CertRoutes = require('./routes/CertRoute');
 const InvRoutes = require('./routes/InvRoute');
 const ProRoutes = require('./routes/ProRoute');
 // const profileRoutes = require('./routes/ProfilePhotoRoute');
-const UserProfileRoutes = require('./routes/UserProfileRoute');
+const UserProfileRoutes = require('./routes/EduProfileRoute');
+
+const ExpUserRoutes = require('./routes/ExpUserRoute');
+const CertUserRoutes = require('./routes/CertUserRoute');
+const ProUserRoutes = require('./routes/ProUserRoute');
+const SumUserRoutes = require('./routes/SumUserRoute');
 
 const app = express();
 const port = 3001;
@@ -50,8 +55,13 @@ app.use('/api/certifications',CertRoutes);
 app.use('/api/involvements',InvRoutes);
 app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
-app.use('/api/userprofile', UserProfileRoutes)
 
+
+app.use('/api/userprofile', UserProfileRoutes);
+app.use('/api/userprofile', ExpUserRoutes);
+app.use('/api/userprofile', CertUserRoutes);
+app.use('/api/userprofile', ProUserRoutes);
+app.use('/api/userprofile', SumUserRoutes);
 
 
 
@@ -128,6 +138,27 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// router.delete('/delete-profile-photo', async (req, res) => {
+//   try {
+//     const profilePhoto = await ProfilePhoto.findOne();
+//     if (profilePhoto) {
+//       // Delete the image from 'uploads'
+//       const imagePath = path.join(__dirname, 'uploads', path.basename(profilePhoto.imageUrl));
+//       fs.unlinkSync(imagePath);
+
+//       // Delete the profile photo document from the database
+//       await ProfilePhoto.findByIdAndRemove(profilePhoto._id);
+
+//       res.json({ success: true });
+//     } else {
+//       res.json({ success: false, message: 'No profile photo found' });
+//     }
+//   } catch (error) {
+//     console.error('Error deleting profile photo:', error);
+//     res.status(500).json({ error: 'Internal Server Error' });
+//   }
+// });
 
 
 ////////////////////////////Profile Photo Code///////////////////////////////////////

@@ -1,21 +1,26 @@
 const mongoose = require('mongoose');
+const EduSchema =  require('./EduModel');
+const expSchema = require('./ExpModel');
+const proSchema = require('./ProModel');
+const certSchema = require('./CertModel');
+const invSchema = require('./InvModel');
+const SumSchema = require('./SumModel');
 
 
-const EduSchema = new mongoose.Schema({
-    university: String,
-    degree: String,
-    major: String,
-    startDate: { month: String, year: String },
-    endDate: { month: String, year: String },
-  });
 
 const UserProfileSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true 
-      }, 
-    education: [EduSchema]
+      },
+    summary: [SumSchema], 
+    education: [EduSchema],
+    experience: [expSchema],
+    project: [proSchema],
+    certification: [certSchema],
+    involvement: [invSchema] 
+
 });
 
 

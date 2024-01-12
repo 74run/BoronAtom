@@ -127,11 +127,11 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
 
 
-  useEffect(() => {
-    fetch('/api/items')
-      .then((res) => res.json())
-      .then((data) => setEducations(data));
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/items')
+  //     .then((res) => res.json())
+  //     .then((data) => setEducations(data));
+  // }, []);
 
 
 
@@ -223,9 +223,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
               <option key={index} value={name} />
             ))}
           </datalist>
-
-
-       
+      
           <select
               className="form-control mb-2"
               value={editData.degree}

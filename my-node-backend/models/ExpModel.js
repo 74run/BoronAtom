@@ -11,4 +11,4 @@ const expSchema = new mongoose.Schema({
 
 const Exp = mongoose.model('Exp', expSchema);
 
-module.exports = Exp;
+module.exports = expSchema;

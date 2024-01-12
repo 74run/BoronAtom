@@ -9,7 +9,7 @@ body {
   height: 100vh;
     background-size: cover;
     
-    background-color: black;
+    /*background-color: black;*/
     overflow:auto;
     
     background-attachment: fixed;
