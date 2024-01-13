@@ -186,8 +186,7 @@ router.post('/login', async (req, res) => {
     
         console.log('after findone');
         if (!user) {
-          console.log('inside if no user');
-          return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+          return res.status(401).json({ success: false, message: 'User does not exist!' });
         }
         console.log('password from frontend is:', password);
         console.log('password in db is:', user.password);

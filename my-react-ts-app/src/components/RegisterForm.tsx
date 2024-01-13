@@ -1,3 +1,5 @@
+// RegisterForm.tsx
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +16,7 @@ const RegisterForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null); // State to hold the error message
   const [logdata, setLogData] = useState('');
   const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
@@ -21,6 +24,36 @@ const RegisterForm: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const validateEmail = () => {
+    // Regular expression for validating an Email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
+    } else {
+      setError(null);
+    }
+  };
+
+  // Function to handle input change for first name
+  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only alphabets in the first name field
+    const inputValue = e.target.value.replace(/[^A-Za-z ]/gi, '');
+
+    setFirstName(inputValue);
+  };
+
+  // Function to handle input change for last name
+  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Allow only alphabets in the last name field
+    const inputValue = e.target.value.replace(/[^A-Za-z ]/gi, '');
+    setLastName(inputValue);
+  };
 
   const saveDataToLocalStorage = (data: { data: { userId: any; }; }) => {
     const userId = data.data.userId;
@@ -40,6 +73,18 @@ const RegisterForm: React.FC = () => {
   };
 
   const handleRegister = async () => {
+    // Password criteria validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$/;
+    if (!passwordRegex.test(password)) {
+      setError('Invalid password. Please follow the password criteria.');
+      return;
+    }
+
+    // Check if passwords match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match!');
+      return;
+    }
     try {
       const response = await axios.post('http://localhost:3001/api/register', {
         firstName,
@@ -56,20 +101,24 @@ const RegisterForm: React.FC = () => {
       // In your React component
       saveDataToLocalStorage(data);
 
-      // localStorage.setItem('userId', userId);
+      // Reset error state after successful registration
+      setError(null);
 
       // Navigate to the home page after successful registration
       navigate('/verifyotp');
       // You might want to display a message to the user indicating successful registration
     } catch (error: any) {
       // Explicitly specify the type of 'error' as 'any'
+      setError(error.message || 'Unknown error');
       console.error('Registration error:', error.message || 'Unknown error');
     }
-};
-
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevents the default form submission behavior
+    e.preventDefault();
+
+    // Validate email before submitting the form
+    validateEmail();
 
     // Call your login function when the form is submitted
     handleRegister();
@@ -100,7 +149,7 @@ const RegisterForm: React.FC = () => {
             type="text"
             className="form-control"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={handleFirstNameChange}
             required
           />
         </div>
@@ -110,7 +159,7 @@ const RegisterForm: React.FC = () => {
             type="text"
             className="form-control"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={handleLastNameChange}
             required
           />
         </div>
@@ -119,8 +168,8 @@ const RegisterForm: React.FC = () => {
           <input
             type="text"
             className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
+            onBlur={validateEmail}
             required
           />
         </div>
@@ -172,6 +221,8 @@ const RegisterForm: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <button type="submit" className="btn btn-success">
           Register
