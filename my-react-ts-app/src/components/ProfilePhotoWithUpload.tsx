@@ -1,7 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Cropper from 'react-cropper';
-import 'cropperjs/dist/cropper.css';
 import profileImage from './Gold.png';
 
 interface ProfilePhotoProps {
