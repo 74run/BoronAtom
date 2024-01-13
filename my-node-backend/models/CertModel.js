@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const expSchema = new mongoose.Schema({
+const certSchema = new mongoose.Schema({
     name: String,
     issuedBy: String,
     issuedDate: { month: String, year: String },
@@ -8,6 +8,6 @@ const expSchema = new mongoose.Schema({
     url: String,
 });
 
-const Cert = mongoose.model('Cert', expSchema);
+const Cert = mongoose.model('Cert', certSchema);
 
-module.exports = Cert;
+module.exports = certSchema;
