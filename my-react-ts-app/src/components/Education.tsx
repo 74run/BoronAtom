@@ -317,7 +317,6 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
                 </div>
               </div>
               <button
-                
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
               >

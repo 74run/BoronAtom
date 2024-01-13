@@ -49,7 +49,8 @@ interface Involvement {
   _id: string;
   organization: string;
   role: string;
-  duration: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
   description: string;
  
 }
@@ -229,7 +230,8 @@ const Profile: React.FC = () => {
 
   const handleEditInv = (id: string, data: {    organization: string;
     role: string;
-    duration: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
     description: string; }) => {
     fetch(`http://localhost:3001/api/involvements/${id}`, {
       method: 'PUT',
