@@ -14,6 +14,8 @@ import ProfilePhoto from './components/ProfilePhotoWithUpload';
 import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
+import ProfileNew from './components/ProfilePhoto';
+import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
 import './css/profile.css';
@@ -363,7 +365,11 @@ const Profile: React.FC = () => {
           <CoverPage onUpload={(file: File): void => { } 
            } />
            <div>
-          <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /></div>
+           <div className="bg-gray-900 text-gray-400 min-h-screen p-4">
+      <ProfileNew />
+    </div>
+          {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
+          </div>
           <SectionWrapper>
             <div style={{ marginTop: '150px' }} />
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />

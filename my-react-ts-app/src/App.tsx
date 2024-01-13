@@ -8,7 +8,7 @@ import VerifyOTP from './components/VerifyOTP';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
-
+import './index.css'
 
 
 const App: React.FC = () => {
