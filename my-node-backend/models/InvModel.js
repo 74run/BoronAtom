@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const invSchema = new mongoose.Schema({
     organization: String,
     role: String,
-    duration: String,
+    startDate: { month: String, year: String },
+    endDate: { month: String, year: String },
     description: String
 });
 
