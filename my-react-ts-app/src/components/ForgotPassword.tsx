@@ -9,6 +9,10 @@ const ForgotPassword: React.FC = () => {
   const [isResetLinkSent, setIsResetLinkSent] = useState(false);
   const navigate = useNavigate();
 
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+  
   const handleSendClick = async () => {
     try {
       const response = await axios.post('http://localhost:3001/api/forgotpassword', { email });
@@ -45,6 +49,13 @@ const ForgotPassword: React.FC = () => {
         Send
         {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
       </button>
+      {/* Register button */}
+      <div className="register-link">
+        <p>Don't have an account? </p>
+        <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
+          Register
+        </button>
+      </div>
     </div>
   );
 };

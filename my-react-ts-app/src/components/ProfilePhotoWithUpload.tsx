@@ -1,7 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Cropper from 'react-cropper';
-import 'cropperjs/dist/cropper.css';
 import profileImage from './Gold.png';
 
 interface ProfilePhotoProps {
@@ -11,8 +9,7 @@ interface ProfilePhotoProps {
 }
 
 const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange, onDelete }) => {
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const cropperRef = useRef<Cropper | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -20,7 +17,10 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange, onD
 
   const handleViewPhotoClick = () => setShowModal(true);
 
-  const handleHideModal = () => setShowModal(false);
+  const handleHideModal = () => {
+    setSelectedFile(null);
+    setShowModal(false);
+  };
 
   const handleUploadClick = () => {
     if (!isUploading && selectedFile) {
@@ -33,24 +33,22 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange, onD
     }
   };
 
-  const handleCancelClick = () => {
-    setSelectedFile(null);
-    setShowModal(false);
-  };
+  const handleCancelClick = () => handleHideModal();
 
-  const handleEditImageClick = () => fileInputRef.current && fileInputRef.current.click();
+  const handleEditImageClick = () => fileInputRef.current?.click();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files && event.target.files[0];
+    const file = event.target.files && event.target.files.length > 0 ? event.target.files[0] : null;
     setSelectedFile(file);
   };
+  
 
   const handleDeleteClick = () => {
     setIsUploading(true);
     setTimeout(() => {
       onDelete();
       setIsUploading(false);
-      setShowModal(false);
+      handleHideModal();
     }, 2000);
   };
 
@@ -77,16 +75,6 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({ imageUrl, onFileChange, onD
           <Modal.Title>View Full Photo</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {selectedFile && (
-            <Cropper
-              ref={cropperRef}
-              src={URL.createObjectURL(selectedFile)}
-              style={{ height: 400, width: '100%' }}
-              aspectRatio={1}
-              guides={true}
-              crop={() => {}}
-            />
-          )}
           {!selectedFile && (
             <img
               src={imageUrl || profileImage}

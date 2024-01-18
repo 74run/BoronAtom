@@ -10,6 +10,7 @@ const User = require('../models/UserModel');
 
 
 
+
 router.post('/:userID/education', async (req, res) => {
   try {
     const { university, degree, major, startDate, endDate } = req.body;
@@ -59,6 +60,35 @@ router.get('/:userId/education', async (req, res) => {
     res.json(userProfile.education);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+
+router.get('/details/:userID', async (req, res) => {
+  try {
+      const userId = req.params.userID;
+
+      // Query the database to get user details by ID
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      // Send user details as a JSON response
+      res.json({
+          success: true,
+          user: {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              username: user.username
+              // Add other fields as needed
+          }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
 

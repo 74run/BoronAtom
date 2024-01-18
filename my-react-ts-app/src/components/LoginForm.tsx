@@ -5,11 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
+// ... (imports and other code)
+
 const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userId, setUserId] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // State to track password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null); // State to hold the error message
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -25,17 +28,15 @@ const LoginForm: React.FC = () => {
       navigate(`/profile/${userID}`);
     } catch (error: any) {
       console.error('Login error:', error.response.data.message || 'Unknown error');
+      setError(error.response.data.message || 'Unknown error'); // Set the error message in state
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Prevents the default form submission behavior
-
-    // Call your login function when the form is submitted
+    e.preventDefault();
     handleLogin();
   };
 
-  // Function to toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -81,6 +82,7 @@ const LoginForm: React.FC = () => {
             </button>
           </div>
         </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" className="btn btn-success">
           Login
         </button>
@@ -88,7 +90,6 @@ const LoginForm: React.FC = () => {
           Forgot Password
         </button>
       </form>
-      {/* Register button */}
       <div className="register-link">
         <p>Don't have an account? </p>
         <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
@@ -100,3 +101,4 @@ const LoginForm: React.FC = () => {
 };
 
 export default LoginForm;
+

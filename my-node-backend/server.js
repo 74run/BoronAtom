@@ -22,6 +22,7 @@ const ExpUserRoutes = require('./routes/ExpUserRoute');
 const CertUserRoutes = require('./routes/CertUserRoute');
 const ProUserRoutes = require('./routes/ProUserRoute');
 const SumUserRoutes = require('./routes/SumUserRoute');
+const InvUserRoutes = require('./routes/InvUserRoute');
 
 const app = express();
 const port = 3001;
@@ -52,7 +53,7 @@ require('./routes/UserRoute')(app);
 // app.use('/', profileRoutes);
 app.use('/api/experiences', ExpRoutes);
 app.use('/api/certifications',CertRoutes);
-app.use('/api/involvements',InvRoutes);
+// app.use('/api/involvements',InvRoutes);
 app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
 
@@ -62,6 +63,7 @@ app.use('/api/userprofile', ExpUserRoutes);
 app.use('/api/userprofile', CertUserRoutes);
 app.use('/api/userprofile', ProUserRoutes);
 app.use('/api/userprofile', SumUserRoutes);
+app.use('/api/userprofile', InvUserRoutes);
 
 
 
