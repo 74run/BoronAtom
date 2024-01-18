@@ -47,8 +47,8 @@ const Profile: React.FC<ProfileProps> = (UserDetail) => {
 
 
   return (
-    <div className="container mt-5">
-      <div className="d-flex flex-column align-items-center pt-4">
+    <div className="container mt-(-3)">
+      <div className="d-flex flex-column align-items-center pt-0">
         <div className="position-relative">
           {/* Add onClick handler to the image */}
           <img
@@ -79,6 +79,10 @@ const Profile: React.FC<ProfileProps> = (UserDetail) => {
             currentAvatar={avatarUrl.current}  
           />
         )}
+         
+        
+
+
       </div>
     </div>
   );

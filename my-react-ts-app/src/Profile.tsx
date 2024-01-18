@@ -394,14 +394,14 @@ const Profile: React.FC = () => {
           {/* Content for the middle section goes here */}
           <CoverPage onUpload={(file: File): void => { } 
            } />
-           <div>
-           <div className="bg-gray-900 text-gray-400 min-h-screen p-4">
+           <div style={{ position: 'absolute', top: "120px", left: 0, right: 0, bottom: 0 }}>
+           <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
       <ProfileNew UserDetail={userDetails} />
     </div>
           {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
           </div>
           <SectionWrapper>
-            <div style={{ marginTop: '150px' }} />
+            <div style={{ marginTop: '220px' }} />
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
             <ProjectsSection  onEdit={handleEditPro}
