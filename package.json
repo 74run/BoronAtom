@@ -1,5 +1,9 @@
 {
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "react-pdf": "^7.7.0",
+    "react-to-pdf": "^1.0.1"
   }
 }
