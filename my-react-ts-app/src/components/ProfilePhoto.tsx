@@ -1,17 +1,50 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Pencil, X } from "react-bootstrap-icons";
 import Modal from "./Model";
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-const Profile: React.FC = () => {
+interface UserDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  // Add other fields as needed
+}
+
+interface ProfileProps {
+  UserDetail: UserDetails | null;
+}
+
+
+const Profile: React.FC<ProfileProps> = (UserDetail) => {
+
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const avatarUrl = useRef<string>(
     "https://avatarfiles.alphacoders.com/161/161002.jpg"
   );
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [fullImageModalOpen, setFullImageModalOpen] = useState<boolean>(false);
 
+
+  const { username,userID } = useParams();
   const updateAvatar = (imgSrc: string) => {
     avatarUrl.current = imgSrc;
   };
+
+
+  useEffect(() => {
+    // Make an HTTP request to fetch user details based on the user ID
+    axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+        .then(response => {
+            setUserDetails(response.data.user);
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+        });
+}, [userID]);
+
+
 
   return (
     <div className="container mt-5">
@@ -30,65 +63,13 @@ const Profile: React.FC = () => {
             title="Change photo"
             onClick={() => setModalOpen(true)}
           >
-            <Pencil size={16} className="text-light" />
+            <Pencil size={50} style={{width: "20px", height: "20px"}} className="text-light" />
           </button>
         </div>
-        <h2 className="text-black font-weight-bold mt-4">Mack Aroney</h2>
-        <p className="text-secondary text-sm mt-2">Software Engineer</p>
-
-        {/* Full Image Modal */}
-        {fullImageModalOpen && (
-          <div
-            className="modal fade show"
-            style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-            onClick={() => setFullImageModalOpen(false)}
-          >
-            <div className="modal-dialog modal-dialog-centered">
-              <div className="modal-content">
-                <div className="modal-body text-center">
-                  <img
-                    src={avatarUrl.current}
-                    alt="Full Avatar"
-                    className="img-fluid rounded-circle border border-secondary"
-                  />
-                  <button
-                    className="position-absolute bottom-50 start-50 translate-middle p-1 rounded-circle bg-dark border border-dark"
-                    title="Change photo"
-                    onClick={() => setModalOpen(true)}
-                  >
-                    <Pencil size={16} className="text-light" />
-                  </button>
-                  <div className="mt-3">
-                    <label htmlFor="fileInput" className="btn btn-dark">
-                      Choose File
-                      <input
-                        type="file"
-                        id="fileInput"
-                        className="visually-hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              updateAvatar(reader.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                    </label>
-                    <button
-                      className="btn btn-dark ms-2"
-                      onClick={() => setFullImageModalOpen(false)}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        <h2 className="text-black font-weight-bold mt-4">{userDetails && `${userDetails.firstName} ${userDetails.lastName}`}
+</h2>
+        <p className="text-secondary text-sm mt-2">{userDetails && `${userDetails.email}`}
+</p>
 
         {/* Edit Avatar Modal */}
         {modalOpen && (

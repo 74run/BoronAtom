@@ -14,6 +14,7 @@ const UserProfileSchema = new mongoose.Schema({
         ref: 'User',
         required: true 
       },
+  
     summary: [SumSchema], 
     education: [EduSchema],
     experience: [expSchema],
