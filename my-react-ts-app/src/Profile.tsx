@@ -15,6 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
+// import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
@@ -394,14 +395,15 @@ const Profile: React.FC = () => {
           {/* Content for the middle section goes here */}
           <CoverPage onUpload={(file: File): void => { } 
            } />
-           <div style={{ position: 'absolute', top: "120px", left: 0, right: 0, bottom: 0 }}>
+           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0 }}>
            <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
       <ProfileNew UserDetail={userDetails} />
     </div>
-          {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
+        {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
           </div>
           <SectionWrapper>
-            <div style={{ marginTop: '220px' }} />
+            <div style={{ marginTop: '250px' }} />
+      
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
             <ProjectsSection  onEdit={handleEditPro}
