@@ -88,24 +88,36 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, {  university: editData.university,
+      onEdit(editData.id, {
+        university: editData.university,
         degree: editData.degree,
         major: editData.major,
         startDate: { ...editData.startDate },
-        endDate: { ...editData.endDate }, });
-      
+        endDate: { ...editData.endDate },
+      });
+  
       const updatedItems = educations.map((education) =>
-      education._id === editData.id
-        ? { ...education, university: editData.university, degree: editData.degree, major: editData.major, startDate: { ...editData.startDate }, endDate: { ...editData.endDate } }
-        : education
-    );
-
-    setEducations(updatedItems);
-      
+        education._id === editData.id
+          ? {
+              ...education,
+              university: editData.university,
+              degree: editData.degree,
+              major: editData.major,
+              startDate: { ...editData.startDate },
+              endDate: { ...editData.endDate },
+            }
+          : education
+      );
+  
+      setEducations(updatedItems);
+  
+      // Update local storage
+      localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedItems));
+  
       setEditData(null);
     }
   };
-
+  
   const handleDelete = (id: string) => {
     fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
@@ -122,6 +134,9 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
   
+        // Update local storage
+        localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedEducations));
+  
         // Reset the editData state
         setEditData(null);
       })
@@ -129,6 +144,9 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
         console.error('Error deleting education:', error.message);
       });
   };
+  
+  // Rest of the code remains unchanged
+  
   
 
   useEffect(() => {
