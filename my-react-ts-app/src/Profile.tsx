@@ -15,6 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
+// import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
@@ -22,6 +23,15 @@ import './css/profile.css';
 import './App.css';
 
 import React, { useEffect, useState } from 'react';
+
+
+interface UserDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  // Add other fields as needed
+}
 
 interface Education {
   _id: string;
@@ -88,7 +98,28 @@ const Profile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   
   const { userID } = useParams();
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
 
+  // Fetch user details and educations data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userResponse = await axios.get(`http://localhost:3001/api/userprofile/details/${userID}`);
+        setUserDetails(userResponse.data.user);
+
+        const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+        const fetchedEducations = educationsResponse.data.educations;
+        setEducations(fetchedEducations);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, [userID]);
+
+
+  
   useEffect(() => {
     // Fetch the current profile photo URL from the server on component mount
     axios.get('http://localhost:3001/api/profile-photo')
@@ -235,7 +266,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/involvements/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -308,7 +339,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteInv = (id: string) => {
-    fetch(`http://localhost:3001/api/involvements/${id}`, {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -364,21 +395,22 @@ const Profile: React.FC = () => {
           {/* Content for the middle section goes here */}
           <CoverPage onUpload={(file: File): void => { } 
            } />
-           <div>
-           <div className="bg-gray-900 text-gray-400 min-h-screen p-4">
-      <ProfileNew />
+           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0 }}>
+           <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
+      <ProfileNew UserDetail={userDetails} />
     </div>
-          {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
+        {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
           </div>
           <SectionWrapper>
-            <div style={{ marginTop: '150px' }} />
+            <div style={{ marginTop: '250px' }} />
+      
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
             <ProjectsSection  onEdit={handleEditPro}
             onDelete={handleDeletePro} Projects={projects} />
             <Skills />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
-            onDelete={handleDeleteEdu} />
+            onDelete={handleDeleteEdu}  UserDetail={userDetails} />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
               onDelete= {handleDeleteExp}/>
             <CertificationSection Certifications={certifications} onEdit={handleEditCert}

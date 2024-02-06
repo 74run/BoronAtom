@@ -14,6 +14,7 @@ interface ImageCropperProps {
   currentAvatar: string;
   updateAvatar: (dataUrl: string) => void;
   closeModal: () => void;
+  style?: React.CSSProperties;
 }
 
 const ImageCropper: React.FC<ImageCropperProps> = ({
@@ -89,11 +90,20 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
             ref={imgRef}
             src={imgSrc}
             alt="Upload"
-            style={{ maxHeight: "90vh" }}
+            style={{
+              width: "400px", // Set the desired width
+              height: "auto", // Set the desired height
+              objectFit: "contain",
+              overflow: "visible",
+              
+              zIndex: "1" 
+            }}
             onLoad={onImageLoad}
             className="img-fluid"
           />
         </ReactCrop>
+<hr / >
+  <hr />
         <button
           className="btn btn-primary mt-4"
           onClick={() => {

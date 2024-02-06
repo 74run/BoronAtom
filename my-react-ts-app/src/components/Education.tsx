@@ -4,6 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
+interface UserDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  // Add other fields as needed
+}
 
 
 interface Education {
@@ -18,16 +25,17 @@ interface Education {
 
 interface EducationProps {
   Educations: Education[];
+  UserDetail: UserDetails | null;
   onEdit: (id: string, data: {university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
   onDelete :(id: string)=> void;
   
 }
 
 
-const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete}) => {
+const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEdit, onDelete}) => {
   const [editData, setEditData] = useState<{id: string; university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
-  
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
@@ -49,6 +57,19 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
 
+  useEffect(() => {
+    // Make an HTTP request to fetch user details based on the user ID
+    axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+        .then(response => {
+            setUserDetails(response.data.user);
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+        });
+}, [userID]);
+
+
+
 
 
 
@@ -67,24 +88,36 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, {  university: editData.university,
+      onEdit(editData.id, {
+        university: editData.university,
         degree: editData.degree,
         major: editData.major,
         startDate: { ...editData.startDate },
-        endDate: { ...editData.endDate }, });
-      
+        endDate: { ...editData.endDate },
+      });
+  
       const updatedItems = educations.map((education) =>
-      education._id === editData.id
-        ? { ...education, university: editData.university, degree: editData.degree, major: editData.major, startDate: { ...editData.startDate }, endDate: { ...editData.endDate } }
-        : education
-    );
-
-    setEducations(updatedItems);
-      
+        education._id === editData.id
+          ? {
+              ...education,
+              university: editData.university,
+              degree: editData.degree,
+              major: editData.major,
+              startDate: { ...editData.startDate },
+              endDate: { ...editData.endDate },
+            }
+          : education
+      );
+  
+      setEducations(updatedItems);
+  
+      // Update local storage
+      localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedItems));
+  
       setEditData(null);
     }
   };
-
+  
   const handleDelete = (id: string) => {
     fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
@@ -101,6 +134,9 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
   
+        // Update local storage
+        localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedEducations));
+  
         // Reset the editData state
         setEditData(null);
       })
@@ -108,6 +144,9 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
         console.error('Error deleting education:', error.message);
       });
   };
+  
+  // Rest of the code remains unchanged
+  
   
 
   useEffect(() => {
@@ -239,7 +278,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, onEdit, onDelete
       marginBottom: '20px',
     }}
     className="container">
-      <h2>Education</h2>
+     <h2>Education</h2>
       {educations.map(education => (
         <div key={education._id} className="mb-3">
           {editData && editData.id === education._id ? (

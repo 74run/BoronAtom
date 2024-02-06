@@ -1,5 +1,19 @@
 {
   "devDependencies": {
+    "@types/react-katex": "^3.0.4",
+    "@types/react-latex": "^2.0.3",
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@react-pdf/renderer": "^3.2.1",
+    "child_process": "^1.0.2",
+    "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.10.1",
+    "katex": "^0.16.9",
+    "pdflatex": "^0.0.1",
+    "react-latex": "^2.0.0",
+    "react-pdf": "^7.7.0",
+    "react-pdf-js": "^5.1.0",
+    "react-pdf-viewer": "^0.1.0"
   }
 }

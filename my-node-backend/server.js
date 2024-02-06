@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const { exec } = require('child_process');
 
 
 
@@ -53,7 +54,7 @@ require('./routes/UserRoute')(app);
 // app.use('/', profileRoutes);
 app.use('/api/experiences', ExpRoutes);
 app.use('/api/certifications',CertRoutes);
-app.use('/api/involvements',InvRoutes);
+// app.use('/api/involvements',InvRoutes);
 app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
 
@@ -64,6 +65,33 @@ app.use('/api/userprofile', CertUserRoutes);
 app.use('/api/userprofile', ProUserRoutes);
 app.use('/api/userprofile', SumUserRoutes);
 app.use('/api/userprofile', InvUserRoutes);
+
+
+
+app.post('/compile-latex', (req, res) => {
+  const { latexCode } = req.body;
+
+  // Save the LaTeX code to a .tex file
+  const texFilePath = path.join(__dirname, './latex-files/file.tex');
+  require('fs').writeFileSync(texFilePath, latexCode);
+
+  // Full path to pdflatex executable
+  const pdflatexPath = 'C:/Users/74run/AppData/Local/Programs/MiKTeX/miktex/bin/x64/pdflatex'; // Replace with the actual path on your server
+
+  // Use pdflatex to compile the LaTeX code to PDF
+  exec(`${pdflatexPath} -output-directory=${path.join(__dirname, './latex-files')} ${texFilePath}`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Compilation error: ${stderr}`);
+      return res.status(500).send({ error: 'Compilation failed' });
+    }
+
+    // Assuming pdflatex generates a file named file.pdf
+    const pdfFilePath = path.join(__dirname, './latex-files/file.pdf');
+    res.sendFile(pdfFilePath);
+  });
+});
+
+
 
 
 
