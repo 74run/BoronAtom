@@ -5,7 +5,7 @@ import React from 'react';
 const Footer: React.FC = () => {
   return (
     <footer style={footerStyle}>
-      <p>&copy; 2024 Boron</p>
+      <p>&copy; 2024 Boron Atom</p>
     </footer>
   );
 };
