@@ -39,6 +39,16 @@
       \textbf{#1} \labelitemi #2 \hfill #3 \\ #4 \vspace*{5pt}
     }
 
+    \newcommand{\employer}[4]{{
+      \vspace*{2pt}%
+      \textbf{#1} #2 \hfill #3\\ #4 \vspace*{2pt}}
+      }
+
+    \newcommand{\project}[4]{{
+        \vspace*{2pt}% 
+        \textbf{#1} #2 \hfill #3\\ \textit{#4} \vspace*{2pt}}
+        }
+        
     \newcommand{\lineunder}{
       \vspace*{-8pt} \\ \hspace*{-18pt} 
       \hrulefill \\
@@ -62,6 +72,16 @@
       }
 
 
+      \newenvironment{bullet-list-major}{
+        \begin{list}{\labelitemii}{\setlength\leftmargin{3pt} 
+        \topsep 0pt \itemsep -2pt}}{\vspace*{4pt}\end{list}
+        }
+
+      \newenvironment{bullet-list-minor}{
+        \begin{list}{\labelitemii}{\setlength\leftmargin{15pt} 
+          \topsep 0pt \itemsep -2pt}}{\vspace*{4pt}\end{list}
+          }
+
 
     \begin{document}
 
@@ -70,72 +90,75 @@
     \vspace*{-44pt}
 
     \begin{center}
-      {\LARGE \textbf{Tarun Sai Janapati}} \\
+      {\LARGE \textbf{Tarun Janapati}} \\
       \faPhone\ 551-755-1991 \quad
-      \faEnvelope\ \href{mailto:tarunsai.janapati@slu.edu}{tarunsai.janapati@slu.edu} \quad
+      \faEnvelope\ \href{mailto:tarunjanapati7@gmail.com}{tarunjanapati7@gmail.com} \quad
       \faLinkedin\ \url{https://www.linkedin.com/in/tarun-janapati/}
     \end{center}
+   \vspace*{4pt}%
+    \header{Summary}
+
+    {
+      \textit{Establishing effective configuration management and change control is extremely challenging on complex software projects for several reasons. Software designs, interfaces, code, and requirements tend to evolve rapidly throughout development, making it difficult to establish firm baselines under configuration control.}
+      }
 
     \vspace{15pt}
 
    \header{Education}
 
     {
-        \school{Saint Louis University}{St. Louis, MO}{Graduation: 05/2025}{\textit{MS in Analytics \labelitemi 3.9/4.0}}
+      \school{Saint Louis University}{Master's Degree}{Graduation: 2021}{\textit{Analytics \labelitemi 2018}}
       
 
-        \school{Visvesvaraya National Institute of Technology}{Nagpur, India}{Graduation: 05/2022}{\textit{BTech in Mechanical Engineering \labelitemi 7.00/10.00}}
+      \school{Visvesvaraya National Institute of Technology}{Bachelor's Degree}{Graduation: 2021}{\textit{Mechanical \labelitemi 2017}}
       }
 
     \vspace*{4pt}%
     \header{Experience}
 
     {
-          \subsection*{Data Analyst Intern - TechCorp}
-          Remote -- 01/2024 to 04/2024
-          \begin{itemize}
-            \item Conducted data analysis and visualization.
-\item Collaborated with cross-functional teams on various projects.
-          \end{itemize}
-        }
-    
+        \employer{Machine Design Engineer}{--Caterpillar}{2023 -- 2028}{Pune, India}
+        \begin{bullet-list-minor}
+	      \item Analyzed and updated the engine design with a group of people.
+        \end{bullet-list-minor}
+       
+      }
     \vspace*{4pt}%
     \header{Skills}
 
-    \begin{itemize}
-      \item \textbf{Programming Languages:} Python, R Programming, SPSS
-      \item \textbf{Data Analysis:} Pandas, NumPy
-      \item \textbf{Data Science:} Tensorflow, Keras, OpenCV, NLTK, Pytorch
-      \item \textbf{Machine Learning:} Scikit-Learn, Regression Models
-      \item \textbf{Data Visualization:} Matplotlib, Seaborn, Tableau
-      \item \textbf{Statistical Analysis:} Hypothesis Testing, Regression Analysis
-      \item \textbf{Microsoft Tools:} Excel, Word, Power Point, Power Automate.
-      \item \textbf{Tools:} Jupyter Notebook, Git, SQL
-    \end{itemize}
-
     \vspace*{4pt}%
     \header{Projects}
-    \textbf{Dynamic Steam Properties Calculator (Personal Project)} \
-    12/2022 -- 02/2023 \
-    Developed a web-based tool using Python, Flask, HTML, CSS, and JavaScript to calculate steam properties. Deployed: \url{https://steamcalci.com}
+    {
+      \project{Design Hacksaw Machine}{VNIT}{2018 -- 2020}{Developed a web-based tool using Python, Flask, HTML, CSS, and JavaScript to calculate steam properties.
+Deployed : steamcalci.com}
+      
 
-    % Add other projects similarly
+      \project{Analysis of Factors Influencing Attitudes Towards Debt}{Saint Louis University}{2019 -- 2022}{Analyzed a dataset to uncover drivers of attitudes toward debt. Used R for data cleaning, preprocessing, and
+regression analysis.}
+      }
 
     \vspace*{4pt}%
     \header{Certifications}
-    \begin{itemize}
-      \item \textbf{International Conference on Innovative Product Design and Intelligent Manufacturing System '2022} \hfill 11/2022
-      \item \textbf{Hero Campus Challenge Season 7} \hfill 02/2021
-      \item \textbf{Introduction to Data Analytics} \hfill 02/2023
-    \end{itemize}
-
+    {
+      \begin{bullet-list-major}
+      \item \textbf{Hero MotoCrop} \labelitemi Hero Honda \hfill 2018 -- 2020
+      \end{bullet-list-major}
+      }
     \vspace*{4pt}%
     \header{Involvements}
-    \begin{itemize}
-      \item \textbf{Student Representative, Training and Placement, VNIT} \hfill 05/2021 -- 08/2021
-      \item \textbf{Volunteer, AXIS'20, Visvesvaraya National Institute of Technology} \hfill 01/2020 -- 03/2020
-      \item \textbf{Organizer, Prayaas Club, Visvesvaraya National Institute of Technology} \hfill 09/2018 -- 03/2020
-    \end{itemize}
+    {
 
+      \begin{bullet-list-major}
+      \item \textbf{Manager} \labelitemi AXIS \hfill 2021 -- 2028
+      
+      \end{bullet-list-major}
+      
+
+
+      \begin{bullet-list-major}
+      \item \textbf{Key Player} \labelitemi Jugad \hfill 2017 -- 2019
+      
+      \end{bullet-list-major}
+      }
     \end{document}
   
