@@ -92,6 +92,40 @@ router.get('/details/:userID', async (req, res) => {
   }
 });
 
+router.get('/EduDetails/:userID', async (req, res) => {
+  try {
+      const userId = req.params.userID;
+
+
+
+      // Query the database to get user details by ID
+       const user = await UserProfile.findOne({ userID: userId });
+
+      if (!user) {
+          return res.status(404).json({ success: false, message: 'User not found' });
+      }
+
+      // Send user details as a JSON response
+      res.json({
+          success: true,
+          user: {
+              education: user.education,
+              experience: user.experience,
+              involvement: user.involvement,
+              certification: user.certification,
+              project: user.project,
+              summary: user.summary
+              // Add other fields as needed
+          }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
+
+
 router.put('/:userId/education/:id', async (req, res) => {
     try {
       const user = await User.findById(req.params.userId);

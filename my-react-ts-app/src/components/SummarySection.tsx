@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,7 +18,7 @@ interface SummarySectionProps {
 }
 
 const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDelete}) => {
-  const [summarys, setSummarys] = useState<Summary[]>([]);
+  const [summarys, setSummarys] = useState<Summary[]>(Summarys);
   const [editData, setEditData] = useState<{
     id: string;
     content: string
@@ -30,11 +30,40 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
+  // useEffect(() => {
+  //   const storedSummarys = JSON.parse(localStorage.getItem(`summarys_${userID}`) || '[]');
+  //   setSummarys(storedSummarys);
+  // }, []);
+
+
+  useEffect(() => {
+    fetchSummary();
+  }, []);
+
+  const fetchSummary = () => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/summary`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        return response.json(); // Parse the response JSON
+      })
+      .then(data => {
+        // console.log("Project data:",data)
+        setSummarys(data); // Set projects state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+      });
+  };
+  
+
   const handleEditClick = (id: string, content: string) => {
     setEditData({id, content});
   };
 
   const handleSaveClick = () => {
+    const storageKey = `summarys_${userID}`;
     axios.post(`http://localhost:3001/api/userprofile/${userID}/summary`, newSummary)
       .then((response) => {
         const newSummaryFromServer = response.data.summary;
@@ -45,6 +74,10 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
           _id: '',
            content: '',
         });
+
+        const updatedSummarys = [...summarys, newSumData];
+        // localStorage.setItem(storageKey, JSON.stringify(updatedSummarys));
+        
   
         setIsAdding(false);
       })
@@ -63,6 +96,8 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
       ? {...summary, content: editData.content}: summary
       );
       setSummarys(updatedItems);
+
+      // localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedItems));
       setEditData(null);
     }
   }
@@ -79,6 +114,8 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
           // Update the state to remove the deleted summary
           const updatedSummarys = summarys.filter((summary) => summary._id !== id);
           setSummarys(updatedSummarys);
+
+          // localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedSummarys));
   
           // Reset the editData state
           setEditData(null);

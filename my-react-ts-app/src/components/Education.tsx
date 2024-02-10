@@ -69,6 +69,30 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 }, [userID]);
 
 
+useEffect(() => {
+  fetchEducation();
+}, []);
+
+const fetchEducation = () => {
+  fetch(`http://localhost:3001/api/userprofile/${userID}/education`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch educations');
+      }
+      return response.json(); // Parse the response JSON
+    })
+    .then(data => {
+      // console.log("Project data:",data)
+      setEducations(data); // Set projects state with the fetched data
+    })
+    .catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+};
+
+
+
+
 
 
 
@@ -112,7 +136,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
       setEducations(updatedItems);
   
       // Update local storage
-      localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedItems));
+      // localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedItems));
   
       setEditData(null);
     }
@@ -135,7 +159,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
         setEducations(updatedEducations);
   
         // Update local storage
-        localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedEducations));
+        // localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedEducations));
   
         // Reset the editData state
         setEditData(null);
@@ -166,33 +190,33 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const storageKey = `educations_${userID}`;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // const storageKey = `educations_${userID}`;
   
-        // Check if data exists in local storage
-        const storedData = localStorage.getItem(storageKey);
-        if (storedData) {
-          setEducations(JSON.parse(storedData));
-        } else {
-          // If not, fetch data from the server
-          const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
-          const fetchedEducations = response.data.educations;
+  //       // Check if data exists in local storage
+  //       // const storedData = localStorage.getItem(storageKey);
+  //       if (storedData) {
+  //         setEducations(JSON.parse(storedData));
+  //       } else {
+  //         // If not, fetch data from the server
+  //         const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+  //         const fetchedEducations = response.data.educations;
   
-          // Update state
-          setEducations(fetchedEducations);
+  //         // Update state
+  //         setEducations(fetchedEducations);
   
-          // Store the fetched data in local storage
-          localStorage.setItem(storageKey, JSON.stringify(fetchedEducations));
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
+  //         // Store the fetched data in local storage
+  //         // localStorage.setItem(storageKey, JSON.stringify(fetchedEducations));
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching data:', error);
+  //     }
+  //   };
   
-    fetchData();
-  }, [userID]);
+  //   fetchData();
+  // }, [userID]);
   
 
   // useEffect(() => {
@@ -224,7 +248,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
       },
     };
   
-    const storageKey = `educations_${userID}`;
+    // const storageKey = `educations_${userID}`;
 
   axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
     .then((response) => {
@@ -236,7 +260,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
       // Update local storage
       const updatedEducations = [...educations, newEduData];
-      localStorage.setItem(storageKey, JSON.stringify(updatedEducations));
+      // localStorage.setItem(storageKey, JSON.stringify(updatedEducations));
 
       setNewEducation({
         _id: '',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -25,7 +25,7 @@ interface ExperienceProps {
 
 const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{ id: string; jobTitle: string; company: string; location: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; description: string} | null>(null);
-  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>(Experiences);
   const [newExperience, setNewExperience] = useState<Experience>({
     _id: '',
     jobTitle: '',
@@ -45,6 +45,33 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   ];
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
+
+// useEffect(() => {
+//   const storedExperiences = JSON.parse(localStorage.getItem(`experiences_${userID}`) || '[]');
+//   setExperiences(storedExperiences);
+// }, []);
+
+useEffect(() => {
+  fetchExperience();
+}, []);
+
+const fetchExperience = () => {
+  fetch(`http://localhost:3001/api/userprofile/${userID}/experience`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch educations');
+      }
+      return response.json(); // Parse the response JSON
+    })
+    .then(data => {
+      // console.log("Project data:",data)
+      setExperiences(data); // Set projects state with the fetched data
+    })
+    .catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+};
+  
 
 
   const handleEditClick = (id: string, jobTitle: string, company: string, location: string, startDate: { month: string; year: string }, endDate: { month: string; year: string }, description: string) => {
@@ -68,6 +95,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     );
 
     setExperiences(updatedItems);
+
+    // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedItems));
       
       setEditData(null);
     }
@@ -86,13 +115,17 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         year: newExperience.endDate.year,
       },
     };
+
+    // const storageKey = `experiences_${userID}`;
  
     axios.post(`http://localhost:3001/api/userprofile/${userID}/experience`, formattedExperience)
       .then((response) => {
         const newExperienceFromServer = response.data.experience;
         const newExpData = newExperienceFromServer[newExperienceFromServer.length-1]
         setExperiences([...experiences, newExpData]);
-  
+
+        const updatedExperiences = [...experiences, newExpData];
+        // localStorage.setItem(storageKey, JSON.stringify(updatedExperiences));
         // Reset the newExperience state
         setNewExperience({ _id: '', jobTitle: '', company: '', location: '', startDate: { month: '', year: '' },
         endDate: { month: '', year: '' }, description:'' });
@@ -115,6 +148,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   
         // Reset the editData state
         setEditData(null);
+        // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedExperiences));
       })
       .catch((error) => {
         console.error('Error deleting experience:', error.message);

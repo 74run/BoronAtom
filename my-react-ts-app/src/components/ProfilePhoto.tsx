@@ -14,12 +14,57 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+interface EduDetails {
+  education: Array<{
+    university: string;
+    degree: string;
+    major: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+  }>;
+  experience: Array<{
+    jobTitle: string;
+  company: string;
+  location: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  description: string;
+  }>
+  summary: Array<{
+      content: string;
+    
+  }>
+  project: Array<{
+    name: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    skills: string;
+    description: string;
+  }>
+  involvement: Array<{
+  organization: string;
+  role: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  description: string;
+  }>
+  certification: Array<{
+  name: string;
+  issuedBy: string;
+  issuedDate: { month: string; year: string };
+  expirationDate: { month: string; year: string };
+  url: string;
+  }>
+}
+
 interface ProfileProps {
   UserDetail: UserDetails | null;
+  EduDetail: EduDetails | null;
 }
 
 const Profile: React.FC<ProfileProps> = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
   const avatarUrl = useRef<string>(
     "https://avatarfiles.alphacoders.com/161/161002.jpg"
   );
@@ -44,58 +89,47 @@ const Profile: React.FC<ProfileProps> = () => {
       });
   }, [userID]);
 
-  const generatePdf = () => {
-    const educations = [
-      {
-        institute: "Saint Louis University",
-        location: "St. Louis, MO",
-        graduationDate: "05/2025",
-        degree: "MS in Analytics",
-        GPA: "3.9/4.0",
-      },
-      {
-        institute: "Visvesvaraya National Institute of Technology",
-        location: "Nagpur, India",
-        graduationDate: "05/2022",
-        degree: "BTech in Mechanical Engineering",
-        CGPA: "7.00/10.00",
-      },
-      // Add more education entries if needed
-    ];
+
+  useEffect(() => {
+    axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`)
+      .then(response => {
+        if (response.data && response.data.success) {
+          setEduDetails(response.data.user);
+        } else {
+          console.error('Error fetching user details:', response.data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user details:', error);
+      });
+  }, [userID]);
   
-    const experiences = [
-      {
-        position: "Data Analyst Intern",
-        company: "TechCorp",
-        location: "Remote",
-        startDate: "01/2024",
-        endDate: "04/2024",
-        responsibilities: [
-          "Conducted data analysis and visualization.",
-          "Collaborated with cross-functional teams on various projects.",
-        ],
-      },
-      // Add more experience entries if needed
-    ];
+
+  const generatePdf = () => {
+    
+    const educations = eduDetails?.education || [];
+
+    const experiences = eduDetails?.experience || [];
+
+    
+  
+    
   
     // Add sections for projects, certifications, skills, involvements as needed
   
-    const educationSection = educations
-    .map(
+    const educationSection = educations.map(
       (education) => `
-        \\school{${education.institute}}{${education.location}}{Graduation: ${education.graduationDate}}{\\textit{${education.degree} \\labelitemi ${education.GPA || education.CGPA}}}
+      \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.year}}{\\textit{${education.major} \\labelitemi ${education.startDate.year}}}
       `
-    )
-    .join("\n");
+    ).join("\n");
+
+
   
-    const experienceSection = experiences
-      .map(
+    const experienceSection = experiences.map(
         (experience) => `
-          \\subsection*{${experience.position} - ${experience.company}}
+          \\subsection*{${experience.jobTitle} - ${experience.company}}
           ${experience.location} -- ${experience.startDate} to ${experience.endDate}
-          \\begin{itemize}
-            ${experience.responsibilities.map((responsibility) => `\\item ${responsibility}`).join("\n")}
-          \\end{itemize}
+         
         `
       )
       .join("\n");
@@ -180,6 +214,9 @@ const Profile: React.FC<ProfileProps> = () => {
       \\faLinkedin\\ \\url{https://www.linkedin.com/in/tarun-janapati/}
     \\end{center}
 
+    \\vspace*{4pt}%
+    \\header{Summary}
+
     \\vspace{15pt}
 
    \\header{Education}
@@ -190,48 +227,23 @@ const Profile: React.FC<ProfileProps> = () => {
     \\header{Experience}
 
     {${experienceSection}}
-    
     \\vspace*{4pt}%
     \\header{Skills}
 
-    \\begin{itemize}
-      \\item \\textbf{Programming Languages:} Python, R Programming, SPSS
-      \\item \\textbf{Data Analysis:} Pandas, NumPy
-      \\item \\textbf{Data Science:} Tensorflow, Keras, OpenCV, NLTK, Pytorch
-      \\item \\textbf{Machine Learning:} Scikit-Learn, Regression Models
-      \\item \\textbf{Data Visualization:} Matplotlib, Seaborn, Tableau
-      \\item \\textbf{Statistical Analysis:} Hypothesis Testing, Regression Analysis
-      \\item \\textbf{Microsoft Tools:} Excel, Word, Power Point, Power Automate.
-      \\item \\textbf{Tools:} Jupyter Notebook, Git, SQL
-    \\end{itemize}
-
     \\vspace*{4pt}%
     \\header{Projects}
-    \\textbf{Dynamic Steam Properties Calculator (Personal Project)} \\
-    12/2022 -- 02/2023 \\
-    Developed a web-based tool using Python, Flask, HTML, CSS, and JavaScript to calculate steam properties. Deployed: \\url{https://steamcalci.com}
-
-    % Add other projects similarly
 
     \\vspace*{4pt}%
     \\header{Certifications}
-    \\begin{itemize}
-      \\item \\textbf{International Conference on Innovative Product Design and Intelligent Manufacturing System '2022} \\hfill 11/2022
-      \\item \\textbf{Hero Campus Challenge Season 7} \\hfill 02/2021
-      \\item \\textbf{Introduction to Data Analytics} \\hfill 02/2023
-    \\end{itemize}
 
     \\vspace*{4pt}%
     \\header{Involvements}
-    \\begin{itemize}
-      \\item \\textbf{Student Representative, Training and Placement, VNIT} \\hfill 05/2021 -- 08/2021
-      \\item \\textbf{Volunteer, AXIS'20, Visvesvaraya National Institute of Technology} \\hfill 01/2020 -- 03/2020
-      \\item \\textbf{Organizer, Prayaas Club, Visvesvaraya National Institute of Technology} \\hfill 09/2018 -- 03/2020
-    \\end{itemize}
+
 
     \\end{document}
   `;
-
+  const firstName = userDetails?.firstName;
+  const lastName = userDetails?.lastName;
   axios
     .post('http://localhost:3001/compile-latex', { latexCode }, { responseType: 'blob' })
     .then((response) => {
@@ -240,7 +252,8 @@ const Profile: React.FC<ProfileProps> = () => {
       // Create a download link for the PDF
       const downloadLink = document.createElement('a');
       downloadLink.href = URL.createObjectURL(pdfBlob);
-      downloadLink.download = 'resume.pdf';
+      downloadLink.download = `${firstName}_${lastName}_resume.pdf`;
+
 
       // Append the link to the document body
       document.body.appendChild(downloadLink);
@@ -260,63 +273,78 @@ const Profile: React.FC<ProfileProps> = () => {
 };
   
 
+
+
   
 const previewPdf = async () => {
   try {
-    const educations = [
-      {
-        institute: "Saint Louis University",
-        location: "St. Louis, MO",
-        graduationDate: "05/2025",
-        degree: "MS in Analytics",
-        GPA: "3.9/4.0",
-      },
-      {
-        institute: "Visvesvaraya National Institute of Technology",
-        location: "Nagpur, India",
-        graduationDate: "05/2022",
-        degree: "BTech in Mechanical Engineering",
-        CGPA: "7.00/10.00",
-      },
-      // Add more education entries if needed
-    ];
+    const educations = eduDetails?.education || [];
   
-    const experiences = [
-      {
-        position: "Data Analyst Intern",
-        company: "TechCorp",
-        location: "Remote",
-        startDate: "01/2024",
-        endDate: "04/2024",
-        responsibilities: [
-          "Conducted data analysis and visualization.",
-          "Collaborated with cross-functional teams on various projects.",
-        ],
-      },
-      // Add more experience entries if needed
-    ];
-  
+    const experiences = eduDetails?.experience || [];
+
+    const summarys = eduDetails?.summary || [];
+
+    const projects = eduDetails?.project || [];
+
+    const certifications = eduDetails?.certification || [];
+
+    const involvements = eduDetails?.involvement || [];
     // Add sections for projects, certifications, skills, involvements as needed
+
+    const summarySection = summarys.map(
+      (summary)=>`
+      \\textit{${summary.content}}
+      `
+    ).join("\n");
+
+    const projectSection = projects.map(
+      (project)=>`
+      \\project{${project.name}}{${project.skills}}{${project.startDate.year} -- ${project.endDate.year}}{${project.description}}
+      `
+    ).join("\n");
   
-    const educationSection = educations
-    .map(
+    const educationSection = educations.map(
       (education) => `
-        \\school{${education.institute}}{${education.location}}{Graduation: ${education.graduationDate}}{\\textit{${education.degree} \\labelitemi ${education.GPA || education.CGPA}}}
+      \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.year}}{\\textit{${education.major} \\labelitemi ${education.startDate.year}}}
+      `
+    ).join("\n");
+
+    const experienceSection = experiences.map(
+      (experience) => `
+        \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
+        \\begin{bullet-list-minor}
+	      \\item ${experience.description}
+        \\end{bullet-list-minor}
+       
       `
     )
     .join("\n");
-  
-    const experienceSection = experiences
-      .map(
-        (experience) => `
-          \\subsection*{${experience.position} - ${experience.company}}
-          ${experience.location} -- ${experience.startDate} to ${experience.endDate}
-          \\begin{itemize}
-            ${experience.responsibilities.map((responsibility) => `\\item ${responsibility}`).join("\n")}
-          \\end{itemize}
-        `
-      )
-      .join("\n");
+
+
+    const involvementSection = involvements.map(
+      (involvement) => `
+
+      \\begin{bullet-list-major}
+      \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.year} -- ${involvement.endDate.year}
+      
+      \\end{bullet-list-major}
+      `
+    )
+    .join("\n");
+
+    const certificationSection = certifications.map(
+      (certification) => `
+      \\begin{bullet-list-major}
+      \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${certification.issuedDate.year} -- ${certification.expirationDate.year}
+      \\end{bullet-list-major}
+      `
+    )
+    .join("\n");
+
+
+
+
+
   
     // Add similar sections for projects, certifications, skills, involvements
   
@@ -361,6 +389,16 @@ const previewPdf = async () => {
       \\textbf{#1} \\labelitemi #2 \\hfill #3 \\\\ #4 \\vspace*{5pt}
     }
 
+    \\newcommand{\\employer}[4]{{
+      \\vspace*{2pt}%
+      \\textbf{#1} #2 \\hfill #3\\\\ #4 \\vspace*{2pt}}
+      }
+
+    \\newcommand{\\project}[4]{{
+        \\vspace*{2pt}% 
+        \\textbf{#1} #2 \\hfill #3\\\\ \\textit{#4} \\vspace*{2pt}}
+        }
+        
     \\newcommand{\\lineunder}{
       \\vspace*{-8pt} \\\\ \\hspace*{-18pt} 
       \\hrulefill \\\\
@@ -384,6 +422,16 @@ const previewPdf = async () => {
       }
 
 
+      \\newenvironment{bullet-list-major}{
+        \\begin{list}{\\labelitemii}{\\setlength\\leftmargin{3pt} 
+        \\topsep 0pt \\itemsep -2pt}}{\\vspace*{4pt}\\end{list}
+        }
+
+      \\newenvironment{bullet-list-minor}{
+        \\begin{list}{\\labelitemii}{\\setlength\\leftmargin{15pt} 
+          \\topsep 0pt \\itemsep -2pt}}{\\vspace*{4pt}\\end{list}
+          }
+
 
     \\begin{document}
 
@@ -392,11 +440,15 @@ const previewPdf = async () => {
     \\vspace*{-44pt}
 
     \\begin{center}
-      {\\LARGE \\textbf{Tarun Sai Janapati}} \\\\
+      {\\LARGE \\textbf{${userDetails?.firstName} ${userDetails?.lastName}}} \\\\
       \\faPhone\\ 551-755-1991 \\quad
-      \\faEnvelope\\ \\href{mailto:tarunsai.janapati@slu.edu}{tarunsai.janapati@slu.edu} \\quad
+      \\faEnvelope\\ \\href{mailto:${userDetails?.email}}{${userDetails?.email}} \\quad
       \\faLinkedin\\ \\url{https://www.linkedin.com/in/tarun-janapati/}
     \\end{center}
+   \\vspace*{4pt}%
+    \\header{Summary}
+
+    {${summarySection}}
 
     \\vspace{15pt}
 
@@ -408,45 +460,19 @@ const previewPdf = async () => {
     \\header{Experience}
 
     {${experienceSection}}
-    
     \\vspace*{4pt}%
     \\header{Skills}
 
-    \\begin{itemize}
-      \\item \\textbf{Programming Languages:} Python, R Programming, SPSS
-      \\item \\textbf{Data Analysis:} Pandas, NumPy
-      \\item \\textbf{Data Science:} Tensorflow, Keras, OpenCV, NLTK, Pytorch
-      \\item \\textbf{Machine Learning:} Scikit-Learn, Regression Models
-      \\item \\textbf{Data Visualization:} Matplotlib, Seaborn, Tableau
-      \\item \\textbf{Statistical Analysis:} Hypothesis Testing, Regression Analysis
-      \\item \\textbf{Microsoft Tools:} Excel, Word, Power Point, Power Automate.
-      \\item \\textbf{Tools:} Jupyter Notebook, Git, SQL
-    \\end{itemize}
-
     \\vspace*{4pt}%
     \\header{Projects}
-    \\textbf{Dynamic Steam Properties Calculator (Personal Project)} \\
-    12/2022 -- 02/2023 \\
-    Developed a web-based tool using Python, Flask, HTML, CSS, and JavaScript to calculate steam properties. Deployed: \\url{https://steamcalci.com}
-
-    % Add other projects similarly
+    {${projectSection}}
 
     \\vspace*{4pt}%
     \\header{Certifications}
-    \\begin{itemize}
-      \\item \\textbf{International Conference on Innovative Product Design and Intelligent Manufacturing System '2022} \\hfill 11/2022
-      \\item \\textbf{Hero Campus Challenge Season 7} \\hfill 02/2021
-      \\item \\textbf{Introduction to Data Analytics} \\hfill 02/2023
-    \\end{itemize}
-
+    {${certificationSection}}
     \\vspace*{4pt}%
     \\header{Involvements}
-    \\begin{itemize}
-      \\item \\textbf{Student Representative, Training and Placement, VNIT} \\hfill 05/2021 -- 08/2021
-      \\item \\textbf{Volunteer, AXIS'20, Visvesvaraya National Institute of Technology} \\hfill 01/2020 -- 03/2020
-      \\item \\textbf{Organizer, Prayaas Club, Visvesvaraya National Institute of Technology} \\hfill 09/2018 -- 03/2020
-    \\end{itemize}
-
+    {${involvementSection}}
     \\end{document}
   `;
 

@@ -23,7 +23,7 @@ interface CertificationProps {
 
 const CertificationSection: React.FC<CertificationProps> = ({ Certifications, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{ id: string; name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string } | null>(null);
-  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [certifications, setCertifications] = useState<Certification[]>(Certifications);
   const [newCertification, setNewCertification] = useState<Certification>({
     _id: '',
     name: '',
@@ -41,6 +41,32 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   ];
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
+
+  // useEffect(() => {
+  //   const storedCertifications = JSON.parse(localStorage.getItem(`certifications_${userID}`) || '[]');
+  //   setCertifications(storedCertifications);
+  // }, []);
+  
+  useEffect(() => {
+    fetchCertification();
+  }, []);
+  
+  const fetchCertification = () => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/certification`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch educations');
+        }
+        return response.json(); // Parse the response JSON
+      })
+      .then(data => {
+        // console.log("Project data:",data)
+        setCertifications(data); // Set projects state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+      });
+  };
 
   const handleEditClick = (
     id: string,
@@ -71,6 +97,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       );
 
       setCertifications(updatedItems);
+
+      // localStorage.setItem(`certifications_${userID}`, JSON.stringify(updatedItems));
       
       setEditData(null);
     }
@@ -88,12 +116,16 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         year: newCertification.expirationDate.year,
       },
     };
+
+    // const storageKey = `certifications_${userID}`;
     axios.post(`http://localhost:3001/api/userprofile/${userID}/certification`, formattedCertification)
     .then((response) => {
       const newCertificationFromServer = response.data.certification;
       const newCertData = newCertificationFromServer[newCertificationFromServer.length-1]
         setCertifications([...certifications, newCertData]);
   
+        const updatedCertifications = [...certifications, newCertData];
+        // localStorage.setItem(storageKey, JSON.stringify(updatedCertifications));
         // Reset the newCertification state
         setNewCertification({
           _id: '',
@@ -123,6 +155,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
         // Reset the editData state
         setEditData(null);
+        // localStorage.setItem(`certifications_${userID}`, JSON.stringify(updatedCertifications));
       })
       .catch((error) => {
         console.error('Error deleting certification:', error.message);

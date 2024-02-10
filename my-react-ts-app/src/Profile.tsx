@@ -33,6 +33,51 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+interface EduDetails {
+  education: Array<{
+    university: string;
+    degree: string;
+    major: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+  }>;
+  experience: Array<{
+    jobTitle: string;
+  company: string;
+  location: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  description: string;
+  }>
+  summary: Array<{
+      content: string;
+    
+  }>
+  project: Array<{
+    name: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    skills: string;
+    description: string;
+  }>
+  involvement: Array<{
+  organization: string;
+  role: string;
+  startDate: { month: string; year: string };
+  endDate: { month: string; year: string };
+  description: string;
+  }>
+  certification: Array<{
+  name: string;
+  issuedBy: string;
+  issuedDate: { month: string; year: string };
+  expirationDate: { month: string; year: string };
+  url: string;
+  }>
+}
+
+
+
 interface Education {
   _id: string;
   university: string;
@@ -99,7 +144,7 @@ const Profile: React.FC = () => {
   
   const { userID } = useParams();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
-
+  const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
   // Fetch user details and educations data
   useEffect(() => {
     const fetchData = async () => {
@@ -107,7 +152,10 @@ const Profile: React.FC = () => {
         const userResponse = await axios.get(`http://localhost:3001/api/userprofile/details/${userID}`);
         setUserDetails(userResponse.data.user);
 
-        const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+        const eduResponse = await axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`);
+        setEduDetails(eduResponse.data.user)
+
+        const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/education`);
         const fetchedEducations = educationsResponse.data.educations;
         setEducations(fetchedEducations);
       } catch (error) {
@@ -117,6 +165,9 @@ const Profile: React.FC = () => {
 
     fetchData();
   }, [userID]);
+
+
+  
 
 
   
@@ -397,7 +448,7 @@ const Profile: React.FC = () => {
            } />
            <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0 }}>
            <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
-      <ProfileNew UserDetail={userDetails} />
+      <ProfileNew UserDetail={userDetails} EduDetail={eduDetails} />
     </div>
         {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
           </div>
