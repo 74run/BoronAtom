@@ -36,15 +36,16 @@ router.post('/:userID/project', async (req, res) => {
     }
   });
   
-  router.get('/:userId/project', async (req, res) => {
+  router.get('/:userID/project', async (req, res) => {
     try {
-      const user = await User.findById(req.params.userId);
+      const userId = req.params.userID;
+      const userProfile = await UserProfile.findOne({ userID: userId });
   
-      if (!user) {
+      if (!userProfile) {
         return res.status(404).json({ message: 'User not found' });
       }
   
-      const userProfile = await UserProfile.findOne({ userID: user._id });
+      // const userProfile = await UserProfile.findOne({ userID: user._id });
   
       if (!userProfile) {
         return res.status(404).json({ message: 'UserProfile not found' });

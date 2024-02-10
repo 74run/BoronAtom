@@ -42,10 +42,31 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
  
+  // useEffect(() => {
+  //   const storedInvolvements = JSON.parse(localStorage.getItem(`involvements_${userID}`) || '[]');
+  //   setInvolvements(storedInvolvements);
+  // }, []);
+
   useEffect(() => {
-    const storedInvolvements = JSON.parse(localStorage.getItem(`involvements_${userID}`) || '[]');
-    setInvolvements(storedInvolvements);
+    fetchInvolvement();
   }, []);
+  
+  const fetchInvolvement = () => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch educations');
+        }
+        return response.json(); // Parse the response JSON
+      })
+      .then(data => {
+        // console.log("Project data:",data)
+        setInvolvements(data); // Set projects state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+      });
+  };
 
   
   const handleEditClick = (id: string, organization: string, role: string, startDate: { month: string; year: string },
@@ -69,7 +90,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
       setInvolvements(updatedItems);
 
-      localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedItems));
+      // localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedItems));
       
 
       setEditData(null);
@@ -96,7 +117,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       },
     };
 
-    const storageKey = `involvements_${userID}`;
+    // const storageKey = `involvements_${userID}`;
     axios.post(`http://localhost:3001/api/userprofile/${userID}/involvement`, formattedInvolvement)
       .then((response) => {
         const newInvolvementFromServer = response.data.involvement;
@@ -108,7 +129,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         endDate: { month: '', year: '' }, description: '' });
 
         const updatedInvolvements = [...involvements, newInvData];
-        localStorage.setItem(storageKey, JSON.stringify(updatedInvolvements));
+        // localStorage.setItem(storageKey, JSON.stringify(updatedInvolvements));
   
         // Set isAdding to false
         setIsAdding(false);
@@ -158,7 +179,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
         // Reset the editData state
         setEditData(null);
-        localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedInvolvements));
+        // localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedInvolvements));
       })
       .catch((error) => {
         console.error('Error deleting involvement:', error);

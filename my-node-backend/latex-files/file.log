@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.19)  8 FEB 2024 18:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.19)  10 FEB 2024 16:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -327,11 +327,11 @@ Package rerunfilecheck Info: File `file.out' has not changed.
 Here is how much of TeX's memory you used:
  10091 strings out of 474485
  157887 string characters out of 5743734
- 1942528 words of memory out of 5000000
+ 1941528 words of memory out of 5000000
  32297 multiletter control sequences out of 15000+600000
  562284 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,421b,440s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,313b,440s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/type1/public/fontawesome/
 FontAwesome.pfb><C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/type1/publi
 c/amsfonts/cm/cmbx12.pfb><C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/ty
@@ -342,7 +342,7 @@ ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/74run/AppData/Local
 ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Users/74r
 un/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
 Output written on C:\Users\74run\Desktop\TJ-VSD\my-node-backend\latex-files\fil
-e.pdf (1 page, 114517 bytes).
+e.pdf (1 page, 111511 bytes).
 PDF statistics:
  54 PDF objects out of 1000 (max. 8388607)
  2 named destinations out of 1000 (max. 500000)

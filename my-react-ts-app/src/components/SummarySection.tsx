@@ -30,10 +30,32 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
+  // useEffect(() => {
+  //   const storedSummarys = JSON.parse(localStorage.getItem(`summarys_${userID}`) || '[]');
+  //   setSummarys(storedSummarys);
+  // }, []);
+
+
   useEffect(() => {
-    const storedSummarys = JSON.parse(localStorage.getItem(`summarys_${userID}`) || '[]');
-    setSummarys(storedSummarys);
+    fetchSummary();
   }, []);
+
+  const fetchSummary = () => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/summary`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch projects');
+        }
+        return response.json(); // Parse the response JSON
+      })
+      .then(data => {
+        // console.log("Project data:",data)
+        setSummarys(data); // Set projects state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching projects:', error);
+      });
+  };
   
 
   const handleEditClick = (id: string, content: string) => {
@@ -54,7 +76,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
         });
 
         const updatedSummarys = [...summarys, newSumData];
-        localStorage.setItem(storageKey, JSON.stringify(updatedSummarys));
+        // localStorage.setItem(storageKey, JSON.stringify(updatedSummarys));
         
   
         setIsAdding(false);
@@ -75,7 +97,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
       );
       setSummarys(updatedItems);
 
-      localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedItems));
+      // localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedItems));
       setEditData(null);
     }
   }
@@ -93,7 +115,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
           const updatedSummarys = summarys.filter((summary) => summary._id !== id);
           setSummarys(updatedSummarys);
 
-          localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedSummarys));
+          // localStorage.setItem(`summarys_${userID}`, JSON.stringify(updatedSummarys));
   
           // Reset the editData state
           setEditData(null);

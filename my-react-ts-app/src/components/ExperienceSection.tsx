@@ -46,10 +46,31 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
+// useEffect(() => {
+//   const storedExperiences = JSON.parse(localStorage.getItem(`experiences_${userID}`) || '[]');
+//   setExperiences(storedExperiences);
+// }, []);
+
 useEffect(() => {
-  const storedExperiences = JSON.parse(localStorage.getItem(`experiences_${userID}`) || '[]');
-  setExperiences(storedExperiences);
+  fetchExperience();
 }, []);
+
+const fetchExperience = () => {
+  fetch(`http://localhost:3001/api/userprofile/${userID}/experience`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch educations');
+      }
+      return response.json(); // Parse the response JSON
+    })
+    .then(data => {
+      // console.log("Project data:",data)
+      setExperiences(data); // Set projects state with the fetched data
+    })
+    .catch(error => {
+      console.error('Error fetching projects:', error);
+    });
+};
   
 
 
@@ -75,7 +96,7 @@ useEffect(() => {
 
     setExperiences(updatedItems);
 
-    localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedItems));
+    // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedItems));
       
       setEditData(null);
     }
@@ -95,7 +116,7 @@ useEffect(() => {
       },
     };
 
-    const storageKey = `experiences_${userID}`;
+    // const storageKey = `experiences_${userID}`;
  
     axios.post(`http://localhost:3001/api/userprofile/${userID}/experience`, formattedExperience)
       .then((response) => {
@@ -104,7 +125,7 @@ useEffect(() => {
         setExperiences([...experiences, newExpData]);
 
         const updatedExperiences = [...experiences, newExpData];
-        localStorage.setItem(storageKey, JSON.stringify(updatedExperiences));
+        // localStorage.setItem(storageKey, JSON.stringify(updatedExperiences));
         // Reset the newExperience state
         setNewExperience({ _id: '', jobTitle: '', company: '', location: '', startDate: { month: '', year: '' },
         endDate: { month: '', year: '' }, description:'' });
@@ -127,7 +148,7 @@ useEffect(() => {
   
         // Reset the editData state
         setEditData(null);
-        localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedExperiences));
+        // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedExperiences));
       })
       .catch((error) => {
         console.error('Error deleting experience:', error.message);

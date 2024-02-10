@@ -5,6 +5,7 @@ const proSchema = require('./ProModel');
 const certSchema = require('./CertModel');
 const invSchema = require('./InvModel');
 const SumSchema = require('./SumModel');
+const skillSchema = require('./SkillModel');
 
 
 
@@ -14,13 +15,16 @@ const UserProfileSchema = new mongoose.Schema({
         ref: 'User',
         required: true 
       },
+
+
   
     summary: [SumSchema], 
     education: [EduSchema],
     experience: [expSchema],
     project: [proSchema],
     certification: [certSchema],
-    involvement: [invSchema] 
+    involvement: [invSchema],
+    skills: [skillSchema] 
 
 });
 
