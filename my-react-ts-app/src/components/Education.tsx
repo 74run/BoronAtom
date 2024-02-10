@@ -73,6 +73,8 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
 
 
+
+
   const handleEditClick = (    id: string,
     university: string,
     degree: string,

@@ -29,7 +29,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
    endDate: { month: string; year: string },
    skills: string,  description: string 
 } | null>(null);
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<Project[]>(Projects);
   const [newProject, setNewProject] = useState<Project>({
     _id: '',
     name: '',
@@ -47,6 +47,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   ];
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
+
+  useEffect(() => {
+    const storedProjects = JSON.parse(localStorage.getItem(`projects_${userID}`) || '[]');
+    setProjects(storedProjects);
+  }, []);
+  
 
   const handleEditClick = (id: string, name: string,
 
@@ -75,6 +81,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
       setProjects(updatedItems);
 
+      localStorage.setItem(`projects_${userID}`, JSON.stringify(updatedItems));
+
       setEditData(null);
     }
   };
@@ -93,6 +101,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       },
     };
   
+    const storageKey = `projects_${userID}`;
   
     axios.post(`http://localhost:3001/api/userprofile/${userID}/project`, formattedExperience)
       .then((response) => {
@@ -105,6 +114,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         setNewProject({ _id: '', name: '', startDate: { month: '', year: '' },
         endDate: { month: '', year: '' },
         skills: '', description: '' });
+
+
+        const updatedProjects = [...projects, newProData];
+        localStorage.setItem(storageKey, JSON.stringify(updatedProjects));
 
         // Set isAdding to false
         setIsAdding(false);
@@ -124,6 +137,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
         // Reset the editData state
         setEditData(null);
+        localStorage.setItem(`projects_${userID}`, JSON.stringify(updatedProjects));
       })
       .catch((error) => {
         console.error('Error deleting project:', error.message);
