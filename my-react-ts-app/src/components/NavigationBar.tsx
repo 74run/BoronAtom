@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/Navbar.css'; // Import custom CSS for Navbar styling
 import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
 import pic from './Gold.png';
 
@@ -27,33 +27,33 @@ const Navbar: React.FC<NavbarProps> = () => {
   };
 
   return (
-    <div >
-    <BootstrapNavbar bg="dark" variant="dark" fixed="top">
-      <BootstrapNav className="mr-auto" >
-        <Link
-          to="/"
-          className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
-          onClick={() => handleItemClick('home')}
-        >
-          Home
-        </Link>
-        <Link
-          to="/notifications"
-          className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
-          onClick={() => handleItemClick('notifications')}
-        >
-          Notifications
-        </Link>
-        <Link
-          to="/add-friends"
-          className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
-          onClick={() => handleItemClick('add-friends')}
-        >
-          Add Friends
-        </Link>
-        <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle style={{ width: '30px', height: '30px' }} />}  id="basic-nav-dropdown">
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+  <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
+    <BootstrapNav className="" style={{}}>
+      <Link
+        to="/"
+        className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
+        onClick={() => handleItemClick('home')}
+      >
+        Home
+      </Link>
+      <Link
+        to="/notifications"
+        className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
+        onClick={() => handleItemClick('notifications')}
+      >
+        Notifications
+      </Link>
+      <Link
+        to="/add-friends"
+        className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
+        onClick={() => handleItemClick('add-friends')}
+      >
+        Add Friends
+      </Link>
+      <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />} id="basic-nav-dropdown">
         <NavDropdown.Item>
-          <Image src={pic} alt="Profile" roundedCircle style={{ width: '30px', height: '30px', marginRight: '10px' }} />
+          <Image src={pic} alt="Profile" roundedCircle className="profile-pic" />
           Your Profile
         </NavDropdown.Item>
         <NavDropdown.Divider />
@@ -64,13 +64,10 @@ const Navbar: React.FC<NavbarProps> = () => {
         <NavDropdown.Item>Privacy</NavDropdown.Item>
         <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
       </NavDropdown>
-      </BootstrapNav>
+    </BootstrapNav>
+  </BootstrapNavbar>
+</div>
 
-
-
-      
-    </BootstrapNavbar>
-    </div>
   );
 };
 

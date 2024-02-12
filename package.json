@@ -4,7 +4,6 @@
     "client": "cd ./my-react-ts-app && npm start",
     "start": "concurrently -n server,client -c red,green \"nodemon  cd ./my-node-backend/server.js\" \"npm run client\""
   },
-  
   "devDependencies": {
     "@types/react-katex": "^3.0.4",
     "@types/react-latex": "^2.0.3",
@@ -16,7 +15,10 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.1",
     "katex": "^0.16.9",
+    "latex.js": "^0.12.6",
+    "node-latex": "^3.1.0",
     "pdflatex": "^0.0.1",
+    "pdftex.js": "^0.0.10",
     "react-latex": "^2.0.0",
     "react-pdf": "^7.7.0",
     "react-pdf-js": "^5.1.0",

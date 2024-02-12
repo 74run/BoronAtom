@@ -171,15 +171,18 @@ const fetchExperience = () => {
   return (
     <div
       style={{
-        border: '2px solid #ddd',
+        border: '2px solid #4CAF50',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '20px',
+        fontFamily: 'Arial, sans-serif',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2>Experience</h2>
+      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Experience</b></h2>
       {experiences.map((experience) => (
-        <div key={experience._id} className="mb-3">
+        <div key={experience._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === experience._id ? (
             // Edit mode
             <div>
@@ -191,6 +194,7 @@ const fetchExperience = () => {
                 onChange={(e) =>
                   setEditData({ ...editData, jobTitle: e.target.value })
                 }
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <input
                 type="text"
@@ -200,6 +204,7 @@ const fetchExperience = () => {
                 onChange={(e) =>
                   setEditData({ ...editData, company: e.target.value })
                 }
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <input
                 type="text"
@@ -209,6 +214,7 @@ const fetchExperience = () => {
                 onChange={(e) =>
                   setEditData({ ...editData, location: e.target.value })
                 }
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <div className="date-dropdowns">
                 <label>Start Date:</label>
@@ -217,6 +223,7 @@ const fetchExperience = () => {
                     className="form-control mb-2"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -233,6 +240,7 @@ const fetchExperience = () => {
                     className="form-control mb-2"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -249,11 +257,12 @@ const fetchExperience = () => {
               </div>
               <div className="date-dropdowns">
                 <label>End Date:</label>
-                <div className="flex-container">  
+                <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.month}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -270,6 +279,7 @@ const fetchExperience = () => {
                     className="form-control mb-2"
                     value={editData.endDate.year}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -292,10 +302,12 @@ const fetchExperience = () => {
                 onChange={(e) =>
                   setEditData({ ...editData, description: e.target.value })
                 }
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <button
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
+                style={{borderRadius: '4px'}}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -303,22 +315,25 @@ const fetchExperience = () => {
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
+                style={{borderRadius: '4px'}}
               >
                 Cancel
               </button>
             </div>
           ) : (
             // View mode
+            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
+            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{experience.jobTitle}</b></h3>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.company}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.location}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '1rem' }}>{experience.description}</p>
             <div>
-              <h3>{experience.jobTitle}</h3>
-              <p>{experience.company}</p>
-              <p>{experience.location}</p>
-              <p>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
-              <p>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
-              <p>{experience.description}</p>
               <button
                 className="btn btn-primary me-2"
                 onClick={() => handleEditClick(experience._id, experience.jobTitle, experience.company, experience.location, experience.startDate, experience.endDate, experience.description)}
+                style={{ borderRadius: '4px' }}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
@@ -326,11 +341,14 @@ const fetchExperience = () => {
               <button
                 className="btn btn-danger"
                 onClick={() => handleDelete(experience._id)}
+                style={{ borderRadius: '4px' }}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
               </button>
             </div>
+          </div>
+          
           )}
         </div>
       ))}
@@ -345,6 +363,7 @@ const fetchExperience = () => {
             onChange={(e) =>
               setNewExperience({ ...newExperience, jobTitle: e.target.value })
             }
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <input
             type="text"
@@ -354,6 +373,7 @@ const fetchExperience = () => {
             onChange={(e) =>
               setNewExperience({ ...newExperience, company: e.target.value })
             }
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <input
             type="text"
@@ -363,6 +383,7 @@ const fetchExperience = () => {
             onChange={(e) =>
               setNewExperience({ ...newExperience, location: e.target.value })
             }
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <div className="date-dropdowns">
             <label>Start Date:</label>
@@ -371,12 +392,13 @@ const fetchExperience = () => {
                 className="form-control mb-2"
                 value={newExperience.startDate.month}
                 onChange={(e) => setNewExperience({ ...newExperience, startDate: { ...newExperience.startDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newExperience.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -387,12 +409,13 @@ const fetchExperience = () => {
                 className="form-control mb-2"
                 value={newExperience.startDate.year}
                 onChange={(e) => setNewExperience({ ...newExperience, startDate: { ...newExperience.startDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newExperience.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -408,12 +431,13 @@ const fetchExperience = () => {
                 className="form-control mb-2"
                 value={newExperience.endDate.month}
                 onChange={(e) => setNewExperience({ ...newExperience, endDate: { ...newExperience.endDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newExperience.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -424,12 +448,13 @@ const fetchExperience = () => {
                 className="form-control mb-2"
                 value={newExperience.endDate.year}
                 onChange={(e) => setNewExperience({ ...newExperience, endDate: { ...newExperience.endDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newExperience.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -446,10 +471,12 @@ const fetchExperience = () => {
             onChange={(e) =>
               setNewExperience({ ...newExperience, description: e.target.value })
             }
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <button
             className="btn btn-primary"
             onClick={handleSaveClick}
+            style={{borderRadius: '4px'}}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -457,6 +484,7 @@ const fetchExperience = () => {
           <button
             className="btn btn-secondary ms-2"
             onClick={() => setIsAdding(false)}
+            style={{borderRadius: '4px'}}
           >
             Cancel
           </button>
@@ -467,6 +495,7 @@ const fetchExperience = () => {
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
+          style={{borderRadius: '4px'}}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Experience
@@ -474,6 +503,8 @@ const fetchExperience = () => {
       )}
     </div>
   );
+  
+  
 }
 
 export default ExperienceSection;

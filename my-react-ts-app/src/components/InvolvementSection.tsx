@@ -209,18 +209,79 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   //     });
   // }, []);
 
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+  
+    // Check if the first line already starts with a star, if not, prepend a star
+    if (lines.length > 0 && !lines[0].startsWith('*')) {
+      lines[0] = '* ' + lines[0];
+    }
+  
+    // Add a star to the beginning of each new line
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i] !== '' && !lines[i].startsWith('*')) {
+        lines[i] = '* ' + lines[i];
+      }
+    }
+  
+    // Join the lines back together with newlines
+    const newDescription = lines.join('\n');
+  
+    // Update the state
+    setNewInvolvement({ ...newInvolvement, description: newDescription });
+  };
+
+
+  const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+    
+    // Add asterisk at the beginning of each line
+    const linesWithAsterisks = lines.map(line => {
+      // Check if the line is not empty and doesn't start with an asterisk
+      if (line.trim() !== '' && !line.trim().startsWith('*')) {
+        return `* ${line}`;
+      } else {
+        return line;
+      }
+    });
+    
+    // Join the lines back together with newlines
+    const newDescription = linesWithAsterisks.join('\n');
+    
+    // Ensure editData is not null before updating
+    if (editData) {
+      setEditData({ 
+        ...editData, 
+        description: newDescription
+      });
+    }
+  };
+  
+  
+
+  
+
+  
+
   return (
-    <div
+    <div 
+      className="container"
       style={{
-        border: '2px solid #ddd',
+        border: '2px solid #4CAF50',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '20px',
+        fontFamily: 'Arial, sans-serif',
+        color: '#333',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2>Involvements</h2>
+      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Involvements</b></h2>
       {involvements.map((involvement) => (
-        <div key={involvement._id} className="mb-3">
+        <div key={involvement._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === involvement._id ? (
             // Edit mode
             <div>
@@ -230,6 +291,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 placeholder="Organization"
                 value={editData.organization}
                 onChange={(e) => setEditData({ ...editData, organization: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               />
               <input
                 type="text"
@@ -237,6 +299,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 placeholder="Role"
                 value={editData.role}
                 onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               />
               <div className="date-dropdowns">
                 <label>Start Date:</label>
@@ -245,6 +308,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     className="form-control mb-2"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -261,6 +325,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     className="form-control mb-2"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -282,6 +347,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     className="form-control mb-2"
                     value={editData.endDate.month}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -298,6 +364,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     className="form-control mb-2"
                     value={editData.endDate.year}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -316,11 +383,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 className="form-control mb-2"
                 placeholder="Description"
                 value={editData.description}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                onChange={handleEditDescriptionChange}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               />
               <button
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
+                style={{borderRadius: '4px'}}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -328,21 +397,26 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
+                style={{borderRadius: '4px'}}
               >
                 Cancel
               </button>
             </div>
           ) : (
             // View mode
+            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
+            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{involvement.organization}</b></h3>
+            <p style={{ marginBottom: '0.5rem' }}>Role: {involvement.role}</p>
+            <p style={{ marginBottom: '0.5rem' }}>Start Date: {involvement.startDate && `${involvement.startDate.month} ${involvement.startDate.year}`}</p>
+            <p style={{ marginBottom: '0.5rem' }}>End Date: {involvement.endDate && `${involvement.endDate.month} ${involvement.endDate.year}`}</p>
+            <p style={{ marginBottom: '1rem' }}> {involvement.description.split('*').slice(1).map((part, index) => (
+    <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
+  ))}</p>
             <div>
-              <h3>{involvement.organization}</h3>
-              <p>Role: {involvement.role}</p>
-              <p>Start Date: {involvement.startDate && `${involvement.startDate.month} ${involvement.startDate.year}`}</p>
-              <p>End Date: {involvement.endDate && `${involvement.endDate.month} ${involvement.endDate.year}`}</p>
-              <p>Description: {involvement.description}</p>
               <button
                 className="btn btn-primary me-2"
                 onClick={() => handleEditClick(involvement._id, involvement.organization, involvement.role, involvement.startDate, involvement.endDate, involvement.description)}
+                style={{ borderRadius: '4px' }}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
@@ -350,11 +424,14 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               <button
                 className="btn btn-danger"
                 onClick={() => handleDelete(involvement._id)}
+                style={{ borderRadius: '4px' }}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
               </button>
             </div>
+          </div>
+          
           )}
         </div>
       ))}
@@ -367,6 +444,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             placeholder="Organization"
             value={newInvolvement.organization}
             onChange={(e) => setNewInvolvement({ ...newInvolvement, organization: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
           <input
             type="text"
@@ -374,6 +452,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             placeholder="Role"
             value={newInvolvement.role}
             onChange={(e) => setNewInvolvement({ ...newInvolvement, role: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
           <div className="date-dropdowns">
             <label>Start Date:</label>
@@ -382,12 +461,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 className="form-control mb-2"
                 value={newInvolvement.startDate.month}
                 onChange={(e) => setNewInvolvement({ ...newInvolvement, startDate: { ...newInvolvement.startDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newInvolvement.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -398,12 +478,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 className="form-control mb-2"
                 value={newInvolvement.startDate.year}
                 onChange={(e) => setNewInvolvement({ ...newInvolvement, startDate: { ...newInvolvement.startDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newInvolvement.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -419,12 +500,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 className="form-control mb-2"
                 value={newInvolvement.endDate.month}
                 onChange={(e) => setNewInvolvement({ ...newInvolvement, endDate: { ...newInvolvement.endDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newInvolvement.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -435,12 +517,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 className="form-control mb-2"
                 value={newInvolvement.endDate.year}
                 onChange={(e) => setNewInvolvement({ ...newInvolvement, endDate: { ...newInvolvement.endDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newInvolvement.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -453,11 +536,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             className="form-control mb-2"
             placeholder="Description"
             value={newInvolvement.description}
-            onChange={(e) => setNewInvolvement({ ...newInvolvement, description: e.target.value })}
+            onChange={(e) => handleDescriptionChange(e)}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
           <button
             className="btn btn-primary"
             onClick={handleSaveClick}
+            style={{borderRadius: '4px'}}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -465,6 +550,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
           <button
             className="btn btn-secondary ms-2"
             onClick={() => setIsAdding(false)}
+            style={{borderRadius: '4px'}}
           >
             Cancel
           </button>
@@ -475,6 +561,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
+          style={{borderRadius: '4px'}}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Involvement
@@ -482,6 +569,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       )}
     </div>
   );
+  
 };
 
 export default InvolvementSection;

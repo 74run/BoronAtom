@@ -323,14 +323,13 @@ const previewPdf = async () => {
 
     const involvementSection = involvements.map(
       (involvement) => `
-
-      \\begin{bullet-list-major}
-      \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.year} -- ${involvement.endDate.year}
-      
-      \\end{bullet-list-major}
-      `
-    )
-    .join("\n");
+          \\begin{bullet-list-major}
+          \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.year} -- ${involvement.endDate.year}
+          ${involvement.description.split('*').slice(1).map((part, index) => `\\newline -{${part}}`).join('')}
+          \\end{bullet-list-major}
+          `
+    ).join("\n");
+    
 
     const certificationSection = certifications.map(
       (certification) => `
@@ -527,14 +526,15 @@ const previewPdf = async () => {
        
         {/* PDF Download and Preview Buttons */}
         <div className="d-flex justify-content-end">
-      <button className="btn btn-primary mr-2" onClick={generatePdf}>
-        Download PDF
-      </button>
-      </div><div>
-      <button className="btn btn-secondary" onClick={previewPdf}>
-        Preview PDF
-      </button>
-    </div>
+  <button className="btn btn-primary mr-2" onClick={generatePdf} style={{ marginRight: '10px' }}>
+    Download PDF
+  </button>
+  
+  <button className="btn btn-secondary" onClick={previewPdf}>
+    Preview PDF
+  </button>
+</div>
+
         {/* PDF Preview */}
         {previewPdfUrl && (
           <iframe

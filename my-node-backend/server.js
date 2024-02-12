@@ -7,7 +7,7 @@ const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
-
+const { latex } = require('latex.js');
 
 
 const EduRoutes = require('./routes/EduRoute');

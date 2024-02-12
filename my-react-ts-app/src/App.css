@@ -18,6 +18,16 @@ body {
 
 }
 
+.Full-Resume {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #e7e5ed;
+  
+  overflow: hidden;
+  box-shadow: 0 0 200px rgba(247, 244, 244, 1);
+}
+
 
 
 .custom-modal {
@@ -25,31 +35,7 @@ body {
 }
 
 
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    background-color: #333;
-    color: #fff;
-  }
-  
-  .logo img {
-    max-height: 40px;
-  }
-  
-  .nav-buttons {
-    display: flex;
-    justify-content: flex-end; /* Align items to the right */
-    align-items: center;
-  }
-  
-  
-  .nav-buttons a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 10px;
-  }
+
 
   
  

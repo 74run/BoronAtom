@@ -434,26 +434,28 @@ const Profile: React.FC = () => {
       
 
       {/* Three Sections Layout */}
-      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black'  }}   >
+      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', padding: '80px',   }}   >
         {/* Left Section (20%) */}
-        <div  style={{ flex: '0 0 20%'}}>
+        <div  style={{ flex: '0 0 10%'}}>
           {/* Add content for the left section */}
           {/* For example: */}
         </div>
 
         {/* Middle Section (60%) */}
-        <div style={{ flex: '0 0 60%', backgroundColor: '#ffffff', position: 'relative' }}>
+        <div className= 'Full-Resume' style={{ flex: '0 0 60%', position: 'relative', borderRadius: '20px' }}>
           {/* Content for the middle section goes here */}
+      <div style={{  marginBottom: '20px' }}>
           <CoverPage onUpload={(file: File): void => { } 
            } />
-           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0 }}>
-           <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
+           
+           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0, marginTop: '-180px' }}>
+           
       <ProfileNew UserDetail={userDetails} EduDetail={eduDetails} />
-    </div>
-        {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
-          </div>
+
+       
+          </div></div>
           <SectionWrapper>
-            <div style={{ marginTop: '250px' }} />
+            <div style={{ marginTop: '150px', padding: '10px' }} />
       
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
@@ -475,14 +477,21 @@ const Profile: React.FC = () => {
         </div>
          
         {/* Right Section (20%) */}
-        <div style={{ flex: '0 0 20%' ,position: 'relative'}}>
+   
+
+        
+
+      <div style={{ flex: '0 0 30%' ,position: 'relative'}}>
           {/* Add content for the right section */}
           {/* For example: */}
         </div>
        
       </div>
-      
-      <Footer /> </>
+      <div >
+      <Footer  />
+      </div>
+    
+       </>
     
   );
 };

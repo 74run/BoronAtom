@@ -78,53 +78,62 @@ const handleAction = async () => {
   return (
     <div
       style={{
-        border: '2px solid #ddd',
+        border: '2px solid #4CAF50',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '20px',
+        fontFamily: 'Arial, sans-serif',
+        color: '#333',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 className="mb-4">Skills</h2>
+      <h2 className="mb-4" style={{color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare'}}><b>Skills</b></h2>
       <div className="mb-3">
         <div className="input-group">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Search or Add new skill"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <button
-            className="btn btn-outline-secondary"
-            type="button"
-            onClick={handleAction}
-          >
-            {skills.length === 0 ? (
-              <FontAwesomeIcon icon={faPlus} />
-            ) : (
-              <FontAwesomeIcon icon={faSearch} />
-            )}
-          </button>
+        
+  <input
+    type="text"
+    className="form-control"
+    placeholder="Search or Add new skill"
+    value={inputValue}
+    onChange={(e) => setInputValue(e.target.value)}
+    style={{  border: '1px solid #ccc', height: '38px', marginRight: '0px', flex: '1' }}
+  />
+  <button
+    className="btn btn-secondary"
+    type="button"
+    onClick={handleAction}
+    style={{ height: '38px' }}
+  >
+    <FontAwesomeIcon icon={faPlus} />
+  </button>
+
         </div>
       </div>
-      <ul className="list-group mb-3">
-        {skills.map((skill) => (
-          <li
-            key={skill._id}
-            className="list-group-item d-flex justify-content-between align-items-center"
-          >
-            {skill.name}
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={() => handleDeleteSkill(skill._id)}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="d-flex flex-wrap">
+  {skills.map((skill) => (
+    <div
+      key={skill._id}
+      className="card m-2"
+      style={{ width: '200px', borderRadius: '20px', border: '1px solid #ccc' }}
+    >
+      <div className="card-body d-flex justify-content-between align-items-center">
+        <span>{skill.name}</span>
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => handleDeleteSkill(skill._id)}
+          style={{ borderRadius: '4px' }}
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
     </div>
   );
+  
 };
 
 export default Skills;

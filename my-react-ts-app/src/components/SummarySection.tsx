@@ -134,36 +134,40 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
 });
 setIsAdding(true);
   };
-
   return (
     <div
       style={{
-        border: '2px solid black',
-        borderRadius: '8px',
+        border: '2px solid #4CAF50',
+        borderRadius: '10px',
         padding: '1.5rem',
         marginBottom: '1.5rem',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 style={{ color: 'black' }}>Summary</h2>
+      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Summary</b></h2>
       {summarys.map((summary) => (
-        <div key={summary._id} style={{ marginBottom: '1rem' }}>
+        <div key={summary._id} style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', transition: 'all 0.3s' }}>
           {editData && editData.id === summary._id ? (
             <>
               {/* Edit mode */}
               <textarea
                 value={editData.content}
-                onChange= {(e)=> setEditData({...editData, content: e.target.value })}
+                onChange={(e) => setEditData({ ...editData, content: e.target.value })}
                 className="form-control mb-2"
-                style={{ height: '150px' }}
+                style={{ height: '150px', borderRadius: '8px', border: '1px solid #ccc', width: '100%', marginBottom: '1rem', transition: 'all 0.3s' }}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <button
-                  onClick= {handleUpdate}
+                  onClick={handleUpdate}
                   className="btn btn-success me-2"
                   style={{
-                    backgroundColor: '#28a745',
-                    borderColor: '#28a745',
+                    backgroundColor: '#4CAF50',
                     color: '#fff',
+                    border: '1px solid #4CAF50',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    transition: 'all 0.3s',
                   }}
                 >
                   <FontAwesomeIcon icon={faSave} className="me-2" />
@@ -173,9 +177,12 @@ setIsAdding(true);
                   onClick={handleCancelClick}
                   className="btn btn-secondary"
                   style={{
-                    backgroundColor: '#6c757d',
-                    borderColor: '#6c757d',
-                    color: '#fff',
+                    backgroundColor: '#ccc',
+                    color: '#000',
+                    border: '1px solid #ccc',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    transition: 'all 0.3s',
                   }}
                 >
                   <FontAwesomeIcon icon={faTimes} className="me-2" />
@@ -193,8 +200,11 @@ setIsAdding(true);
                   className="btn btn-primary me-2"
                   style={{
                     backgroundColor: '#007bff',
-                    borderColor: '#007bff',
                     color: '#fff',
+                    border: '1px solid #007bff',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    transition: 'all 0.3s',
                   }}
                 >
                   <FontAwesomeIcon icon={faEdit} className="me-2" />
@@ -203,6 +213,14 @@ setIsAdding(true);
                 <button
                   onClick={() => handleDelete(summary._id)}
                   className="btn btn-danger"
+                  style={{
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    border: '1px solid #dc3545',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    transition: 'all 0.3s',
+                  }}
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
@@ -213,37 +231,68 @@ setIsAdding(true);
         </div>
       ))}
       {isAdding && summarys.length === 0 && (
-         <><textarea
-          value={newSummary.content}
-          onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
-          className="form-control mb-2"
-          style={{ height: '150px' }} />
-          
-          <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
-            Save
-          </button><button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)}>
-            Cancel
-          </button></>
-        
+        <>
+          <textarea
+            value={newSummary.content}
+            onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
+            className="form-control mb-2"
+            style={{ height: '150px', borderRadius: '8px', border: '1px solid #ccc', width: '100%', marginBottom: '1rem', transition: 'all 0.3s' }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={handleSaveClick}
+              style={{
+                backgroundColor: '#4CAF50',
+                color: '#fff',
+                border: '1px solid #4CAF50',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                marginRight: '0.5rem',
+                transition: 'all 0.3s',
+              }}
+            >
+              Save
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setIsAdding(false)}
+              style={{
+                backgroundColor: '#ccc',
+                color: '#000',
+                border: '1px solid #ccc',
+                padding: '0.5rem 1rem',
+                borderRadius: '4px',
+                transition: 'all 0.3s',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
       )}
-      
-     {!isAdding && summarys.length === 0 &&(
-      
-      <button
-        onClick={handleAddClick}
-        className="btn btn-primary"
-        style={{
-          backgroundColor: '#007bff',
-          borderColor: '#007bff',
-          color: '#fff',
-        }}
-      >
-        <FontAwesomeIcon icon={faEdit} className="me-2" />
-        Add Summary
-      </button>
-     )}
+  
+      {!isAdding && summarys.length === 0 && (
+        <button
+          onClick={handleAddClick}
+          className="btn btn-primary"
+          style={{
+            backgroundColor: '#4CAF50',
+            color: '#fff',
+            border: '1px solid #4CAF50',
+            padding: '0.5rem 1rem',
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+          }}
+        >
+          <FontAwesomeIcon icon={faEdit} className="me-2" />
+          Add Summary
+        </button>
+      )}
     </div>
   );
-};
+  
+        }  
 
 export default SummarySection;
