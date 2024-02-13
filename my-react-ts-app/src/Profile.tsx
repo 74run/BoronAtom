@@ -22,6 +22,8 @@ import './index.css';
 import './css/profile.css';
 import './App.css';
 
+import PDFResume from './components/MyPdfViewer';
+
 import React, { useEffect, useState } from 'react';
 
 
@@ -450,7 +452,8 @@ const Profile: React.FC = () => {
            
            <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0, marginTop: '-180px' }}>
            
-      <ProfileNew UserDetail={userDetails} EduDetail={eduDetails} />
+      <ProfileNew UserDetail={userDetails} />
+      <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 
        
           </div></div>

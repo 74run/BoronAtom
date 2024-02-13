@@ -6,8 +6,11 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
 // ... (imports and other code)
+interface LoginFormProps {
+  onLogin: () => void; // Callback function to be called after successful login
+}
 
-const LoginForm: React.FC = () => {
+const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [userId, setUserId] = useState('');
@@ -23,6 +26,9 @@ const LoginForm: React.FC = () => {
 
       console.log('User ID:', userID);
       console.log('Server Response:', message);
+      onLogin();
+
+      sessionStorage.setItem('userId', userID);
 
       // Dynamically navigate to the dashboard with the username as a parameter
       navigate(`/profile/${userID}`);

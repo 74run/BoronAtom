@@ -179,17 +179,19 @@ router.post('/forgotpassword', async (req, res) => {
     }
 })
 
+
+
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
     
-        console.log('after findone');
+        // console.log('after findone');
         if (!user) {
           return res.status(401).json({ success: false, message: 'User does not exist!' });
         }
-        console.log('password from frontend is:', password);
-        console.log('password in db is:', user.password);
+        // console.log('password from frontend is:', password);
+        // console.log('password in db is:', user.password);
     
         // const isPasswordValid = bcrypt.compare(password, user.password);
         bcrypt.compare(password, user.password, (err, result) => {

@@ -191,6 +191,57 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   //     });
   // }, []);
 
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+  
+    // Check if the first line already starts with a star, if not, prepend a star
+    if (lines.length > 0 && !lines[0].startsWith('*')) {
+      lines[0] = '* ' + lines[0];
+    }
+  
+    // Add a star to the beginning of each new line
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i] !== '' && !lines[i].startsWith('*')) {
+        lines[i] = '* ' + lines[i];
+      }
+    }
+  
+    // Join the lines back together with newlines
+    const newDescription = lines.join('\n');
+  
+    // Update the state
+    setNewProject({ ...newProject, description: newDescription });
+  };
+
+
+  const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+    
+    // Add asterisk at the beginning of each line
+    const linesWithAsterisks = lines.map(line => {
+      // Check if the line is not empty and doesn't start with an asterisk
+      if (line.trim() !== '' && !line.trim().startsWith('*')) {
+        return `* ${line}`;
+      } else {
+        return line;
+      }
+    });
+    
+    // Join the lines back together with newlines
+    const newDescription = linesWithAsterisks.join('\n');
+    
+    // Ensure editData is not null before updating
+    if (editData) {
+      setEditData({ 
+        ...editData, 
+        description: newDescription
+      });
+    }
+  };
+
   
 
   return (
@@ -224,7 +275,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="form-control mb-2"
                 placeholder="Description"
                 value={editData.description}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                onChange={handleEditDescriptionChange}
                 
                 style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
@@ -343,9 +394,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   <div style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>
     <strong>Skills:</strong> {project.skills}
   </div>
-  <div style={{ fontFamily: 'Arial, sans-serif', marginBottom: '1rem' }}>
-    <strong>Description:</strong> {project.description}
-  </div>
+  <div style={{ marginBottom: '1rem' }}> {project.description.split('*').slice(1).map((part, index) => (
+    <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
+  ))}</div>
   <div>
     <button
       className="btn btn-primary me-2"
@@ -384,7 +435,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             className="form-control mb-2"
             placeholder="Description"
             value={newProject.description}
-            onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+            onChange={(e) => handleDescriptionChange(e)}
             style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <input

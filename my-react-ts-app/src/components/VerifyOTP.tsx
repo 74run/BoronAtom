@@ -43,7 +43,7 @@ const VerifyOTP: React.FC = () => {
       const msg = response.data.message;
 
       if (msg === 'User email verified successfully.') {
-        navigate('/');
+        navigate('/login');
       } else {
         // Set the error message
         setErrorMessage(msg);

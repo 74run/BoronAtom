@@ -168,6 +168,56 @@ const fetchExperience = () => {
     setIsAdding(true);
   };
 
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+  
+    // Check if the first line already starts with a star, if not, prepend a star
+    if (lines.length > 0 && !lines[0].startsWith('*')) {
+      lines[0] = '* ' + lines[0];
+    }
+  
+    // Add a star to the beginning of each new line
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i] !== '' && !lines[i].startsWith('*')) {
+        lines[i] = '* ' + lines[i];
+      }
+    }
+  
+    // Join the lines back together with newlines
+    const newDescription = lines.join('\n');
+  
+    // Update the state
+    setNewExperience({ ...newExperience, description: newDescription });
+  };
+
+
+  const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+    
+    // Add asterisk at the beginning of each line
+    const linesWithAsterisks = lines.map(line => {
+      // Check if the line is not empty and doesn't start with an asterisk
+      if (line.trim() !== '' && !line.trim().startsWith('*')) {
+        return `* ${line}`;
+      } else {
+        return line;
+      }
+    });
+    
+    // Join the lines back together with newlines
+    const newDescription = linesWithAsterisks.join('\n');
+    
+    // Ensure editData is not null before updating
+    if (editData) {
+      setEditData({ 
+        ...editData, 
+        description: newDescription
+      });
+    }
+  };
+
   return (
     <div
       style={{
@@ -294,14 +344,12 @@ const fetchExperience = () => {
                   </select>
                 </div>
               </div>
-              <input
-                type="text"
+              <textarea
+                
                 className="form-control mb-2"
                 placeholder="Description"
                 value={editData.description}
-                onChange={(e) =>
-                  setEditData({ ...editData, description: e.target.value })
-                }
+                onChange={handleEditDescriptionChange}
                 style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <button
@@ -328,7 +376,9 @@ const fetchExperience = () => {
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.location}</p>
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '1rem' }}>{experience.description}</p>
+            <p style={{ marginBottom: '1rem' }}> {experience.description.split('*').slice(1).map((part, index) => (
+    <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
+  ))}</p>
             <div>
               <button
                 className="btn btn-primary me-2"
@@ -463,14 +513,11 @@ const fetchExperience = () => {
               </select>
             </div>
           </div>
-          <input
-            type="text"
+          <textarea
             className="form-control mb-2"
             placeholder="Description"
             value={newExperience.description}
-            onChange={(e) =>
-              setNewExperience({ ...newExperience, description: e.target.value })
-            }
+            onChange={(e) => handleDescriptionChange(e)}
             style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <button

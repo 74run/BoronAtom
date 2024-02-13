@@ -1,27 +1,18 @@
-const { TextDecoder, TextEncoder } = require('util');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const { GenerativeModel, configure } = require('google-generativeai');
+// Access your API key as an environment variable (see "Set up your API key" above)
+const genAI = new GoogleGenerativeAI('AIzaSyBf4mP_ZntIUtomLLYU3i37o5_iSfTGD4k');
 
-const { display } = require('IPython.display');
-const Markdown = require('markdown').markdown;
+async function run() {
+  // For text-only input, use the gemini-pro model
+  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
 
-// Function to convert text to Markdown format
-function toMarkdown(text) {
-  text = text.replace('•', '  *');
-  return Markdown(textwrap.indent(text, '> ', predicate = (_) => true));
+  const prompt = "Write a story about a magic backpack in 50 words."
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  console.log(text);
 }
 
-// Set up API key
-const GOOGLE_API_KEY = 'ABC';
-
-// Configure GenerativeAI with API key
-configure({ api_key: GOOGLE_API_KEY });
-
-// Initialize GenerativeModel
-const model = new GenerativeModel('gemini-pro');
-
-// Generate content and display as Markdown
-(async () => {
-  const response = await model.generateContent("Write a Summary for my Resume as a Mechanical Engineer");
-  display(toMarkdown(response.text));
-})();
+run();
