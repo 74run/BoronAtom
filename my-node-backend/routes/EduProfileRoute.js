@@ -114,7 +114,8 @@ router.get('/EduDetails/:userID', async (req, res) => {
               involvement: user.involvement,
               certification: user.certification,
               project: user.project,
-              summary: user.summary
+              summary: user.summary,
+              skills: user.skills
               // Add other fields as needed
           }
       });

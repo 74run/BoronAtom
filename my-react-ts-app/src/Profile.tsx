@@ -15,6 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
+import ContactEditor from './components/contact';
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -76,9 +77,17 @@ interface EduDetails {
   expirationDate: { month: string; year: string };
   url: string;
   }>
+  skills: Array<{
+    domain: string;
+    name: string;
+  }>
 }
 
-
+interface Skill {
+  _id: string;
+  domain: string;
+  name: string;
+}
 
 interface Education {
   _id: string;
@@ -140,6 +149,7 @@ const Profile: React.FC = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [involvements, setInvolvements] = useState<Involvement[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
@@ -231,12 +241,14 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEditEdu = (id: string, data: {   university: string;
+  const handleEditEdu = (id: string, data: {   
+    university: string;
     degree: string;
     major: string;
     startDate: { month: string; year: string };
-    endDate: { month: string; year: string };}) => {
-      // console.log('Sending data to server:', data);
+    endDate: { month: string; year: string };
+  }) => {
+    // console.log('Sending data to server:', data);
     fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
       method: 'PUT',
       headers: {
@@ -244,15 +256,41 @@ const Profile: React.FC = () => {
       },
       body: JSON.stringify(data),
     })
-      .then((res) => res.json())
-      .then(() => {
+    .then((res) => res.json())
+    .then(() => {
+      // Ensure educations is not undefined before mapping over it
+      if (educations) {
         const updatedItems = educations.map((education) =>
           education._id === id ? { ...education, ...data } : education
         );
         setEducations(updatedItems);
-      });
+      }
+    });
   };
 
+  const handleEditSkill = (id: string, data: {   
+       domain: string; name: string;
+  }) => {
+    // console.log('Sending data to server:', data);
+    fetch(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then((res) => res.json())
+    .then(() => {
+      // Ensure educations is not undefined before mapping over it
+      if (skills) {
+        const updatedItems = skills.map((skill) =>
+          skill._id === id ? { ...skill, ...data } : skill
+        );
+        setSkills(updatedItems);
+      }
+    });
+  };
+  
   const handleEditSum = (id: string, data: {content: string;}) => {
       // console.log('Sending data to server:', data);
     fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
@@ -423,6 +461,17 @@ const Profile: React.FC = () => {
         setSummarys(updatedItems);
       });
   };
+
+  const handleDeleteSkill = (id: string) => {
+    fetch(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = skills.filter((skill) => skill._id !== id);
+        setSkills(updatedItems);
+      });
+  };
   
   
   
@@ -453,6 +502,7 @@ const Profile: React.FC = () => {
            <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0, marginTop: '-180px' }}>
            
       <ProfileNew UserDetail={userDetails} />
+      <ContactEditor />
       <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 
        
@@ -464,7 +514,7 @@ const Profile: React.FC = () => {
             
             <ProjectsSection  onEdit={handleEditPro}
             onDelete={handleDeletePro} Projects={projects} />
-            <Skills />
+            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
             onDelete={handleDeleteEdu}  UserDetail={userDetails} />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}

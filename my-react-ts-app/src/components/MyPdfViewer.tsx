@@ -53,6 +53,10 @@ interface EduDetails {
     expirationDate: { month: string; year: string };
     url: string;
     }>
+    skills: Array<{
+      domain: string;
+      name: string;
+    }>
   }
 
 interface PDFGeneratorProps {
@@ -87,6 +91,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`)
         .then(response => {
           if (response.data && response.data.success) {
+            console.log('user details:',response.data.user)
             setEduDetails(response.data.user);
           } else {
             console.error('Error fetching user details:', response.data.message);
@@ -222,6 +227,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       {${experienceSection}}
       \\vspace*{4pt}%
       \\header{Skills}
+
   
       \\vspace*{4pt}%
       \\header{Projects}
@@ -282,6 +288,8 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const certifications = eduDetails?.certification || [];
   
       const involvements = eduDetails?.involvement || [];
+
+      const skills = eduDetails?.skills || [];
       // Add sections for projects, certifications, skills, involvements as needed
   
       const summarySection = summarys.map(
@@ -328,6 +336,15 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         (certification) => `
         \\begin{bullet-list-major}
         \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${certification.issuedDate.year} -- ${certification.expirationDate.year}
+        \\end{bullet-list-major}
+        `
+      )
+      .join("\n");
+
+      const skillSection = skills.map(
+        (skill) => `
+        \\begin{bullet-list-major}
+        \\item \\textbf{${skill.domain}:} ${skill.name}
         \\end{bullet-list-major}
         `
       )
@@ -454,6 +471,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       {${experienceSection}}
       \\vspace*{4pt}%
       \\header{Skills}
+      {${skillSection}}
   
       \\vspace*{4pt}%
       \\header{Projects}

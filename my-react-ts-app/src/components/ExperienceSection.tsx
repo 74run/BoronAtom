@@ -376,9 +376,11 @@ const fetchExperience = () => {
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.location}</p>
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
             <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
-            <p style={{ marginBottom: '1rem' }}> {experience.description.split('*').slice(1).map((part, index) => (
-    <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
-  ))}</p>
+            {experience.description.split('*').slice(1).map((part, index) => (
+    <p key={index} style={{ marginBottom: '0.5rem' }}>
+      -{part}
+    </p>
+  ))}
             <div>
               <button
                 className="btn btn-primary me-2"

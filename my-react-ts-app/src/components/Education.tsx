@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
 interface UserDetails {
@@ -427,6 +427,7 @@ const fetchEducation = () => {
                 onClick={handleUpdate}
                 style={{borderRadius: '4px'}}
               >
+                <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
               </button>
               <button
@@ -450,6 +451,7 @@ const fetchEducation = () => {
       onClick={() => handleEditClick(education._id, education.university, education.degree, education.major, education.startDate, education.endDate)}
       style={{ borderRadius: '4px' }}
     >
+      <FontAwesomeIcon icon={faEdit} className="me-2" />
       Edit
     </button>
     <button
@@ -457,6 +459,7 @@ const fetchEducation = () => {
       onClick={() => handleDelete(education._id)}
       style={{ borderRadius: '4px' }}
     >
+      <FontAwesomeIcon icon={faTrash} className="me-2" />
       Delete
     </button>
   </div>
@@ -584,6 +587,7 @@ const fetchEducation = () => {
             </div>
           </div>
           <button type="submit" className="btn btn-primary" onClick={handleSaveClick} style={{borderRadius: '4px'}}>
+          <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
           </button>
           <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)} style={{borderRadius: '4px'}}>

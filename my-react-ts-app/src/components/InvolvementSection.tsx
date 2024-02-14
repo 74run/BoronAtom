@@ -409,9 +409,9 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             <p style={{ marginBottom: '0.5rem' }}>Role: {involvement.role}</p>
             <p style={{ marginBottom: '0.5rem' }}>Start Date: {involvement.startDate && `${involvement.startDate.month} ${involvement.startDate.year}`}</p>
             <p style={{ marginBottom: '0.5rem' }}>End Date: {involvement.endDate && `${involvement.endDate.month} ${involvement.endDate.year}`}</p>
-            <p style={{ marginBottom: '1rem' }}> {involvement.description.split('*').slice(1).map((part, index) => (
+             {involvement.description.split('*').slice(1).map((part, index) => (
     <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
-  ))}</p>
+  ))}
             <div>
               <button
                 className="btn btn-primary me-2"
