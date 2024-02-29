@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faSave, faTimes, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faSave, faTimes, faTrash, faMagic } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -27,6 +27,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
     _id: '',
     content: '', 
   });
+  const [generatedText, setGeneratedText] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
@@ -56,6 +57,65 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
         console.error('Error fetching projects:', error);
       });
   };
+
+    
+ 
+  
+
+const fetchGeneratedText = () => {
+  axios.get('http://localhost:3001/api/userprofile/generate')
+    .then(response => {
+      const generatedText = response.data.text;
+      console.log('Generated Text:', generatedText);
+      setGeneratedText(generatedText);
+
+      if (editData) {
+        setEditData(prevData => ({ ...prevData!, content: '' }));
+      } else {
+        setNewSummary(prevSummary => ({ ...prevSummary, content: '' }));
+      }
+
+      
+      // Split the generated text into words
+      const words = generatedText.split(' ');
+      
+      // Define a function to print words one by one
+      const printWords = (index: number) => {
+        if (index < words.length) {
+          const nextWord = words[index];
+          
+          // Print the word
+          if (editData) {
+            setEditData(prevData => ({ ...prevData!, content: prevData!.content + ' ' + nextWord }));
+          } else {
+            setNewSummary(prevSummary => ({ ...prevSummary, content: prevSummary.content + ' ' + nextWord }));
+          }
+          
+          // Call the next word after a delay
+          setTimeout(() => {
+            printWords(index + 1);
+          }, 200); // Adjust the timing as needed
+        }
+      };
+      
+      // Start printing words
+      printWords(0);
+      
+    })
+    .catch(error => {
+      console.error('Error fetching generated text:', error);
+    });
+};
+
+  
+
+
+
+
+  const handleGenerateTextClick = () => {
+    fetchGeneratedText();
+  };
+  
   
 
   const handleEditClick = (id: string, content: string) => {
@@ -136,15 +196,17 @@ setIsAdding(true);
   };
   return (
     <div
-      style={{
-        border: '2px solid #4CAF50',
-        borderRadius: '10px',
-        padding: '1.5rem',
-        marginBottom: '1.5rem',
-        backgroundColor: '#f9f9f9',
-        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
-      }}
-    >
+    style={{
+      border: '2px solid #4CAF50',
+      borderRadius: '10px',
+      padding: '1.5rem',
+      marginBottom: '1.5rem',
+      background: 'rgba(255, 255, 255, 0.7)', // Change the color and transparency here
+        
+      boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
+    }}
+  >
+  
       <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Summary</b></h2>
       {summarys.map((summary) => (
         <div key={summary._id} style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', transition: 'all 0.3s' }}>
@@ -158,6 +220,21 @@ setIsAdding(true);
                 style={{ height: '150px', borderRadius: '8px', border: '1px solid #ccc', width: '100%', marginBottom: '1rem', transition: 'all 0.3s' }}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+        onClick={handleGenerateTextClick}
+        className="btn btn-info me-2"
+        style={{
+          backgroundColor: '#17a2b8',
+          color: '#fff',
+          border: '1px solid #17a2b8',
+          padding: '0.5rem 1rem',
+          borderRadius: '4px',
+          transition: 'all 0.3s',
+        }}
+      >
+        <FontAwesomeIcon icon={faMagic} className="me-2" />
+        AI Summary
+      </button>
                 <button
                   onClick={handleUpdate}
                   className="btn btn-success me-2"
@@ -239,6 +316,23 @@ setIsAdding(true);
             style={{ height: '150px', borderRadius: '8px', border: '1px solid #ccc', width: '100%', marginBottom: '1rem', transition: 'all 0.3s' }}
           />
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+
+          <button
+        onClick={handleGenerateTextClick}
+        className="btn btn-info me-2"
+        style={{
+          backgroundColor: '#17a2b8',
+          color: '#fff',
+          border: '1px solid #17a2b8',
+          padding: '0.5rem 1rem',
+          borderRadius: '4px',
+          transition: 'all 0.3s',
+        }}
+      >
+        <FontAwesomeIcon icon={faMagic} className="me-2" />
+        AI Summary
+      </button>
+            
             <button
               type="submit"
               className="btn btn-primary"

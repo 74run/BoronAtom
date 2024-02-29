@@ -57,6 +57,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
 
   return (
     <div className="login-container">
+      <div className='login-box'>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -101,6 +102,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
         <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
           Register
         </button>
+      </div>
       </div>
     </div>
   );

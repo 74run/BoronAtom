@@ -15,7 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
-import ContactEditor from './components/contact';
+
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -502,7 +502,7 @@ const Profile: React.FC = () => {
            <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0, marginTop: '-180px' }}>
            
       <ProfileNew UserDetail={userDetails} />
-      <ContactEditor />
+
       <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 
        

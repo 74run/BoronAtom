@@ -6,6 +6,7 @@ const certSchema = require('./CertModel');
 const invSchema = require('./InvModel');
 const SumSchema = require('./SumModel');
 const skillSchema = require('./SkillModel');
+const contactSchema = require('./ContactModel');
 
 
 
@@ -24,7 +25,8 @@ const UserProfileSchema = new mongoose.Schema({
     project: [proSchema],
     certification: [certSchema],
     involvement: [invSchema],
-    skills: [skillSchema] 
+    skills: [skillSchema],
+    contact: [contactSchema] 
 
 });
 

@@ -141,6 +141,7 @@ const RegisterForm: React.FC = () => {
 
   return (
     <div className="register-container">
+      <div className='register-box'>
       <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -235,6 +236,7 @@ const RegisterForm: React.FC = () => {
         <button type="button" className="btn btn-outline-primary" onClick={handleLoginClick}>
           Login
         </button>
+      </div>
       </div>
     </div>
   );

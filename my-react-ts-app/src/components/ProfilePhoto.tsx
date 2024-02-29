@@ -6,6 +6,9 @@ import axios from 'axios';
 import { pdf, Document, Page, Text } from '@react-pdf/renderer';
 import Latex from 'react-latex';
 
+import ModalContact from "./ModalContact";
+import { PencilFill } from "react-bootstrap-icons";
+
 interface UserDetails {
   firstName: string;
   lastName: string;
@@ -28,9 +31,31 @@ const Profile: React.FC<ProfileProps> = () => {
   );
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [fullImageModalOpen, setFullImageModalOpen] = useState<boolean>(false);
-  const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
-
+  
   const { userID } = useParams();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contactDetails, setContactDetails] = useState({
+    name: "John Doe",
+    email: "johndoe@example.com",
+    phoneNumber: "1234567890",
+  });
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const updateContactDetails = (updatedDetails: {
+    name: string;
+    email: string;
+    phoneNumber: string;
+  }) => {
+    setContactDetails(updatedDetails);
+  };
+
 
   const updateAvatar = (imgSrc: string) => {
     avatarUrl.current = imgSrc;
@@ -74,9 +99,35 @@ const Profile: React.FC<ProfileProps> = () => {
         </button>
       </div>
       <h2 className="text-black font-weight-bold mt-4">{userDetails && `${userDetails.firstName} ${userDetails.lastName}`}
-</h2>
+      
+</h2> 
+
+
+
       <p className="text-secondary text-sm mt-2">{userDetails && `${userDetails.email}`}
 </p>
+
+<div style={{ position: "relative" }}>
+  
+      <PencilFill
+        style={{
+          position: "absolute",
+          top: -50,
+          right: -200,
+          color: "black",
+          fontSize: "1.5rem",
+          cursor: "pointer",
+        }}
+        onClick={openModal}
+      />
+      <ModalContact
+        isOpen={isModalOpen}
+        closeModal={closeModal}
+        contactDetails={contactDetails}
+        updateContactDetails={updateContactDetails}
+      />
+    </div>
+
 
       {/* Edit Avatar Modal */}
       {modalOpen && (

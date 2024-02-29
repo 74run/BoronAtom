@@ -23,7 +23,7 @@ body {
   flex-direction: column;
   width: 100%;
   background-color: #e7e5ed;
-  
+  background: linear-gradient(to right, #6c7070, #000808);
   overflow: hidden;
   box-shadow: 0 0 200px rgba(247, 244, 244, 1);
 }
