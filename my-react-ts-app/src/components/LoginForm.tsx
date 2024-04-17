@@ -21,14 +21,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
   const handleLogin = async () => {
     try {
       const response = await axios.post('http://localhost:3001/api/login', { username, password });
-      const { success, message, userID } = response.data;
+      const { success, message, userID, token } = response.data;
       setUserId(userID);
 
       console.log('User ID:', userID);
       console.log('Server Response:', message);
       onLogin();
 
-      sessionStorage.setItem('userId', userID);
+      sessionStorage.setItem('Token',token);
+      sessionStorage.setItem('UserID',userID);
 
       // Dynamically navigate to the dashboard with the username as a parameter
       navigate(`/profile/${userID}`);

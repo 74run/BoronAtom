@@ -1,0 +1,126 @@
+/* Adjusted chat container styles */
+.chat-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 10px;
+    flex-direction: column;
+    margin-left: 0px;
+  }
+
+  .chat-title {
+    font-size: 24px;
+    color: white;
+    background-color: black;
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    margin-bottom: 20px; /* Add margin to create space between title and chatbox */
+  }
+  
+  /* Chat box styles */
+  .chat-box {
+    width: 400px;
+    height: 500px;
+    background-color: #0fe9b3;
+    border-radius: 8px;
+    box-shadow: 0px 0px 20px rgba(5, 5, 5, 0.7);
+    padding: 20px;
+    overflow: hidden; /* Hide overflowing content */
+  }
+  
+  /* Message container styles */
+  .message-container {
+    height: calc(100% - 100px);
+    overflow-y: auto;
+  }
+  
+  /* Message styles */
+  .message-box {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .message {
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    font-size: small;
+    
+  }
+  
+  /* Style for user messages */
+  .message.user {
+    background-color: rgb(174, 218, 181);
+    align-self: flex-end; /* Align user messages to the right */
+  
+  }
+  
+  /* Style for AI messages */
+  .message.ai {
+    background-color: #4a9cd294;
+  }
+
+  .message.user::after {
+    content: '';
+    position: absolute;
+    right: -8px; /* Adjust the value to control the size of the "peek" */
+    top: 50%;
+    border-top: 8px solid transparent;
+    border-right: 8px solid rgb(174, 218, 181);
+    border-bottom: 8px solid transparent;
+    transform: translateY(-50%);
+  }
+  
+  /* Peeking effect for AI messages */
+  .message.ai::before {
+    content: '';
+    position: absolute;
+    left: -8px; /* Adjust the value to control the size of the "peek" */
+    top: 50%;
+    border-top: 8px solid transparent;
+    border-left: 8px solid #4a9cd294;
+    border-bottom: 8px solid transparent;
+    transform: translateY(-50%);
+  }
+  
+  /* Button styles */
+  button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #4000ff;
+    color: #ffffff;
+    border-radius: 5px;
+    margin-left: 8px;
+    cursor: pointer;
+  }
+  
+  /* Button hover styles */
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Textarea styles */
+  textarea {
+    width: calc(100% - 20px);
+    height: 60px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  /* Textarea focus styles */
+  textarea:focus {
+    border-color: #007bff;
+  }
+  
+  /* Textarea placeholder styles */
+  textarea::placeholder {
+    color: #aaa;
+  }
+  

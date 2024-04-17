@@ -63,7 +63,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   
 
 const fetchGeneratedText = () => {
-  axios.get('http://localhost:3001/api/userprofile/generate')
+  axios.get(`http://localhost:3001/api/userprofile/generate/${userID}`)
     .then(response => {
       const generatedText = response.data.text;
       console.log('Generated Text:', generatedText);
@@ -201,8 +201,7 @@ setIsAdding(true);
       borderRadius: '10px',
       padding: '1.5rem',
       marginBottom: '1.5rem',
-      background: 'rgba(255, 255, 255, 0.7)', // Change the color and transparency here
-        
+      background: 'rgba(255, 255, 255, 0.7)',
       boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
     }}
   >

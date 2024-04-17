@@ -16,6 +16,7 @@ interface UserDetails {
 interface Education {
   _id: string;
   university: string;
+  cgpa: string;
   degree: string;
   major: string;
   startDate: { month: string; year: string };
@@ -26,20 +27,21 @@ interface Education {
 interface EducationProps {
   Educations: Education[];
   UserDetail: UserDetails | null;
-  onEdit: (id: string, data: {university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
+  onEdit: (id: string, data: {university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
   onDelete :(id: string)=> void;
   
 }
 
 
 const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEdit, onDelete}) => {
-  const [editData, setEditData] = useState<{id: string; university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
+  const [editData, setEditData] = useState<{id: string; university: string; cgpa: string;  degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
+    cgpa: '',
     degree: '',
     major: '',
     startDate: { month: '', year: '' },
@@ -99,11 +101,12 @@ const fetchEducation = () => {
 
   const handleEditClick = (    id: string,
     university: string,
+    cgpa: string,
     degree: string,
     major: string,
     startDate: { month: string; year: string },
     endDate: { month: string; year: string }) => {
-    setEditData({  id, university, degree, major, startDate, endDate });
+    setEditData({  id, university, cgpa, degree, major, startDate, endDate });
   };
 
   const handleCancelEdit = () => {
@@ -114,6 +117,7 @@ const fetchEducation = () => {
     if (editData) {
       onEdit(editData.id, {
         university: editData.university,
+        cgpa: editData.cgpa,
         degree: editData.degree,
         major: editData.major,
         startDate: { ...editData.startDate },
@@ -125,6 +129,7 @@ const fetchEducation = () => {
           ? {
               ...education,
               university: editData.university,
+              cgpa: editData.cgpa,
               degree: editData.degree,
               major: editData.major,
               startDate: { ...editData.startDate },
@@ -230,7 +235,7 @@ const fetchEducation = () => {
 
   const handleSaveClick = () => {
     // Form validation check
-    if (!newEducation.university || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
+    if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
       console.error('Please fill in all required fields');
       // You can display an error message to the user or handle it as appropriate
       return;
@@ -265,6 +270,7 @@ const fetchEducation = () => {
       setNewEducation({
         _id: '',
         university: '',
+        cgpa: '',
         degree: '',
         major: '',
         startDate: { month: '', year: '' },
@@ -284,6 +290,7 @@ const fetchEducation = () => {
   const handleAddClick = () => {
     setNewEducation({     _id: '',
     university: '',
+    cgpa: '',
     degree: '',
     major: '',
     startDate: { month: '', year: '' },
@@ -325,6 +332,14 @@ const fetchEducation = () => {
                   <option key={index} value={name} />
                 ))}
               </datalist>
+              <input
+        type="text"
+        className="form-control mb-2"
+        placeholder="CGPA"
+        value={editData.cgpa}
+        onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
+        style={{borderRadius: '4px', border: '1px solid #ccc'}}
+    />
               <select
                 className="form-control mb-2"
                 value={editData.degree}
@@ -344,6 +359,7 @@ const fetchEducation = () => {
                 onChange={(e) => setEditData({ ...editData, major: e.target.value })}
                 style={{borderRadius: '4px', border: '1px solid #ccc'}}
               />
+              
               <div className="date-dropdowns">
                 <label>Start Date:</label>
                 <div className="flex-container">
@@ -441,6 +457,7 @@ const fetchEducation = () => {
           ) : (
             <div className="display-info" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
   <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{education.university}</b></h3>
+  <p style={{ marginBottom: '0.5rem' }}>GPA: {education.cgpa}</p>
   <p style={{ marginBottom: '0.5rem' }}>Degree: {education.degree}</p>
   <p style={{ marginBottom: '0.5rem' }}>Major: {education.major}</p>
   <p style={{ marginBottom: '0.5rem' }}>Start Date: {education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
@@ -448,7 +465,7 @@ const fetchEducation = () => {
   <div>
     <button
       className="btn btn-primary me-2"
-      onClick={() => handleEditClick(education._id, education.university, education.degree, education.major, education.startDate, education.endDate)}
+      onClick={() => handleEditClick(education._id, education.university, education.cgpa, education.degree, education.major, education.startDate, education.endDate)}
       style={{ borderRadius: '4px' }}
     >
       <FontAwesomeIcon icon={faEdit} className="me-2" />
@@ -508,6 +525,14 @@ const fetchEducation = () => {
             onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
             style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
+             <input
+      type="text"
+      className="form-control mb-2"
+      placeholder="CGPA"
+      value={newEducation.cgpa}
+      onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
+      style={{borderRadius: '4px', border: '1px solid #ccc'}}
+    />
           <div className="date-dropdowns">
             <label>Start Date:</label>
             <div className="flex-container">

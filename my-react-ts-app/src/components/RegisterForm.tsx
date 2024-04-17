@@ -126,7 +126,7 @@ const RegisterForm: React.FC = () => {
 
   // Function to handle navigation to the login page
   const handleLoginClick = () => {
-    navigate('/');
+    navigate('/login');
   };
 
   // Function to toggle password visibility

@@ -1,65 +1,111 @@
-import React, { useState } from "react";
-import { X, PencilFill, Check } from "react-bootstrap-icons";
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+
+interface ContactDetails {
+  _id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
 
 interface ModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  contactDetails: {
-    name: string;
-    email: string;
-    phoneNumber: string;
-  };
-  updateContactDetails: (updatedDetails: {
-    name: string;
-    email: string;
-    phoneNumber: string;
-  }) => void;
 }
 
-const ModalContact: React.FC<ModalProps> = ({
-  isOpen,
-  closeModal,
-  contactDetails,
-  updateContactDetails,
-}) => {
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editedDetails, setEditedDetails] = useState(contactDetails);
+const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null);
+  const [editedContactDetails, setEditedContactDetails] = useState<ContactDetails>({
+    _id: '',
+    name: '',
+    email: '',
+    phoneNumber: '',
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const { userID } = useParams();
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  useEffect(() => {
+    if (isOpen) {
+      fetchContactDetails();
+    }
+  }, [isOpen]);
+
+  const fetchContactDetails = () => {
+    axios
+      .get(`http://localhost:3001/api/userprofile/${userID}/contact`)
+      .then((response) => {
+        const fetchedContactDetails = response.data[0];
+        setContactDetails(fetchedContactDetails || {
+          _id: '',
+          name: '',
+          email: '',
+          phoneNumber: '',
+        });
+        // If contact details are undefined, open edit mode immediately
+        if (!fetchedContactDetails) {
+          setIsEditing(true);
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching contact details:', error);
+      });
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setEditedContactDetails({ ...contactDetails! }); // Add null check (!) or provide default values
+  };
+
+  const handleSaveClick = () => {
+    const method = contactDetails?._id ? 'PUT' : 'POST';
+    const url = contactDetails?._id ? `http://localhost:3001/api/userprofile/${userID}/contact/${contactDetails._id}` : `http://localhost:3001/api/userprofile/${userID}/contact`;
+    axios({
+      method: method,
+      url: url,
+      data: editedContactDetails,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        fetchContactDetails(); // Fetch updated contact details after saving
+        setIsEditing(false);
+      })
+      .catch((error) => {
+        console.error('Error saving contact details:', error);
+      });
+  };
+  
+
+  const handleCancelClick = () => {
+    setIsEditing(false);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setEditedDetails((prevDetails) => ({
-      ...prevDetails,
+    setEditedContactDetails((prevState) => ({
+      ...prevState,
       [name]: value,
     }));
   };
 
-  const toggleEditMode = () => {
-    setIsEditMode(!isEditMode);
-  };
-
-  const handleSave = () => {
-    updateContactDetails(editedDetails);
-    toggleEditMode();
-  };
+  if (!contactDetails) {
+    return null; // Or render a loading indicator
+  }
 
   return (
     <>
       {isOpen && (
-        <div className="modal fade show" style={{ display: "block" }}>
+        <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">
-                  {isEditMode ? "Edit Contact Details" : "View Contact Details"}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  aria-label="Close"
-                  onClick={closeModal}
-                ></button>
+                <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
+                <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
               </div>
               <div className="modal-body">
                 <form onSubmit={(e) => e.preventDefault()}>
@@ -67,13 +113,13 @@ const ModalContact: React.FC<ModalProps> = ({
                     <label htmlFor="name" className="form-label">
                       Name
                     </label>
-                    {isEditMode ? (
+                    {isEditing || !contactDetails.name ? (
                       <input
                         type="text"
                         className="form-control"
                         id="name"
                         name="name"
-                        value={editedDetails.name}
+                        value={editedContactDetails.name}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -84,13 +130,13 @@ const ModalContact: React.FC<ModalProps> = ({
                     <label htmlFor="email" className="form-label">
                       Email
                     </label>
-                    {isEditMode ? (
+                    {isEditing || !contactDetails.email ? (
                       <input
                         type="email"
                         className="form-control"
                         id="email"
                         name="email"
-                        value={editedDetails.email}
+                        value={editedContactDetails.email}
                         onChange={handleInputChange}
                       />
                     ) : (
@@ -101,34 +147,39 @@ const ModalContact: React.FC<ModalProps> = ({
                     <label htmlFor="phoneNumber" className="form-label">
                       Phone Number
                     </label>
-                    {isEditMode ? (
+                    {isEditing || !contactDetails.phoneNumber ? (
                       <input
                         type="text"
                         className="form-control"
                         id="phoneNumber"
                         name="phoneNumber"
-                        value={editedDetails.phoneNumber}
+                        value={editedContactDetails.phoneNumber}
                         onChange={handleInputChange}
                       />
                     ) : (
                       <div>{contactDetails.phoneNumber}</div>
                     )}
                   </div>
-                  {isEditMode ? (
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handleSave}
-                    >
-                      <Check /> Save
-                    </button>
+                  {isEditing ? (
+                    <div>
+                      <button
+                        type="button"
+                        className="btn btn-success"
+                        onClick={handleSaveClick}
+                        style={{ marginRight: '0.5rem' }}
+                      >
+                        <FontAwesomeIcon icon={faSave} className="me-2" />
+                        Save
+                      </button>
+                      <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
+                        <FontAwesomeIcon icon={faTimes} className="me-2" />
+                        Cancel
+                      </button>
+                    </div>
                   ) : (
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={toggleEditMode}
-                    >
-                      <PencilFill /> Edit
+                    <button type="button" className="btn btn-primary" onClick={handleEditClick}>
+                      <FontAwesomeIcon icon={faEdit} className="me-2" />
+                      Edit
                     </button>
                   )}
                 </form>

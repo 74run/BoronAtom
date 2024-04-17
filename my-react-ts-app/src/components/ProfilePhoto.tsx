@@ -121,10 +121,8 @@ const Profile: React.FC<ProfileProps> = () => {
         onClick={openModal}
       />
       <ModalContact
-        isOpen={isModalOpen}
-        closeModal={closeModal}
-        contactDetails={contactDetails}
-        updateContactDetails={updateContactDetails}
+            isOpen={isModalOpen}
+            closeModal={closeModal} 
       />
     </div>
 

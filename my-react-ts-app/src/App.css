@@ -21,11 +21,11 @@ body {
 .Full-Resume {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  background-color: #e7e5ed;
-  background: linear-gradient(to right, #6c7070, #000808);
+  width: 50%;
+  background-color: #fbfbfc;
+  
   overflow: hidden;
-  box-shadow: 0 0 200px rgba(247, 244, 244, 1);
+  box-shadow: 0 0 100px rgb(247, 244, 244);
 }
 
 

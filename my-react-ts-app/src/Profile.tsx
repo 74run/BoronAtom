@@ -15,6 +15,7 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
+import ChatBox from './components/ChatBox';
 
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
@@ -39,6 +40,7 @@ interface UserDetails {
 interface EduDetails {
   education: Array<{
     university: string;
+    cgpa: string;
     degree: string;
     major: string;
     startDate: { month: string; year: string };
@@ -92,6 +94,7 @@ interface Skill {
 interface Education {
   _id: string;
   university: string;
+  cgpa: string;
   degree: string;
   major: string;
   startDate: { month: string; year: string };
@@ -143,6 +146,8 @@ interface Project {
 }
 
 
+
+
 const Profile: React.FC = () => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [summarys, setSummarys] = useState<Summary[]>([]);
@@ -153,7 +158,7 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
-  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { userID } = useParams();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
@@ -243,6 +248,7 @@ const Profile: React.FC = () => {
 
   const handleEditEdu = (id: string, data: {   
     university: string;
+    cgpa: string;
     degree: string;
     major: string;
     startDate: { month: string; year: string };
@@ -472,6 +478,16 @@ const Profile: React.FC = () => {
         setSkills(updatedItems);
       });
   };
+
+
+  const handleLogout = () => {
+    // Perform logout logic (e.g., clear session storage)
+    // Set isLoggedIn to false
+    // console.log('Logout clicked');
+    // sessionStorage.removeItem('userId');
+    
+    setIsLoggedIn(false);
+  };
   
   
   
@@ -481,7 +497,7 @@ const Profile: React.FC = () => {
       
         {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
         
-        <NavigationBar />
+        <NavigationBar onLogout={handleLogout} />
       
 
       {/* Three Sections Layout */}
@@ -534,8 +550,9 @@ const Profile: React.FC = () => {
 
         
 
-      <div style={{ flex: '0 0 30%' ,position: 'relative'}}>
+      <div style={{ flex: '0 0 30%'}}>
           {/* Add content for the right section */}
+          <ChatBox />
           {/* For example: */}
         </div>
        

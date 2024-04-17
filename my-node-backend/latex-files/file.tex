@@ -39,6 +39,16 @@
         \textbf{#1} \labelitemi #2 \hfill #3 \\ #4 \vspace*{5pt}
       }
   
+      \newcommand{\employer}[4]{{
+        \vspace*{2pt}%
+        \textbf{#1} #2 \hfill #3\\ #4 \vspace*{2pt}}
+        }
+  
+      \newcommand{\project}[4]{{
+          \vspace*{2pt}% 
+          \textbf{#1} #2 \hfill #3\\ #4 \vspace*{2pt}}
+          }
+          
       \newcommand{\lineunder}{
         \vspace*{-8pt} \\ \hspace*{-18pt} 
         \hrulefill \\
@@ -62,6 +72,16 @@
         }
   
   
+        \newenvironment{bullet-list-major}{
+          \begin{list}{\labelitemii}{\setlength\leftmargin{3pt} 
+          \topsep 0pt \itemsep -2pt}}{\vspace*{4pt}\end{list}
+          }
+  
+        \newenvironment{bullet-list-minor}{
+          \begin{list}{\labelitemii}{\setlength\leftmargin{15pt} 
+            \topsep 0pt \itemsep -2pt}}{\vspace*{4pt}\end{list}
+            }
+  
   
       \begin{document}
   
@@ -70,47 +90,117 @@
       \vspace*{-44pt}
   
       \begin{center}
-        {\LARGE \textbf{Tarun Sai Janapati}} \\
+        {\LARGE \textbf{Tarun Janapati}} \\
         \faPhone\ 551-755-1991 \quad
-        \faEnvelope\ \href{mailto:tarunsai.janapati@slu.edu}{tarunsai.janapati@slu.edu} \quad
+        \faEnvelope\ \href{mailto:tarunjanapati7@gmail.com}{tarunjanapati7@gmail.com} \quad
         \faLinkedin\ \url{https://www.linkedin.com/in/tarun-janapati/}
       \end{center}
-  
-      \vspace*{4pt}%
+     \vspace*{4pt}%
       \header{Summary}
+  
+      {
+        \textit{ Highly motivated and results-oriented individual with a Master's in Analytics and a Bachelor's in Mechanical Engineering. Proven track record of successfully completing projects and assignments in machine design, data analysis, web development, and quantitative research. Demonstrated skills in Python, R, SPSS, Keras, and other analytical tools. Seeking a challenging role where I can leverage my technical abilities and make significant contributions to the organization.}
+        }
   
       \vspace{15pt}
   
      \header{Education}
   
       {
-        \school{Saint Louis University}{Master's Degree}{Graduation: 2021}{\textit{Analytics MS \labelitemi 2018}}
+        \school{Saint Louis University}{Master's Degree}{Graduation: 2025}{\textit{Analytics MS \labelitemi 3.9}}
         
 
-        \school{Visvesvaraya National Institute of Technology}{Bachelor's Degree}{Graduation: 2021}{\textit{Mechanical \labelitemi 2017}}
+        \school{Visvesvaraya National Institute of Technology}{Bachelor's Degree}{Graduation: 2022}{\textit{Mechanical Engineering \labelitemi 7}}
         }
   
       \vspace*{4pt}%
       \header{Experience}
   
       {
-            \subsection*{Machine Design Engineer - Caterpillar}
-            Pune, India US -- [object Object] to [object Object]
-           
-          }
+      \employer{Graduate Engineer Trainee}{--Saarloha Advanced Materials Pvt Ltd}{2022 -- 2022}{Pune, India}
+      \begin{bullet-list-minor}
+          \item In-depth knowledge of equipment in Steel melting shops, focused on data collection and analysis.
+\item Conducted inspections, preventive maintenance, and resolved equipment issues to improve productivity.
+\item Collaborated with cross-functional teams for equipment safety and efficiency
+      \end{bullet-list-minor}
+  }
       \vspace*{4pt}%
       \header{Skills}
+      {
+        \begin{bullet-list-major}
+        \item \textbf{Programming Languages:} Python, R Programming, SPSS
+        \end{bullet-list-major}
+        
 
+        \begin{bullet-list-major}
+        \item \textbf{Data Analysis:} Pandas, NumPy
+        \end{bullet-list-major}
+        
+
+        \begin{bullet-list-major}
+        \item \textbf{Data Science:} Tensorflow, Keras, OpenCV, NLTK, Pytorch
+        \end{bullet-list-major}
+        
+
+        \begin{bullet-list-major}
+        \item \textbf{Machine Learning:} Scikit-Learn, Regression Models
+        \end{bullet-list-major}
+        
+
+        \begin{bullet-list-major}
+        \item \textbf{Data Visualization:} Matplotlib, Seaborn, Tableau
+        \end{bullet-list-major}
+        
+
+        \begin{bullet-list-major}
+        \item \textbf{Statistical Analysis:} Hypothesis Testing, Regression Analysis
+        \end{bullet-list-major}
+        
+
+        \begin{bullet-list-major}
+        \item \textbf{Tools:} Jupyter Notebook, Git, SQL
+        \end{bullet-list-major}
+        }
   
       \vspace*{4pt}%
       \header{Projects}
+      {
+      \project{Dynamic Steam Properties Calculator}{Personal Project}{2022 -- 2023}{
+          \begin{bullet-list-minor}
+              \item Developed a web-based tool using Python, Flask, HTML, CSS, and JavaScript to calculate steam properties.
+\item Deployed : steamcalci.com
+          \end{bullet-list-minor}
+      }
+  
+
+      \project{Analysis of Factors Influencing Attitudes Towards Debt}{Saint Louis University}{2023 -- 2023}{
+          \begin{bullet-list-minor}
+              \item Analyzed a dataset to uncover drivers of attitudes toward debt. Used R for data cleaning, preprocessing, and regression analysis.
+          \end{bullet-list-minor}
+      }
+  
+
+      \project{Design and Optimization of Thermoelectric Generators}{VNIT}{2021 -- 2022}{
+          \begin{bullet-list-minor}
+              \item Improved power output and efficiency by 10% by analyzing and optimizing the design parameters. Published a Journal paper in Materials Today Proceedings, Elsevier.
+          \end{bullet-list-minor}
+      }
+  }
   
       \vspace*{4pt}%
       \header{Certifications}
-  
+      {
+        \begin{bullet-list-major}
+        \item \textbf{International Conference on Innovative Product Design and Intelligent Manufacturing System ’2022} \labelitemi NIT Rourkela \hfill 2022 -- 
+        \end{bullet-list-major}
+        }
       \vspace*{4pt}%
       \header{Involvements}
-  
-  
+      {
+            \begin{bullet-list-major}
+            \item \textbf{Student Representative, Training and Placement} \labelitemi VNIT \hfill 2021 -- 2021
+            
+            \end{bullet-list-major}
+            }
       \end{document}
     

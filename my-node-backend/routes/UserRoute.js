@@ -5,6 +5,18 @@ const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 
+const crypto = require('crypto');
+
+const generateRandomString = (length) => {
+    return crypto.randomBytes(Math.ceil(length / 2))
+        .toString('hex') // Convert to hexadecimal format
+        .slice(0, length); // Return required number of characters
+};
+
+const secretKey = generateRandomString(32); // Generate a 32-character (256-bit) random string
+console.log("Generated Secret Key:", secretKey);
+
+
 let transporter = nodemailer.createTransport({ 
   host: "smtp.gmail.com",
   port: 587,
@@ -180,45 +192,37 @@ router.post('/forgotpassword', async (req, res) => {
 })
 
 
-
 router.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
-    
-        // console.log('after findone');
-        if (!user) {
-          return res.status(401).json({ success: false, message: 'User does not exist!' });
-        }
-        // console.log('password from frontend is:', password);
-        // console.log('password in db is:', user.password);
-    
-        // const isPasswordValid = bcrypt.compare(password, user.password);
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) {
-            // Handle error
-            console.error(err);
-          }
-        
-          if (result) {
-            // Passwords match
-            res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id });
-          } else {
-            // Passwords do not match
-            return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-          }
-        });
-        // console.log('value of isPasswordvalid is:', isPasswordValid);
-    
-        // if (!isPasswordValid) {
-        //   return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        // }
-    
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+  try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username });
+  
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'User does not exist!' });
       }
-    });
+
+      bcrypt.compare(password, user.password, (err, result) => {
+        if (err) {
+          // Handle error
+          console.error(err);
+        }
+      
+        if (result) {
+          // Passwords match
+          const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' }); // Convert _id to string
+          console.log('userID:', user._id.toString());
+          res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token});
+        } else {
+          // Passwords do not match
+          return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+        }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 router.get('/user', async (req, res) => {
     try {

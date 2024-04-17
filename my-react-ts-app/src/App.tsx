@@ -1,6 +1,4 @@
-// frontend/src/App.tsx
-
-import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Profile from './Profile';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
@@ -10,40 +8,51 @@ import ResetPassword from './components/ResetPassword';
 import React, { useState, useEffect } from 'react';
 import './index.css'
 
-
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+
+
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    // Update isLoggedIn state after successful login
+  };
+
+  useEffect(() => {
+    console.log('Token in sessionStorage:', sessionStorage.getItem('Token'));
+  console.log('userID in sessionStorage:', sessionStorage.getItem('UserID'));
+  const token = sessionStorage.getItem('Token');
+  const storedUserID = sessionStorage.getItem('userID');
+    console.log('isLoggedIn:', isLoggedIn); // Log the initial value of isLoggedIn
+  }, []); // Empty dependency array ensures it only runs once when the component mounts
 
   useEffect(() => {
     // Check if userId exists in session storage
-    const userId = sessionStorage.getItem('userId');
-    if (userId) {
-      // Perform any additional checks here if needed
+    const token = sessionStorage.getItem('Token');
+    if (token) {
+      // Perform additional checks on the token, if necessary, on the server-side
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
   }, []);
-
-  // Function to handle login
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
-
-  // Function to handle logout
-  const handleLogout = () => {
-    // Perform logout logic (e.g., clear session storage)
-    // Set isLoggedIn to false
-    setIsLoggedIn(false);
-  };
+  
   return (
     <Router>
       <Routes>
-      <Route path="/" element={<Navigate to={isLoggedIn ? '/profile/:userID' : '/login'} />} />
+        {/* Protected Route */}
+        <Route path="/profile/:userID" element={<Profile />} />
+        
+        {/* Public Routes */}
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/verifyotp" element={<VerifyOTP />} />
-        {isLoggedIn && <Route path="/profile/:userID" element={<Profile />} />}
+        
+        {/* Default Redirect */}
+        <Route path="/" element={<Navigate to={isLoggedIn ? `/profile/${sessionStorage.getItem('UserID')}` : '/login'} />} />
       </Routes>
     </Router>
   );

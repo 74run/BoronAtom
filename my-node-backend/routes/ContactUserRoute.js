@@ -55,31 +55,39 @@ router.post('/:userID/contact', async (req, res) => {
     }
   });
   
-  router.put('/:userId/contact/:id', async (req, res) => {
-      try {
-        const user = await User.findById(req.params.userId);
-    
-        if (!user) {
-          return res.status(404).json({ message: 'User not found' });
+  router.put('/:userID/contact/:contactID', async (req, res) => {
+    try {
+        const { userID, contactID } = req.params;
+
+        const { name, email, phoneNumber } = req.body;
+
+        let userProfile = await UserProfile.findOne({ userID });
+
+        if (!userProfile) {
+            return res.status(404).json({ message: 'User profile not found' });
         }
-    
-        const { id } = req.params;
-        const updatedUserProfile = await UserProfile.findOneAndUpdate(
-          { 'userID': user._id, 'contact._id': id },
-          {
-            $set: {
-              'contact.$': req.body,
-            },
-          },
-          { new: true }
-        );
-    
+
+        const contactToUpdate = userProfile.contact.find(contact => contact._id.toString() === contactID);
+
+        if (!contactToUpdate) {
+            return res.status(404).json({ message: 'Contact not found' });
+        }
+
+        // Update the contact details
+        contactToUpdate.name = name;
+        contactToUpdate.email = email;
+        contactToUpdate.phoneNumber = phoneNumber;
+
+        const updatedUserProfile = await userProfile.save();
+
         res.json(updatedUserProfile);
-      } catch (error) {
-        res.status(500).json({ message: error.message });
-      }
-    });
-    
+    } catch (error) {
+        console.error('Error updating contact:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
     
   
     router.delete('/:userID/contact/:id', async (req, res) => {

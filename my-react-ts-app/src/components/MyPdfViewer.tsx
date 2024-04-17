@@ -15,6 +15,7 @@ interface UserDetails {
 interface EduDetails {
     education: Array<{
       university: string;
+      cgpa: string;
       degree: string;
       major: string;
       startDate: { month: string; year: string };
@@ -126,7 +127,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const experienceSection = experiences.map(
           (experience) => `
             \\subsection*{${experience.jobTitle} - ${experience.company}}
-            ${experience.location} -- ${experience.startDate} to ${experience.endDate}
+            ${experience.location} -- ${experience.startDate.year} to ${experience.endDate.year}
            
           `
         )
@@ -309,7 +310,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     
       const educationSection = educations.map(
         (education) => `
-        \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.year}}{\\textit{${education.major} \\labelitemi ${education.startDate.year}}}
+        \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.year}}{\\textit{${education.major} \\labelitemi ${education.cgpa}}}
         `
       ).join("\n");
   

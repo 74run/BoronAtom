@@ -8,10 +8,13 @@ import pic from './Gold.png';
 
 interface NavbarProps {
   // Add any props you need
+  onLogout: () => void;
+
 }
 
-const Navbar: React.FC<NavbarProps> = () => {
+const Navbar: React.FC<NavbarProps> = ({onLogout}) => {
   const [activeItem, setActiveItem] = useState<string>('home');
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const navigate = useNavigate();
 
   const handleItemClick = (itemName: string) => {
@@ -20,12 +23,13 @@ const Navbar: React.FC<NavbarProps> = () => {
   };
 
   const handleLogout = () => {
-    // Perform the logout actions here
-    // For example, clear user authentication token, redirect to login page, etc.
-    console.log('Logout clicked');
-    sessionStorage.removeItem('userId');
-    navigate('/login');
+    // Update isLoggedIn state after logout
+    setIsLoggedIn(false);
+    // You may also want to clear any stored tokens or user data from session storage
+    sessionStorage.removeItem('Token');
+    sessionStorage.removeItem('UserID');
   };
+  
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow">
@@ -86,3 +90,4 @@ const Navbar: React.FC<NavbarProps> = () => {
 };
 
 export default Navbar;
+
