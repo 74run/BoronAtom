@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
+
 // ... (imports and other code)
 interface LoginFormProps {
   onLogin: () => void; // Callback function to be called after successful login
@@ -13,10 +14,12 @@ interface LoginFormProps {
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
   const [userId, setUserId] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null); // State to hold the error message
   const navigate = useNavigate();
+
 
   const handleLogin = async () => {
     try {
@@ -28,8 +31,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
       console.log('Server Response:', message);
       onLogin();
 
-      sessionStorage.setItem('Token',token);
-      sessionStorage.setItem('UserID',userID);
+      localStorage.setItem('Token',token);
+      localStorage.setItem('UserID',userID);
 
       // Dynamically navigate to the dashboard with the username as a parameter
       navigate(`/profile/${userID}`);

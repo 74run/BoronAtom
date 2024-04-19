@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Profile from './Profile';
 import LoginForm from './components/LoginForm';
@@ -5,54 +6,96 @@ import RegisterForm from './components/RegisterForm';
 import VerifyOTP from './components/VerifyOTP';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
-import React, { useState, useEffect } from 'react';
-import './index.css'
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    // Initialize isLoggedIn state based on localStorage
+    return localStorage.getItem('isLoggedIn') === 'true';
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
+  const decode = (token: string) => {
+    const payload = token.split('.')[1]; // Assuming token structure: header.payload.signature
+    const decodedPayload = atob(payload);
+    return JSON.parse(decodedPayload);
+  };
+  
 
+  useEffect(() => {
+    const checkTokenExpiration = () => {
+      const token = localStorage.getItem('Token');
+      const storedUserID = localStorage.getItem('UserID');
+    
+      if (!token || !storedUserID) {
+        handleLogout();
+        return;
+      }
+  
+      // Decode the token (if it's a JWT) to get expiration time
+      const decodedToken = decode(token);
+      if (decodedToken && decodedToken.exp * 1000 < Date.now()) {
+        // Token is expired
+        handleLogout();
+        return;
+      }
+  
+      // Token is still valid, consider refreshing it if needed
+      // For example, you might implement token refresh logic here
+    };
 
+    const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(storedIsLoggedIn);
+    setIsLoading(false); // Loading is complete
+    checkTokenExpiration();
+  }, []);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
-    // Update isLoggedIn state after successful login
+    localStorage.setItem('isLoggedIn', 'true');
   };
 
-  useEffect(() => {
-    console.log('Token in sessionStorage:', sessionStorage.getItem('Token'));
-  console.log('userID in sessionStorage:', sessionStorage.getItem('UserID'));
-  const token = sessionStorage.getItem('Token');
-  const storedUserID = sessionStorage.getItem('userID');
-    console.log('isLoggedIn:', isLoggedIn); // Log the initial value of isLoggedIn
-  }, []); // Empty dependency array ensures it only runs once when the component mounts
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    localStorage.removeItem('Token');
+    localStorage.removeItem('UserID');
+    localStorage.setItem('isLoggedIn', 'false');
+  };
 
-  useEffect(() => {
-    // Check if userId exists in session storage
-    const token = sessionStorage.getItem('Token');
-    if (token) {
-      // Perform additional checks on the token, if necessary, on the server-side
-      setIsLoggedIn(true);
-    } else {
-      setIsLoggedIn(false);
-    }
-  }, []);
-  
   return (
     <Router>
       <Routes>
         {/* Protected Route */}
-        <Route path="/profile/:userID" element={<Profile />} />
-        
+        <Route
+          path="/profile/:userID"
+          element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
+        />
+
         {/* Public Routes */}
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/verifyotp" element={<VerifyOTP />} />
-        
+
         {/* Default Redirect */}
-        <Route path="/" element={<Navigate to={isLoggedIn ? `/profile/${sessionStorage.getItem('UserID')}` : '/login'} />} />
+        <Route
+          path="/"
+          element={
+            isLoading ? (
+              <div>Loading...</div>
+            ) : isLoggedIn ? (
+              <Navigate
+                to={`/profile/${localStorage.getItem('UserID') || '/login'}`}
+                replace={true}
+              />
+            ) : (
+              <Navigate to="/login" replace={true} />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

@@ -146,8 +146,6 @@ interface Project {
 }
 
 
-
-
 const Profile: React.FC = () => {
   const [educations, setEducations] = useState<Education[]>([]);
   const [summarys, setSummarys] = useState<Summary[]>([]);
@@ -158,7 +156,7 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const { userID } = useParams();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
@@ -478,16 +476,6 @@ const Profile: React.FC = () => {
         setSkills(updatedItems);
       });
   };
-
-
-  const handleLogout = () => {
-    // Perform logout logic (e.g., clear session storage)
-    // Set isLoggedIn to false
-    // console.log('Logout clicked');
-    // sessionStorage.removeItem('userId');
-    
-    setIsLoggedIn(false);
-  };
   
   
   
@@ -497,7 +485,7 @@ const Profile: React.FC = () => {
       
         {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
         
-        <NavigationBar onLogout={handleLogout} />
+        <NavigationBar />
       
 
       {/* Three Sections Layout */}
