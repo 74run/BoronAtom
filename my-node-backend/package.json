@@ -1,4 +1,5 @@
 {
+  
   "name": "my-node-backend",
   "version": "1.0.0",
   "description": "",
@@ -7,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd ../my-react-ts-app && npm start",
     "start": "concurrently -n server,client -c red,green \"nodemon server.js\" \"npm run client\""
+   
   },
   "keywords": [],
   "author": "",

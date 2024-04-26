@@ -157,7 +157,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       backgroundColor: '#f9f9f9',
       boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
     }}>
-      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Skills</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Skills</b></h4>
       {skills.map((skill) => (
         <div key={skill._id} className="mb-3" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
           {editData && editData.id === skill._id ? (
@@ -197,29 +197,44 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             </div>
           ) : (
             // View mode
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-              <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{skill.domain}</b></h3>
-              <p style={{ marginBottom: '0.5rem' }}>{skill.name}</p>
+            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '6px', marginBottom: '0.2rem', position: 'relative' }}>
+  <h6 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{skill.domain}</b></h6>
+  <p style={{ marginBottom: '0.2rem', fontSize: '0.9rem'}}>{skill.name}</p>
 
-              <div>
-                <button
-                  className="btn btn-primary me-2"
-                  onClick={() => handleEditClick(skill._id, skill.domain, skill.name)}
-                  style={{ borderRadius: '4px' }}
-                >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(skill._id)}
-                  style={{ borderRadius: '4px' }}
-                >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
-                  Delete
-                </button>
-              </div>
-            </div>
+  <div style={{ position: 'absolute', top: '8px', right: '8px' }}>
+    <button
+      className="btn btn-primary me-2"
+      onClick={() => handleEditClick(skill._id, skill.domain, skill.name)}
+      style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: '1px solid #007bff',
+        padding: '0.3rem 0.4rem', // Adjusted padding
+        borderRadius: '100px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem', // Adjusted font size
+      }}
+    >
+      <FontAwesomeIcon icon={faEdit} className="me-0" />
+    </button>
+    <button
+      className="btn btn-danger"
+      onClick={() => handleDelete(skill._id)}
+      style={{
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        padding: '0.3rem 0.4rem',
+        border: '1px solid #dc3545',
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem',
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className="me-0" />
+    </button>
+  </div>
+</div>
+
 
           )}
         </div>
@@ -267,7 +282,15 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
-          style={{ borderRadius: '4px' }}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Skill

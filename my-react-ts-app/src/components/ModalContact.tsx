@@ -10,6 +10,7 @@ interface ContactDetails {
   name: string;
   email: string;
   phoneNumber: string;
+  linkedIn: string;
 }
 
 interface ModalProps {
@@ -24,6 +25,7 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
     name: '',
     email: '',
     phoneNumber: '',
+    linkedIn: '',
   });
   const [isEditing, setIsEditing] = useState(false);
   const { userID } = useParams();
@@ -44,6 +46,7 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
           name: '',
           email: '',
           phoneNumber: '',
+          linkedIn: '',
         });
         // If contact details are undefined, open edit mode immediately
         if (!fetchedContactDetails) {
@@ -158,6 +161,23 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
                       />
                     ) : (
                       <div>{contactDetails.phoneNumber}</div>
+                    )}
+                  </div>
+                  <div className="mb-3">
+                    <label htmlFor="linkedIn" className="form-label">
+                      LinkedIn Profile
+                    </label>
+                    {isEditing || !contactDetails.linkedIn ? (
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="linkedIn"
+                        name="linkedIn"
+                        value={editedContactDetails.linkedIn}
+                        onChange={handleInputChange}
+                      />
+                    ) : (
+                      <div>{contactDetails.linkedIn}</div>
                     )}
                   </div>
                   {isEditing ? (

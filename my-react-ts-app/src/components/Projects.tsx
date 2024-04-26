@@ -257,7 +257,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Projects</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Projects</b></h4>
       {projects.map((project) => (
         <div key={project._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === project._id ? (
@@ -383,25 +383,34 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             </div>
           ) : (
             // View mode
-<div style={{ border: '4px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{project.name}</b></h3>
-  <div style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>
+<div style={{ border: '2px solid #ccc', borderRadius: '8px', padding: '8px', marginBottom: '1rem' }}>
+  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', fontSize: '1rem', marginBottom: '0.5rem' }}><b>{project.name}</b></h3>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
     <strong>Start Date:</strong> {project.startDate.month} {project.startDate.year}
   </div>
-  <div style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
     <strong>End Date:</strong> {project.endDate.month} {project.endDate.year}
   </div>
-  <div style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
     <strong>Skills:</strong> {project.skills}
   </div>
-  <div style={{ marginBottom: '1rem' }}> {project.description.split('*').slice(1).map((part, index) => (
-    <p key={index} style={{ marginBottom: '0.5rem' }}>-{part}</p>
-  ))}</div>
+  {project.description.split('*').slice(1).map((part, index) => (
+     <p key={index} style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}>{part}</p>
+  ))}
+
   <div>
     <button
       className="btn btn-primary me-2"
       onClick={() => handleEditClick(project._id, project.name, project.startDate, project.endDate, project.skills, project.description)}
-      style={{ borderRadius: '4px' }}
+      style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: '1px solid #007bff',
+        padding: '0.3rem 0.6rem', // Adjusted padding
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem', // Adjusted font size
+      }}
     >
       <FontAwesomeIcon icon={faEdit} className="me-2" />
       Edit
@@ -409,7 +418,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     <button
       className="btn btn-danger"
       onClick={() => handleDelete(project._id)}
-      style={{ borderRadius: '4px' }}
+      style={{
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        padding: '0.3rem 0.4rem',
+        border: '1px solid #dc3545',
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem',
+      }}
     >
       <FontAwesomeIcon icon={faTrash} className="me-2" />
       Delete
@@ -546,7 +563,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
-          style={{borderRadius: '4px'}}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Project

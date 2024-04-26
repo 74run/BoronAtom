@@ -199,7 +199,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 style={{color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare'}}><b>Certifications</b></h2>
+      <h4 style={{color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare'}}><b>Certifications</b></h4>
       {certifications.map((certification) => (
         <div key={certification._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === certification._id ? (
@@ -326,16 +326,24 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           ) : (
             // View mode
             <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{certification.name}</b></h3>
-            <p style={{ marginBottom: '0.5rem' }}>Issued By: {certification.issuedBy}</p>
-            <p style={{ marginBottom: '0.5rem' }}>Issued Date: {certification.issuedDate.month} {certification.issuedDate.year}</p>
-            <p style={{ marginBottom: '0.5rem' }}>Expiration Date: {certification.expirationDate.month} {certification.expirationDate.year}</p>
-            <p style={{ marginBottom: '1rem' }}>Certificate URL: {certification.url}</p>
+            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '1rem' }}><b>{certification.name}</b></h3>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Issued By: {certification.issuedBy}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Issued Date: {certification.issuedDate.month} {certification.issuedDate.year}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Expiration Date: {certification.expirationDate.month} {certification.expirationDate.year}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Certificate URL: {certification.url}</p>
             <div>
               <button
                 className="btn btn-primary me-2"
                 onClick={() => handleEditClick(certification._id, certification.name, certification.issuedBy, certification.issuedDate, certification.expirationDate, certification.url)}
-                style={{ borderRadius: '4px' }}
+                style={{
+                  backgroundColor: '#007bff',
+                  color: '#fff',
+                  border: '1px solid #007bff',
+                  padding: '0.3rem 0.6rem', // Adjusted padding
+                  borderRadius: '4px',
+                  transition: 'all 0.3s',
+                  fontSize: '0.8rem', // Adjusted font size
+                }}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
@@ -343,7 +351,15 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               <button
                 className="btn btn-danger"
                 onClick={() => handleDelete(certification._id)}
-                style={{ borderRadius: '4px' }}
+                style={{
+                  backgroundColor: '#dc3545',
+                  color: '#fff',
+                  padding: '0.3rem 0.4rem',
+                  border: '1px solid #dc3545',
+                  borderRadius: '4px',
+                  transition: 'all 0.3s',
+                  fontSize: '0.8rem',
+                }}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
@@ -481,7 +497,15 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
-          style={{borderRadius: '4px'}}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Certification

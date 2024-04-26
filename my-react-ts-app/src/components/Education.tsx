@@ -313,7 +313,7 @@ const fetchEducation = () => {
         boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Education</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Education</b></h4>
       {educations.map(education => (
         <div key={education._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === education._id ? (
@@ -456,17 +456,25 @@ const fetchEducation = () => {
             </div>
           ) : (
             <div className="display-info" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{education.university}</b></h3>
-  <p style={{ marginBottom: '0.5rem' }}>GPA: {education.cgpa}</p>
-  <p style={{ marginBottom: '0.5rem' }}>Degree: {education.degree}</p>
-  <p style={{ marginBottom: '0.5rem' }}>Major: {education.major}</p>
-  <p style={{ marginBottom: '0.5rem' }}>Start Date: {education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
-  <p style={{ marginBottom: '0.5rem' }}>End Date: {education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
+  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '1rem' }}><b>{education.university}</b></h3>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>GPA: </strong>{education.cgpa}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Degree: </strong>{education.degree}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Major: </strong>{education.major}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Start Date </strong>{education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>End Date: </strong>{education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
   <div>
     <button
       className="btn btn-primary me-2"
       onClick={() => handleEditClick(education._id, education.university, education.cgpa, education.degree, education.major, education.startDate, education.endDate)}
-      style={{ borderRadius: '4px' }}
+      style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: '1px solid #007bff',
+        padding: '0.3rem 0.6rem', // Adjusted padding
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem', // Adjusted font size
+      }}
     >
       <FontAwesomeIcon icon={faEdit} className="me-2" />
       Edit
@@ -474,7 +482,15 @@ const fetchEducation = () => {
     <button
       className="btn btn-danger"
       onClick={() => handleDelete(education._id)}
-      style={{ borderRadius: '4px' }}
+      style={{
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        padding: '0.3rem 0.4rem',
+        border: '1px solid #dc3545',
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem',
+      }}
     >
       <FontAwesomeIcon icon={faTrash} className="me-2" />
       Delete
@@ -624,7 +640,15 @@ const fetchEducation = () => {
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
-          style={{borderRadius: '4px'}}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Education

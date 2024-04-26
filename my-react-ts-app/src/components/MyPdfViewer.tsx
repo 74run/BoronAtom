@@ -1,6 +1,8 @@
 
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { FaFilePdf, FaEye } from 'react-icons/fa';
+
 
 import React, { useRef, useState, useEffect } from "react";
 
@@ -57,6 +59,12 @@ interface EduDetails {
     skills: Array<{
       domain: string;
       name: string;
+    }>
+    contact: Array<{
+      name: string;
+      email: string;
+      phoneNumber: string;
+      linkedIn: string;
     }>
   }
 
@@ -271,6 +279,25 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         console.error('Error compiling LaTeX:', error);
       });
   };
+
+
+  function convertToLatex(description: string): string {
+    // Define a map of special characters and their LaTeX equivalents
+    const symbolMap: { [key: string]: string } = {
+        '%': '\%',
+    
+     
+        // Add more symbols and their replacements as needed
+    };
+
+    // Replace special symbols with their LaTeX equivalents
+    let convertedDescription: string = description;
+    for (const symbol in symbolMap) {
+        convertedDescription = convertedDescription.replace(new RegExp(symbol, 'g'), symbolMap[symbol]);
+    }
+
+    return convertedDescription;
+}
     
   
   
@@ -291,6 +318,8 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const involvements = eduDetails?.involvement || [];
 
       const skills = eduDetails?.skills || [];
+
+      const contacts = eduDetails?.contact || [];
       // Add sections for projects, certifications, skills, involvements as needed
   
       const summarySection = summarys.map(
@@ -302,7 +331,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const projectSection = projects.map((project) => `
       \\project{${project.name}}{${project.skills}}{${project.startDate.year} -- ${project.endDate.year}}{
           \\begin{bullet-list-minor}
-              ${project.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n')}
+              ${convertToLatex(project.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
           \\end{bullet-list-minor}
       }
   `).join("\n");
@@ -317,7 +346,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const experienceSection = experiences.map((experience) => `
       \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
       \\begin{bullet-list-minor}
-          ${experience.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n')}
+          ${convertToLatex(experience.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
       \\end{bullet-list-minor}
   `).join("\n\n");
   
@@ -351,6 +380,11 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       )
       .join("\n");
   
+
+      
+    
+    // Usage:
+    
   
   
   
@@ -450,10 +484,22 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       \\vspace*{-44pt}
   
       \\begin{center}
-        {\\LARGE \\textbf{${userDetails?.firstName} ${userDetails?.lastName}}} \\\\
-        \\faPhone\\ 551-755-1991 \\quad
-        \\faEnvelope\\ \\href{mailto:${userDetails?.email}}{${userDetails?.email}} \\quad
-        \\faLinkedin\\ \\url{https://www.linkedin.com/in/tarun-janapati/}
+        {\\LARGE \\textbf{${
+          contacts[0]?.name // Check if contacts[0].name exists
+              ? contacts[0].name // If it exists, use it
+              : `${userDetails?.firstName} ${userDetails?.lastName}` // If not, fallback to userDetails?.firstName
+      }}} \\\\
+        \\faPhone\\ ${contacts[0].phoneNumber} \\quad
+        \\faEnvelope\\ \\href{mailto:  ${
+          contacts[0]?.email
+          ? contacts[0].email
+          : `${userDetails?.email}`
+      }}{  ${
+        contacts[0]?.email
+        ? contacts[0].email
+        : `${userDetails?.email}`
+    }} \\quad
+        \\faLinkedin\\ \\url{${contacts[0].linkedIn}}
       \\end{center}
      \\vspace*{4pt}%
       \\header{Summary}
@@ -508,13 +554,29 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
          
           {/* PDF Download and Preview Buttons */}
           <div className="d-flex justify-content-end">
-    <button className="btn btn-primary mr-2" onClick={generatePdf} style={{ marginRight: '10px' }}>
-      Download PDF
-    </button>
-    
-    <button className="btn btn-secondary" onClick={previewPdf}>
-      Preview PDF
-    </button>
+          <button className="btn btn-primary mr-2" onClick={generatePdf} style={{
+  backgroundColor: '#007bff',
+  color: '#fff',
+  border: '1px solid #007bff',
+  padding: '0.3rem 0.6rem', // Adjusted padding
+  borderRadius: '100px',
+  transition: 'all 0.3s',
+  fontSize: '0.8rem', // Adjusted font size
+  marginRight: '10px'
+}}>
+  <FaFilePdf /> Download PDF
+</button>
+
+<button className="btn btn-secondary" onClick={previewPdf} style={{
+  color: '#fff',
+  border: '1px solid #007bff',
+  padding: '0.3rem 0.6rem', // Adjusted padding
+  borderRadius: '100px',
+  transition: 'all 0.3s',
+  fontSize: '0.8rem', // Adjusted font size
+}}>
+  <FaEye /> Preview PDF
+</button>
   </div>
   
           {/* PDF Preview */}

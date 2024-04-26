@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/contact', async (req, res) => {
     try {
-        const { name, email, phoneNumber } = req.body;
+        const { name, email, phoneNumber, linkedIn } = req.body;
         const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -23,6 +23,7 @@ router.post('/:userID/contact', async (req, res) => {
         name: name,
         email: email,
         phoneNumber: phoneNumber,
+        linkedIn: linkedIn,
         
       });
   
@@ -59,7 +60,7 @@ router.post('/:userID/contact', async (req, res) => {
     try {
         const { userID, contactID } = req.params;
 
-        const { name, email, phoneNumber } = req.body;
+        const { name, email, phoneNumber, linkedIn } = req.body;
 
         let userProfile = await UserProfile.findOne({ userID });
 
@@ -77,6 +78,7 @@ router.post('/:userID/contact', async (req, res) => {
         contactToUpdate.name = name;
         contactToUpdate.email = email;
         contactToUpdate.phoneNumber = phoneNumber;
+        contactToUpdate.linkedIn = linkedIn;
 
         const updatedUserProfile = await userProfile.save();
 

@@ -62,7 +62,7 @@ const ChatBox: React.FC = () => {
         <div className="message-container">
           {messages.map((message) => (
             <div key={message.id} className={`message ${message.sender}`}>
-              <p>{message.text}</p>
+              <p style={{ fontSize: '12px' }}>{message.text}</p>
             </div>
           ))}
         </div>

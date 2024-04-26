@@ -56,11 +56,13 @@ router.post('/chat/:userID', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `You are my Resume Builder for my "${user.education}", "${user.experience}", and "${user.project}" with this job details "${text}".`;
+    const prompt = `Create my Resume to aligin my "${user.education}", "${user.experience}", and "${user.project}" with this job details as follows "${text}".`;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const aiMessage = response.text();
+
+  console.log('Resume:', aiMessage)
 
   res.json({ message: aiMessage });
 });

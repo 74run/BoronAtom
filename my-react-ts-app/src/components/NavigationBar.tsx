@@ -42,28 +42,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 </div>
 
           <BootstrapNav className="ms-auto"> {/* Added class for left alignment */}
-            <Link
-              to="/"
-              className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
-              onClick={() => handleItemClick('home')}
-            >
-              <FontAwesomeIcon icon={faHome} /> Home
-            </Link>
-            <Link
-              to="/notifications"
-              className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
-              onClick={() => handleItemClick('notifications')}
-            >
-              <FontAwesomeIcon icon={faBell} /> Notifications
-            </Link>
-            <Link
-              to="/add-friends"
-              className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
-              onClick={() => handleItemClick('add-friends')}
-            >
-              <FontAwesomeIcon icon={faUserFriends} /> Add Friends
-            </Link>
-            <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex' }}>
               
               <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />}>
                 <NavDropdown.Item>
@@ -79,6 +58,56 @@ const Navbar: React.FC<NavbarProps> = () => {
                 <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
               </NavDropdown>
             </div>
+            <Link
+              to="/"
+              className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
+              onClick={() => handleItemClick('home')}
+              style={{
+                
+                color: '#fff',
+                border: '4px solid #007bff',
+                padding: '0.5rem 1rem', // Adjusted padding
+                borderRadius: '1000px',
+                transition: 'all 0.3s',
+                fontSize: '1rem', // Adjusted font size
+              }}
+            >
+              <FontAwesomeIcon icon={faHome} />
+            </Link>
+            <Link
+              to="/notifications"
+              className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
+              onClick={() => handleItemClick('notifications')}
+              style={{
+                
+                color: '#fff',
+                border: '4px solid #007bff',
+                padding: '0.5rem 1rem', // Adjusted padding
+                borderRadius: '1000px',
+                transition: 'all 0.3s',
+                fontSize: '1rem', // Adjusted font size
+              }}
+
+            >
+              <FontAwesomeIcon icon={faBell} /> 
+            </Link>
+            <Link
+              to="/add-friends"
+              className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
+              onClick={() => handleItemClick('add-friends')}
+              style={{
+                
+                color: '#fff',
+                border: '4px solid #007bff',
+                padding: '0.5rem 1rem', // Adjusted padding
+                borderRadius: '1000px',
+                transition: 'all 0.3s',
+                fontSize: '1rem', // Adjusted font size
+              }}
+            >
+              <FontAwesomeIcon icon={faUserFriends} /> 
+            </Link>
+            
           </BootstrapNav>
         </BootstrapNavbar>
       </div>

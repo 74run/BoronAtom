@@ -206,7 +206,7 @@ setIsAdding(true);
     }}
   >
   
-      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Summary</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Summary</b></h4>
       {summarys.map((summary) => (
         <div key={summary._id} style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #ddd', borderRadius: '8px', transition: 'all 0.3s' }}>
           {editData && editData.id === summary._id ? (
@@ -269,33 +269,36 @@ setIsAdding(true);
           ) : (
             <>
               {/* View mode */}
-              <p style={{ marginBottom: '1rem' }}>{summary.content}</p>
+              <p style={{ marginBottom: '1rem', fontSize: '14px' }}>{summary.content}</p>
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button
-                  onClick={() => handleEditClick(summary._id, summary.content)}
-                  className="btn btn-primary me-2"
-                  style={{
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: '1px solid #007bff',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '4px',
-                    transition: 'all 0.3s',
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
-                  Edit
-                </button>
+              <button
+  onClick={() => handleEditClick(summary._id, summary.content)}
+  className="btn btn-primary me-2"
+  style={{
+    backgroundColor: '#007bff',
+    color: '#fff',
+    border: '1px solid #007bff',
+    padding: '0.3rem 0.6rem', // Adjusted padding
+    borderRadius: '4px',
+    transition: 'all 0.3s',
+    fontSize: '0.8rem', // Adjusted font size
+  }}
+>
+  <FontAwesomeIcon icon={faEdit} className="me-1" style={{ fontSize: '0.8rem' }} /> {/* Adjusted icon size */}
+  Edit
+</button>
+
                 <button
                   onClick={() => handleDelete(summary._id)}
                   className="btn btn-danger"
                   style={{
                     backgroundColor: '#dc3545',
                     color: '#fff',
+                    padding: '0.3rem 0.4rem',
                     border: '1px solid #dc3545',
-                    padding: '0.5rem 1rem',
                     borderRadius: '4px',
                     transition: 'all 0.3s',
+                    fontSize: '0.8rem',
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />

@@ -5,9 +5,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { pdf, Document, Page, Text } from '@react-pdf/renderer';
 import Latex from 'react-latex';
+import { PersonFill } from 'react-bootstrap-icons';
 
 import ModalContact from "./ModalContact";
-import { PencilFill } from "react-bootstrap-icons";
 
 interface UserDetails {
   firstName: string;
@@ -17,14 +17,22 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+interface ContactDetails {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
 
 interface ProfileProps {
   UserDetail: UserDetails | null;
+  ContactDetail: ContactDetails | null; 
 
 }
 
 const Profile: React.FC<ProfileProps> = () => {
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [contactDetails, setContactDetails] = useState<any>(null);
+  const [userDetails, setUserDetails] = useState<any>(null);
   
   const avatarUrl = useRef<string>(
     "https://avatarfiles.alphacoders.com/161/161002.jpg"
@@ -34,11 +42,7 @@ const Profile: React.FC<ProfileProps> = () => {
   
   const { userID } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [contactDetails, setContactDetails] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phoneNumber: "1234567890",
-  });
+  // const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); 
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -72,6 +76,22 @@ const Profile: React.FC<ProfileProps> = () => {
       });
   }, [userID]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/contact`);
+       
+        setContactDetails(response.data[0]);
+      } catch (error) {
+        console.error('Error fetching contact details:', error);
+      }
+    };
+
+    fetchData();
+  }, [userID]);
+
+
+
 
 
   
@@ -79,7 +99,7 @@ const Profile: React.FC<ProfileProps> = () => {
  
 
   return (
-    <div className="container mt-(-3)">
+    <div className="container mt-3">
     <div className="d-flex flex-column align-items-center pt-0">
       <div className="position-relative">
         {/* Add onClick handler to the image */}
@@ -87,7 +107,7 @@ const Profile: React.FC<ProfileProps> = () => {
           src={avatarUrl.current}
           alt="Avatar"
           className="rounded-circle border border-secondary"
-          style={{ width: "150px", height: "150px", cursor: "pointer" }}
+          style={{ width: "150px", height: "150px", cursor: "pointer"}}
           onClick={() => setFullImageModalOpen(true)}
         />
         <button
@@ -98,33 +118,34 @@ const Profile: React.FC<ProfileProps> = () => {
           <Pencil size={50} style={{width: "20px", height: "20px"}} className="text-light" />
         </button>
       </div>
-      <h2 className="text-black font-weight-bold mt-4">{userDetails && `${userDetails.firstName} ${userDetails.lastName}`}
-      
-</h2> 
+     
+
+<PersonFill
+    style={{
+      position: "relative",
+      top: '20',
+      color: "black",
+      fontSize: "1.5rem",
+      cursor: "pointer",
+    }}
+    onClick={openModal}
+  /> <h4 className="text-black font-weight-bold mt-4" style={{ marginBottom: '0.2rem' }}>
+  {contactDetails && contactDetails.name ? contactDetails.name : (userDetails && `${userDetails.firstName} ${userDetails.lastName}`)}
+</h4>
 
 
 
-      <p className="text-secondary text-sm mt-2">{userDetails && `${userDetails.email}`}
+
+      <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.6rem', fontSize: '0.8rem' }} className="text-secondary text-sm mt-2">{contactDetails && contactDetails.email ? contactDetails.email :(userDetails && `${userDetails.email}`)}
 </p>
 
 <div style={{ position: "relative" }}>
   
-      <PencilFill
-        style={{
-          position: "absolute",
-          top: -50,
-          right: -200,
-          color: "black",
-          fontSize: "1.5rem",
-          cursor: "pointer",
-        }}
-        onClick={openModal}
-      />
-      <ModalContact
-            isOpen={isModalOpen}
-            closeModal={closeModal} 
-      />
-    </div>
+  <ModalContact
+    isOpen={isModalOpen}
+    closeModal={closeModal} 
+  />
+</div>
 
 
       {/* Edit Avatar Modal */}

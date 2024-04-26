@@ -37,6 +37,14 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+
+interface ContactDetails {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+
 interface EduDetails {
   education: Array<{
     university: string;
@@ -82,6 +90,12 @@ interface EduDetails {
   skills: Array<{
     domain: string;
     name: string;
+  }>
+  contact: Array<{
+    name: string;
+    email: string;
+    phoneNumber: string;
+    linkedIn: string;
   }>
 }
 
@@ -158,7 +172,8 @@ const Profile: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   
   const { userID } = useParams();
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
   // Fetch user details and educations data
   useEffect(() => {
@@ -173,6 +188,10 @@ const Profile: React.FC = () => {
         const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/education`);
         const fetchedEducations = educationsResponse.data.educations;
         setEducations(fetchedEducations);
+
+        const contactsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/contact`);
+        const fetchedContacts = contactsResponse.data.contact;
+        setContactDetails(fetchedContacts);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -499,15 +518,20 @@ const Profile: React.FC = () => {
         {/* Middle Section (60%) */}
         <div className= 'Full-Resume' style={{ flex: '0 0 60%', position: 'relative', borderRadius: '20px' }}>
           {/* Content for the middle section goes here */}
-      <div style={{  marginBottom: '20px' }}>
+      <div style={{  marginBottom: '0px' }}>
           <CoverPage onUpload={(file: File): void => { } 
            } />
            
-           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0, marginTop: '-180px' }}>
+           <div style={{ position: 'relative', top: "120px", left: 0, marginRight: '500px', bottom: 0, marginTop: '-180px' }}>
            
-      <ProfileNew UserDetail={userDetails} />
+      <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
+      </div>
+      <div style={{ position: 'relative', top: "20px", left: "80px", marginRight: '-300px', bottom: 0, marginTop: '-80px' }}>
 
       <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+      </div>
+
+      <div>
 
        
           </div></div>

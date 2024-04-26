@@ -230,7 +230,7 @@ const fetchExperience = () => {
         boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Experience</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Experience</b></h4>
       {experiences.map((experience) => (
         <div key={experience._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === experience._id ? (
@@ -371,21 +371,29 @@ const fetchExperience = () => {
           ) : (
             // View mode
             <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}><b>{experience.jobTitle}</b></h3>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.company}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>{experience.location}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>Start Date: {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' }}>End Date: {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
+            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' , fontSize: '1rem' }}><b>{experience.jobTitle}</b></h3>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Company: </strong>{experience.company}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Location: </strong>{experience.location}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Start Date:</strong> {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
+            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>End Date:</strong> {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
             {experience.description.split('*').slice(1).map((part, index) => (
-    <p key={index} style={{ marginBottom: '0.5rem' }}>
-      -{part}
+    <p key={index} style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}>
+      {part}
     </p>
   ))}
             <div>
               <button
                 className="btn btn-primary me-2"
                 onClick={() => handleEditClick(experience._id, experience.jobTitle, experience.company, experience.location, experience.startDate, experience.endDate, experience.description)}
-                style={{ borderRadius: '4px' }}
+                style={{
+                  backgroundColor: '#007bff',
+                  color: '#fff',
+                  border: '1px solid #007bff',
+                  padding: '0.3rem 0.6rem', // Adjusted padding
+                  borderRadius: '4px',
+                  transition: 'all 0.3s',
+                  fontSize: '0.8rem', // Adjusted font size
+                }}
               >
                 <FontAwesomeIcon icon={faEdit} className="me-2" />
                 Edit
@@ -393,7 +401,15 @@ const fetchExperience = () => {
               <button
                 className="btn btn-danger"
                 onClick={() => handleDelete(experience._id)}
-                style={{ borderRadius: '4px' }}
+                style={{
+                  backgroundColor: '#dc3545',
+                  color: '#fff',
+                  padding: '0.3rem 0.4rem',
+                  border: '1px solid #dc3545',
+                  borderRadius: '4px',
+                  transition: 'all 0.3s',
+                  fontSize: '0.8rem',
+                }}
               >
                 <FontAwesomeIcon icon={faTrash} className="me-2" />
                 Delete
@@ -544,7 +560,15 @@ const fetchExperience = () => {
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
-          style={{borderRadius: '4px'}}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Experience
