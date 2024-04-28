@@ -39,10 +39,10 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "vercel",
-    "build": "vercel build",
+    "dev": "vite",
+    "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vercel preview"
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
