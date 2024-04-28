@@ -10,6 +10,6 @@ const expSchema = new mongoose.Schema({
   
 });
 
-const Exp = mongoose.model('Exp', expSchema);
+// const Exp = mongoose.model('Exp', expSchema);
 
 module.exports = expSchema;

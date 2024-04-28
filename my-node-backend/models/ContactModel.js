@@ -7,6 +7,6 @@ const contactSchema = new mongoose.Schema({
     linkedIn: String,
   });
 
-  const Contact = mongoose.model('Contact', contactSchema);
+  // const Contact = mongoose.model('Contact', contactSchema);
 
   module.exports = contactSchema;
