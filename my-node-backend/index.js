@@ -36,7 +36,7 @@ const port = 3001;
 
 
 app.use(cors({
-  origin: ["https://boron-atom.vercel.app"],
+  origin: ["https://boron-atom-chi.vercel.app"],
   methods: ["POST", "GET"],
   credentials: true
 }));
