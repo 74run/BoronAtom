@@ -36,7 +36,7 @@ const port = process.env.REACT_APP_BACKPORT;
 
 
 app.use(cors({
-  origin: ["https://boron-atom-chi.vercel.app"],
+  origin: ["https://boron-atom-chi.vercel.app/login"],
   methods: ["POST", "GET"],
   credentials: true
 }));
