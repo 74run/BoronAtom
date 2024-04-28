@@ -8,6 +8,6 @@ const invSchema = new mongoose.Schema({
     description: String
 });
 
-const Inv = mongoose.model('Inv', invSchema);
+// const Inv = mongoose.model('Inv', invSchema);
 
 module.exports = invSchema;

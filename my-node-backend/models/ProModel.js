@@ -8,6 +8,6 @@ const proSchema = new mongoose.Schema({
     description: String,
 });
 
-const Pro = mongoose.model('Pro', proSchema);
+// const Pro = mongoose.model('Pro', proSchema);
 
 module.exports = proSchema;

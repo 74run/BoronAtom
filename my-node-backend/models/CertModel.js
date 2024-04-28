@@ -8,6 +8,6 @@ const certSchema = new mongoose.Schema({
     url: String,
 });
 
-const Cert = mongoose.model('Cert', certSchema);
+// const Cert = mongoose.model('Cert', certSchema);
 
 module.exports = certSchema;
