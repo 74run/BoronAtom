@@ -13,7 +13,8 @@
     "routes": [
       {
         "src": "/(.*)",
-        "dest": "src/App.tsx",
+
+        "dest": "/",
         "methods": ["GET", "POST", "PUT", "DELETE"],
         "headers":{
           "Access-Control-Allow-Origin": "*"
