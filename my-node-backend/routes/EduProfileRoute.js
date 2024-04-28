@@ -13,10 +13,10 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/education', async (req, res) => {
   try {
-    const { university, degree, major, startDate, endDate } = req.body;
+    const { university, cgpa, degree, major, startDate, endDate } = req.body;
     const userId = req.params.userID;
 
-    if (!university || !degree || !major || !startDate || !endDate) {
+    if (!university || !cgpa || !degree || !major || !startDate || !endDate) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -28,6 +28,7 @@ router.post('/:userID/education', async (req, res) => {
 
     userProfile.education.push({
       university: university,
+      cgpa: cgpa,
       degree: degree,
       major: major,
       startDate: startDate,
@@ -114,7 +115,9 @@ router.get('/EduDetails/:userID', async (req, res) => {
               involvement: user.involvement,
               certification: user.certification,
               project: user.project,
-              summary: user.summary
+              summary: user.summary,
+              skills: user.skills,
+              contact: user.contact
               // Add other fields as needed
           }
       });

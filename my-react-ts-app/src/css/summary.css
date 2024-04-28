@@ -1,0 +1,48 @@
+.summary-container {
+    border: 2px solid #4CAF50;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 200px rgba(10, 0, 0, 0.5);
+  }
+  
+  .summary-header {
+    color: #4CAF50;
+    text-align: left;
+    margin-bottom: 1rem;
+    font-family: Timesquare;
+  }
+  
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+  
+  .summary-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.3s;
+  }
+  
+  .summary-item p {
+    margin-bottom: 1rem;
+  }
+  
+  .summary-button-group {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .summary-button-group button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s;
+  }
+  
+  .summary-button-group button:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+  

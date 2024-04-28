@@ -7,15 +7,17 @@ const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
+const { latex } = require('latex.js');
+
+require("dotenv").config();
 
 
-
-const EduRoutes = require('./routes/EduRoute');
+// const EduRoutes = require('./routes/EduRoute');
 const UniRoutes = require('./routes/UniRoute');
-const ExpRoutes = require('./routes/ExpRoute');
-const CertRoutes = require('./routes/CertRoute');
-const InvRoutes = require('./routes/InvRoute');
-const ProRoutes = require('./routes/ProRoute');
+// const ExpRoutes = require('./routes/ExpRoute');
+// const CertRoutes = require('./routes/CertRoute');
+// const InvRoutes = require('./routes/InvRoute');
+// const ProRoutes = require('./routes/ProRoute');
 // const profileRoutes = require('./routes/ProfilePhotoRoute');
 const UserProfileRoutes = require('./routes/EduProfileRoute');
 
@@ -25,16 +27,19 @@ const ProUserRoutes = require('./routes/ProUserRoute');
 const SumUserRoutes = require('./routes/SumUserRoute');
 const InvUserRoutes = require('./routes/InvUserRoute');
 const SkillUserRoutes = require('./routes/SkillUserRoute');
+const ContactUserRoutes = require('./routes/ContactUserRoute');
+const Google = require('./google');
+
 
 const app = express();
-const port = 3001;
+const port = process.env.REACT_APP_BACKPORT;
 
 
 app.use(cors());
 app.use(bodyParser.json());
 
 
-mongoose.connect('mongodb://127.0.0.1:27017/EducationDetails', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 // Handle MongoDB connection events
@@ -47,16 +52,23 @@ db.once('open', () => {
 app.use(express.json());
 
 
+
+
+
 require('./routes/UserRoute')(app);
+
+
+
+
 
 
 
 // app.use('/api/items', EduRoutes);
 // app.use('/', profileRoutes);
-app.use('/api/experiences', ExpRoutes);
-app.use('/api/certifications',CertRoutes);
-// app.use('/api/involvements',InvRoutes);
-app.use('/api/projects', ProRoutes);
+// app.use('/api/experiences', ExpRoutes);
+// app.use('/api/certifications',CertRoutes);
+// // app.use('/api/involvements',InvRoutes);
+// app.use('/api/projects', ProRoutes);
 app.use('/', UniRoutes);
 
 
@@ -67,6 +79,8 @@ app.use('/api/userprofile', ProUserRoutes);
 app.use('/api/userprofile', SumUserRoutes);
 app.use('/api/userprofile', InvUserRoutes);
 app.use('/api/userprofile', SkillUserRoutes);
+app.use('/api/userprofile', ContactUserRoutes)
+app.use('/api/userprofile', Google);
 
 
 

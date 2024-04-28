@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
 interface UserDetails {
@@ -16,6 +16,7 @@ interface UserDetails {
 interface Education {
   _id: string;
   university: string;
+  cgpa: string;
   degree: string;
   major: string;
   startDate: { month: string; year: string };
@@ -26,20 +27,21 @@ interface Education {
 interface EducationProps {
   Educations: Education[];
   UserDetail: UserDetails | null;
-  onEdit: (id: string, data: {university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
+  onEdit: (id: string, data: {university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
   onDelete :(id: string)=> void;
   
 }
 
 
 const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEdit, onDelete}) => {
-  const [editData, setEditData] = useState<{id: string; university: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
+  const [editData, setEditData] = useState<{id: string; university: string; cgpa: string;  degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
+    cgpa: '',
     degree: '',
     major: '',
     startDate: { month: '', year: '' },
@@ -59,7 +61,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
   useEffect(() => {
     // Make an HTTP request to fetch user details based on the user ID
-    axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
         .then(response => {
             setUserDetails(response.data.user);
         })
@@ -74,7 +76,7 @@ useEffect(() => {
 }, []);
 
 const fetchEducation = () => {
-  fetch(`http://localhost:3001/api/userprofile/${userID}/education`)
+  fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to fetch educations');
@@ -99,11 +101,12 @@ const fetchEducation = () => {
 
   const handleEditClick = (    id: string,
     university: string,
+    cgpa: string,
     degree: string,
     major: string,
     startDate: { month: string; year: string },
     endDate: { month: string; year: string }) => {
-    setEditData({  id, university, degree, major, startDate, endDate });
+    setEditData({  id, university, cgpa, degree, major, startDate, endDate });
   };
 
   const handleCancelEdit = () => {
@@ -114,6 +117,7 @@ const fetchEducation = () => {
     if (editData) {
       onEdit(editData.id, {
         university: editData.university,
+        cgpa: editData.cgpa,
         degree: editData.degree,
         major: editData.major,
         startDate: { ...editData.startDate },
@@ -125,6 +129,7 @@ const fetchEducation = () => {
           ? {
               ...education,
               university: editData.university,
+              cgpa: editData.cgpa,
               degree: editData.degree,
               major: editData.major,
               startDate: { ...editData.startDate },
@@ -143,7 +148,7 @@ const fetchEducation = () => {
   };
   
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +181,7 @@ const fetchEducation = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/universities');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/universities`);
         // setUniversities(response.data.universities);
         setFilteredUniversities(response.data.universities);
       } catch (error) {
@@ -201,7 +206,7 @@ const fetchEducation = () => {
   //         setEducations(JSON.parse(storedData));
   //       } else {
   //         // If not, fetch data from the server
-  //         const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+  //         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/educations`);
   //         const fetchedEducations = response.data.educations;
   
   //         // Update state
@@ -230,7 +235,7 @@ const fetchEducation = () => {
 
   const handleSaveClick = () => {
     // Form validation check
-    if (!newEducation.university || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
+    if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
       console.error('Please fill in all required fields');
       // You can display an error message to the user or handle it as appropriate
       return;
@@ -250,7 +255,7 @@ const fetchEducation = () => {
   
     // const storageKey = `educations_${userID}`;
 
-  axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
+  axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`, formattedEducation)
     .then((response) => {
       const newEducationFromServer = response.data.education;
       const newEduData = newEducationFromServer[newEducationFromServer.length - 1];
@@ -265,6 +270,7 @@ const fetchEducation = () => {
       setNewEducation({
         _id: '',
         university: '',
+        cgpa: '',
         degree: '',
         major: '',
         startDate: { month: '', year: '' },
@@ -284,6 +290,7 @@ const fetchEducation = () => {
   const handleAddClick = () => {
     setNewEducation({     _id: '',
     university: '',
+    cgpa: '',
     degree: '',
     major: '',
     startDate: { month: '', year: '' },
@@ -293,55 +300,66 @@ const fetchEducation = () => {
   };
 
   return (
- 
     <div 
-    style={{
-      border: '2px solid #ddd',
-      borderRadius: '8px',
-      padding: '16px',
-      marginBottom: '20px',
-    }}
-    className="container">
-     <h2>Education</h2>
+      
+      style={{
+        border: '2px solid #4CAF50',
+        borderRadius: '8px',
+        padding: '16px',
+        marginBottom: '20px',
+        fontFamily: 'Arial, sans-serif',
+        color: '#333',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
+      }}
+    >
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Education</b></h4>
       {educations.map(education => (
-        <div key={education._id} className="mb-3">
+        <div key={education._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === education._id ? (
             <div className="editing-form">
-          
-            <input
-              list="universities"
-              type="text"
-              className="form-control mb-2"
-              placeholder="University Name"
-              value={editData.university}
-              onChange={(e) => setEditData({ ...editData, university: e.target.value })}
-            />
-          <datalist
-            id="universities"
-          >
-            {filteredUniversities.map((name, index) => (
-              <option key={index} value={name} />
-            ))}
-          </datalist>
-      
-          <select
-              className="form-control mb-2"
-              value={editData.degree}
-              onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
-            >
-              <option value="Associate Degree">Associate Degree</option>
-              <option value="Bachelor's Degree">Bachelor's Degree</option>
-              <option value="Master's Degree">Master's Degree</option>
-              <option value="Doctoral Degree">Doctoral Degree</option>
-            </select>
-
+              <input
+                list="universities"
+                type="text"
+                className="form-control mb-2"
+                placeholder="University Name"
+                value={editData.university}
+                onChange={(e) => setEditData({ ...editData, university: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+              />
+              <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
+                {filteredUniversities.map((name, index) => (
+                  <option key={index} value={name} />
+                ))}
+              </datalist>
+              <input
+        type="text"
+        className="form-control mb-2"
+        placeholder="CGPA"
+        value={editData.cgpa}
+        onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
+        style={{borderRadius: '4px', border: '1px solid #ccc'}}
+    />
+              <select
+                className="form-control mb-2"
+                value={editData.degree}
+                onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+              >
+                <option value="Associate Degree">Associate Degree</option>
+                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                <option value="Master's Degree">Master's Degree</option>
+                <option value="Doctoral Degree">Doctoral Degree</option>
+              </select>
               <input
                 type="text"
                 className="form-control mb-2"
                 placeholder="Major"
                 value={editData.major}
                 onChange={(e) => setEditData({ ...editData, major: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               />
+              
               <div className="date-dropdowns">
                 <label>Start Date:</label>
                 <div className="flex-container">
@@ -349,6 +367,7 @@ const fetchEducation = () => {
                     className="form-control mb-2"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -365,6 +384,7 @@ const fetchEducation = () => {
                     className="form-control mb-2"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -381,11 +401,12 @@ const fetchEducation = () => {
               </div>
               <div className="date-dropdowns">
                 <label>End Date:</label>
-                <div className="flex-container">  
+                <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.month}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -402,6 +423,7 @@ const fetchEducation = () => {
                     className="form-control mb-2"
                     value={editData.endDate.year}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -419,38 +441,63 @@ const fetchEducation = () => {
               <button
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
+                style={{borderRadius: '4px'}}
               >
+                <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
               </button>
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
+                style={{borderRadius: '4px'}}
               >
                 Cancel
               </button>
             </div>
           ) : (
-            <div className="display-info">
-            
-              <h3>{education.university}</h3>
-              <p>Degree: {education.degree}</p>
-              <p>Major: {education.major}</p>
-              <p>Start Date: {education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
-              <p>End Date: {education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
+            <div className="display-info" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
+  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '1rem' }}><b>{education.university}</b></h3>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>GPA: </strong>{education.cgpa}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Degree: </strong>{education.degree}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Major: </strong>{education.major}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Start Date </strong>{education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
+  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>End Date: </strong>{education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
+  <div>
+    <button
+      className="btn btn-primary me-2"
+      onClick={() => handleEditClick(education._id, education.university, education.cgpa, education.degree, education.major, education.startDate, education.endDate)}
+      style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: '1px solid #007bff',
+        padding: '0.3rem 0.6rem', // Adjusted padding
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem', // Adjusted font size
+      }}
+    >
+      <FontAwesomeIcon icon={faEdit} className="me-2" />
+      Edit
+    </button>
+    <button
+      className="btn btn-danger"
+      onClick={() => handleDelete(education._id)}
+      style={{
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        padding: '0.3rem 0.4rem',
+        border: '1px solid #dc3545',
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem',
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className="me-2" />
+      Delete
+    </button>
+  </div>
+</div>
 
-              <button
-                className="btn btn-primary me-2"
-                onClick={() => handleEditClick(education._id, education.university, education.degree, education.major, education.startDate, education.endDate)}
-              >
-                Edit
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={() => handleDelete(education._id)}
-              >
-                Delete
-              </button>
-            </div>
           )}
         </div>
       ))}
@@ -463,6 +510,7 @@ const fetchEducation = () => {
             placeholder="Search University"
             onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
             value={newEducation.university}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
           <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
             {filteredUniversities.map((name, index) => (
@@ -470,27 +518,37 @@ const fetchEducation = () => {
             ))}
           </datalist>
           <select
-              className="form-control mb-2"
-              value={newEducation.degree}
-              onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-            >
-              {!newEducation.degree && (
-                      <option value="" disabled>
-                        Select Degree
-                      </option>
-                    )}
-              <option value="Associate Degree">Associate Degree</option>
-              <option value="Bachelor's Degree">Bachelor's Degree</option>
-              <option value="Master's Degree">Master's Degree</option>
-              <option value="Doctoral Degree">Doctoral Degree</option>
-            </select>
+            className="form-control mb-2"
+            value={newEducation.degree}
+            onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+          >
+            {!newEducation.degree && (
+              <option value="" disabled>
+                Select Degree
+              </option>
+            )}
+            <option value="Associate Degree">Associate Degree</option>
+            <option value="Bachelor's Degree">Bachelor's Degree</option>
+            <option value="Master's Degree">Master's Degree</option>
+            <option value="Doctoral Degree">Doctoral Degree</option>
+          </select>
           <input
             type="text"
             className="form-control mb-2"
             placeholder="Major"
             value={newEducation.major}
             onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc'}}
           />
+             <input
+      type="text"
+      className="form-control mb-2"
+      placeholder="CGPA"
+      value={newEducation.cgpa}
+      onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
+      style={{borderRadius: '4px', border: '1px solid #ccc'}}
+    />
           <div className="date-dropdowns">
             <label>Start Date:</label>
             <div className="flex-container">
@@ -498,12 +556,13 @@ const fetchEducation = () => {
                 className="form-control mb-2"
                 value={newEducation.startDate.month}
                 onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newEducation.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -514,12 +573,13 @@ const fetchEducation = () => {
                 className="form-control mb-2"
                 value={newEducation.startDate.year}
                 onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newEducation.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -535,12 +595,13 @@ const fetchEducation = () => {
                 className="form-control mb-2"
                 value={newEducation.endDate.month}
                 onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newEducation.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -551,12 +612,13 @@ const fetchEducation = () => {
                 className="form-control mb-2"
                 value={newEducation.endDate.year}
                 onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newEducation.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -565,25 +627,37 @@ const fetchEducation = () => {
               </select>
             </div>
           </div>
-           <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
+          <button type="submit" className="btn btn-primary" onClick={handleSaveClick} style={{borderRadius: '4px'}}>
+          <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
           </button>
-          <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)}>
+          <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)} style={{borderRadius: '4px'}}>
             Cancel
           </button>
         </div>
       )}
       {!isAdding && (
         <button
-        className="btn btn-primary"
-        onClick={handleAddClick}
-      >
-        <FontAwesomeIcon icon={faPlus} className="me-2" />
-        Add Education
-      </button>
+          className="btn btn-primary"
+          onClick={handleAddClick}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
+        >
+          <FontAwesomeIcon icon={faPlus} className="me-2" />
+          Add Education
+        </button>
       )}
     </div>
   );
+  
+  
 };
 
 export default EducationSection;

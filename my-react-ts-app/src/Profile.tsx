@@ -15,12 +15,16 @@ import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
+import ChatBox from './components/ChatBox';
+
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
 import './css/profile.css';
 import './App.css';
+
+import PDFResume from './components/MyPdfViewer';
 
 import React, { useEffect, useState } from 'react';
 
@@ -33,9 +37,18 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+
+interface ContactDetails {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+
 interface EduDetails {
   education: Array<{
     university: string;
+    cgpa: string;
     degree: string;
     major: string;
     startDate: { month: string; year: string };
@@ -74,13 +87,28 @@ interface EduDetails {
   expirationDate: { month: string; year: string };
   url: string;
   }>
+  skills: Array<{
+    domain: string;
+    name: string;
+  }>
+  contact: Array<{
+    name: string;
+    email: string;
+    phoneNumber: string;
+    linkedIn: string;
+  }>
 }
 
-
+interface Skill {
+  _id: string;
+  domain: string;
+  name: string;
+}
 
 interface Education {
   _id: string;
   university: string;
+  cgpa: string;
   degree: string;
   major: string;
   startDate: { month: string; year: string };
@@ -138,26 +166,32 @@ const Profile: React.FC = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [certifications, setCertifications] = useState<Certification[]>([]);
   const [involvements, setInvolvements] = useState<Involvement[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   
   const { userID } = useParams();
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); // Updated initial state
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
+  const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
   // Fetch user details and educations data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userResponse = await axios.get(`http://localhost:3001/api/userprofile/details/${userID}`);
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`);
         setUserDetails(userResponse.data.user);
 
-        const eduResponse = await axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`);
+        const eduResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`);
         setEduDetails(eduResponse.data.user)
 
-        const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/education`);
+        const educationsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`);
         const fetchedEducations = educationsResponse.data.educations;
         setEducations(fetchedEducations);
+
+        const contactsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`);
+        const fetchedContacts = contactsResponse.data.contact;
+        setContactDetails(fetchedContacts);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -173,7 +207,7 @@ const Profile: React.FC = () => {
   
   useEffect(() => {
     // Fetch the current profile photo URL from the server on component mount
-    axios.get('http://localhost:3001/api/profile-photo')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
       .then((response) => {
         setImageUrl(response.data.imageUrl);
       })
@@ -190,7 +224,7 @@ const Profile: React.FC = () => {
       formData.append('photo', newFile);
 
       // Upload the new photo and update the profile photo URL
-      axios.post('http://localhost:3001/upload', formData)
+      axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
         .then((response) => {
           setImageUrl(response.data.imageUrl);
         })
@@ -229,31 +263,60 @@ const Profile: React.FC = () => {
       .then((data) => setEducations(data));
   }, []);
 
-  const handleEditEdu = (id: string, data: {   university: string;
+  const handleEditEdu = (id: string, data: {   
+    university: string;
+    cgpa: string;
     degree: string;
     major: string;
     startDate: { month: string; year: string };
-    endDate: { month: string; year: string };}) => {
-      // console.log('Sending data to server:', data);
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    endDate: { month: string; year: string };
+  }) => {
+    // console.log('Sending data to server:', data);
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
-      .then((res) => res.json())
-      .then(() => {
+    .then((res) => res.json())
+    .then(() => {
+      // Ensure educations is not undefined before mapping over it
+      if (educations) {
         const updatedItems = educations.map((education) =>
           education._id === id ? { ...education, ...data } : education
         );
         setEducations(updatedItems);
-      });
+      }
+    });
   };
 
+  const handleEditSkill = (id: string, data: {   
+       domain: string; name: string;
+  }) => {
+    // console.log('Sending data to server:', data);
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+    .then((res) => res.json())
+    .then(() => {
+      // Ensure educations is not undefined before mapping over it
+      if (skills) {
+        const updatedItems = skills.map((skill) =>
+          skill._id === id ? { ...skill, ...data } : skill
+        );
+        setSkills(updatedItems);
+      }
+    });
+  };
+  
   const handleEditSum = (id: string, data: {content: string;}) => {
       // console.log('Sending data to server:', data);
-    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/summary/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -275,7 +338,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -296,7 +359,7 @@ const Profile: React.FC = () => {
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
     url: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -317,7 +380,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -338,7 +401,7 @@ const Profile: React.FC = () => {
     endDate: { month: string; year: string };
     skills: string;
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -356,7 +419,7 @@ const Profile: React.FC = () => {
   
   // Update onDelete in App.tsx or where you render ItemList
   const handleDeleteEdu = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -367,7 +430,7 @@ const Profile: React.FC = () => {
   };
   
   const handleDeleteExp = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -379,7 +442,7 @@ const Profile: React.FC = () => {
   
 
   const handleDeleteCert = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -390,7 +453,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteInv = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -401,7 +464,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeletePro = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -412,13 +475,24 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteSum = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/summary/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
       .then(() => {
         const updatedItems = summarys.filter((summary) => summary._id !== id);
         setSummarys(updatedItems);
+      });
+  };
+
+  const handleDeleteSkill = (id: string) => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
+      method: 'DELETE',
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const updatedItems = skills.filter((skill) => skill._id !== id);
+        setSkills(updatedItems);
       });
   };
   
@@ -434,32 +508,41 @@ const Profile: React.FC = () => {
       
 
       {/* Three Sections Layout */}
-      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black'  }}   >
+      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', padding: '80px',   }}   >
         {/* Left Section (20%) */}
-        <div  style={{ flex: '0 0 20%'}}>
+        <div  style={{ flex: '0 0 10%'}}>
           {/* Add content for the left section */}
           {/* For example: */}
         </div>
 
         {/* Middle Section (60%) */}
-        <div style={{ flex: '0 0 60%', backgroundColor: '#ffffff', position: 'relative' }}>
+        <div className= 'Full-Resume' style={{ flex: '0 0 60%', position: 'relative', borderRadius: '20px' }}>
           {/* Content for the middle section goes here */}
+      <div style={{  marginBottom: '0px' }}>
           <CoverPage onUpload={(file: File): void => { } 
            } />
-           <div style={{ position: 'relative', top: "120px", left: 0, right: 0, bottom: 0 }}>
-           <div className="bg-gray-900 text-gray-400 min-h-screen p-3">
-      <ProfileNew UserDetail={userDetails} EduDetail={eduDetails} />
-    </div>
-        {/* <ProfilePhoto imageUrl={imageUrl} onFileChange={handleFileChange} onDelete={handleDeleteProfile} /> */}
-          </div>
+           
+           <div style={{ position: 'relative', top: "120px", left: 0, marginRight: '500px', bottom: 0, marginTop: '-180px' }}>
+           
+      <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
+      </div>
+      <div style={{ position: 'relative', top: "20px", left: "80px", marginRight: '-300px', bottom: 0, marginTop: '-80px' }}>
+
+      <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+      </div>
+
+      <div>
+
+       
+          </div></div>
           <SectionWrapper>
-            <div style={{ marginTop: '250px' }} />
+            <div style={{ marginTop: '150px', padding: '10px' }} />
       
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             
             <ProjectsSection  onEdit={handleEditPro}
             onDelete={handleDeletePro} Projects={projects} />
-            <Skills />
+            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
             <EducationSection Educations={educations} onEdit={handleEditEdu}
             onDelete={handleDeleteEdu}  UserDetail={userDetails} />
             <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
@@ -475,14 +558,22 @@ const Profile: React.FC = () => {
         </div>
          
         {/* Right Section (20%) */}
-        <div style={{ flex: '0 0 20%' ,position: 'relative'}}>
+   
+
+        
+
+      <div style={{ flex: '0 0 30%'}}>
           {/* Add content for the right section */}
+          <ChatBox />
           {/* For example: */}
         </div>
        
       </div>
-      
-      <Footer /> </>
+      <div >
+      <Footer  />
+      </div>
+    
+       </>
     
   );
 };

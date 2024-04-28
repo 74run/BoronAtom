@@ -1,0 +1,23 @@
+.open-modal-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.open-modal-btn:hover {
+  background-color: #0056b3;
+}
+
+.pencil-icon {
+  color: #007bff;
+  font-size: 1.5rem;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.pencil-icon:hover {
+  color: #0056b3;
+}

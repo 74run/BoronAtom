@@ -9,7 +9,7 @@ const User = require('../models/UserModel');
 
   router.post('/:userID/skill', async (req, res) => {
     try {
-        const { name } = req.body;
+        const { domain, name } = req.body;
       const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -23,6 +23,7 @@ const User = require('../models/UserModel');
       }
   
       userProfile.skills.push({
+        domain: domain,
         name: name
       });
   
@@ -84,6 +85,31 @@ router.get('/:userID/skill', async (req, res) => {
       }
   
       res.json(userProfile.skills);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  router.put('/:userID/skill/:id', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userID);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const { id } = req.params;
+      const updatedUserProfile = await UserProfile.findOneAndUpdate(
+        { 'userID': user._id, 'skills._id': id },
+        {
+          $set: {
+            'skills.$': req.body,
+          },
+        },
+        { new: true }
+      );
+  
+      res.json(updatedUserProfile);
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

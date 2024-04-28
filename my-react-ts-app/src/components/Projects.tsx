@@ -54,7 +54,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   }, []);
 
   const fetchProjects = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
@@ -127,7 +127,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   
     const storageKey = `projects_${userID}`;
   
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/project`, formattedExperience)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedExperience)
       .then((response) => {
         const newProjectFromServer = response.data.project;
         const newProData = newProjectFromServer[newProjectFromServer.length-1]
@@ -153,7 +153,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/project/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`)
     .then((response) => {
       // Update the state to remove the deleted certification
         const updatedProjects = projects.filter((project) => project._id !== id);
@@ -181,7 +181,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   // useEffect(() => {
-  //   fetch('http://localhost:3001/api/projects')
+  //   fetch('${process.env.REACT_APP_API_URL}/api/projects')
   //     .then((response) => response.json())
   //     .then((data) => {
   //       setProjects(data);
@@ -191,18 +191,75 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   //     });
   // }, []);
 
+
+  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+  
+    // Check if the first line already starts with a star, if not, prepend a star
+    if (lines.length > 0 && !lines[0].startsWith('*')) {
+      lines[0] = '* ' + lines[0];
+    }
+  
+    // Add a star to the beginning of each new line
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i] !== '' && !lines[i].startsWith('*')) {
+        lines[i] = '* ' + lines[i];
+      }
+    }
+  
+    // Join the lines back together with newlines
+    const newDescription = lines.join('\n');
+  
+    // Update the state
+    setNewProject({ ...newProject, description: newDescription });
+  };
+
+
+  const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const description = e.target.value;
+    const lines = description.split('\n');
+    
+    // Add asterisk at the beginning of each line
+    const linesWithAsterisks = lines.map(line => {
+      // Check if the line is not empty and doesn't start with an asterisk
+      if (line.trim() !== '' && !line.trim().startsWith('*')) {
+        return `* ${line}`;
+      } else {
+        return line;
+      }
+    });
+    
+    // Join the lines back together with newlines
+    const newDescription = linesWithAsterisks.join('\n');
+    
+    // Ensure editData is not null before updating
+    if (editData) {
+      setEditData({ 
+        ...editData, 
+        description: newDescription
+      });
+    }
+  };
+
+  
+
   return (
     <div
       style={{
-        border: '2px solid #ddd',
+        border: '2px solid #4CAF50',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '20px',
+        fontFamily: 'Arial, sans-serif',
+        color: '#333',
+        backgroundColor: '#f9f9f9',
+        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
       }}
     >
-      <h2><b>Projects</b></h2>
+      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Projects</b></h4>
       {projects.map((project) => (
-        <div key={project._id} className="mb-3">
+        <div key={project._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
           {editData && editData.id === project._id ? (
             // Edit mode
             <div>
@@ -212,13 +269,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 placeholder="Project Name"
                 value={editData.name}
                 onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <textarea
-                
                 className="form-control mb-2"
                 placeholder="Description"
                 value={editData.description}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+                onChange={handleEditDescriptionChange}
+                
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <input
                 type="text"
@@ -226,6 +285,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 placeholder="Skills Acquired"
                 value={editData.skills}
                 onChange={(e) => setEditData({ ...editData, skills: e.target.value })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
               />
               <div className="date-dropdowns">
                 <label>Start Date:</label>
@@ -234,6 +294,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     className="form-control mb-2"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -250,6 +311,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     className="form-control mb-2"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -266,11 +328,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               </div>
               <div className="date-dropdowns">
                 <label>End Date:</label>
-                <div className="flex-container">  
+                <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.month}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -287,6 +350,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     className="form-control mb-2"
                     value={editData.endDate.year}
                     onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
+                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -304,6 +368,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               <button
                 className="btn btn-primary me-2"
                 onClick={handleUpdate}
+                style={{borderRadius: '4px'}}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -311,34 +376,64 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
+                style={{borderRadius: '4px'}}
               >
                 Cancel
               </button>
             </div>
           ) : (
             // View mode
-           
-        <div key={project._id} >
-          <h3>{project.name}</h3>
-          <p>Start Date: {project.startDate.month} {project.startDate.year}</p>
-          <p>End Date: {project.endDate.month} {project.endDate.year}</p>
-          <p>Skills: {project.skills}</p>
-          <p>Description: {project.description}</p>
-          <button
-            className="btn btn-primary me-2"
-            onClick={() => handleEditClick(project._id, project.name, project.startDate, project.endDate, project.skills, project.description)}
-          >
-            <FontAwesomeIcon icon={faEdit} className="me-2" />
-            Edit
-          </button>
-          <button
-            className="btn btn-danger"
-            onClick={() => handleDelete(project._id)}
-          >
-            <FontAwesomeIcon icon={faTrash} className="me-2" />
-            Delete
-          </button>
-            </div>
+<div style={{ border: '2px solid #ccc', borderRadius: '8px', padding: '8px', marginBottom: '1rem' }}>
+  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', fontSize: '1rem', marginBottom: '0.5rem' }}><b>{project.name}</b></h3>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+    <strong>Start Date:</strong> {project.startDate.month} {project.startDate.year}
+  </div>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+    <strong>End Date:</strong> {project.endDate.month} {project.endDate.year}
+  </div>
+  <div style={{ fontFamily: 'Arial, sans-serif', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
+    <strong>Skills:</strong> {project.skills}
+  </div>
+  {project.description.split('*').slice(1).map((part, index) => (
+     <p key={index} style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}>{part}</p>
+  ))}
+
+  <div>
+    <button
+      className="btn btn-primary me-2"
+      onClick={() => handleEditClick(project._id, project.name, project.startDate, project.endDate, project.skills, project.description)}
+      style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: '1px solid #007bff',
+        padding: '0.3rem 0.6rem', // Adjusted padding
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem', // Adjusted font size
+      }}
+    >
+      <FontAwesomeIcon icon={faEdit} className="me-2" />
+      Edit
+    </button>
+    <button
+      className="btn btn-danger"
+      onClick={() => handleDelete(project._id)}
+      style={{
+        backgroundColor: '#dc3545',
+        color: '#fff',
+        padding: '0.3rem 0.4rem',
+        border: '1px solid #dc3545',
+        borderRadius: '4px',
+        transition: 'all 0.3s',
+        fontSize: '0.8rem',
+      }}
+    >
+      <FontAwesomeIcon icon={faTrash} className="me-2" />
+      Delete
+    </button>
+  </div>
+</div>
+
           )}
         </div>
       ))}
@@ -351,13 +446,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             placeholder="Project Name"
             value={newProject.name}
             onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <textarea
-            
             className="form-control mb-2"
             placeholder="Description"
             value={newProject.description}
-            onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+            onChange={(e) => handleDescriptionChange(e)}
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <input
             type="text"
@@ -365,6 +461,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             placeholder="Skills Acquired"
             value={newProject.skills}
             onChange={(e) => setNewProject({ ...newProject, skills: e.target.value })}
+            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
           />
           <div className="date-dropdowns">
             <label>Start Date:</label>
@@ -373,12 +470,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="form-control mb-2"
                 value={newProject.startDate.month}
                 onChange={(e) => setNewProject({ ...newProject, startDate: { ...newProject.startDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newProject.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -389,12 +487,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="form-control mb-2"
                 value={newProject.startDate.year}
                 onChange={(e) => setNewProject({ ...newProject, startDate: { ...newProject.startDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newProject.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -410,12 +509,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="form-control mb-2"
                 value={newProject.endDate.month}
                 onChange={(e) => setNewProject({ ...newProject, endDate: { ...newProject.endDate, month: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
               >
                 {!newProject.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                )}
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -426,12 +526,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="form-control mb-2"
                 value={newProject.endDate.year}
                 onChange={(e) => setNewProject({ ...newProject, endDate: { ...newProject.endDate, year: e.target.value } })}
+                style={{borderRadius: '4px', border: '1px solid #ccc'}}
               >
                 {!newProject.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                )}
                 {graduationYears.map((year) => (
                   <option key={year} value={year}>
                     {year}
@@ -443,6 +544,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
           <button
             className="btn btn-primary"
             onClick={handleSaveClick}
+            style={{borderRadius: '4px'}}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -450,6 +552,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
           <button
             className="btn btn-secondary ms-2"
             onClick={() => setIsAdding(false)}
+            style={{borderRadius: '4px'}}
           >
             Cancel
           </button>
@@ -460,6 +563,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         <button
           className="btn btn-primary"
           onClick={handleAddClick}
+          style={{
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: '1px solid #007bff',
+            padding: '0.3rem 0.6rem', // Adjusted padding
+            borderRadius: '4px',
+            transition: 'all 0.3s',
+            fontSize: '0.8rem', // Adjusted font size
+          }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Project
@@ -467,6 +579,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       )}
     </div>
   );
+  
+  
 };
 
 export default ProjectsSection;

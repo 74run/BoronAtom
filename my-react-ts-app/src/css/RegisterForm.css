@@ -1,18 +1,29 @@
 /* frontend/src/components/RegisterForm.css */
 .register-container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #28a745; /* Bootstrap success color */
-    border-radius: 8px;
-    margin-top: 180px;
+  display:flow-root;
+ height: 100vh;
+  background: linear-gradient(to right, #6c7070, #000b01);
   }
   
+  .register-box {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #0c0101;
+    border-radius: 12px;
+    
+  margin-top: 10px;
+    background-color: rgba(255,255,255,0.5);
+    box-shadow: 0 15px 25px rgba(0,0,0,.5);
+}
+
   .form-label {
     font-weight: bold;
   }
   
   .form-control {
+    border: 1px solid #0c0101;
+    border-radius: 10px;
     width: 100%;
     padding: 8px;
     margin-bottom: 15px;

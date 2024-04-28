@@ -59,7 +59,7 @@ const CoverPage: React.FC<CoverPageProps> = ({ onUpload }) => {
               
               objectFit: 'cover',
               cursor: 'pointer', // Set cursor to pointer
-              border: '2px solid black'
+              
             }}
             onClick={handleViewPhotoClick}
           />

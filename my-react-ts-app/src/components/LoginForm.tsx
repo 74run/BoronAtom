@@ -5,24 +5,34 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
-// ... (imports and other code)
 
-const LoginForm: React.FC = () => {
+// ... (imports and other code)
+interface LoginFormProps {
+  onLogin: () => void; // Callback function to be called after successful login
+}
+
+const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
   const [userId, setUserId] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null); // State to hold the error message
   const navigate = useNavigate();
 
+
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/login', { username, password });
-      const { success, message, userID } = response.data;
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { username, password });
+      const { success, message, userID, token } = response.data;
       setUserId(userID);
 
       console.log('User ID:', userID);
       console.log('Server Response:', message);
+      onLogin();
+
+      localStorage.setItem('Token',token);
+      localStorage.setItem('UserID',userID);
 
       // Dynamically navigate to the dashboard with the username as a parameter
       navigate(`/profile/${userID}`);
@@ -51,6 +61,7 @@ const LoginForm: React.FC = () => {
 
   return (
     <div className="login-container">
+      <div className='login-box'>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -95,6 +106,7 @@ const LoginForm: React.FC = () => {
         <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
           Register
         </button>
+      </div>
       </div>
     </div>
   );

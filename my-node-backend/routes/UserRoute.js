@@ -5,6 +5,18 @@ const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 
+const crypto = require('crypto');
+
+const generateRandomString = (length) => {
+    return crypto.randomBytes(Math.ceil(length / 2))
+        .toString('hex') // Convert to hexadecimal format
+        .slice(0, length); // Return required number of characters
+};
+
+const secretKey = 'ilovekajal7'; // Generate a 32-character (256-bit) random string
+console.log("Generated Secret Key:", secretKey);
+
+
 let transporter = nodemailer.createTransport({ 
   host: "smtp.gmail.com",
   port: 587,
@@ -138,6 +150,7 @@ router.post('/register', async (req, res) => {
 router.post('/forgotpassword', async (req, res) => {
     try {
         const {email} = req.body;
+        const Email = email
         console.log('the email from reqbody is:', email);
         const ForgotPasswordRecords = await User.findOne({email: email});
         if (ForgotPasswordRecords.length <= 0) {
@@ -163,7 +176,7 @@ router.post('/forgotpassword', async (req, res) => {
             status: "PENDING",
             message: "Reset Password email sent",
             data: {
-              email,
+              Email,
             },
           });
           // return res.json({
@@ -179,55 +192,118 @@ router.post('/forgotpassword', async (req, res) => {
     }
 })
 
+
+router.post('/resetpassword', async (req, res) => {
+ 
+  const { email, password } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    // If user not found, return an error
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update user's password with the new hashed password
+    user.password = hashedPassword;
+    user.confirmPassword = hashedPassword;
+
+    // Save the updated user
+    await user.save();
+
+    // Respond with success message
+    return res.status(200).json({ message: 'Password reset successfully' });
+  } catch (error) {
+    console.error('Error resetting password:', error.message);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 router.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
-    
-        console.log('after findone');
-        if (!user) {
-          return res.status(401).json({ success: false, message: 'User does not exist!' });
-        }
-        console.log('password from frontend is:', password);
-        console.log('password in db is:', user.password);
-    
-        // const isPasswordValid = bcrypt.compare(password, user.password);
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (err) {
-            // Handle error
-            console.error(err);
-          }
-        
-          if (result) {
-            // Passwords match
-            res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id });
-          } else {
-            // Passwords do not match
-            return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-          }
-        });
-        // console.log('value of isPasswordvalid is:', isPasswordValid);
-    
-        // if (!isPasswordValid) {
-        //   return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        // }
-    
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Internal server error' });
+  try {
+      const { username, password } = req.body;
+      const user = await User.findOne({ username });
+  
+      if (!user) {
+        return res.status(401).json({ success: false, message: 'User does not exist!' });
       }
-    });
+
+      bcrypt.compare(password, user.password, (err, result) => {
+        if (err) {
+          // Handle error
+          console.error(err);
+        }
+      
+        if (result) {
+          // Passwords match
+          const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' }); // Convert _id to string
+          console.log('userID:', user._id.toString());
+          res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token});
+        } else {
+          // Passwords do not match
+          return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+        }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 router.get('/user', async (req, res) => {
-    try {
-        const userId = req.userId;
-        const userLog = await User.find({ userId });
-        res.status(200).json(userLog);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Internal server error.' });
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
+
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ success: false, message: 'Invalid token' });
+      }
+
+      const userId = decoded.userId;
+
+      User.findById(userId)
+        .then(user => {
+          if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+          }
+          // Return relevant user data (without password)
+          res.status(200).json({ success: true, user: { username: user.username } });
+        })
+        .catch(err => {
+          console.error(err);
+          res.status(500).json({ message: 'Internal server error' });
+        });
     });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+// router.get('/user', async (req, res) => {
+//     try {
+//         const userId = req.userId;
+//         const userLog = await User.find({ userId });
+//         res.status(200).json(userLog);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ success: false, message: 'Internal server error.' });
+//     }
+//     });
 
 
 module.exports = (app) => {

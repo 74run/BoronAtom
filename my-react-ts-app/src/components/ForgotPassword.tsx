@@ -15,8 +15,9 @@ const ForgotPassword: React.FC = () => {
   
   const handleSendClick = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/forgotpassword', { email });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/forgotpassword`, { email });
       const msg = response.data.message;
+      localStorage.setItem('Email', email);
       console.log("status of resp:", msg);
       if (msg === 'Reset Password email sent') {
         setIsResetLinkSent(true);
