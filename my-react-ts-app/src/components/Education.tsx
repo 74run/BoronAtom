@@ -61,7 +61,7 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
   useEffect(() => {
     // Make an HTTP request to fetch user details based on the user ID
-    axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
         .then(response => {
             setUserDetails(response.data.user);
         })
@@ -76,7 +76,7 @@ useEffect(() => {
 }, []);
 
 const fetchEducation = () => {
-  fetch(`http://localhost:3001/api/userprofile/${userID}/education`)
+  fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to fetch educations');
@@ -148,7 +148,7 @@ const fetchEducation = () => {
   };
   
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -181,7 +181,7 @@ const fetchEducation = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/universities');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/universities`);
         // setUniversities(response.data.universities);
         setFilteredUniversities(response.data.universities);
       } catch (error) {
@@ -206,7 +206,7 @@ const fetchEducation = () => {
   //         setEducations(JSON.parse(storedData));
   //       } else {
   //         // If not, fetch data from the server
-  //         const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/educations`);
+  //         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/educations`);
   //         const fetchedEducations = response.data.educations;
   
   //         // Update state
@@ -255,7 +255,7 @@ const fetchEducation = () => {
   
     // const storageKey = `educations_${userID}`;
 
-  axios.post(`http://localhost:3001/api/userprofile/${userID}/education`, formattedEducation)
+  axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`, formattedEducation)
     .then((response) => {
       const newEducationFromServer = response.data.education;
       const newEduData = newEducationFromServer[newEducationFromServer.length - 1];

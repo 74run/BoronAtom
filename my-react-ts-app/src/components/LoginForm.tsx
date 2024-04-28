@@ -23,7 +23,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/login', { username, password });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { username, password });
       const { success, message, userID, token } = response.data;
       setUserId(userID);
 

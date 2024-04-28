@@ -52,7 +52,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   }, []);
   
   const fetchInvolvement = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch educations');
@@ -118,7 +118,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
     };
 
     // const storageKey = `involvements_${userID}`;
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/involvement`, formattedInvolvement)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement`, formattedInvolvement)
       .then((response) => {
         const newInvolvementFromServer = response.data.involvement;
         const newInvData = newInvolvementFromServer[newInvolvementFromServer.length-1]
@@ -143,7 +143,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
 
 
-  //   fetch('http://localhost:3001/api/involvements', {
+  //   fetch('${process.env.REACT_APP_API_URL}/api/involvements', {
   //     method: 'POST',
   //     headers: {
   //       'Content-Type': 'application/json',
@@ -169,7 +169,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   // };
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'DELETE',
     })
       .then(() => {
@@ -199,7 +199,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   };
 
   // useEffect(() => {
-  //   fetch('http://localhost:3001/api/involvements')
+  //   fetch('${process.env.REACT_APP_API_URL}/api/involvements')
   //     .then((response) => response.json())
   //     .then((data) => {
   //       setInvolvements(data);

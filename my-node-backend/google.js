@@ -5,10 +5,12 @@ const router = express.Router();
 
 const UserProfile = require('./models/UserprofileModel');
 
+require('dotenv').config();
 
 
+const API  = process.env.REACT_APP_GOOGLE_API;
 // Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI('AIzaSyDvzpWVZ-KvenyOUtbMi3QJ-sYwdbJwnoU');
+const genAI = new GoogleGenerativeAI(API);
 
 // Define an endpoint to generate text
 router.get('/generate/:userID', async (req, res) => {
@@ -26,7 +28,7 @@ router.get('/generate/:userID', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `Write a Resume summary for ${user.education}, ${user.experience}, and ${user.project}.`;
+    const prompt = `Write a Resume summary for Mechanical Engineer.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

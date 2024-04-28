@@ -65,7 +65,7 @@ const RegisterForm: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`http://localhost:3001/api/user`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/user`);
       setLogData(response.data);
     } catch (error) {
       console.error('Error fetching data:', 'Unknown');
@@ -86,7 +86,7 @@ const RegisterForm: React.FC = () => {
       return;
     }
     try {
-      const response = await axios.post('http://localhost:3001/api/register', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, {
         firstName,
         lastName,
         email,

@@ -17,7 +17,7 @@ const ResetPassword: React.FC = () => {
     // Fetch email from the forgot password API endpoint
     const fetchEmail = async () => {
       try {
-        const response = await axios.post('http://localhost:3001/api/forgotpassword');
+        const response = await axios.post( `${process.env.REACT_APP_API_URL}/api/forgotpassword`);
         setEmail(response.data.data);
          // Set the email state with the email from the response
       } catch (error: any) {
@@ -47,7 +47,7 @@ const ResetPassword: React.FC = () => {
       }
 
 
-      const response = await axios.post('http://localhost:3001/api/resetpassword', { email, password });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/resetpassword`, { email, password });
       const msg = response.data.message;
       console.log("status of resp:", msg);
       if (msg === 'Password reset successfully') {

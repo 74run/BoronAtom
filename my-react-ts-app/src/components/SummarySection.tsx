@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+
+
 interface Summary {
   _id: string;
   content: string;
@@ -35,6 +37,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   //   const storedSummarys = JSON.parse(localStorage.getItem(`summarys_${userID}`) || '[]');
   //   setSummarys(storedSummarys);
   // }, []);
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 
   useEffect(() => {
@@ -42,7 +45,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   }, []);
 
   const fetchSummary = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/summary`)
+    fetch(`${API_BASE_URL}/api/userprofile/${userID}/summary`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
@@ -63,7 +66,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({Summarys, onEdit, onDele
   
 
 const fetchGeneratedText = () => {
-  axios.get(`http://localhost:3001/api/userprofile/generate/${userID}`)
+  axios.get(`${API_BASE_URL}/api/userprofile/generate/${userID}`)
     .then(response => {
       const generatedText = response.data.text;
       console.log('Generated Text:', generatedText);
@@ -124,7 +127,7 @@ const fetchGeneratedText = () => {
 
   const handleSaveClick = () => {
     const storageKey = `summarys_${userID}`;
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/summary`, newSummary)
+    axios.post(`${API_BASE_URL}/api/userprofile/${userID}/summary`, newSummary)
       .then((response) => {
         const newSummaryFromServer = response.data.summary;
         const newSumData = newSummaryFromServer[newSummaryFromServer.length-1]
@@ -167,7 +170,7 @@ const fetchGeneratedText = () => {
   };
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`)
+    axios.delete(`${API_BASE_URL}/api/userprofile/${userID}/summary/${id}`)
       .then((response) => {
         // Check if the delete operation was successful
         if (response.status === 200) {

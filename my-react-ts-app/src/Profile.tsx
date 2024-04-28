@@ -179,17 +179,17 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userResponse = await axios.get(`http://localhost:3001/api/userprofile/details/${userID}`);
+        const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`);
         setUserDetails(userResponse.data.user);
 
-        const eduResponse = await axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`);
+        const eduResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`);
         setEduDetails(eduResponse.data.user)
 
-        const educationsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/education`);
+        const educationsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`);
         const fetchedEducations = educationsResponse.data.educations;
         setEducations(fetchedEducations);
 
-        const contactsResponse = await axios.get(`http://localhost:3001/api/userprofile/${userID}/contact`);
+        const contactsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`);
         const fetchedContacts = contactsResponse.data.contact;
         setContactDetails(fetchedContacts);
       } catch (error) {
@@ -207,7 +207,7 @@ const Profile: React.FC = () => {
   
   useEffect(() => {
     // Fetch the current profile photo URL from the server on component mount
-    axios.get('http://localhost:3001/api/profile-photo')
+    axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
       .then((response) => {
         setImageUrl(response.data.imageUrl);
       })
@@ -224,7 +224,7 @@ const Profile: React.FC = () => {
       formData.append('photo', newFile);
 
       // Upload the new photo and update the profile photo URL
-      axios.post('http://localhost:3001/upload', formData)
+      axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
         .then((response) => {
           setImageUrl(response.data.imageUrl);
         })
@@ -272,7 +272,7 @@ const Profile: React.FC = () => {
     endDate: { month: string; year: string };
   }) => {
     // console.log('Sending data to server:', data);
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -295,7 +295,7 @@ const Profile: React.FC = () => {
        domain: string; name: string;
   }) => {
     // console.log('Sending data to server:', data);
-    fetch(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -316,7 +316,7 @@ const Profile: React.FC = () => {
   
   const handleEditSum = (id: string, data: {content: string;}) => {
       // console.log('Sending data to server:', data);
-    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/summary/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -338,7 +338,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -359,7 +359,7 @@ const Profile: React.FC = () => {
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
     url: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -380,7 +380,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -401,7 +401,7 @@ const Profile: React.FC = () => {
     endDate: { month: string; year: string };
     skills: string;
     description: string; }) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -419,7 +419,7 @@ const Profile: React.FC = () => {
   
   // Update onDelete in App.tsx or where you render ItemList
   const handleDeleteEdu = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/education/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -430,7 +430,7 @@ const Profile: React.FC = () => {
   };
   
   const handleDeleteExp = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -442,7 +442,7 @@ const Profile: React.FC = () => {
   
 
   const handleDeleteCert = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -453,7 +453,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteInv = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/involvement/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -464,7 +464,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeletePro = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -475,7 +475,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteSum = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/summary/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/summary/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())
@@ -486,7 +486,7 @@ const Profile: React.FC = () => {
   };
 
   const handleDeleteSkill = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
       method: 'DELETE',
     })
       .then((res) => res.json())

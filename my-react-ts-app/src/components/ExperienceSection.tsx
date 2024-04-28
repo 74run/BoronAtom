@@ -56,7 +56,7 @@ useEffect(() => {
 }, []);
 
 const fetchExperience = () => {
-  fetch(`http://localhost:3001/api/userprofile/${userID}/experience`)
+  fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Failed to fetch educations');
@@ -118,7 +118,7 @@ const fetchExperience = () => {
 
     // const storageKey = `experiences_${userID}`;
  
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/experience`, formattedExperience)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience`, formattedExperience)
       .then((response) => {
         const newExperienceFromServer = response.data.experience;
         const newExpData = newExperienceFromServer[newExperienceFromServer.length-1]
@@ -141,7 +141,7 @@ const fetchExperience = () => {
   
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/experience/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`)
       .then((response) => {
         const updatedExperiences = experiences.filter((experience) => experience._id !== id);
         setExperiences(updatedExperiences);

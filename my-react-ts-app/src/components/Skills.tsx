@@ -35,7 +35,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
   }, []);
 
   const fetchSkills = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/skill`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
@@ -75,7 +75,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
   const handleSaveClick = () => {
     // console.log(newSkill);
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/skill`, newSkill)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`, newSkill)
     .then((response) => {
       // console.log(response.data); // Log the entire response data
       const newSkillFromServer = response.data.skills;
@@ -92,7 +92,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
   
 
   const handleDelete = (id: string) => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`, {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
       method: 'DELETE',
     })
       .then(() => {
@@ -108,7 +108,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
   const handleAction = async () => {
     if (inputValue.trim() !== '') {
       try {
-        const response = await fetch(`http://localhost:3001/api/userprofile/${userID}/skill`, {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -130,7 +130,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
   const handleDeleteSkill = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3001/api/userprofile/${userID}/skill/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`);
       fetchSkills();
     } catch (error) {
       console.error('Error deleting skill:', error);

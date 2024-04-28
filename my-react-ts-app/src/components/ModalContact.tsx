@@ -38,7 +38,7 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
 
   const fetchContactDetails = () => {
     axios
-      .get(`http://localhost:3001/api/userprofile/${userID}/contact`)
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`)
       .then((response) => {
         const fetchedContactDetails = response.data[0];
         setContactDetails(fetchedContactDetails || {
@@ -65,7 +65,7 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
 
   const handleSaveClick = () => {
     const method = contactDetails?._id ? 'PUT' : 'POST';
-    const url = contactDetails?._id ? `http://localhost:3001/api/userprofile/${userID}/contact/${contactDetails._id}` : `http://localhost:3001/api/userprofile/${userID}/contact`;
+    const url = contactDetails?._id ? `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact/${contactDetails._id}` : `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`;
     axios({
       method: method,
       url: url,

@@ -3,8 +3,7 @@ import { Pencil } from "react-bootstrap-icons";
 import Modal from "./Model";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { pdf, Document, Page, Text } from '@react-pdf/renderer';
-import Latex from 'react-latex';
+
 import { PersonFill } from 'react-bootstrap-icons';
 
 import ModalContact from "./ModalContact";
@@ -67,7 +66,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
   useEffect(() => {
     // Make an HTTP request to fetch user details based on the user ID
-    axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
       .then(response => {
         setUserDetails(response.data.user);
       })
@@ -79,7 +78,7 @@ const Profile: React.FC<ProfileProps> = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/userprofile/${userID}/contact`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`);
        
         setContactDetails(response.data[0]);
       } catch (error) {

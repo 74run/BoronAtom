@@ -31,7 +31,7 @@ const ChatBox: React.FC = () => {
       setInputText('');
   
       // Send user message to backend
-      const response = await fetch(`http://localhost:3001/api/userprofile/chat/${userID}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/chat/${userID}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

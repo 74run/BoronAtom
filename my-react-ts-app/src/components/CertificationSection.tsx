@@ -52,7 +52,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   }, []);
   
   const fetchCertification = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/certification`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch educations');
@@ -118,7 +118,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
     };
 
     // const storageKey = `certifications_${userID}`;
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/certification`, formattedCertification)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification`, formattedCertification)
     .then((response) => {
       const newCertificationFromServer = response.data.certification;
       const newCertData = newCertificationFromServer[newCertificationFromServer.length-1]
@@ -147,7 +147,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/certification/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`)
       .then((response) => {
         // Update the state to remove the deleted certification
         const updatedCertifications = certifications.filter((certification) => certification._id !== id);
@@ -175,7 +175,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   };
 
   // useEffect(() => {
-  //   fetch('http://localhost:3001/api/certifications')
+  //   fetch('${process.env.REACT_APP_API_URL}/api/certifications')
   //     .then((response) => response.json())
   //     .then((data) => {
   //       setCertifications(data);

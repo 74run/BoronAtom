@@ -86,7 +86,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
 
     useEffect(() => {
       // Make an HTTP request to fetch user details based on the user ID
-      axios.get(`http://localhost:3001/api/userprofile/details/${userID}`)
+      axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
         .then(response => {
           setUserDetails(response.data.user);
         })
@@ -97,7 +97,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   
   
     useEffect(() => {
-      axios.get(`http://localhost:3001/api/userprofile/EduDetails/${userID}`)
+      axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
         .then(response => {
           if (response.data && response.data.success) {
             console.log('user details:',response.data.user)
@@ -253,7 +253,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     const firstName = userDetails?.firstName;
     const lastName = userDetails?.lastName;
     axios
-      .post('http://localhost:3001/compile-latex', { latexCode }, { responseType: 'blob' })
+      .post(`${process.env.REACT_APP_API_URL}/compile-latex`, { latexCode }, { responseType: 'blob' })
       .then((response) => {
         const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
   
@@ -533,7 +533,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       \\end{document}
     `;
   
-    const response = await axios.post('http://localhost:3001/compile-latex', { latexCode }, { responseType: 'blob' });
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/compile-latex`, { latexCode }, { responseType: 'blob' });
     const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
   
     // Open the PDF in a new window without asking for confirmation

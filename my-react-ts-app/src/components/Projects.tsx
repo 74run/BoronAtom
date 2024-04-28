@@ -54,7 +54,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   }, []);
 
   const fetchProjects = () => {
-    fetch(`http://localhost:3001/api/userprofile/${userID}/project`)
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
@@ -127,7 +127,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   
     const storageKey = `projects_${userID}`;
   
-    axios.post(`http://localhost:3001/api/userprofile/${userID}/project`, formattedExperience)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedExperience)
       .then((response) => {
         const newProjectFromServer = response.data.project;
         const newProData = newProjectFromServer[newProjectFromServer.length-1]
@@ -153,7 +153,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleDelete = (id: string) => {
-    axios.delete(`http://localhost:3001/api/userprofile/${userID}/project/${id}`)
+    axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`)
     .then((response) => {
       // Update the state to remove the deleted certification
         const updatedProjects = projects.filter((project) => project._id !== id);
@@ -181,7 +181,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   // useEffect(() => {
-  //   fetch('http://localhost:3001/api/projects')
+  //   fetch('${process.env.REACT_APP_API_URL}/api/projects')
   //     .then((response) => response.json())
   //     .then((data) => {
   //       setProjects(data);
