@@ -21,9 +21,6 @@
   "test": "echo \"Error: no test specified\" && exit 1",
   
 
-    
-
-  "client": "cd ../my-react-ts-app && npm start",
   
 
     
