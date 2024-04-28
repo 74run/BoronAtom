@@ -35,7 +35,11 @@ const app = express();
 const port = process.env.REACT_APP_BACKPORT;
 
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://boron-atom-chi.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 
