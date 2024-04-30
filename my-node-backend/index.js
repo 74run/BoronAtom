@@ -35,7 +35,9 @@ const app = express();
 const port = process.env.REACT_APP_BACKPORT;
 
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000"}
+));
 app.use(bodyParser.json());
 
 
@@ -69,7 +71,7 @@ require('./routes/UserRoute')(app);
 // app.use('/api/certifications',CertRoutes);
 // // app.use('/api/involvements',InvRoutes);
 // app.use('/api/projects', ProRoutes);
-app.use('/', UniRoutes);
+// app.use('/', UniRoutes);
 
 
 app.use('/api/userprofile', UserProfileRoutes);
