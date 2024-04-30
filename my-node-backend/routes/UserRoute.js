@@ -309,5 +309,5 @@ router.get('/user', async (req, res) => {
 
 
 module.exports = (app) => {
-  app.use('/api', allowCors(router));
+  app.use('/api', router);
 };
