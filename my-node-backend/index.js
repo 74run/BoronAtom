@@ -41,6 +41,8 @@ const port = 3001;
 
 app.use(cors({
   origin: "https://boron-atom-chi.vercel.app"
+  methods: ['GET', 'POST'], // Specify allowed HTTP methods
+  credentials: true // Enable credentials
 }));
 app.use(bodyParser.json());
 
