@@ -77,7 +77,7 @@ require('./routes/UserRoute')(app);
 // app.use('/api/certifications',CertRoutes);
 // // app.use('/api/involvements',InvRoutes);
 // app.use('/api/projects', ProRoutes);
-app.use('/', UniRoutes);
+// app.use('/', UniRoutes);
 
 
 app.use('/api/userprofile', UserProfileRoutes);
