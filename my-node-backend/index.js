@@ -40,9 +40,9 @@ const port = 3001;
 
 
 app.use(cors({
-  origin: "https://boron-atom-chi.vercel.app"
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-  credentials: true // Enable credentials
+  origin: "https://boron-atom-chi.vercel.app",
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
 }));
 app.use(bodyParser.json());
 
