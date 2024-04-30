@@ -5,6 +5,8 @@ const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 
+const allowCors = require('../cors');
+
 const crypto = require('crypto');
 
 const generateRandomString = (length) => {
@@ -307,5 +309,5 @@ router.get('/user', async (req, res) => {
 
 
 module.exports = (app) => {
-  app.use('/api', router);
+  app.use('/api', allowCors(router));
 };
