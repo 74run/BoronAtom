@@ -34,11 +34,21 @@ const Google = require('./google');
 const app = express();
 const port = 3001;
 
+
+
+
+
+app.use(cors({
+  origin: 'https://boron-atom-chi.vercel.app'
+}));
+app.use(bodyParser.json());
+
+
 const allowCors = fn => async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true)
   res.setHeader('Access-Control-Allow-Origin', '*')
   // another common pattern
-  // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -57,13 +67,6 @@ const handler = (req, res) => {
 }
 
 allowCors(handler)
-
-
-
-app.use(cors({
-  origin: 'https://boron-atom-chi.vercel.app'
-}));
-app.use(bodyParser.json());
 
 
 mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails', { useNewUrlParser: true, useUnifiedTopology: true });
