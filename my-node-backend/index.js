@@ -40,7 +40,7 @@ const port = 3001;
 
 
 app.use(cors({
-  origin: 'https://boron-atom-chi.vercel.app'
+  origin: "https://boron-atom-chi.vercel.app"
 }));
 app.use(bodyParser.json());
 
