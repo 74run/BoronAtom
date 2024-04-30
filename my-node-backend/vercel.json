@@ -21,7 +21,9 @@
 
       
       "headers": {
-     "Access-Control-Allow-Credentials": "*" 
+     "Access-Control-Allow-Credentials": "*",
+          "Access-Control-Allow-Origin": "*"
+          
       }
 
 
