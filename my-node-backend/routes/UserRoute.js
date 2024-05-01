@@ -1,11 +1,9 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
+const bcryptjs = require('bcryptjs');
 const User = require('../models/UserModel');
 const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
-
-const allowCors = require('../cors');
 
 const crypto = require('crypto');
 
@@ -50,7 +48,7 @@ const sendOTPVerificationEmail = async (email, _id,res) => {
     //hash the otp
     const saltRounds = 10;
     
-    const hashedOTP = await bcrypt.hash(otp, saltRounds);
+    const hashedOTP = await bcryptjs.hash(otp, saltRounds);
     const newOTPVerification = await new UserOTPVerification({
       userId: _id,
       otp: hashedOTP,
@@ -101,7 +99,7 @@ router.post("/verifyOTP", async (req, res) => {
           UserOTPVerification.deleteMany({ userId });
           throw new Error("Code has expired. Please request again.");
         } else {
-          const validOTP = await bcrypt.compare(otp, hashedOTP);
+          const validOTP = await bcryptjs.compare(otp, hashedOTP);
           if(!validOTP) {
             //supplied otp is wrong
             throw new Error("Invalid code passed. Check your inbox.");
@@ -135,8 +133,8 @@ router.post('/register', async (req, res) => {
         if (existingUser) {
           return res.status(400).json({ success: false, message: 'User already exists.' });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const hpc = await bcrypt.hash(confirmPassword, 10);
+        const hashedPassword = await bcryptjs.hash(password, 10);
+        const hpc = await bcryptjs.hash(confirmPassword, 10);
         const user = new User({ firstName, lastName, email, username, password: hashedPassword, confirmPassword: hpc });
         console.log('after user schema');
         await user.save().then((result) => {
@@ -209,7 +207,7 @@ router.post('/resetpassword', async (req, res) => {
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcryptjs.hash(password, 10);
 
     // Update user's password with the new hashed password
     user.password = hashedPassword;
@@ -236,7 +234,7 @@ router.post('/login', async (req, res) => {
         return res.status(401).json({ success: false, message: 'User does not exist!' });
       }
 
-      bcrypt.compare(password, user.password, (err, result) => {
+      bcryptjs.compare(password, user.password, (err, result) => {
         if (err) {
           // Handle error
           console.error(err);
