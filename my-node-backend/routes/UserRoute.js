@@ -13,8 +13,8 @@ const generateRandomString = (length) => {
         .slice(0, length); // Return required number of characters
 };
 
-const secretKey = 'ilovekajal7'; // Generate a 32-character (256-bit) random string
-console.log("Generated Secret Key:", secretKey);
+const secretKey = 'ilovekajal7';
+
 
 
 let transporter = nodemailer.createTransport({ 
