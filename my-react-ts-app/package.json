@@ -20,7 +20,7 @@
     "bootstrap": "^5.3.2",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
-    "express": "^0.0.5",
+    
     "js-cookie": "^3.0.5",
     "mongoose": "^8.0.3",
     "os-browserify": "^0.3.0",
