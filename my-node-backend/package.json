@@ -29,6 +29,10 @@
   
 
   "dependencies": {
+
+
+    "@google/generative-ai": "^0.9.0",
+  
   
 
     
