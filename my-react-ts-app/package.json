@@ -20,7 +20,7 @@
     "bootstrap": "^5.3.2",
     "cors": "^2.8.5",
     "csv-parser": "^3.0.0",
-    "expres": "^0.0.5",
+    "express": "^0.0.5",
     "js-cookie": "^3.0.5",
     "mongoose": "^8.0.3",
     "os-browserify": "^0.3.0",
@@ -44,8 +44,11 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build": "react-scripts build",
-   
+    
+    "build": "react scripts build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+
+
   },
 
   "eslintConfig": {
