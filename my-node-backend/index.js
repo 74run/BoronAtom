@@ -92,6 +92,11 @@ app.use('/api/userprofile', ContactUserRoutes)
 app.use('/api/userprofile', Google);
 
 
+app.use('/run', (req,res)=> {
+  res.send("server is running")
+})
+
+
 
 app.post('/compile-latex', (req, res) => {
   const { latexCode } = req.body;
