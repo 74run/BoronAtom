@@ -3,7 +3,7 @@
 "client":"cd ./my-react-ts-app && npm start",
 "build":"react-scripts build",
 "start":"concurrently -n server,client -c red,green \"nodemon  cd ./my-node-backend/index.js\" \"npm run client\"",
-"predeploy":"npm run build","deploy":"gh-pages -d build"},
+"predeploy":"react scripts build","deploy":"gh-pages -d build"},
 "devDependencies":{"@types/react-katex":"^3.0.4",
 "@types/react-latex":"^2.0.3",
 "concurrently":"^8.2.2",
