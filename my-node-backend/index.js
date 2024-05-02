@@ -48,7 +48,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 
-mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails');
 
 const db = mongoose.connection;
 // Handle MongoDB connection events
@@ -78,7 +78,7 @@ require('./routes/UserRoute')(app);
 // app.use('/api/certifications',CertRoutes);
 // // app.use('/api/involvements',InvRoutes);
 // app.use('/api/projects', ProRoutes);
-// app.use('/', UniRoutes);
+app.use('/', UniRoutes);
 
 
 app.use('/api/userprofile', UserProfileRoutes);
