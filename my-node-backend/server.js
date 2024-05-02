@@ -35,8 +35,17 @@
 // const port = process.env.REACT_APP_BACKPORT;
 
 
+<<<<<<< HEAD
 // app.use(cors());
 // app.use(bodyParser.json());
+=======
+app.use(cors({
+  origin: ["https://boron-atom-chi.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}));
+app.use(bodyParser.json());
+>>>>>>> 1b0093c8a78a7fbc96cd5efda042f07b2ea07cfb
 
 
 // mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails', { useNewUrlParser: true, useUnifiedTopology: true });

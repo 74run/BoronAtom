@@ -7,7 +7,8 @@ const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
-const { latex } = require('latex.js');
+
+const allowCors = require('./cors');
 
 require("dotenv").config();
 
@@ -32,12 +33,18 @@ const Google = require('./google');
 
 
 const app = express();
-const port = process.env.REACT_APP_BACKPORT;
+const port = 3001;
+
+
+
 
 
 app.use(cors({
-  origin: "http://localhost:3000"}
-));
+  origin: "*",
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 app.use(bodyParser.json());
 
 
