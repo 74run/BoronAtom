@@ -38,7 +38,7 @@ const port = 3001;
 
 
 const corsOptions = {
-  origin: 'https://boron-atom-one.vercel.app', // Explicitly allow your frontend domain
+  origin: 'https://boronatom.me', // Explicitly allow your frontend domain
   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
   credentials: true, // If your frontend needs to send cookies or credentials with the request
   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
