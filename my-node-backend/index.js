@@ -42,6 +42,8 @@ const corsOptions = {
   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
   credentials: true, // If your frontend needs to send cookies or credentials with the request
   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
