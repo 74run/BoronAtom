@@ -17,5 +17,7 @@
         "Access-Control-Allow-Credentials": "true"
       }
     }
-  ]
+  ],
+  "files": ["UniName.json"]
+  
 }
