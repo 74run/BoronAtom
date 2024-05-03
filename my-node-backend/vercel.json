@@ -9,7 +9,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "index.js",
+      "dest": "/index.js",
       "headers": {
         "Access-Control-Allow-Origin": "https://boron-atom-one.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
