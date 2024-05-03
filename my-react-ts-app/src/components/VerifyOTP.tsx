@@ -8,6 +8,8 @@ const VerifyOTP: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   const checkAndClearLocalStorage = () => {
     const storedData = localStorage.getItem('userId');
   
@@ -39,7 +41,7 @@ const VerifyOTP: React.FC = () => {
       const userId = checkAndClearLocalStorage();
 
       console.log('userid from checkAndClearLocalStorage is: ', userId);
-      const response = await axios.post('http://localhost:3001/api/verifyOTP', { userId, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, { userId, otp });
       const msg = response.data.message;
 
       if (msg === 'User email verified successfully.') {
