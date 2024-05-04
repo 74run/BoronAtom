@@ -531,7 +531,7 @@ const Profile: React.FC = () => {
   <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
 </div>
 
-            <div style={{ position: 'relative', top: "50%", left: "25%", marginRight: '0%', marginTop: '-20%' }}>
+            <div style={{ position: 'relative'}}>
   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 </div>
 
