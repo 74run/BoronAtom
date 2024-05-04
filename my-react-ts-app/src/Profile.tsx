@@ -510,7 +510,9 @@ const Profile: React.FC = () => {
       {/* Three Sections Layout */}
       <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', padding: '80px',   }}   >
         {/* Left Section (20%) */}
-        <div  style={{ flex: '0 0 10%'}}>
+
+
+        <div className='empty'  style={{ flex: '0 0 10%'}}>
           {/* Add content for the left section */}
           {/* For example: */}
         </div>
