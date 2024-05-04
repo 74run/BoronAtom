@@ -538,7 +538,7 @@ const Profile: React.FC = () => {
             <div></div>
           </div>
           <SectionWrapper>
-            <div style={{ marginTop: '25%', padding: '10px' }} />
+            <div style={{ padding: '10px' }} />
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
             <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
