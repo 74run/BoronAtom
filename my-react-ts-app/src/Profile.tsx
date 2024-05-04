@@ -508,7 +508,7 @@ const Profile: React.FC = () => {
       
 
       {/* Three Sections Layout */}
-     <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', padding: '80px' }}>
+     <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
 
 
       <div className='empty' style={{ flex: '0 0 10%' }}>
