@@ -4,7 +4,7 @@ const fs = require('fs');
 const router = express.Router();
 
 router.get('/api/universities', (req, res) => {
-  fs.readFile('./UniName.json', 'utf8', (err, data) => {
+  fs.readFile('/vercel/path0/my-node-backend/UniName.json', 'utf8', (err, data) => {
     if (err) {
       console.error('Error reading JSON file:', err);
       return res.status(500).json({ error: 'Internal server error' });
