@@ -505,14 +505,17 @@ const Profile: React.FC = () => {
       <NavigationBar />
   
       {/* Three Sections Layout */}
+
       <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
 
 
       <div className='empty' style={{ flex: '0 0 5%' }}>
+
           {/* Add content for the right section */}
       
           {/* For example: */}
         </div>
+
 
 
 
@@ -534,6 +537,7 @@ const Profile: React.FC = () => {
           </div>
           <SectionWrapper>
             <div style={{  padding: '10px' }} />
+
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
             <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
@@ -551,7 +555,9 @@ const Profile: React.FC = () => {
           {/* For example: */}
         </div>
 
+
         
+
       </div>
   
       <div>

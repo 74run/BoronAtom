@@ -48,10 +48,24 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+const corsOptions = {
+  origin: 'https://boronatom.me', 
+  methods: 'GET,POST,PUT,DELETE', 
+  credentials: true, 
+  allowedHeaders: 'Content-Type,Authorization', 
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+};
+
 
 app.use('/run', (req,res)=> {
   res.send("server is running")
 })
+
+app.use(cors(corsOptions));
+
+
+app.use(bodyParser.json());
 
 
 mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails');
@@ -100,6 +114,16 @@ app.use('/api/userprofile', InvUserRoutes);
 app.use('/api/userprofile', SkillUserRoutes);
 app.use('/api/userprofile', ContactUserRoutes)
 app.use('/api/userprofile', Google);
+
+
+app.use('/run', (req,res)=> {
+  res.send("server is running")
+})
+
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from the backend!' });
+});
 
 
 
