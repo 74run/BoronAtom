@@ -1,20 +1,16 @@
 const express = require('express');
-const fs = require('fs');
+const universities = require('./UniName.json');
 
 const router = express.Router();
 
 router.get('/api/universities', (req, res) => {
-  fs.readFile(process.cwd()+ '/my-node-backend/UniName.json', 'utf8', (err, data) => {
-    if (err) {
-      console.error('Error reading JSON file:', err);
-      return res.status(500).json({ error: 'Internal server error' });
-    }
-
-    const jsonData = JSON.parse(data);
-    const universityNames = jsonData.map(entry => entry.name);
-
+  try {
+    const universityNames = universities.map(entry => entry.name);
     res.json({ universities: universityNames });
-  });
+  } catch (error) {
+    console.error('Error reading JSON file:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 module.exports = router;
