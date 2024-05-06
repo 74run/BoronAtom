@@ -53,4 +53,25 @@
   
  
 
+  @media screen and (max-width: 768px) {
+    .Full-Profile {
+      flex-direction: column;
+      padding: 10px;
+      
+    }
+  
+    .Full-Resume {
+      flex: 1; /* Occupy all available space */
+      width: 100%; /* Occupy full width */
+      
+    }
+  
+    .empty {
+      display: none;
+    }
+  
+    .chatbox {
+      display: none;
+    }
+  }
   

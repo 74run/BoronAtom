@@ -5,7 +5,9 @@ import ReactCrop, {
   makeAspectCrop,
   Crop,
 } from "react-image-crop";
+
 import setCanvasPreview from "../setCanvasPreview";
+import axios from "axios"; // Import Axios for making HTTP requests
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
@@ -73,93 +75,96 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
     setCrop(centeredCrop);
   };
 
+  const handleCropImage = async () => {
+    if (!previewCanvasRef.current || !imgRef.current || !crop) return;
+
+    setCanvasPreview(
+      imgRef.current,
+      previewCanvasRef.current,
+      convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height)
+    );
+    const dataUrl = previewCanvasRef.current.toDataURL();
+
+    try {
+      // Send cropped image data to backend
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/saveImage`, { imageData: dataUrl });
+      // Handle success response (if needed)
+      console.log("Image saved successfully:", response.data);
+      // Update the avatar with the cropped image
+      updateAvatar(dataUrl);
+      closeModal();
+    } catch (error) {
+      // Handle error
+      console.error("Error saving image:", error);
+    }
+  };
+
   return (
     <>
-    {error && <p className="text-danger text-sm">{error}</p>}
-    {imgSrc && (
-      <div className="d-flex flex-column align-items-center">
-        <ReactCrop
-          crop={crop}
-          onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
-          circularCrop
-          keepSelection
-          aspect={ASPECT_RATIO}
-          minWidth={MIN_DIMENSION}
-        >
-          <img
-            ref={imgRef}
-            src={imgSrc}
-            alt="Upload"
-            style={{
-              width: "400px", // Set the desired width
-              height: "auto", // Set the desired height
-              objectFit: "contain",
-              overflow: "visible",
-              
-              zIndex: "1" 
-            }}
-            onLoad={onImageLoad}
-            className="img-fluid"
-          />
-        </ReactCrop>
-<hr / >
-  <hr />
-        <button
-          className="btn btn-primary mt-4"
-          onClick={() => {
-            setCanvasPreview(
-              imgRef.current!, // HTMLImageElement
-              previewCanvasRef.current!, // HTMLCanvasElement
-              convertToPixelCrop(
-                crop!,
-                imgRef.current!.width,
-                imgRef.current!.height
-              )
-            );
-            const dataUrl = previewCanvasRef.current!.toDataURL();
-            updateAvatar(dataUrl);
-            closeModal();
+      {error && <p className="text-danger text-sm">{error}</p>}
+      {imgSrc && (
+        <div className="d-flex flex-column align-items-center">
+          <ReactCrop
+            crop={crop}
+            onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
+            circularCrop
+            keepSelection
+            aspect={ASPECT_RATIO}
+            minWidth={MIN_DIMENSION}
+          >
+            <img
+              ref={imgRef}
+              src={imgSrc}
+              alt="Upload"
+              style={{
+                width: "400px",
+                height: "auto",
+                objectFit: "contain",
+                overflow: "visible",
+                zIndex: "1",
+              }}
+              onLoad={onImageLoad}
+              className="img-fluid"
+            />
+          </ReactCrop>
+          <hr />
+          <button
+            className="btn btn-primary mt-4"
+            onClick={handleCropImage}
+            style={{ position: "absolute", bottom: "16px", left: "50%", transform: "translateX(-50%)" }}
+          >
+            Crop Image
+          </button>
+        </div>
+      )}
+      {crop && (
+        <canvas
+          ref={previewCanvasRef}
+          className="mt-4"
+          style={{
+            display: "none",
+            border: "1px solid black",
+            objectFit: "contain",
+            width: 150,
+            height: 150,
           }}
-          style={{ position: "absolute", bottom: "16px", left: "50%", transform: "translateX(-50%)" }}
-        >
-          Crop Image
-        </button>
-      </div>
-    )}
-    {crop && (
-      <canvas
-        ref={previewCanvasRef}
-        className="mt-4"
-        style={{
-          display: "none",
-          border: "1px solid black",
-          objectFit: "contain",
-          width: 150,
-          height: 150,
-        }}
-      />
-    )}
-  
-
-  
-    <label className="block mb-3 custom-file-label-container position-absolute bottom-0 end-0 m-3">
-      <div className="custom-file">
-        <input
-          type="file"
-          accept="image/*"
-          onChange={onSelectFile}
-          className="custom-file-input visually-hidden"
-          id="fileInput"
         />
-        <label className="custom-file-label" htmlFor="fileInput">
-          Choose file
-        </label>
-      </div>
-    </label>
-  </>
-  
-
-
+      )}
+      <label className="block mb-3 custom-file-label-container position-absolute bottom-0 end-0 m-3">
+        <div className="custom-file">
+          <input
+            type="file"
+            accept="image/*"
+            onChange={onSelectFile}
+            className="custom-file-input visually-hidden"
+            id="fileInput"
+          />
+          <label className="custom-file-label" htmlFor="fileInput">
+            Choose file
+          </label>
+        </div>
+      </label>
+    </>
   );
 };
 

@@ -21,11 +21,11 @@ body {
 .Full-Resume {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  
   background-color: #fbfbfc;
   
-  overflow: hidden;
-  box-shadow: 0 0 100px rgb(247, 244, 244);
+  overflow:hidden;
+  box-shadow: 0 0 px rgb(247, 244, 244);
 }
 
 

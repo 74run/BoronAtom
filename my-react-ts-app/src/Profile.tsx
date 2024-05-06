@@ -501,81 +501,64 @@ const Profile: React.FC = () => {
 
   return (
     <>
-      
-        {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
-        
-        <NavigationBar />
-      
-
+      {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
+      <NavigationBar />
+  
       {/* Three Sections Layout */}
-      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', padding: '80px',   }}   >
-        {/* Left Section (20%) */}
-        <div  style={{ flex: '0 0 10%'}}>
-          {/* Add content for the left section */}
+      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
+
+
+      <div className='empty' style={{ flex: '0 0 5%' }}>
+          {/* Add content for the right section */}
+      
           {/* For example: */}
         </div>
 
+
+
+
+
         {/* Middle Section (60%) */}
-        <div className= 'Full-Resume' style={{ flex: '0 0 60%', position: 'relative', borderRadius: '20px' }}>
-          {/* Content for the middle section goes here */}
-      <div style={{  marginBottom: '0px' }}>
-          <CoverPage onUpload={(file: File): void => { } 
-           } />
-           
-           <div style={{ position: 'relative', top: "120px", left: 0, marginRight: '500px', bottom: 0, marginTop: '-180px' }}>
-           
-      <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
-      </div>
-      <div style={{ position: 'relative', top: "20px", left: "80px", marginRight: '-300px', bottom: 0, marginTop: '-80px' }}>
-
-      <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
-      </div>
-
-      <div>
-
-       
-          </div></div>
-          <SectionWrapper>
-            <div style={{ marginTop: '150px', padding: '10px' }} />
-      
-            <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
-            
-            <ProjectsSection  onEdit={handleEditPro}
-            onDelete={handleDeletePro} Projects={projects} />
-            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
-            <EducationSection Educations={educations} onEdit={handleEditEdu}
-            onDelete={handleDeleteEdu}  UserDetail={userDetails} />
-            <ExperienceSection Experiences={experiences} onEdit={handleEditExp}
-              onDelete= {handleDeleteExp}/>
-            <CertificationSection Certifications={certifications} onEdit={handleEditCert}
-              onDelete= {handleDeleteCert}/>
-            <InvolvementSection Involvements={involvements} onEdit={handleEditInv}
-              onDelete= {handleDeleteInv} />
-
-
-          </SectionWrapper>
-          
-        </div>
-         
-        {/* Right Section (20%) */}
-   
-
         
+        <div className= 'Full-Resume' style={{ flex: '0 0 45%', position: 'relative', borderRadius: '20px' }}>
+          {/* Content for the middle section goes here */}
+          <div style={{ marginBottom: '0px' }}>
+            <CoverPage onUpload={(file: File): void => { } } />
+            <div style={{ marginTop: '-80px'}}>
+  <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
 
-      <div style={{ flex: '0 0 30%'}}>
+  <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+</div>
+
+            <div></div>
+          </div>
+          <SectionWrapper>
+            <div style={{  padding: '10px' }} />
+            <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
+            <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
+            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
+            <EducationSection Educations={educations} onEdit={handleEditEdu} onDelete={handleDeleteEdu} UserDetail={userDetails} />
+            <ExperienceSection Experiences={experiences} onEdit={handleEditExp} onDelete={handleDeleteExp}/>
+            <CertificationSection Certifications={certifications} onEdit={handleEditCert} onDelete={handleDeleteCert}/>
+            <InvolvementSection Involvements={involvements} onEdit={handleEditInv} onDelete={handleDeleteInv} />
+          </SectionWrapper>
+        </div>
+  
+        {/* Right Section (20%) */}
+        <div className='chatbox' style={{ flex: '0 0 30%' }}>
           {/* Add content for the right section */}
           <ChatBox />
           {/* For example: */}
         </div>
-       
+
+        
       </div>
-      <div >
-      <Footer  />
+  
+      <div>
+        <Footer />
       </div>
-    
-       </>
-    
+    </>
   );
-};
+};  
 
 export default Profile;

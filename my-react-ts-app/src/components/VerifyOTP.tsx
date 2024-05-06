@@ -8,6 +8,8 @@ const VerifyOTP: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
+  const API_BASE_URL = process.env.REACT_APP_API_URL;
+
   const checkAndClearLocalStorage = () => {
     const storedData = localStorage.getItem('userId');
   
@@ -39,7 +41,7 @@ const VerifyOTP: React.FC = () => {
       const userId = checkAndClearLocalStorage();
 
       console.log('userid from checkAndClearLocalStorage is: ', userId);
-      const response = await axios.post('http://localhost:3001/api/verifyOTP', { userId, otp });
+      const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, { userId, otp });
       const msg = response.data.message;
 
       if (msg === 'User email verified successfully.') {
@@ -56,9 +58,8 @@ const VerifyOTP: React.FC = () => {
       console.error('Verification error:', error.message || 'Unknown error');
     }
   };
-
   return (
-    <div>
+    <div className="verification-container">
       <h2>Enter Verification OTP</h2>
       <label htmlFor="otpInput">OTP:</label>
       <input
@@ -66,13 +67,70 @@ const VerifyOTP: React.FC = () => {
         id="otpInput"
         value={otp}
         onChange={(e) => setOtp(e.target.value)}
+        className="otp-input"
       />
-      <button onClick={handleVerification}>Verify</button>
-
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {isVerified && <p>Verification successful! You can proceed.</p>}
+      <button onClick={handleVerification} className="verify-button">Verify</button>
+  
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {isVerified && <p className="success-message">Verification successful! You can proceed.</p>}
+  
+      <style >{`
+        .verification-container {
+          max-width: 400px;
+          margin: 0 auto;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #f9f9f9;
+        }
+  
+        h2 {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+  
+        label {
+          font-size: 16px;
+          margin-bottom: 10px;
+          display: block;
+        }
+  
+        .otp-input {
+          width: 100%;
+          padding: 10px;
+          font-size: 16px;
+          margin-bottom: 20px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+  
+        .verify-button {
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #007bff;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+  
+        .verify-button:hover {
+          background-color: #0056b3;
+        }
+  
+        .error-message {
+          color: red;
+          margin-top: 10px;
+        }
+  
+        .success-message {
+          color: green;
+          margin-top: 10px;
+        }
+      `}</style>
     </div>
   );
+  
 };
 
 export default VerifyOTP;
