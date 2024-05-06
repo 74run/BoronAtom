@@ -33,6 +33,8 @@
 
     "react": "^18.0.0",
 
+    "react-bootstrap": "^2.10.2",
+
     
     "react-image-crop": "^10.1.8",
 
