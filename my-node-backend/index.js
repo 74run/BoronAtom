@@ -37,16 +37,12 @@ const Google = require('./google');
 const app = express();
 const port = 3001;
 
-const corsOptions = {
-  origin: '*', // Explicitly allow your frontend domain
-  methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
-  credentials: true, // If your frontend needs to send cookies or credentials with the request
-  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
-};
-
-app.use(cors(corsOptions));
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+// const corsOptions = {
+//   origin: '*', // Explicitly allow your frontend domain
+//   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
+//   credentials: true, // If your frontend needs to send cookies or credentials with the request
+//   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+// };
 
 const corsOptions = {
   origin: 'https://boronatom.me', 
@@ -56,6 +52,11 @@ const corsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
+
+app.use(cors(corsOptions));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+
 
 
 app.use('/run', (req,res)=> {
