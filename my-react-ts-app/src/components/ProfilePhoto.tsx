@@ -1,12 +1,14 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Pencil } from "react-bootstrap-icons";
+import { Border, Pencil } from "react-bootstrap-icons";
 import Modal from "./Model";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { MdEdit } from 'react-icons/md';
 
 import { PersonFill } from 'react-bootstrap-icons';
 
 import ModalContact from "./ModalContact";
+import { Left } from "react-bootstrap/lib/Media";
 
 interface UserDetails {
   firstName: string;
@@ -100,7 +102,8 @@ const Profile: React.FC<ProfileProps> = () => {
   return (
     <div className="container mt-3">
     <div className="d-flex flex-column align-items-center pt-0">
-      <div className="position-relative">
+    
+    <div className="position-relative">
         {/* Add onClick handler to the image */}
         <img
           src={avatarUrl.current}

@@ -8,6 +8,8 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
 
+const { GridFSBucket, ObjectId } = require('mongodb');
+
 const allowCors = require('./cors');
 
 require("dotenv").config();
@@ -35,7 +37,16 @@ const Google = require('./google');
 const app = express();
 const port = 3001;
 
+const corsOptions = {
+  origin: '*', // Explicitly allow your frontend domain
+  methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
+  credentials: true, // If your frontend needs to send cookies or credentials with the request
+  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+};
 
+app.use(cors(corsOptions));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 const corsOptions = {
   origin: 'https://boronatom.me', 
@@ -45,6 +56,11 @@ const corsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204
 };
+
+
+app.use('/run', (req,res)=> {
+  res.send("server is running")
+})
 
 app.use(cors(corsOptions));
 
@@ -64,6 +80,10 @@ db.once('open', () => {
 
 app.use(express.json());
 
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from the backend!' });
+});
 
 
 
@@ -160,6 +180,38 @@ app.post('/compile-latex', (req, res) => {
 // app.use('/uploads', express.static('uploads'));
 
 
+const imageSchema = new mongoose.Schema({
+  imageData: Buffer, // Store image data as Buffer
+  filename: String,
+});
+
+// Create a model for the image collection
+const Image = mongoose.model("Image", imageSchema);
+
+
+app.post("/api/saveImage", async (req, res) => {
+  const imageData = req.body.imageData;
+
+  // Create a unique filename for the image
+  const filename = "avatar_" + Date.now() + ".png";
+
+  // Decode base64 image data
+  const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
+
+  // Save the image to the MongoDB database
+  try {
+    const image = new Image({ imageData: Buffer.from(base64Data, "base64"), filename });
+    await image.save();
+    console.log("Image saved successfully:", filename);
+    res.json({ success: true, filename: filename });
+  } catch (error) {
+    console.error("Error saving image:", error);
+    res.status(500).json({ error: "Error saving image" });
+  }
+});
+
+
+
 
 // app.get('/api/profile-photo', async (req, res) => {
 //   try {
@@ -174,6 +226,12 @@ app.post('/compile-latex', (req, res) => {
 //     res.status(500).json({ error: 'Internal Server Error' });
 //   }
 // });
+
+
+
+
+
+
 
 
 // app.post('/upload', upload.single('photo'), async (req, res) => {
