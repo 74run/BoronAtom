@@ -45,7 +45,7 @@ const port = 3001;
 // };
 
 const corsOptions = {
-  origin: 'https://boronatom.me', 
+  origin: 'https://www.boronatom.me', 
   methods: 'GET,POST,PUT,DELETE', 
   credentials: true, 
   allowedHeaders: 'Content-Type,Authorization', 
