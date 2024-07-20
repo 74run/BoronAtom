@@ -1,21 +1,23 @@
-# Use an official Node.js runtime as the base image
+# Use an official Node.js runtime as a parent image
 FROM node:14
 
-# Install TeX Live
-RUN apt-get update && \
-    apt-get install -y texlive-full
-
 # Set the working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Install necessary packages including wget and TeX Live
+RUN apt-get update && apt-get install -y wget texlive-full
 
-# Install Node.js dependencies
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Expose port 3000
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Command to start your Node.js application
-CMD ["node", "index.js"]
+# Command to run the app
+CMD ["node", "server.js"]
