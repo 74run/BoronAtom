@@ -24,7 +24,7 @@
   
 
 
-
+"install-texlive": "sh ./install-texlive.sh",
     
 
 
