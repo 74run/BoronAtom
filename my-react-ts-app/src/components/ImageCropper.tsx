@@ -89,7 +89,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       // Send cropped image data to backend
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/saveImage`, { imageData: dataUrl });
       // Handle success response (if needed)
-      console.log("Image saved successfully:", response.data);
+      // console.log("Image saved successfully:", response.data);
       // Update the avatar with the cropped image
       updateAvatar(dataUrl);
       closeModal();

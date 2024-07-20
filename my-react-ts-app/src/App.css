@@ -21,7 +21,7 @@ body {
 .Full-Resume {
   display: flex;
   flex-direction: column;
-  
+
   background-color: #fbfbfc;
   
   overflow:hidden;

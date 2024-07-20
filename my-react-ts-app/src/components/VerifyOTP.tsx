@@ -40,7 +40,7 @@ const VerifyOTP: React.FC = () => {
     try {
       const userId = checkAndClearLocalStorage();
 
-      console.log('userid from checkAndClearLocalStorage is: ', userId);
+      // console.log('userid from checkAndClearLocalStorage is: ', userId);
       const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, { userId, otp });
       const msg = response.data.message;
 
@@ -52,7 +52,7 @@ const VerifyOTP: React.FC = () => {
         setIsVerified(false); // Assuming you want to set isVerified state to false
       }
 
-      console.log('Response is:', response.data);
+      // console.log('Response is:', response.data);
     } catch (error: any) {
       // Explicitly specify the type of 'error' as 'any'
       console.error('Verification error:', error.message || 'Unknown error');

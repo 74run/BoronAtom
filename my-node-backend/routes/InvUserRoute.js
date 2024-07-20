@@ -94,7 +94,7 @@ router.post('/:userID/involvement', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting involvement with id:', id);
+          // console.log('Deleting involvement with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'involvement._id': id },

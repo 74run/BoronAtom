@@ -8,6 +8,9 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
 
+const os = require('os');
+
+
 const { GridFSBucket, ObjectId } = require('mongodb');
 
 const allowCors = require('./cors');
@@ -48,13 +51,27 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
+// const corsOptions = {
+//   origin: 'https://boronatom.me', 
+//   methods: 'GET,POST,PUT,DELETE', 
+//   credentials: true, 
+//   allowedHeaders: 'Content-Type,Authorization', 
+//   preflightContinue: false,
+//   optionsSuccessStatus: 204
+// };
+
 
 app.use('/run', (req,res)=> {
   res.send("server is running")
 })
 
+app.use(cors(corsOptions));
 
-mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails');
+
+app.use(bodyParser.json());
+
+
+mongoose.connect(process.env.REACT_APP_MONGODB);
 
 const db = mongoose.connection;
 // Handle MongoDB connection events
@@ -102,30 +119,60 @@ app.use('/api/userprofile', ContactUserRoutes)
 app.use('/api/userprofile', Google);
 
 
+app.use('/run', (req,res)=> {
+  res.send("server is running")
+})
+
+
+app.get('/', (req, res) => {
+  res.json({ message: 'Hello from the backend!' });
+});
+
+
 
 app.post('/compile-latex', (req, res) => {
   const { latexCode } = req.body;
+  const uniqueId = new Date().getTime();
+  const outputDir = os.tmpdir();
+  const texFileName = path.join(outputDir, `temp_${uniqueId}.tex`);
+  const pdfFileName = path.join(outputDir, `temp_${uniqueId}.pdf`);
 
-  // Save the LaTeX code to a .tex file
-  const texFilePath = path.join(__dirname, './latex-files/file.tex');
-  require('fs').writeFileSync(texFilePath, latexCode);
+  console.log(`LaTeX file path: ${texFileName}`);
+  console.log(`PDF file path: ${pdfFileName}`);
 
-  // Full path to pdflatex executable
-  const pdflatexPath = 'C:/Users/74run/AppData/Local/Programs/MiKTeX/miktex/bin/x64/pdflatex'; // Replace with the actual path on your server
+  // Write LaTeX code to a .tex file
+  fs.writeFileSync(texFileName, latexCode);
 
-  // Use pdflatex to compile the LaTeX code to PDF
-  exec(`${pdflatexPath} -output-directory=${path.join(__dirname, './latex-files')} ${texFilePath}`, (error, stdout, stderr) => {
+  // Compile LaTeX file to PDF using pdflatex
+  exec(`pdflatex -interaction=nonstopmode -output-directory=${outputDir} ${texFileName}`, (error, stdout, stderr) => {
     if (error) {
-      console.error(`Compilation error: ${stderr}`);
-      return res.status(500).send({ error: 'Compilation failed' });
+      console.error(`LaTeX compilation error: ${error}`);
+      console.error(`stderr: ${stderr}`);
+      console.error(`stdout: ${stdout}`);
+      return res.status(500).send('LaTeX compilation error');
     }
 
-    // Assuming pdflatex generates a file named file.pdf
-    const pdfFilePath = path.join(__dirname, './latex-files/file.pdf');
-    res.sendFile(pdfFilePath);
+    console.log(`PDF file generated: ${pdfFileName}`);
+
+    // Check if the PDF file was generated
+    if (!fs.existsSync(pdfFileName)) {
+      console.error('PDF file not found after compilation');
+      return res.status(500).json({ message: 'PDF file not found after compilation' });
+    }
+
+    // Send the generated PDF file as a response
+    res.sendFile(pdfFileName, (err) => {
+      if (err) {
+        console.error(`Error sending PDF file: ${err}`);
+        return res.status(500).send('Error sending PDF file');
+      }
+
+      // Clean up temporary files
+      fs.unlinkSync(texFileName);
+      fs.unlinkSync(pdfFileName);
+    });
   });
 });
-
 
 
 
@@ -178,7 +225,7 @@ app.post("/api/saveImage", async (req, res) => {
   try {
     const image = new Image({ imageData: Buffer.from(base64Data, "base64"), filename });
     await image.save();
-    console.log("Image saved successfully:", filename);
+    // console.log("Image saved successfully:", filename);
     res.json({ success: true, filename: filename });
   } catch (error) {
     console.error("Error saving image:", error);

@@ -101,7 +101,7 @@ router.post('/:userID/certification', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting certification with id:', id);
+          // console.log('Deleting certification with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'certification._id': id },

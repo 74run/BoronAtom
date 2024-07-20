@@ -17,6 +17,8 @@ import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
 import ChatBox from './components/ChatBox';
 
+import LatexComponent from './latex/latex';
+
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -205,16 +207,16 @@ const Profile: React.FC = () => {
 
 
   
-  useEffect(() => {
-    // Fetch the current profile photo URL from the server on component mount
-    axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
-      .then((response) => {
-        setImageUrl(response.data.imageUrl);
-      })
-      .catch((error) => {
-        console.error('Error fetching profile photo:', error);
-      });
-  }, []); // Empty dependency array means this effect runs once on mount
+  // useEffect(() => {
+  //   // Fetch the current profile photo URL from the server on component mount
+  //   axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
+  //     .then((response) => {
+  //       setImageUrl(response.data.imageUrl);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching profile photo:', error);
+  //     });
+  // }, []); // Empty dependency array means this effect runs once on mount
 
   const handleFileChange = (newFile: File | null) => {
     setFile(newFile);
@@ -529,8 +531,6 @@ const Profile: React.FC = () => {
 
   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 </div>
-
-            <div></div>
           </div>
           <SectionWrapper>
             <div style={{  padding: '10px' }} />
@@ -543,6 +543,7 @@ const Profile: React.FC = () => {
             <InvolvementSection Involvements={involvements} onEdit={handleEditInv} onDelete={handleDeleteInv} />
           </SectionWrapper>
         </div>
+
   
         {/* Right Section (20%) */}
         <div className='chatbox' style={{ flex: '0 0 30%' }}>

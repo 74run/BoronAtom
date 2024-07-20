@@ -95,8 +95,8 @@ const RegisterForm: React.FC = () => {
         confirmPassword,
       });
 
-      console.log('User registered successfully.');
-      console.log('User Data:', response.data);
+      // console.log('User registered successfully.');
+      // console.log('User Data:', response.data);
       const { data } = response;
       // In your React component
       saveDataToLocalStorage(data);
