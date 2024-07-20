@@ -40,25 +40,28 @@ const Google = require('./google');
 const app = express();
 const port = 3001;
 
+// const corsOptions = {
+//   origin: '*', // Explicitly allow your frontend domain
+//   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
+//   credentials: true, // If your frontend needs to send cookies or credentials with the request
+//   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+// };
+
+
 const corsOptions = {
-  origin: '*', // Explicitly allow your frontend domain
-  methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
-  credentials: true, // If your frontend needs to send cookies or credentials with the request
-  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+  origin: 'https://www.boronatom.me', 
+  methods: 'GET,POST,PUT,DELETE', 
+  credentials: true, 
+  allowedHeaders: 'Content-Type,Authorization', 
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-// const corsOptions = {
-//   origin: 'https://boronatom.me', 
-//   methods: 'GET,POST,PUT,DELETE', 
-//   credentials: true, 
-//   allowedHeaders: 'Content-Type,Authorization', 
-//   preflightContinue: false,
-//   optionsSuccessStatus: 204
-// };
 
 
 app.use('/run', (req,res)=> {
