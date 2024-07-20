@@ -17,6 +17,8 @@ import SectionWrapper from './components/SectionWrapper';
 import ProfileNew from './components/ProfilePhoto';
 import ChatBox from './components/ChatBox';
 
+import LatexComponent from './latex/latex';
+
 // import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -205,16 +207,16 @@ const Profile: React.FC = () => {
 
 
   
-  useEffect(() => {
-    // Fetch the current profile photo URL from the server on component mount
-    axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
-      .then((response) => {
-        setImageUrl(response.data.imageUrl);
-      })
-      .catch((error) => {
-        console.error('Error fetching profile photo:', error);
-      });
-  }, []); // Empty dependency array means this effect runs once on mount
+  // useEffect(() => {
+  //   // Fetch the current profile photo URL from the server on component mount
+  //   axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
+  //     .then((response) => {
+  //       setImageUrl(response.data.imageUrl);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching profile photo:', error);
+  //     });
+  // }, []); // Empty dependency array means this effect runs once on mount
 
   const handleFileChange = (newFile: File | null) => {
     setFile(newFile);
@@ -505,17 +507,14 @@ const Profile: React.FC = () => {
       <NavigationBar />
   
       {/* Three Sections Layout */}
-
       <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
 
 
       <div className='empty' style={{ flex: '0 0 5%' }}>
-
           {/* Add content for the right section */}
       
           {/* For example: */}
         </div>
-
 
 
 
@@ -532,12 +531,9 @@ const Profile: React.FC = () => {
 
   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 </div>
-
-            <div></div>
           </div>
           <SectionWrapper>
             <div style={{  padding: '10px' }} />
-
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
             <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
@@ -547,6 +543,7 @@ const Profile: React.FC = () => {
             <InvolvementSection Involvements={involvements} onEdit={handleEditInv} onDelete={handleDeleteInv} />
           </SectionWrapper>
         </div>
+
   
         {/* Right Section (20%) */}
         <div className='chatbox' style={{ flex: '0 0 30%' }}>
@@ -555,9 +552,7 @@ const Profile: React.FC = () => {
           {/* For example: */}
         </div>
 
-
         
-
       </div>
   
       <div>

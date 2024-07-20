@@ -95,7 +95,7 @@ router.post('/:userID/project', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting project with id:', id);
+          // console.log('Deleting project with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'project._id': id },

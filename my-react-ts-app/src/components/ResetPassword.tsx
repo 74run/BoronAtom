@@ -38,7 +38,7 @@ const ResetPassword: React.FC = () => {
 
   const handleUpdateClick = async () => {
     const email = localStorage.getItem('Email')
-    console.log('Email:', email);
+    // console.log('Email:', email);
     try {
       // Check if passwords match
       if (password !== confirmPassword) {
@@ -49,7 +49,7 @@ const ResetPassword: React.FC = () => {
 
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/resetpassword`, { email, password });
       const msg = response.data.message;
-      console.log("status of resp:", msg);
+      // console.log("status of resp:", msg);
       if (msg === 'Password reset successfully') {
         navigate('/login');
         localStorage.removeItem('Email')

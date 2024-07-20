@@ -31,7 +31,7 @@ const router = express.Router();
 
 const sendOTPVerificationEmail = async (email, _id,res) => {
   try {
-    console.log('Inside sendotpverificationemail method');
+    // console.log('Inside sendotpverificationemail method');
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
 
     //mail options
@@ -43,7 +43,7 @@ const sendOTPVerificationEmail = async (email, _id,res) => {
              <p>This code <b>expires in 1 hour</b>.</p>`
     };
 
-    console.log('before hashedOTP');
+    // console.log('before hashedOTP');
 
     //hash the otp
     const saltRounds = 10;
@@ -126,17 +126,17 @@ router.post("/verifyOTP", async (req, res) => {
 router.post('/register', async (req, res) => {
     try {
         const { firstName, lastName, email, username, password, confirmPassword } = req.body;
-        console.log(email);
+        // console.log(email);
         const existingUser = await User.findOne({ username });
 
-        console.log('exsisting user is:', existingUser);
+        // console.log('exsisting user is:', existingUser);
         if (existingUser) {
           return res.status(400).json({ success: false, message: 'User already exists.' });
         }
         const hashedPassword = await bcryptjs.hash(password, 10);
         const hpc = await bcryptjs.hash(confirmPassword, 10);
         const user = new User({ firstName, lastName, email, username, password: hashedPassword, confirmPassword: hpc });
-        console.log('after user schema');
+        // console.log('after user schema');
         await user.save().then((result) => {
           //Handle account verification
           sendOTPVerificationEmail(email, result._id, res);
@@ -151,27 +151,27 @@ router.post('/forgotpassword', async (req, res) => {
     try {
         const {email} = req.body;
         const Email = email
-        console.log('the email from reqbody is:', email);
+        // console.log('the email from reqbody is:', email);
         const ForgotPasswordRecords = await User.findOne({email: email});
         if (ForgotPasswordRecords.length <= 0) {
           //no record found
           throw new Error("User doesn't exist. Please register first or enter correct email address ");
         } else {
-          console.log('inside else loop');
+          // console.log('inside else loop');
           if (!email) {
             throw new Error("Enter Your email address");
           }
           // const token = jwt.sign({id: ForgotPasswordRecords.userId}, "jwt_secret_key", {expiresIn: "1d"});
-          console.log('before mail options');
+          // console.log('before mail options');
           const mailOptions = {
             from: 'pvsndeepak@gmail.com',
             to: email,
             subject: "Reset Your Password",
             html: `http://localhost:3000/resetpassword`
           };
-          console.log('after mail options');
+          // console.log('after mail options');
           await transporter.sendMail(mailOptions);
-          console.log('after transporter send mail');
+          // console.log('after transporter send mail');
           return res.json({
             status: "PENDING",
             message: "Reset Password email sent",
@@ -243,7 +243,7 @@ router.post('/login', async (req, res) => {
         if (result) {
           // Passwords match
           const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' }); // Convert _id to string
-          console.log('userID:', user._id.toString());
+          // console.log('userID:', user._id.toString());
           res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token});
         } else {
           // Passwords do not match

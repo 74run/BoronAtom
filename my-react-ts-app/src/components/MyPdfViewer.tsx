@@ -284,9 +284,9 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   function convertToLatex(description: string): string {
     // Define a map of special characters and their LaTeX equivalents
     const symbolMap: { [key: string]: string } = {
-        '%': '\%',
-    
-     
+        '%': '\\%',
+      // Replace % with \%
+        
         // Add more symbols and their replacements as needed
     };
 
@@ -297,9 +297,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     }
 
     return convertedDescription;
-}
-    
-  
+};
   
   
     
@@ -343,12 +341,23 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         `
       ).join("\n");
   
-      const experienceSection = experiences.map((experience) => `
-      \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
-      \\begin{bullet-list-minor}
-          ${convertToLatex(experience.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
-      \\end{bullet-list-minor}
-  `).join("\n\n");
+      const experienceSection = experiences.map((experience) => {
+        // Check if description exists and is not empty
+        if (experience.description && experience.description.trim() !== '') {
+          return `
+            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
+            \\begin{bullet-list-minor}
+                ${convertToLatex(experience.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
+            \\end{bullet-list-minor}
+          `;
+        } else {
+          // Return other fields without modification if description is empty
+          return `
+            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
+          `;
+        }
+      }).join("\n");
+      
   
   
   
@@ -517,6 +526,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   
       {${experienceSection}}
       \\vspace*{4pt}%
+
       \\header{Skills}
       {${skillSection}}
   
@@ -533,18 +543,25 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       \\end{document}
     `;
   
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/compile-latex`, { latexCode }, { responseType: 'blob' });
-    const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
   
-    // Open the PDF in a new window without asking for confirmation
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    window.open(pdfUrl, '_blank');
-  
-    // Clean up the data URL
-    URL.revokeObjectURL(pdfUrl);
-  } catch (error) {
-    console.error('Error compiling or previewing PDF:', error);
-  }
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/compile-latex`, { latexCode }, { responseType: 'blob' });
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+
+      // Open the PDF in a new window
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const pdfWindow = window.open(pdfUrl, '_blank');
+
+      // Revoke the object URL after the window is closed
+      if (pdfWindow) {
+        pdfWindow.addEventListener('load', () => {
+          URL.revokeObjectURL(pdfUrl);
+        });
+      } else {
+        URL.revokeObjectURL(pdfUrl);
+      }
+    } catch (error) {
+      console.error('Error compiling or previewing PDF:', error);
+    }
   };
   
   

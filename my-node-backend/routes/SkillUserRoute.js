@@ -48,7 +48,7 @@ const User = require('../models/UserModel');
 
         const { id } = req.params;
 
-        console.log('Deleting skill with id:', id);
+        // console.log('Deleting skill with id:', id);
 
         const result = await UserProfile.findOneAndUpdate(
             { 'userID': user._id, 'skills._id': id },

@@ -69,7 +69,7 @@ const fetchGeneratedText = () => {
   axios.get(`${API_BASE_URL}/api/userprofile/generate/${userID}`)
     .then(response => {
       const generatedText = response.data.text;
-      console.log('Generated Text:', generatedText);
+      // console.log('Generated Text:', generatedText);
       setGeneratedText(generatedText);
 
       if (editData) {

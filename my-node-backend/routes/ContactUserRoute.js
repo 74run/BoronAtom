@@ -103,7 +103,7 @@ router.post('/:userID/contact', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting contact with id:', id);
+          // console.log('Deleting contact with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'contact._id': id },

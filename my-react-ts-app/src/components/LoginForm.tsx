@@ -27,8 +27,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) =>  {
       const { success, message, userID, token } = response.data;
       setUserId(userID);
 
-      console.log('User ID:', userID);
-      console.log('Server Response:', message);
+      // console.log('User ID:', userID);
+      // console.log('Server Response:', message);
       onLogin();
 
       localStorage.setItem('Token',token);

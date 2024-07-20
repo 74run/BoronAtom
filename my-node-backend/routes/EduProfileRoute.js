@@ -167,7 +167,7 @@ router.put('/:userId/education/:id', async (req, res) => {
 
         const { id } = req.params;
 
-        console.log('Deleting education with id:', id);
+        // console.log('Deleting education with id:', id);
 
         const result = await UserProfile.findOneAndUpdate(
             { 'userID': user._id, 'education._id': id },

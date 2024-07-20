@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const handleLogout = () => {
     // Perform the logout actions here
     // For example, clear user authentication token, redirect to login page, etc.
-    console.log('Logout clicked');
+    // console.log('Logout clicked');
     localStorage.removeItem('Token');
     localStorage.removeItem('UserID');
     navigate('/login');

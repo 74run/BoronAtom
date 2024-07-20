@@ -92,7 +92,7 @@ router.post('/:userID/experience', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting experience with id:', id);
+          // console.log('Deleting experience with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'experience._id': id },
