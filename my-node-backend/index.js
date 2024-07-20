@@ -147,7 +147,7 @@ app.post('/compile-latex', (req, res) => {
   fs.writeFileSync(texFileName, latexCode);
 
   // Compile LaTeX file to PDF using pdflatex
-  exec(`pdflatex -interaction=nonstopmode -output-directory=${outputDir} ${texFileName}`, { env: { PATH: process.env.PATH + ':/usr/local/texlive/2023/bin/x86_64-linux' } }, (error, stdout, stderr) => {
+  exec(`pdflatex -interaction=nonstopmode -output-directory=${outputDir} ${texFileName}`, { env: process.env }, (error, stdout, stderr) => {
     if (error) {
       console.error(`LaTeX compilation error: ${error}`);
       console.error(`stderr: ${stderr}`);
