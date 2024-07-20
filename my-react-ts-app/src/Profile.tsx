@@ -501,17 +501,16 @@ const Profile: React.FC = () => {
 
   return (
     <>
-      
-        {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
-        
-        <NavigationBar />
-      
-
+      {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
+      <NavigationBar />
+  
       {/* Three Sections Layout */}
-     <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
+
+      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
 
 
-      <div className='empty' style={{ flex: '0 0 10%' }}>
+      <div className='empty' style={{ flex: '0 0 5%' }}>
+
           {/* Add content for the right section */}
       
           {/* For example: */}
@@ -521,24 +520,24 @@ const Profile: React.FC = () => {
 
 
 
+
         {/* Middle Section (60%) */}
         
-        <div className= 'Full-Resume' style={{ flex: '0 0 60%', position: 'relative', borderRadius: '20px' }}>
+        <div className= 'Full-Resume' style={{ flex: '0 0 45%', position: 'relative', borderRadius: '20px' }}>
           {/* Content for the middle section goes here */}
           <div style={{ marginBottom: '0px' }}>
             <CoverPage onUpload={(file: File): void => { } } />
-            <div style={{ }}>
+            <div style={{ marginTop: '-80px'}}>
   <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
-</div>
 
-            <div style={{ position: 'relative'}}>
   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
 </div>
 
             <div></div>
           </div>
           <SectionWrapper>
-            <div style={{ padding: '10px' }} />
+            <div style={{  padding: '10px' }} />
+
             <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
             <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
             <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
@@ -555,6 +554,10 @@ const Profile: React.FC = () => {
           <ChatBox />
           {/* For example: */}
         </div>
+
+
+        
+
       </div>
   
       <div>
