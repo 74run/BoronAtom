@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.19)  21 JUL 2024 22:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.12) (preloaded format=pdflatex 2024.1.19)  21 JUL 2024 23:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**./temp.tex
-(temp.tex
+**C:/Users/74run/Desktop/TJ-VSD/my-node-backend/temp.tex
+(C:/Users/74run/Desktop/TJ-VSD/my-node-backend/temp.tex
 LaTeX2e <2023-11-01>
 L3 programming layer <2024-01-04>
 (C:\Users\74run\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
@@ -310,20 +310,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 96.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 96.
-
-
-! LaTeX Error: Something's wrong--perhaps a missing \item.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.143       }
-             
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-[1
+ [1
 
 {C:/Users/74run/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/74ru
 n/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/fontawesome/fontawesometwo.enc}
@@ -336,13 +323,13 @@ Package rerunfilecheck Info: File `temp.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 10090 strings out of 474485
- 157201 string characters out of 5743734
- 1947528 words of memory out of 5000000
+ 10092 strings out of 474485
+ 157435 string characters out of 5743734
+ 1948528 words of memory out of 5000000
  32297 multiletter control sequences out of 15000+600000
  562284 words of font info for 50 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,11n,79p,259b,440s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,11n,79p,303b,440s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/type1/public/fontawesome/
 FontAwesome.pfb><C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/type1/publi
 c/amsfonts/cm/cmbx12.pfb><C:/Users/74run/AppData/Local/Programs/MiKTeX/fonts/ty
@@ -352,7 +339,7 @@ ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/74run/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/74run/AppDa
 ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmti9.pfb><C:/Users/74r
 un/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on temp.pdf (1 page, 112750 bytes).
+Output written on temp.pdf (1 page, 112774 bytes).
 PDF statistics:
  54 PDF objects out of 1000 (max. 8388607)
  2 named destinations out of 1000 (max. 500000)

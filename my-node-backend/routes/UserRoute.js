@@ -22,8 +22,8 @@ let transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: 'pvsndeepak@gmail.com',
-    pass: 'lhjw wtbj vynb adsl',
+    user: 'tarunjanapati7@gmail.com',
+    pass: 'irdk xweh oqla fcna',
   },
 });
 
@@ -36,7 +36,7 @@ const sendOTPVerificationEmail = async (email, _id,res) => {
 
     //mail options
     const mailOptions = {
-      from: 'pvsndeepak@gmail.com',
+      from: 'tarunjanapati7@gmail.com',
       to: email,
       subject: "Verify Your Email",
       html: `<p> Enter <b>${otp}</b> in the app to verify your email address and complete your verification </p>
