@@ -8,9 +8,6 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { exec } = require('child_process');
 
-const os = require('os');
-
-
 const { GridFSBucket, ObjectId } = require('mongodb');
 
 const allowCors = require('./cors');
@@ -132,47 +129,38 @@ app.get('/', (req, res) => {
 
 app.post('/compile-latex', (req, res) => {
   const { latexCode } = req.body;
-  const uniqueId = new Date().getTime();
-  const outputDir = os.tmpdir();
-  const texFileName = path.join(outputDir, `temp_${uniqueId}.tex`);
-  const pdfFileName = path.join(outputDir, `temp_${uniqueId}.pdf`);
-
-  console.log(`LaTeX file path: ${texFileName}`);
-  console.log(`PDF file path: ${pdfFileName}`);
+  const texFilePath = path.join(__dirname, 'temp.tex');
+  const pdfFilePath = path.join(__dirname, 'temp.pdf');
 
   // Write LaTeX code to a .tex file
-  fs.writeFileSync(texFileName, latexCode);
+  fs.writeFileSync(texFilePath, latexCode);
 
   // Compile LaTeX file to PDF using pdflatex
-  exec(`pdflatex -interaction=nonstopmode -output-directory=${outputDir} ${texFileName}`, (error, stdout, stderr) => {
+  exec(`pdflatex -interaction=nonstopmode ${texFilePath}`, { cwd: __dirname }, (error, stdout, stderr) => {
     if (error) {
       console.error(`LaTeX compilation error: ${error}`);
       console.error(`stderr: ${stderr}`);
       console.error(`stdout: ${stdout}`);
-      return res.status(500).send('LaTeX compilation error');
+      return res.status(500).json({ message: 'LaTeX compilation error', error: stderr });
     }
 
-    console.log(`PDF file generated: ${pdfFileName}`);
-
     // Check if the PDF file was generated
-    if (!fs.existsSync(pdfFileName)) {
+    if (!fs.existsSync(pdfFilePath)) {
       console.error('PDF file not found after compilation');
       return res.status(500).json({ message: 'PDF file not found after compilation' });
     }
 
     // Send the generated PDF file as a response
-    res.sendFile(pdfFileName, (err) => {
+    res.sendFile(pdfFilePath, (err) => {
       if (err) {
         console.error(`Error sending PDF file: ${err}`);
         return res.status(500).send('Error sending PDF file');
       }
 
-      // Clean up temporary files
-      fs.unlinkSync(texFileName);
-      fs.unlinkSync(pdfFileName);
     });
   });
 });
+
 
 
 
