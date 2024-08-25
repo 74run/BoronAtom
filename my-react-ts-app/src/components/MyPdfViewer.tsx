@@ -397,7 +397,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     
   const previewPdf = async () => {
   
-      const educations = eduDetails?.education || [];
+        const educations = eduDetails?.education || [];
     
       const experiences = eduDetails?.experience || [];
   
@@ -421,7 +421,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       ).join("\n");
   
       const projectSection = projects.map((project) => `
-      \\project{${project.name}}{${project.skills}}{${project.startDate.year} -- ${project.endDate.year}}{
+      \\project{${project.name}}{${project.skills}}{${project.startDate.month}/${project.startDate.year} -- ${project.endDate.month}/${project.endDate.year}}{
           \\begin{bullet-list-minor}
               ${convertToLatex(project.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
           \\end{bullet-list-minor}
@@ -431,7 +431,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     
       const educationSection = educations.map(
         (education) => `
-        \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.year}}{\\textit{${education.major} \\labelitemi ${education.cgpa}}}
+        \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.month}/${education.endDate.year}}{\\textit{${education.major} \\labelitemi GPA: ${education.cgpa}}}
         `
       ).join("\n");
   
@@ -439,7 +439,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         // Check if description exists and is not empty
         if (experience.description && experience.description.trim() !== '') {
           return `
-            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
+            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.month}/${experience.startDate.year} -- ${experience.endDate.month}/${experience.endDate.year}}{${experience.location}}
             \\begin{bullet-list-minor}
                 ${convertToLatex(experience.description.split('*').slice(1).map((part, index) => `\\item ${part.trim()}`).join('\n'))}
             \\end{bullet-list-minor}
@@ -447,7 +447,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         } else {
           // Return other fields without modification if description is empty
           return `
-            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.year} -- ${experience.endDate.year}}{${experience.location}}
+            \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.month}/{${experience.startDate.year} -- ${experience.endDate.month}}/${experience.endDate.year}}{${experience.location}}
           `;
         }
       }).join("\n");
@@ -458,7 +458,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const involvementSection = involvements.map(
         (involvement) => `
             \\begin{bullet-list-major}
-            \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.year} -- ${involvement.endDate.year}
+            \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.month}/${involvement.startDate.year} -- ${involvement.endDate.month}/${involvement.endDate.year}
             ${involvement.description.split('*').slice(1).map((part, index) => `\\newline -{${part}}`).join('')}
             \\end{bullet-list-major}
             `
@@ -468,7 +468,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const certificationSection = certifications.map(
         (certification) => `
         \\begin{bullet-list-major}
-        \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${certification.issuedDate.year} -- ${certification.expirationDate.year}
+        \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${certification.issuedDate.month}/${certification.issuedDate.year} -- ${certification.expirationDate.month}/${certification.expirationDate.year}
         \\end{bullet-list-major}
         `
       )
@@ -498,7 +498,11 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       const latexCode = `
       \\documentclass{article}
       \\usepackage{geometry}
-      \\geometry{margin=1in}
+      
+      \\usepackage{lipsum}
+
+      % Set margins for the first page
+      \\newgeometry{top=0.5in, bottom=1in, left=1in, right=1in}
       \\usepackage{enumitem}
       \\setlist{nosep}
       \\usepackage{hyperref}
@@ -509,14 +513,15 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       \\usepackage{fontawesome}
   
   
-      \\textheight=10in
+      \\setlength{\\textheight}{9.5in}
+      \\setlength{\\footskip}{30pt} 
       \\pagestyle{fancy}
       \\raggedright
       \\fancyhf{}
       \\renewcommand{\\headrulewidth}{0pt}
   
       \\setlength{\\hoffset}{-2pt}
-      \\setlength{\\footskip}{20pt}
+      \\setlength{\\footskip}{30pt}
   
       \\def\\bull{\\vrule height 0.8ex width .7ex depth -.1ex }
   
@@ -609,7 +614,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   
       {${summarySection}}
   
-      \\vspace{15pt}
+      \\vspace*{4pt}%
   
      \\header{Education}
   
