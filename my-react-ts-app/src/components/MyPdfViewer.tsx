@@ -638,23 +638,20 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     `;
   
     try {
-      // Step 3: Upload the LaTeX code to your server
-      const uploadResponse = await axios.post(`${process.env.REACT_APP_API_URL}/upload-latex`, { latexCode });
-  
-      // Assume the response gives back the public URL of the .tex file
-      const texFileUrl = uploadResponse.data.url;
-  
-      // Step 4: Construct the Overleaf URL
-      const encodedUri = encodeURIComponent(texFileUrl);
-      const overleafUrl = `https://www.overleaf.com/docs?snip_uri=${encodedUri}`;
-  
-      // Step 5: Open the Overleaf link in a new window
-      window.open(overleafUrl, '_blank');
-    } catch (error) {
-      console.error('Error generating Overleaf preview:', error);
-    }
-  };
+    // Step 3: Store the LaTeX code on your server
+    await axios.post(`${process.env.REACT_APP_API_URL}/store-latex`, { latexCode });
 
+    // Step 4: Use the stored LaTeX code URL in the Overleaf link
+    const texFileUrl = `${process.env.REACT_APP_API_URL}/view-latex`;
+    const encodedUri = encodeURIComponent(texFileUrl);
+    const overleafUrl = `https://www.overleaf.com/docs?snip_uri=${encodedUri}`;
+
+    // Step 5: Open the Overleaf link in a new window
+    window.open(overleafUrl, '_blank');
+  } catch (error) {
+    console.error('Error storing or viewing LaTeX code:', error);
+  }
+};
   
   
     return (
