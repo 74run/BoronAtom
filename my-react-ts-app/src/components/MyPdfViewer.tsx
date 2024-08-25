@@ -665,18 +665,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
          
           {/* PDF Download and Preview Buttons */}
           <div className="d-flex justify-content-end">
-          <button className="btn btn-primary mr-2" onClick={generatePdf} style={{
-  backgroundColor: '#007bff',
-  color: '#fff',
-  border: '1px solid #007bff',
-  padding: '0.3rem 0.6rem', // Adjusted padding
-  borderRadius: '100px',
-  transition: 'all 0.3s',
-  fontSize: '0.8rem', // Adjusted font size
-  marginRight: '10px'
-}}>
-  <FaFilePdf /> Download PDF
-</button>
+        
 
 <button className="btn btn-secondary" onClick={previewPdf} style={{
   color: '#fff',
@@ -686,14 +675,14 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   transition: 'all 0.3s',
   fontSize: '0.8rem', // Adjusted font size
 }}>
-  <FaEye /> Preview PDF
+  <FaEye /> Preview Overleaf PDF
 </button>
   </div>
   
           {/* PDF Preview */}
           {previewPdfUrl && (
             <iframe
-              title="PDF Preview"
+              title="PDF Overleaf Preview"
               src={previewPdfUrl}
               style={{ width: '100%', height: '500px', border: 'none' }}
             />
