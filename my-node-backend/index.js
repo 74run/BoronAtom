@@ -128,51 +128,34 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
-const uploadDir = path.join(__dirname, 'uploads');
+// In-memory storage for LaTeX code
+let storedLatexCode = '';
 
-// Ensure the upload directory exists
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
-}
-
-// Configure multer for file handling
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({ storage });
-
-// Endpoint to receive LaTeX code and save as a .tex file
-app.post('/upload-latex', (req, res) => {
+// Endpoint to receive LaTeX code via POST
+app.post('/store-latex', (req, res) => {
   const { latexCode } = req.body;
 
+  // Check if LaTeX code is provided
   if (!latexCode) {
     return res.status(400).json({ message: 'No LaTeX code provided' });
   }
 
-  const fileName = `document_${Date.now()}.tex`;
-  const filePath = path.join(uploadDir, fileName);
+  // Store the LaTeX code in memory
+  storedLatexCode = latexCode;
 
-  // Write LaTeX code to a .tex file
-  fs.writeFile(filePath, latexCode, (err) => {
-    if (err) {
-      console.error('Error writing LaTeX file:', err);
-      return res.status(500).json({ message: 'Failed to save LaTeX file' });
-    }
-
-    // Assuming your frontend can access the file via a public URL
-    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${fileName}`;
-    res.json({ url: fileUrl });
-  });
+  res.json({ message: 'LaTeX code stored successfully' });
 });
 
-// Serve the uploads directory as static files
-app.use('/uploads', express.static(uploadDir));
+// Endpoint to view LaTeX code via GET
+app.get('/view-latex', (req, res) => {
+  if (!storedLatexCode) {
+    return res.status(404).send('No LaTeX code stored');
+  }
+
+  // Respond with the stored LaTeX code as plain text
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(storedLatexCode);
+});
 
 
 app.post('/compile-latex', (req, res) => {
