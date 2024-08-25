@@ -128,6 +128,51 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
+const uploadDir = path.join(__dirname, 'uploads');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
+
+// Configure multer for file handling
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
+// Endpoint to receive LaTeX code and save as a .tex file
+app.post('/upload-latex', (req, res) => {
+  const { latexCode } = req.body;
+
+  if (!latexCode) {
+    return res.status(400).json({ message: 'No LaTeX code provided' });
+  }
+
+  const fileName = `document_${Date.now()}.tex`;
+  const filePath = path.join(uploadDir, fileName);
+
+  // Write LaTeX code to a .tex file
+  fs.writeFile(filePath, latexCode, (err) => {
+    if (err) {
+      console.error('Error writing LaTeX file:', err);
+      return res.status(500).json({ message: 'Failed to save LaTeX file' });
+    }
+
+    // Assuming your frontend can access the file via a public URL
+    const fileUrl = `${req.protocol}://${req.get('host')}/uploads/${fileName}`;
+    res.json({ url: fileUrl });
+  });
+});
+
+// Serve the uploads directory as static files
+app.use('/uploads', express.static(uploadDir));
 
 
 app.post('/compile-latex', (req, res) => {
