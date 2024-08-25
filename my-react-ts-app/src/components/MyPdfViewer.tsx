@@ -638,25 +638,23 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     `;
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/compile-latex`, { latexCode }, { responseType: 'blob' });
-      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-
-      // Open the PDF in a new window
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      const pdfWindow = window.open(pdfUrl, '_blank');
-
-      // Revoke the object URL after the window is closed
-      if (pdfWindow) {
-        pdfWindow.addEventListener('load', () => {
-          URL.revokeObjectURL(pdfUrl);
-        });
-      } else {
-        URL.revokeObjectURL(pdfUrl);
-      }
+      // Step 3: Upload the LaTeX code to your server
+      const uploadResponse = await axios.post(`${process.env.REACT_APP_API_URL}/upload-latex`, { latexCode });
+  
+      // Assume the response gives back the public URL of the .tex file
+      const texFileUrl = uploadResponse.data.url;
+  
+      // Step 4: Construct the Overleaf URL
+      const encodedUri = encodeURIComponent(texFileUrl);
+      const overleafUrl = `https://www.overleaf.com/docs?snip_uri=${encodedUri}`;
+  
+      // Step 5: Open the Overleaf link in a new window
+      window.open(overleafUrl, '_blank');
     } catch (error) {
-      console.error('Error compiling or previewing PDF:', error);
+      console.error('Error generating Overleaf preview:', error);
     }
   };
+
   
   
     return (
