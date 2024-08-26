@@ -9,7 +9,7 @@ const User = require('../models/UserModel');
 
   router.post('/:userID/skill', async (req, res) => {
     try {
-        const { domain, name } = req.body;
+        const { domain, name, includeInResume } = req.body;
       const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -24,7 +24,8 @@ const User = require('../models/UserModel');
   
       userProfile.skills.push({
         domain: domain,
-        name: name
+        name: name, 
+        includeInResume
       });
   
       const savedUserProfile = await userProfile.save();

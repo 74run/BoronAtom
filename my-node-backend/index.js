@@ -158,6 +158,7 @@ app.get('/view-latex', (req, res) => {
 });
 
 
+
 app.post('/compile-latex', (req, res) => {
   const { latexCode } = req.body;
   const texFilePath = path.join(__dirname, 'temp.tex');
