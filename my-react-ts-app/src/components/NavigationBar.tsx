@@ -5,6 +5,7 @@ import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } fr
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faBell, faUserFriends, faSearch, faBars } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons
 import pic from './Gold.png';
+import logo from './logo-no-background.png'; 
 
 interface NavbarProps {
   // Add any props you need
@@ -21,8 +22,6 @@ const Navbar: React.FC<NavbarProps> = () => {
 
   const handleLogout = () => {
     // Perform the logout actions here
-    // For example, clear user authentication token, redirect to login page, etc.
-    // console.log('Logout clicked');
     localStorage.removeItem('Token');
     localStorage.removeItem('UserID');
     navigate('/login');
@@ -32,39 +31,40 @@ const Navbar: React.FC<NavbarProps> = () => {
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow">
       <div className="container-fluid">
         <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
-        <div className="input-group mx-auto" style={{ maxWidth: '400px' }}> {/* Centered with max width */}
-        
-  <input 
-    type="text" 
-    className="form-control rounded-start" 
-    placeholder="Search" 
-    aria-label="Search" 
-    aria-describedby="button-addon2" 
-    style={{ borderRadius: '50px 0 0 50px', boxShadow: 'none', paddingRight: '38px' }} // Added paddingRight to adjust for the button width
-  />
-  <div className="input-group-append">
-    <button 
-      className="btn btn-outline-success rounded-end" 
-      type="button" 
-      id="button-addon2" 
-      style={{ borderRadius: '0 50px 50px 0', boxShadow: 'none', width: '38px', padding: '8px' }} // Adjusted width and padding
-    >
-      <FontAwesomeIcon icon={faSearch} />
-    </button>
-  
-</div>
-</div>
-
+          <Link to="/" className="navbar-brand d-flex align-items-center">
+            <Image 
+              src={logo} 
+              alt="Boron Atom Logo" 
+              height="40" 
+              className="d-inline-block align-top" 
+              style={{ marginLeft: '30px', maxHeight: '30px', width: 'auto' }} // Adjusted size for better appearance
+            /> 
+             {/* Adjusted font size for the company name */}
+          </Link>
+          <div className="input-group mx-auto" style={{ maxWidth: '400px' }}> {/* Centered with max width */}
+            <input 
+              type="text" 
+              className="form-control rounded-start" 
+              placeholder="Search" 
+              aria-label="Search" 
+              aria-describedby="button-addon2" 
+              style={{ borderRadius: '50px 0 0 50px', boxShadow: 'none', paddingRight: '10px' }} // Added paddingRight to adjust for the button width
+            />
+            <div className="input-group-append">
+              <button 
+                className="btn btn-outline-success rounded-end" 
+                type="button" 
+                id="button-addon2" 
+                style={{ borderRadius: '0 50px 50px 0', boxShadow: 'none', width: '38px', padding: '8px' }} // Adjusted width and padding
+              >
+                <FontAwesomeIcon icon={faSearch} />
+              </button>
+            </div>
+          </div>
 
           <BootstrapNav className="ms-auto"> {/* Added class for left alignment */}
-      
-       
-
-
-          
-
             {/* Normal navigation */}
-            <div className="d-none d-md-flex" > {/* Display only on larger screens */}
+            <div className="d-none d-md-flex"> {/* Display only on larger screens */}
               <Link
                 to="/"
                 className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
@@ -88,7 +88,7 @@ const Navbar: React.FC<NavbarProps> = () => {
               </Link>
             </div>
 
-            <div style={{ display: 'flex' }} >
+            <div style={{ display: 'flex' }}>
               <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />} align="end">
                 <NavDropdown.Item>
                   <Image src={pic} alt="Profile" roundedCircle className="profile-pic" />
