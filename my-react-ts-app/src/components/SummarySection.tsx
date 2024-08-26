@@ -223,10 +223,11 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                   style={{
                     backgroundColor: '#17a2b8',
                     color: '#fff',
+                    padding: '0.3rem 0.8rem',
                     borderRadius: '8px',
-                    padding: '10px 20px',
+                    fontSize: '0.9rem',
                     transition: 'all 0.3s',
-                    fontSize: '1rem',
+                  
                   }}
                 >
                   <FontAwesomeIcon icon={faMagic} className="me-2" />
@@ -239,10 +240,11 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                     style={{
                       backgroundColor: '#28a745',
                       color: '#fff',
+                      padding: '0.3rem 0.8rem',
                       borderRadius: '8px',
-                      padding: '10px 20px',
+                      fontSize: '0.9rem',
                       transition: 'all 0.3s',
-                      fontSize: '1rem',
+                    
                     }}
                   >
                     <FontAwesomeIcon icon={faSave} className="me-2" />
@@ -254,10 +256,11 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                     style={{
                       backgroundColor: '#6c757d',
                       color: '#fff',
+                      padding: '0.3rem 0.8rem',
                       borderRadius: '8px',
-                      padding: '10px 20px',
+                      fontSize: '0.9rem',
                       transition: 'all 0.3s',
-                      fontSize: '1rem',
+                    
                     }}
                   >
                     <FontAwesomeIcon icon={faTimes} className="me-2" />
@@ -271,7 +274,8 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
               <p
                 style={{
                   marginBottom: '1rem',
-                  fontSize: '1rem',
+                  fontFamily: "'Roboto', sans-serif",
+                  fontSize: '0.9rem',
                   lineHeight: '1.6',
                   color: '#495057',
                 }}
@@ -286,9 +290,8 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                     backgroundColor: '#007bff',
                     color: '#fff',
                     borderRadius: '8px',
-                    padding: '10px 20px',
-                    transition: 'all 0.3s',
-                    fontSize: '1rem',
+                    padding: '0.3rem 0.8rem',
+                    fontSize: '0.9rem',
                   }}
                 >
                   <FontAwesomeIcon icon={faEdit} className="me-2" />
@@ -300,10 +303,9 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                   style={{
                     backgroundColor: '#dc3545',
                     color: '#fff',
+                    padding: '0.3rem 0.8rem',
                     borderRadius: '8px',
-                    padding: '10px 20px',
-                    transition: 'all 0.3s',
-                    fontSize: '1rem',
+                    fontSize: '0.9rem',
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />

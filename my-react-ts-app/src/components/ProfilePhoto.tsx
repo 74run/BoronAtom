@@ -132,12 +132,12 @@ const Profile: React.FC<ProfileProps> = () => {
           <button
           onClick={openModal}
           style={{
-            padding: "10px 20px",
+            padding: '0.3rem 0.8rem',
             backgroundColor: "#28a745",
             color: "#fff",
             border: "none",
             borderRadius: "25px",
-            fontSize: "1rem",
+            fontSize: "0.9rem",
             cursor: "pointer",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
             marginLeft: "auto", // Push the button to the far right
