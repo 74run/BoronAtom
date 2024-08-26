@@ -221,59 +221,113 @@ const fetchExperience = () => {
   return (
     <div
       style={{
-        border: '2px solid #4CAF50',
-        borderRadius: '8px',
-        padding: '16px',
-        marginBottom: '20px',
-        fontFamily: 'Arial, sans-serif',
-        backgroundColor: '#f9f9f9',
-        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
+        border: 'none',
+        borderRadius: '12px',
+        padding: '24px',
+        marginBottom: '30px',
+        fontFamily: "'Roboto', sans-serif",
+        color: '#333',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Experience</b></h4>
+      <h4
+        style={{
+          color: '#4CAF50',
+          textAlign: 'left',
+          marginBottom: '1.5rem',
+          fontFamily: "'Roboto Slab', serif",
+          fontWeight: 700,
+          fontSize: '1.5rem',
+        }}
+      >
+        Experience
+      </h4>
       {experiences.map((experience) => (
-        <div key={experience._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
+        <div
+          key={experience._id}
+          className="mb-3"
+          style={{
+            border: '1px solid #e0e0e0',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+          }}
+        >
           {editData && editData.id === experience._id ? (
             // Edit mode
             <div>
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Job Title"
                 value={editData.jobTitle}
                 onChange={(e) =>
                   setEditData({ ...editData, jobTitle: e.target.value })
                 }
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Company"
                 value={editData.company}
                 onChange={(e) =>
                   setEditData({ ...editData, company: e.target.value })
                 }
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Location"
                 value={editData.location}
                 onChange={(e) =>
                   setEditData({ ...editData, location: e.target.value })
                 }
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>Start Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.startDate.month}
-                    onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        startDate: {
+                          ...editData.startDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -289,8 +343,20 @@ const fetchExperience = () => {
                   <select
                     className="form-control mb-2"
                     value={editData.startDate.year}
-                    onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        startDate: {
+                          ...editData.startDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -305,14 +371,27 @@ const fetchExperience = () => {
                   </select>
                 </div>
               </div>
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>End Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.month}
-                    onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        endDate: {
+                          ...editData.endDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -328,8 +407,20 @@ const fetchExperience = () => {
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.year}
-                    onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        endDate: {
+                          ...editData.endDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -345,17 +436,26 @@ const fetchExperience = () => {
                 </div>
               </div>
               <textarea
-                
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Description"
                 value={editData.description}
                 onChange={handleEditDescriptionChange}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
               <button
-                className="btn btn-primary me-2"
+                className="btn btn-success me-2"
                 onClick={handleUpdate}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -363,60 +463,153 @@ const fetchExperience = () => {
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 Cancel
               </button>
             </div>
           ) : (
             // View mode
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem' , fontSize: '1rem' }}><b>{experience.jobTitle}</b></h3>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Company: </strong>{experience.company}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Location: </strong>{experience.location}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Start Date:</strong> {experience.startDate && `${experience.startDate.month} ${experience.startDate.year}`}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>End Date:</strong> {experience.endDate && `${experience.endDate.month} ${experience.endDate.year}`}</p>
-            {experience.description.split('*').slice(1).map((part, index) => (
-    <p key={index} style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}>
-      {part}
-    </p>
-  ))}
-            <div>
-              <button
-                className="btn btn-primary me-2"
-                onClick={() => handleEditClick(experience._id, experience.jobTitle, experience.company, experience.location, experience.startDate, experience.endDate, experience.description)}
+            <div
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '12px',
+                backgroundColor: '#ffffff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow =
+                  '0 10px 30px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+            >
+              <h5
                 style={{
-                  backgroundColor: '#007bff',
-                  color: '#fff',
-                  border: '1px solid #007bff',
-                  padding: '0.3rem 0.6rem', // Adjusted padding
-                  borderRadius: '4px',
-                  transition: 'all 0.3s',
-                  fontSize: '0.8rem', // Adjusted font size
+                  color: '#333',
+                  fontFamily: "'Roboto Slab', serif",
+                  fontSize: '1.2rem',
+                  marginBottom: '0.5rem',
+                  fontWeight: 700,
                 }}
               >
-                <FontAwesomeIcon icon={faEdit} className="me-2" />
-                Edit
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={() => handleDelete(experience._id)}
+                {experience.jobTitle}
+              </h5>
+              <p
                 style={{
-                  backgroundColor: '#dc3545',
-                  color: '#fff',
-                  padding: '0.3rem 0.4rem',
-                  border: '1px solid #dc3545',
-                  borderRadius: '4px',
-                  transition: 'all 0.3s',
-                  fontSize: '0.8rem',
+                  fontFamily: "'Roboto', sans-serif",
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
                 }}
               >
-                <FontAwesomeIcon icon={faTrash} className="me-2" />
-                Delete
-              </button>
+                <strong>Company: </strong>
+                {experience.company}
+              </p>
+              <p
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Location: </strong>
+                {experience.location}
+              </p>
+              <p
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Start Date:</strong>{' '}
+                {experience.startDate &&
+                  `${experience.startDate.month} ${experience.startDate.year}`}
+              </p>
+              <p
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>End Date:</strong>{' '}
+                {experience.endDate &&
+                  `${experience.endDate.month} ${experience.endDate.year}`}
+              </p>
+              {experience.description
+                .split('*')
+                .slice(1)
+                .map((part, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      marginBottom: '0.5rem',
+                      fontSize: '0.9rem',
+                      color: '#555',
+                    }}
+                  >
+                    {part}
+                  </p>
+                ))}
+  
+              <div>
+                <button
+                  className="btn btn-outline-primary me-2"
+                  onClick={() =>
+                    handleEditClick(
+                      experience._id,
+                      experience.jobTitle,
+                      experience.company,
+                      experience.location,
+                      experience.startDate,
+                      experience.endDate,
+                      experience.description
+                    )
+                  }
+                  style={{
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    border: '1px solid #007bff',
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  Edit
+                </button>
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => handleDelete(experience._id)}
+                  style={{
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    padding: '0.3rem 0.8rem',
+                    border: '1px solid #dc3545',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-          
           )}
         </div>
       ))}
@@ -425,42 +618,73 @@ const fetchExperience = () => {
         <div>
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Job Title"
             value={newExperience.jobTitle}
             onChange={(e) =>
               setNewExperience({ ...newExperience, jobTitle: e.target.value })
             }
-            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Company"
             value={newExperience.company}
             onChange={(e) =>
               setNewExperience({ ...newExperience, company: e.target.value })
             }
-            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Location"
             value={newExperience.location}
             onChange={(e) =>
               setNewExperience({ ...newExperience, location: e.target.value })
             }
-            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
-          <div className="date-dropdowns">
+          <div className="date-dropdowns mb-3">
             <label>Start Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newExperience.startDate.month}
-                onChange={(e) => setNewExperience({ ...newExperience, startDate: { ...newExperience.startDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewExperience({
+                    ...newExperience,
+                    startDate: {
+                      ...newExperience.startDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newExperience.startDate.month && (
                   <option value="" disabled>
@@ -476,8 +700,20 @@ const fetchExperience = () => {
               <select
                 className="form-control mb-2"
                 value={newExperience.startDate.year}
-                onChange={(e) => setNewExperience({ ...newExperience, startDate: { ...newExperience.startDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewExperience({
+                    ...newExperience,
+                    startDate: {
+                      ...newExperience.startDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newExperience.startDate.year && (
                   <option value="" disabled>
@@ -492,14 +728,27 @@ const fetchExperience = () => {
               </select>
             </div>
           </div>
-          <div className="date-dropdowns">
+          <div className="date-dropdowns mb-3">
             <label>End Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newExperience.endDate.month}
-                onChange={(e) => setNewExperience({ ...newExperience, endDate: { ...newExperience.endDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewExperience({
+                    ...newExperience,
+                    endDate: {
+                      ...newExperience.endDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newExperience.endDate.month && (
                   <option value="" disabled>
@@ -515,8 +764,20 @@ const fetchExperience = () => {
               <select
                 className="form-control mb-2"
                 value={newExperience.endDate.year}
-                onChange={(e) => setNewExperience({ ...newExperience, endDate: { ...newExperience.endDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewExperience({
+                    ...newExperience,
+                    endDate: {
+                      ...newExperience.endDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newExperience.endDate.year && (
                   <option value="" disabled>
@@ -532,16 +793,26 @@ const fetchExperience = () => {
             </div>
           </div>
           <textarea
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Description"
             value={newExperience.description}
             onChange={(e) => handleDescriptionChange(e)}
-            style={{borderRadius: '4px', border: '1px solid #ccc', marginBottom: '1rem'}}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
           <button
-            className="btn btn-primary"
+            className="btn btn-success"
             onClick={handleSaveClick}
-            style={{borderRadius: '4px'}}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -549,7 +820,11 @@ const fetchExperience = () => {
           <button
             className="btn btn-secondary ms-2"
             onClick={() => setIsAdding(false)}
-            style={{borderRadius: '4px'}}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
           >
             Cancel
           </button>
@@ -558,16 +833,15 @@ const fetchExperience = () => {
       {!isAdding && (
         // Show "Add Experience" button
         <button
-          className="btn btn-primary"
+          className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
             backgroundColor: '#007bff',
             color: '#fff',
             border: '1px solid #007bff',
-            padding: '0.3rem 0.6rem', // Adjusted padding
-            borderRadius: '4px',
-            transition: 'all 0.3s',
-            fontSize: '0.8rem', // Adjusted font size
+            padding: '10px 20px',
+            borderRadius: '8px',
+            fontSize: '1rem',
           }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
@@ -576,6 +850,7 @@ const fetchExperience = () => {
       )}
     </div>
   );
+  
   
   
 }

@@ -300,51 +300,94 @@ const fetchEducation = () => {
   };
 
   return (
-    <div 
-      
+    <div
       style={{
-        border: '2px solid #4CAF50',
-        borderRadius: '8px',
-        padding: '16px',
-        marginBottom: '20px',
-        fontFamily: 'Arial, sans-serif',
+        border: 'none',
+        borderRadius: '12px',
+        padding: '24px',
+        marginBottom: '30px',
+        fontFamily: "'Roboto', sans-serif",
         color: '#333',
-        backgroundColor: '#f9f9f9',
-        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
+        backgroundColor: '#ffffff',
+        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <h4 style={{ color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare' }}><b>Education</b></h4>
-      {educations.map(education => (
-        <div key={education._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
+      <h4
+        style={{
+          color: '#4CAF50',
+          textAlign: 'left',
+          marginBottom: '1.5rem',
+          fontFamily: "'Roboto Slab', serif",
+          fontWeight: 700,
+          fontSize: '1.5rem',
+        }}
+      >
+        Education
+      </h4>
+      {educations.map((education) => (
+        <div
+          key={education._id}
+          className="mb-3"
+          style={{
+            border: '1px solid #e0e0e0',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+          }}
+        >
           {editData && editData.id === education._id ? (
-            <div className="editing-form">
+            <div>
               <input
                 list="universities"
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="University Name"
                 value={editData.university}
-                onChange={(e) => setEditData({ ...editData, university: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setEditData({ ...editData, university: e.target.value })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
-              <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
+              <datalist id="universities" style={{ background: 'white', width: '100%', color: 'black' }}>
                 {filteredUniversities.map((name, index) => (
                   <option key={index} value={name} />
                 ))}
               </datalist>
               <input
-        type="text"
-        className="form-control mb-2"
-        placeholder="CGPA"
-        value={editData.cgpa}
-        onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
-        style={{borderRadius: '4px', border: '1px solid #ccc'}}
-    />
+                type="text"
+                className="form-control mb-3"
+                placeholder="CGPA"
+                value={editData.cgpa}
+                onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
+              />
               <select
-                className="form-control mb-2"
+                className="form-control mb-3"
                 value={editData.degree}
-                onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setEditData({ ...editData, degree: e.target.value })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               >
                 <option value="Associate Degree">Associate Degree</option>
                 <option value="Bachelor's Degree">Bachelor's Degree</option>
@@ -353,21 +396,39 @@ const fetchEducation = () => {
               </select>
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Major"
                 value={editData.major}
                 onChange={(e) => setEditData({ ...editData, major: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
-              
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>Start Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.startDate.month}
-                    onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        startDate: {
+                          ...editData.startDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -383,8 +444,20 @@ const fetchEducation = () => {
                   <select
                     className="form-control mb-2"
                     value={editData.startDate.year}
-                    onChange={(e) => setEditData({ ...editData, startDate: { ...editData.startDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        startDate: {
+                          ...editData.startDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.startDate.year && (
                       <option value="" disabled>
@@ -399,14 +472,27 @@ const fetchEducation = () => {
                   </select>
                 </div>
               </div>
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>End Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.month}
-                    onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        endDate: {
+                          ...editData.endDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.startDate.month && (
                       <option value="" disabled>
@@ -422,8 +508,20 @@ const fetchEducation = () => {
                   <select
                     className="form-control mb-2"
                     value={editData.endDate.year}
-                    onChange={(e) => setEditData({ ...editData, endDate: { ...editData.endDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        endDate: {
+                          ...editData.endDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.endDate.year && (
                       <option value="" disabled>
@@ -439,9 +537,13 @@ const fetchEducation = () => {
                 </div>
               </div>
               <button
-                className="btn btn-primary me-2"
+                className="btn btn-success me-2"
                 onClick={handleUpdate}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -449,79 +551,182 @@ const fetchEducation = () => {
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 Cancel
               </button>
             </div>
           ) : (
-            <div className="display-info" style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-  <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '1rem' }}><b>{education.university}</b></h3>
-  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>GPA: </strong>{education.cgpa}</p>
-  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Degree: </strong>{education.degree}</p>
-  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Major: </strong>{education.major}</p>
-  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>Start Date </strong>{education.startDate && `${education.startDate.month} ${education.startDate.year}`}</p>
-  <p style={{ marginBottom: '0.5rem', fontSize: '0.8rem' }}><strong>End Date: </strong>{education.endDate && `${education.endDate.month} ${education.endDate.year}`}</p>
-  <div>
-    <button
-      className="btn btn-primary me-2"
-      onClick={() => handleEditClick(education._id, education.university, education.cgpa, education.degree, education.major, education.startDate, education.endDate)}
-      style={{
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: '1px solid #007bff',
-        padding: '0.3rem 0.6rem', // Adjusted padding
-        borderRadius: '4px',
-        transition: 'all 0.3s',
-        fontSize: '0.8rem', // Adjusted font size
-      }}
-    >
-      <FontAwesomeIcon icon={faEdit} className="me-2" />
-      Edit
-    </button>
-    <button
-      className="btn btn-danger"
-      onClick={() => handleDelete(education._id)}
-      style={{
-        backgroundColor: '#dc3545',
-        color: '#fff',
-        padding: '0.3rem 0.4rem',
-        border: '1px solid #dc3545',
-        borderRadius: '4px',
-        transition: 'all 0.3s',
-        fontSize: '0.8rem',
-      }}
-    >
-      <FontAwesomeIcon icon={faTrash} className="me-2" />
-      Delete
-    </button>
-  </div>
-</div>
-
+            <div
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '12px',
+                backgroundColor: '#ffffff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow =
+                  '0 10px 30px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+            >
+              <h5
+                style={{
+                  color: '#333',
+                  fontFamily: "'Roboto Slab', serif",
+                  fontSize: '1.2rem',
+                  marginBottom: '0.5rem',
+                  fontWeight: 700,
+                }}
+              >
+                {education.university}
+              </h5>
+              <p
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>GPA:</strong> {education.cgpa}
+              </p>
+              <p
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Degree:</strong> {education.degree}
+              </p>
+              <p
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Major:</strong> {education.major}
+              </p>
+              <p
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Start Date:</strong>{' '}
+                {education.startDate &&
+                  `${education.startDate.month} ${education.startDate.year}`}
+              </p>
+              <p
+                style={{
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#555',
+                }}
+              >
+                <strong>End Date:</strong>{' '}
+                {education.endDate &&
+                  `${education.endDate.month} ${education.endDate.year}`}
+              </p>
+              <div>
+                <button
+                  className="btn btn-outline-primary me-2"
+                  onClick={() =>
+                    handleEditClick(
+                      education._id,
+                      education.university,
+                      education.cgpa,
+                      education.degree,
+                      education.major,
+                      education.startDate,
+                      education.endDate
+                    )
+                  }
+                  style={{
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    border: '1px solid #007bff',
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  Edit
+                </button>
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => handleDelete(education._id)}
+                  style={{
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    padding: '0.3rem 0.8rem',
+                    border: '1px solid #dc3545',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  Delete
+                </button>
+              </div>
+            </div>
           )}
         </div>
       ))}
       {isAdding && (
-        <div className="adding-form">
+        <div>
           <input
             list="universities"
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Search University"
-            onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
+            onChange={(e) =>
+              setNewEducation({ ...newEducation, university: e.target.value })
+            }
             value={newEducation.university}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
-          <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
+          <datalist
+            id="universities"
+            style={{ background: 'white', width: '100%', color: 'black' }}
+          >
             {filteredUniversities.map((name, index) => (
               <option key={index} value={name} />
             ))}
           </datalist>
           <select
-            className="form-control mb-2"
+            className="form-control mb-3"
             value={newEducation.degree}
-            onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            onChange={(e) =>
+              setNewEducation({ ...newEducation, degree: e.target.value })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           >
             {!newEducation.degree && (
               <option value="" disabled>
@@ -535,28 +740,57 @@ const fetchEducation = () => {
           </select>
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Major"
             value={newEducation.major}
-            onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            onChange={(e) =>
+              setNewEducation({ ...newEducation, major: e.target.value })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
-             <input
-      type="text"
-      className="form-control mb-2"
-      placeholder="CGPA"
-      value={newEducation.cgpa}
-      onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
-      style={{borderRadius: '4px', border: '1px solid #ccc'}}
-    />
-          <div className="date-dropdowns">
+          <input
+            type="text"
+            className="form-control mb-3"
+            placeholder="CGPA"
+            value={newEducation.cgpa}
+            onChange={(e) =>
+              setNewEducation({ ...newEducation, cgpa: e.target.value })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
+          />
+          <div className="date-dropdowns mb-3">
             <label>Start Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newEducation.startDate.month}
-                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewEducation({
+                    ...newEducation,
+                    startDate: {
+                      ...newEducation.startDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newEducation.startDate.month && (
                   <option value="" disabled>
@@ -572,8 +806,20 @@ const fetchEducation = () => {
               <select
                 className="form-control mb-2"
                 value={newEducation.startDate.year}
-                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewEducation({
+                    ...newEducation,
+                    startDate: {
+                      ...newEducation.startDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newEducation.startDate.year && (
                   <option value="" disabled>
@@ -588,14 +834,27 @@ const fetchEducation = () => {
               </select>
             </div>
           </div>
-          <div className="date-dropdowns">
+          <div className="date-dropdowns mb-3">
             <label>End Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newEducation.endDate.month}
-                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewEducation({
+                    ...newEducation,
+                    endDate: {
+                      ...newEducation.endDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newEducation.endDate.month && (
                   <option value="" disabled>
@@ -611,8 +870,20 @@ const fetchEducation = () => {
               <select
                 className="form-control mb-2"
                 value={newEducation.endDate.year}
-                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewEducation({
+                    ...newEducation,
+                    endDate: {
+                      ...newEducation.endDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newEducation.endDate.year && (
                   <option value="" disabled>
@@ -627,27 +898,43 @@ const fetchEducation = () => {
               </select>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary" onClick={handleSaveClick} style={{borderRadius: '4px'}}>
-          <FontAwesomeIcon icon={faSave} className="me-2" />
+          <button
+            className="btn btn-success"
+            onClick={handleSaveClick}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
+          >
+            <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
           </button>
-          <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)} style={{borderRadius: '4px'}}>
+          <button
+            className="btn btn-secondary ms-2"
+            onClick={() => setIsAdding(false)}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
+          >
             Cancel
           </button>
         </div>
       )}
       {!isAdding && (
         <button
-          className="btn btn-primary"
+          className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
             backgroundColor: '#007bff',
             color: '#fff',
             border: '1px solid #007bff',
-            padding: '0.3rem 0.6rem', // Adjusted padding
-            borderRadius: '4px',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            fontSize: '1rem',
             transition: 'all 0.3s',
-            fontSize: '0.8rem', // Adjusted font size
           }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
@@ -656,6 +943,7 @@ const fetchEducation = () => {
       )}
     </div>
   );
+  
   
   
 };

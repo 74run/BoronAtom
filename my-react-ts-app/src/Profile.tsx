@@ -500,66 +500,207 @@ const Profile: React.FC = () => {
   
   
   
-
   return (
     <>
-      {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
       <NavigationBar />
   
-      {/* Three Sections Layout */}
-      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
-
-
-      <div className='empty' style={{ flex: '0 0 5%' }}>
-          {/* Add content for the right section */}
-      
-          {/* For example: */}
-        </div>
-
-
-
-
-
-        {/* Middle Section (60%) */}
-        
-        <div className= 'Full-Resume' style={{ flex: '0 0 45%', position: 'relative', borderRadius: '20px' }}>
-          {/* Content for the middle section goes here */}
-          <div style={{ marginBottom: '0px' }}>
-            <CoverPage onUpload={(file: File): void => { } } />
-            <div style={{ marginTop: '-80px'}}>
-  <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
-
-  <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
-</div>
+      {/* Full page layout */}
+      <div
+        className="Full-Profile"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#f8f9fa",
+          paddingTop: "80px",
+          paddingBottom: "50px",
+          paddingLeft: "15px",
+          paddingRight: "15px",
+        }}
+      >
+        {/* Main Content Area */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            gap: "30px",
+            paddingBottom: "30px",
+          }}
+        >
+          {/* Left Column (Profile Info and Main Content) */}
+          <div
+            style={{
+              flex: "2",
+              display: "flex",
+              flexDirection: "column",
+              gap: "30px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "flex-start",
+                gap: "30px",
+                height: "100%", // Ensure the height matches for both containers
+              }}
+            >
+              {/* ProfileNew Section */}
+              <div
+                style={{
+                  flex: "2",
+                  padding: "30px",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "15px",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "stretch", // Make sure the content stretches within the container
+                }}
+              >
+                <ProfileNew
+                  UserDetail={userDetails}
+                  ContactDetail={contactDetails}
+                />
+              </div>
+  
+              {/* PDFResume Section */}
+              <div
+                style={{
+                  flex: "1",
+                  padding: "20px",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "15px",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                  display: "flex",
+                  height: '100%',
+                  alignItems: "center", // Vertically center the content
+                  justifyContent: "center", // Horizontally center the content
+                }}
+              >
+                <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+              </div>
+            </div>
+  
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                
+              }}
+            >
+              <ProjectsSection
+                onEdit={handleEditPro}
+                onDelete={handleDeletePro}
+                Projects={projects}
+              />
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <ExperienceSection
+                Experiences={experiences}
+                onEdit={handleEditExp}
+                onDelete={handleDeleteExp}
+              />
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <EducationSection
+                Educations={educations}
+                onEdit={handleEditEdu}
+                onDelete={handleDeleteEdu}
+                UserDetail={userDetails}
+              />
+            </div>
           </div>
-          <SectionWrapper>
-            <div style={{  padding: '10px' }} />
-            <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
-            <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
-            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
-            <EducationSection Educations={educations} onEdit={handleEditEdu} onDelete={handleDeleteEdu} UserDetail={userDetails} />
-            <ExperienceSection Experiences={experiences} onEdit={handleEditExp} onDelete={handleDeleteExp}/>
-            <CertificationSection Certifications={certifications} onEdit={handleEditCert} onDelete={handleDeleteCert}/>
-            <InvolvementSection Involvements={involvements} onEdit={handleEditInv} onDelete={handleDeleteInv} />
-          </SectionWrapper>
-        </div>
-
   
-        {/* Right Section (20%) */}
-        <div className='chatbox' style={{ flex: '0 0 30%' }}>
-          {/* Add content for the right section */}
-          <ChatBox />
-          {/* For example: */}
+          {/* Right Column (Sidebar) */}
+          <div
+            style={{
+              flex: "1",
+              display: "flex",
+              flexDirection: "column",
+              gap: "30px",
+            }}
+          >
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <SummarySection
+                Summarys={summarys}
+                onEdit={handleEditSum}
+                onDelete={handleDeleteSum}
+              />
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <Skills
+                Skills={skills}
+                onEdit={handleEditSkill}
+                onDelete={handleDeleteSkill}
+              />
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <CertificationSection
+                Certifications={certifications}
+                onEdit={handleEditCert}
+                onDelete={handleDeleteCert}
+              />
+            </div>
+            <div
+              style={{
+                padding: "20px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+              }}
+            >
+              <InvolvementSection
+                Involvements={involvements}
+                onEdit={handleEditInv}
+                onDelete={handleDeleteInv}
+              />
+            </div>
+          </div>
         </div>
-
-        
       </div>
   
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </>
   );
-};  
+   
+  
+};
 
 export default Profile;
