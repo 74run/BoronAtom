@@ -138,7 +138,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     
   const previewPdf = async () => {
   
-      const educations = eduDetails?.education || [];
+        const educations = eduDetails?.education || [];
     
       const experiences = eduDetails?.experience || [];
   
@@ -384,6 +384,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     `;
   
     try {
+
       // Step 3: Store the LaTeX code on your server
       await axios.post(`${process.env.REACT_APP_API_URL}/store-latex`, { latexCode });
   
@@ -398,6 +399,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       console.error('Error storing or viewing LaTeX code:', error);
     }
   };
+
   
     return (
       <div className="container mt-(-3)">
@@ -405,7 +407,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
          
           {/* PDF Download and Preview Buttons */}
           <div className="d-flex justify-content-end">
-          
+
 
 <button className="btn btn-secondary" onClick={previewPdf} style={{
   padding: "10px 20px",
@@ -418,7 +420,9 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   marginLeft: "auto",// Adjusted font size
 }}>
+
   <FaLeaf />  Preview Overleaf PDF
+
 </button>
   </div>
   
