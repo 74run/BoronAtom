@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faSave, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faSave, faPlus, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
 
 interface Project {
   _id: string;
@@ -12,6 +11,7 @@ interface Project {
   endDate: { month: string; year: string };
   skills: string;
   description: string;
+  includeInResume: boolean;
   isEditing?: boolean;
 }
 
@@ -19,16 +19,16 @@ interface ProjectsSectionProps {
   Projects: Project[];
   onEdit: (id: string, data: { name: string; startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    skills: string; description: string }) => void;
+    skills: string; description: string; includeInResume: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
 const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{
-   id: string; name: string; startDate: { month: string; year: string },
-   endDate: { month: string; year: string },
-   skills: string,  description: string 
-} | null>(null);
+    id: string; name: string; startDate: { month: string; year: string },
+    endDate: { month: string; year: string },
+    skills: string; description: string; includeInResume: boolean
+  } | null>(null);
   const [projects, setProjects] = useState<Project[]>(Projects);
   const [newProject, setNewProject] = useState<Project>({
     _id: '',
@@ -37,6 +37,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     endDate: { month: '', year: '' },
     skills: '',
     description: '',
+    includeInResume: true,
   });
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
@@ -47,7 +48,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   ];
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
-
 
   useEffect(() => {
     fetchProjects();
@@ -62,31 +62,19 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         return response.json(); // Parse the response JSON
       })
       .then(data => {
-        // console.log("Project data:",data)
         setProjects(data); // Set projects state with the fetched data
       })
       .catch(error => {
         console.error('Error fetching projects:', error);
       });
   };
-  
-
-
-  // useEffect(() => {
-  //   const storedProjects = JSON.parse(localStorage.getItem(`projects_${userID}`) || '[]');
-  //   setProjects(storedProjects);
-  // }, []);
-  
 
   const handleEditClick = (id: string, name: string,
-
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
     skills: string, 
-    description: string) => {
-    setEditData({ id, name, startDate,
-    endDate,
-    skills, description });
+    description: string, includeInResume: boolean) => {
+    setEditData({ id, name, startDate, endDate, skills, description, includeInResume });
   };
 
   const handleCancelEdit = () => {
@@ -95,24 +83,20 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description });
+      onEdit(editData.id, { name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description, includeInResume: editData.includeInResume });
 
       const updatedItems = projects.map((project) =>
         project._id === editData.id
-          ? { ...project, name: editData.name,startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description }
+          ? { ...project, name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description, includeInResume: editData.includeInResume }
           : project
       );
 
       setProjects(updatedItems);
-
-      // localStorage.setItem(`projects_${userID}`, JSON.stringify(updatedItems));
-
       setEditData(null);
     }
   };
 
   const handleSaveClick = () => {
-
     const formattedExperience = {
       ...newProject,
       startDate: {
@@ -124,44 +108,42 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         year: newProject.endDate.year,
       },
     };
-  
-    const storageKey = `projects_${userID}`;
-  
+
     axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedExperience)
       .then((response) => {
         const newProjectFromServer = response.data.project;
-        const newProData = newProjectFromServer[newProjectFromServer.length-1]
+        const newProData = newProjectFromServer[newProjectFromServer.length - 1]
         // Update the projects state with the new project
         setProjects([...projects, newProData]);
 
         // Reset the newProject state
-        setNewProject({ _id: '', name: '', startDate: { month: '', year: '' },
-        endDate: { month: '', year: '' },
-        skills: '', description: '' });
-
-
-        const updatedProjects = [...projects, newProData];
-        // localStorage.setItem(storageKey, JSON.stringify(updatedProjects));
+        setNewProject({
+          _id: '',
+          name: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+          skills: '',
+          description: '',
+          includeInResume: true,
+        });
 
         // Set isAdding to false
         setIsAdding(false);
       })
       .catch((error) => {
-        // Handle errors by logging them to the console
         console.error('Error saving project:', error.message);
       });
   };
 
   const handleDelete = (id: string) => {
     axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`)
-    .then((response) => {
-      // Update the state to remove the deleted certification
+      .then((response) => {
+        // Update the state to remove the deleted project
         const updatedProjects = projects.filter((project) => project._id !== id);
         setProjects(updatedProjects);
 
         // Reset the editData state
         setEditData(null);
-        // localStorage.setItem(`projects_${userID}`, JSON.stringify(updatedProjects));
       })
       .catch((error) => {
         console.error('Error deleting project:', error.message);
@@ -176,73 +158,69 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       endDate: { month: '', year: '' },
       skills: '',
       description: '',
+      includeInResume: true,
     });
     setIsAdding(true);
   };
 
-  // useEffect(() => {
-  //   fetch('${process.env.REACT_APP_API_URL}/api/projects')
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setProjects(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching projects:', error);
-  //     });
-  // }, []);
+  const handleToggleInclude = (id: string) => {
+    const updatedProjects = projects.map((project) =>
+      project._id === id ? { ...project, includeInResume: !project.includeInResume } : project
+    );
+    setProjects(updatedProjects);
 
+    const projectToUpdate = updatedProjects.find(project => project._id === id);
+    if (projectToUpdate) {
+      onEdit(id, {
+        name: projectToUpdate.name,
+        startDate: projectToUpdate.startDate,
+        endDate: projectToUpdate.endDate,
+        skills: projectToUpdate.skills,
+        description: projectToUpdate.description,
+        includeInResume: projectToUpdate.includeInResume
+      });
+    }
+  };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-  
-    // Check if the first line already starts with a star, if not, prepend a star
+
     if (lines.length > 0 && !lines[0].startsWith('*')) {
       lines[0] = '* ' + lines[0];
     }
-  
-    // Add a star to the beginning of each new line
+
     for (let i = 1; i < lines.length; i++) {
       if (lines[i] !== '' && !lines[i].startsWith('*')) {
         lines[i] = '* ' + lines[i];
       }
     }
-  
-    // Join the lines back together with newlines
+
     const newDescription = lines.join('\n');
-  
-    // Update the state
     setNewProject({ ...newProject, description: newDescription });
   };
-
 
   const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-    
-    // Add asterisk at the beginning of each line
+
     const linesWithAsterisks = lines.map(line => {
-      // Check if the line is not empty and doesn't start with an asterisk
       if (line.trim() !== '' && !line.trim().startsWith('*')) {
         return `* ${line}`;
       } else {
         return line;
       }
     });
-    
-    // Join the lines back together with newlines
+
     const newDescription = linesWithAsterisks.join('\n');
-    
-    // Ensure editData is not null before updating
+
     if (editData) {
-      setEditData({ 
-        ...editData, 
+      setEditData({
+        ...editData,
         description: newDescription
       });
     }
   };
-
-  
 
   return (
     <div
@@ -416,7 +394,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                       marginRight: '0.5rem',
                     }}
                   >
-                    {!editData.startDate.month && (
+                    {!editData.endDate.month && (
                       <option value="" disabled>
                         Select Month
                       </option>
@@ -562,7 +540,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     {part}
                   </p>
                 ))}
-  
               <div>
                 <button
                   className="btn btn-outline-primary me-2"
@@ -573,7 +550,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                       project.startDate,
                       project.endDate,
                       project.skills,
-                      project.description
+                      project.description,
+                      project.includeInResume
                     )
                   }
                   style={{
@@ -602,6 +580,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
+                </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(project._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: project.includeInResume ? '#28a745' : '#dc3545',
+                    color: project.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={project.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {project.includeInResume ? 'Included' : 'Excluded'}
                 </button>
               </div>
             </div>
@@ -829,9 +824,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       )}
     </div>
   );
-  
-  
-  
 };
 
 export default ProjectsSection;

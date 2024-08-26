@@ -41,6 +41,7 @@ interface EduDetails {
       endDate: { month: string; year: string };
       skills: string;
       description: string;
+      includeInResume: boolean;
     }>
     involvement: Array<{
     organization: string;
@@ -59,6 +60,7 @@ interface EduDetails {
     skills: Array<{
       domain: string;
       name: string;
+      includeInResume: boolean;
     }>
     contact: Array<{
       name: string;
@@ -142,13 +144,13 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   
       const summarys = eduDetails?.summary || [];
   
-      const projects = eduDetails?.project || [];
+      const projects = (eduDetails?.project || []).filter(project => project.includeInResume);
   
       const certifications = eduDetails?.certification || [];
   
       const involvements = eduDetails?.involvement || [];
 
-      const skills = eduDetails?.skills || [];
+      const skills = (eduDetails?.skills || []).filter(skill => skill.includeInResume);
 
       const contacts = eduDetails?.contact || [];
       // Add sections for projects, certifications, skills, involvements as needed
