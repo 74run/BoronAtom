@@ -186,49 +186,99 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   // }, []);
 
   return (
-    <div 
-      className="container"
+    <div
       style={{
-        border: '2px solid #4CAF50',
-        borderRadius: '8px',
-        padding: '16px',
-        marginBottom: '20px',
-        fontFamily: 'Arial, sans-serif',
+        border: 'none',
+        borderRadius: '12px',
+        padding: '24px',
+        marginBottom: '30px',
+        fontFamily: "'Roboto', sans-serif",
         color: '#333',
-        backgroundColor: '#f9f9f9',
-        boxShadow: '0 0 200px rgba(10, 0, 0, 0.5)'
+        backgroundColor: '#ffffff',
+        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
       }}
     >
-      <h4 style={{color: '#4CAF50', textAlign: 'left', marginBottom: '1rem', fontFamily: 'Timesquare'}}><b>Certifications</b></h4>
+      <h4
+        style={{
+          color: '#4CAF50',
+          textAlign: 'left',
+          marginBottom: '1.5rem',
+          fontFamily: "'Roboto Slab', serif",
+          fontWeight: 700,
+          fontSize: '1.5rem',
+        }}
+      >
+        Certifications
+      </h4>
       {certifications.map((certification) => (
-        <div key={certification._id} className="mb-3" style={{border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem'}}>
+        <div
+          key={certification._id}
+          className="mb-3"
+          style={{
+            border: '1px solid #e0e0e0',
+            borderRadius: '12px',
+            padding: '20px',
+            marginBottom: '1.5rem',
+            backgroundColor: '#f8f9fa',
+            transition: 'transform 0.3s, box-shadow 0.3s',
+          }}
+        >
           {editData && editData.id === certification._id ? (
             // Edit mode
             <div>
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Certification Name"
                 value={editData.name}
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setEditData({ ...editData, name: e.target.value })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Issued By"
                 value={editData.issuedBy}
-                onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setEditData({ ...editData, issuedBy: e.target.value })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>Issued Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.issuedDate.month}
-                    onChange={(e) => setEditData({ ...editData, issuedDate: { ...editData.issuedDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        issuedDate: {
+                          ...editData.issuedDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.issuedDate.month && (
                       <option value="" disabled>
@@ -244,8 +294,20 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                   <select
                     className="form-control mb-2"
                     value={editData.issuedDate.year}
-                    onChange={(e) => setEditData({ ...editData, issuedDate: { ...editData.issuedDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        issuedDate: {
+                          ...editData.issuedDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.issuedDate.year && (
                       <option value="" disabled>
@@ -260,14 +322,27 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                   </select>
                 </div>
               </div>
-              <div className="date-dropdowns">
+              <div className="date-dropdowns mb-3">
                 <label>Expiration Date:</label>
                 <div className="flex-container">
                   <select
                     className="form-control mb-2"
                     value={editData.expirationDate.month}
-                    onChange={(e) => setEditData({ ...editData, expirationDate: { ...editData.expirationDate, month: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        expirationDate: {
+                          ...editData.expirationDate,
+                          month: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                      marginRight: '0.5rem',
+                    }}
                   >
                     {!editData.expirationDate.month && (
                       <option value="" disabled>
@@ -283,8 +358,20 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                   <select
                     className="form-control mb-2"
                     value={editData.expirationDate.year}
-                    onChange={(e) => setEditData({ ...editData, expirationDate: { ...editData.expirationDate, year: e.target.value } })}
-                    style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        expirationDate: {
+                          ...editData.expirationDate,
+                          year: e.target.value,
+                        },
+                      })
+                    }
+                    style={{
+                      borderRadius: '8px',
+                      border: '1px solid #ddd',
+                      padding: '10px',
+                    }}
                   >
                     {!editData.expirationDate.year && (
                       <option value="" disabled>
@@ -301,16 +388,28 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               </div>
               <input
                 type="text"
-                className="form-control mb-2"
+                className="form-control mb-3"
                 placeholder="Certificate URL"
                 value={editData.url}
-                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setEditData({ ...editData, url: e.target.value })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                }}
               />
               <button
-                className="btn btn-primary me-2"
+                className="btn btn-success me-2"
                 onClick={handleUpdate}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 <FontAwesomeIcon icon={faSave} className="me-2" />
                 Update
@@ -318,55 +417,130 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               <button
                 className="btn btn-secondary"
                 onClick={handleCancelEdit}
-                style={{borderRadius: '4px'}}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                }}
               >
                 Cancel
               </button>
             </div>
           ) : (
             // View mode
-            <div style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '16px', marginBottom: '1rem' }}>
-            <h3 style={{ color: '#007bff', fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '1rem' }}><b>{certification.name}</b></h3>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Issued By: {certification.issuedBy}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Issued Date: {certification.issuedDate.month} {certification.issuedDate.year}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Expiration Date: {certification.expirationDate.month} {certification.expirationDate.year}</p>
-            <p style={{ fontFamily: 'Arial, sans-serif', marginBottom: '0.5rem', fontSize: '0.8rem' }}>Certificate URL: {certification.url}</p>
-            <div>
-              <button
-                className="btn btn-primary me-2"
-                onClick={() => handleEditClick(certification._id, certification.name, certification.issuedBy, certification.issuedDate, certification.expirationDate, certification.url)}
+            <div
+              style={{
+                border: '1px solid #ddd',
+                borderRadius: '8px',
+                padding: '12px',
+                backgroundColor: '#ffffff',
+                transition: 'transform 0.3s, box-shadow 0.3s',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.boxShadow =
+                  '0 10px 30px rgba(0, 0, 0, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow =
+                  '0 4px 8px rgba(0, 0, 0, 0.1)';
+              }}
+            >
+              <h5
                 style={{
-                  backgroundColor: '#007bff',
-                  color: '#fff',
-                  border: '1px solid #007bff',
-                  padding: '0.3rem 0.6rem', // Adjusted padding
-                  borderRadius: '4px',
-                  transition: 'all 0.3s',
-                  fontSize: '0.8rem', // Adjusted font size
+                  color: '#333',
+                  fontFamily: "'Roboto Slab', serif",
+                  fontSize: '1.2rem',
+                  marginBottom: '0.5rem',
+                  fontWeight: 700,
                 }}
               >
-                <FontAwesomeIcon icon={faEdit} className="me-2" />
-                Edit
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={() => handleDelete(certification._id)}
+                {certification.name}
+              </h5>
+              <div
                 style={{
-                  backgroundColor: '#dc3545',
-                  color: '#fff',
-                  padding: '0.3rem 0.4rem',
-                  border: '1px solid #dc3545',
-                  borderRadius: '4px',
-                  transition: 'all 0.3s',
-                  fontSize: '0.8rem',
+                  fontFamily: "'Roboto', sans-serif",
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  color: '#555',
                 }}
               >
-                <FontAwesomeIcon icon={faTrash} className="me-2" />
-                Delete
-              </button>
+                <strong>Issued By:</strong> {certification.issuedBy}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Issued Date:</strong> {certification.issuedDate.month}{' '}
+                {certification.issuedDate.year}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Expiration Date:</strong> {certification.expirationDate.month}{' '}
+                {certification.expirationDate.year}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Roboto', sans-serif",
+                  fontSize: '0.9rem',
+                  marginBottom: '0.5rem',
+                  color: '#555',
+                }}
+              >
+                <strong>Certificate URL:</strong> {certification.url}
+              </div>
+              <div>
+                <button
+                  className="btn btn-outline-primary me-2"
+                  onClick={() =>
+                    handleEditClick(
+                      certification._id,
+                      certification.name,
+                      certification.issuedBy,
+                      certification.issuedDate,
+                      certification.expirationDate,
+                      certification.url
+                    )
+                  }
+                  style={{
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    borderRadius: '8px',
+                    padding: '0.3rem 0.8rem',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  Edit
+                </button>
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => handleDelete(certification._id)}
+                  style={{
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-          
           )}
         </div>
       ))}
@@ -375,28 +549,60 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
         <div>
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Certification Name"
             value={newCertification.name}
-            onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            onChange={(e) =>
+              setNewCertification({ ...newCertification, name: e.target.value })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Issued By"
             value={newCertification.issuedBy}
-            onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            onChange={(e) =>
+              setNewCertification({
+                ...newCertification,
+                issuedBy: e.target.value,
+              })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
-          <div className="date-dropdowns">
+          <div className="date-dropdowns mb-3">
             <label>Issued Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newCertification.issuedDate.month}
-                onChange={(e) => setNewCertification({ ...newCertification, issuedDate: { ...newCertification.issuedDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewCertification({
+                    ...newCertification,
+                    issuedDate: {
+                      ...newCertification.issuedDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newCertification.issuedDate.month && (
                   <option value="" disabled>
@@ -412,8 +618,20 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               <select
                 className="form-control mb-2"
                 value={newCertification.issuedDate.year}
-                onChange={(e) => setNewCertification({ ...newCertification, issuedDate: { ...newCertification.issuedDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewCertification({
+                    ...newCertification,
+                    issuedDate: {
+                      ...newCertification.issuedDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newCertification.issuedDate.year && (
                   <option value="" disabled>
@@ -428,14 +646,27 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               </select>
             </div>
           </div>
-          <div className="date-dropdowns">
+          <div className="date-dropdowns mb-3">
             <label>Expiration Date:</label>
             <div className="flex-container">
               <select
                 className="form-control mb-2"
                 value={newCertification.expirationDate.month}
-                onChange={(e) => setNewCertification({ ...newCertification, expirationDate: { ...newCertification.expirationDate, month: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc', marginRight: '0.5rem'}}
+                onChange={(e) =>
+                  setNewCertification({
+                    ...newCertification,
+                    expirationDate: {
+                      ...newCertification.expirationDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                  marginRight: '0.5rem',
+                }}
               >
                 {!newCertification.expirationDate.month && (
                   <option value="" disabled>
@@ -451,8 +682,20 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               <select
                 className="form-control mb-2"
                 value={newCertification.expirationDate.year}
-                onChange={(e) => setNewCertification({ ...newCertification, expirationDate: { ...newCertification.expirationDate, year: e.target.value } })}
-                style={{borderRadius: '4px', border: '1px solid #ccc'}}
+                onChange={(e) =>
+                  setNewCertification({
+                    ...newCertification,
+                    expirationDate: {
+                      ...newCertification.expirationDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '10px',
+                }}
               >
                 {!newCertification.expirationDate.year && (
                   <option value="" disabled>
@@ -469,16 +712,28 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           </div>
           <input
             type="text"
-            className="form-control mb-2"
+            className="form-control mb-3"
             placeholder="Certificate URL"
             value={newCertification.url}
-            onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
-            style={{borderRadius: '4px', border: '1px solid #ccc'}}
+            onChange={(e) =>
+              setNewCertification({ ...newCertification, url: e.target.value })
+            }
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+            }}
           />
           <button
-            className="btn btn-primary"
+            className="btn btn-success"
             onClick={handleSaveClick}
-            style={{borderRadius: '4px'}}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
           >
             <FontAwesomeIcon icon={faSave} className="me-2" />
             Save
@@ -486,7 +741,11 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           <button
             className="btn btn-secondary ms-2"
             onClick={() => setIsAdding(false)}
-            style={{borderRadius: '4px'}}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+            }}
           >
             Cancel
           </button>
@@ -495,16 +754,15 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       {!isAdding && (
         // Show "Add Certification" button
         <button
-          className="btn btn-primary"
+          className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
             backgroundColor: '#007bff',
             color: '#fff',
             border: '1px solid #007bff',
-            padding: '0.3rem 0.6rem', // Adjusted padding
-            borderRadius: '4px',
-            transition: 'all 0.3s',
-            fontSize: '0.8rem', // Adjusted font size
+            padding: '10px 20px',
+            borderRadius: '8px',
+            fontSize: '1rem',
           }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
