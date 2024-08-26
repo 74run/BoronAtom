@@ -28,7 +28,7 @@ router.get('/generate/:userID', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `Write a Resume summary for Mechanical Engineer.`;
+    const prompt = `Write a short 50 words Resume summary based on ${user.experience}, ${user.project}, ${user.education} and ${user.skills}`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

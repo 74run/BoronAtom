@@ -125,6 +125,35 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
+// In-memory storage for LaTeX code
+let storedLatexCode = '';
+
+// Endpoint to receive LaTeX code via POST
+app.post('/store-latex', (req, res) => {
+  const { latexCode } = req.body;
+
+  // Check if LaTeX code is provided
+  if (!latexCode) {
+    return res.status(400).json({ message: 'No LaTeX code provided' });
+  }
+
+  // Store the LaTeX code in memory
+  storedLatexCode = latexCode;
+
+  res.json({ message: 'LaTeX code stored successfully' });
+});
+
+// Endpoint to view LaTeX code via GET
+app.get('/view-latex', (req, res) => {
+  if (!storedLatexCode) {
+    return res.status(404).send('No LaTeX code stored');
+  }
+
+  // Respond with the stored LaTeX code as plain text
+  res.setHeader('Content-Type', 'text/plain');
+  res.send(storedLatexCode);
+});
+
 
 
 app.post('/compile-latex', (req, res) => {
