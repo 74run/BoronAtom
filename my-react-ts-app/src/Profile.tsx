@@ -74,6 +74,7 @@ interface EduDetails {
     endDate: { month: string; year: string };
     skills: string;
     description: string;
+    includeInResume: boolean;
   }>
   involvement: Array<{
   organization: string;
@@ -92,6 +93,7 @@ interface EduDetails {
   skills: Array<{
     domain: string;
     name: string;
+    includeInResume: boolean;
   }>
   contact: Array<{
     name: string;
@@ -105,6 +107,7 @@ interface Skill {
   _id: string;
   domain: string;
   name: string;
+  includeInResume: boolean;
 }
 
 interface Education {
@@ -159,6 +162,7 @@ interface Project {
   endDate: { month: string; year: string };
   skills: string;
   description: string;
+  includeInResume: boolean;
 }
 
 
@@ -294,7 +298,7 @@ const Profile: React.FC = () => {
   };
 
   const handleEditSkill = (id: string, data: {   
-       domain: string; name: string;
+       domain: string; name: string; includeInResume: boolean;
   }) => {
     // console.log('Sending data to server:', data);
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
@@ -402,7 +406,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     skills: string;
-    description: string; }) => {
+    description: string; includeInResume: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {

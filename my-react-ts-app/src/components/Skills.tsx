@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faSearch, faEdit, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faEdit, faSave, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 
@@ -9,22 +9,23 @@ interface Skill {
   _id: string;
   domain: string;
   name: string;
+  includeInResume: boolean;
 }
 
 interface SkillsProps {
   Skills: Skill[];
-  onEdit: (id: string, data: { domain: string; name: string }) => void;
+  onEdit: (id: string, data: { domain: string; name: string; includeInResume: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
 const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
-  const [editData, setEditData] = useState<{ id: string; domain: string; name: string } | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [editData, setEditData] = useState<{ id: string; domain: string; name: string; includeInResume: boolean } | null>(null);
   const [skills, setSkills] = useState<Skill[]>(Skills);
   const [newSkill, setNewSkill] = useState<Skill>({
     _id: '',
     domain: '',
     name: '',
+    includeInResume: true,
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -38,21 +39,20 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch projects');
+          throw new Error('Failed to fetch skills');
         }
-        return response.json(); // Parse the response JSON
+        return response.json();
       })
       .then(data => {
-        // console.log("Project data:",data)
-        setSkills(data); // Set projects state with the fetched data
+        setSkills(data);
       })
       .catch(error => {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching skills:', error);
       });
   };
 
-  const handleEditClick = (id: string, domain: string, name: string) => {
-    setEditData({ id, domain, name });
+  const handleEditClick = (id: string, domain: string, name: string, includeInResume: boolean) => {
+    setEditData({ id, domain, name, includeInResume });
   };
 
   const handleCancelEdit = () => {
@@ -61,11 +61,10 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { domain: editData.domain, name: editData.name, });
+      onEdit(editData.id, { domain: editData.domain, name: editData.name, includeInResume: editData.includeInResume });
 
       const updatedItems = skills.map((skill) =>
-      skill._id === editData.id
-      ? {...skill, domain: editData.domain, name: editData.name}: skill
+        skill._id === editData.id ? { ...skill, domain: editData.domain, name: editData.name, includeInResume: editData.includeInResume } : skill
       );
       setSkills(updatedItems);
 
@@ -74,22 +73,18 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
   };
 
   const handleSaveClick = () => {
-    // console.log(newSkill);
     axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`, newSkill)
-    .then((response) => {
-      // console.log(response.data); // Log the entire response data
-      const newSkillFromServer = response.data.skills;
-      const newSkillData = newSkillFromServer[newSkillFromServer.length - 1];
-      setSkills([...skills, newSkillData]);
-      setNewSkill({ _id: '', domain: '', name: '' });
-      setIsAdding(false);
-    })
-    
+      .then((response) => {
+        const newSkillFromServer = response.data.skills;
+        const newSkillData = newSkillFromServer[newSkillFromServer.length - 1];
+        setSkills([...skills, newSkillData]);
+        setNewSkill({ _id: '', domain: '', name: '', includeInResume: true });
+        setIsAdding(false);
+      })
       .catch((error) => {
         console.error('Error saving skill:', error.message);
       });
   };
-  
 
   const handleDelete = (id: string) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
@@ -105,35 +100,19 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       });
   };
 
-  const handleAction = async () => {
-    if (inputValue.trim() !== '') {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ domain: inputValue.trim(), name: inputValue.trim() })
-        });
+  const handleToggleInclude = (id: string) => {
+    const updatedSkills = skills.map((skill) =>
+      skill._id === id ? { ...skill, includeInResume: !skill.includeInResume } : skill
+    );
+    setSkills(updatedSkills);
 
-        if (!response.ok) {
-          throw new Error('Failed to add skill');
-        }
-
-        setInputValue('');
-        fetchSkills();
-      } catch (error) {
-        console.error('Error adding skill:', error);
-      }
-    }
-  };
-
-  const handleDeleteSkill = async (id: string) => {
-    try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`);
-      fetchSkills();
-    } catch (error) {
-      console.error('Error deleting skill:', error);
+    const skillToUpdate = updatedSkills.find(skill => skill._id === id);
+    if (skillToUpdate) {
+      onEdit(id, {
+        domain: skillToUpdate.domain,
+        name: skillToUpdate.name,
+        includeInResume: skillToUpdate.includeInResume
+      });
     }
   };
 
@@ -142,6 +121,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       _id: '',
       domain: '',
       name: '',
+      includeInResume: true,
     });
     setIsAdding(true);
   };
@@ -288,7 +268,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               >
                 {skill.name}
               </p>
-  
+
               <div
                 style={{
                   position: 'absolute',
@@ -301,7 +281,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                 <button
                   className="btn btn-outline-primary"
                   onClick={() =>
-                    handleEditClick(skill._id, skill.domain, skill.name)
+                    handleEditClick(skill._id, skill.domain, skill.name, skill.includeInResume)
                   }
                   style={{
                     backgroundColor: '#007bff',
@@ -327,6 +307,23 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} />
+                </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(skill._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: skill.includeInResume ? '#28a745' : '#dc3545',
+                    color: skill.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={skill.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {skill.includeInResume ? 'Included' : 'Excluded'}
                 </button>
               </div>
             </div>
@@ -413,7 +410,6 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       )}
     </div>
   );
-  
 };
 
 export default Skills;
