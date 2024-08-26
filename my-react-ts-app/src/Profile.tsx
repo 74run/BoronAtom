@@ -524,6 +524,7 @@ const Profile: React.FC = () => {
             justifyContent: "center",
             gap: "30px",
             paddingBottom: "30px",
+            flexWrap: "wrap",
           }}
         >
           {/* Left Column (Profile Info and Main Content) */}
@@ -541,21 +542,24 @@ const Profile: React.FC = () => {
                 justifyContent: "space-between",
                 alignItems: "flex-start",
                 gap: "30px",
-                height: "100%", // Ensure the height matches for both containers
+                flexDirection: "row",
+                flexWrap: "wrap",
+                height: "auto",
               }}
             >
               {/* ProfileNew Section */}
               <div
                 style={{
                   flex: "2",
-                  padding: "30px",
+                  padding: "10px",
                   backgroundColor: "#ffffff",
                   borderRadius: "15px",
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
-                  alignItems: "stretch", // Make sure the content stretches within the container
+                  alignItems: "stretch",
+                  width: "100%",
                 }}
               >
                 <ProfileNew
@@ -566,36 +570,67 @@ const Profile: React.FC = () => {
   
               {/* PDFResume Section */}
               <div
+  style={{
+    flex: "1",
+    padding: "20px",
+    backgroundColor: "#ffffff",
+    borderRadius: "15px",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    display: "flex",
+    minHeight: "300px",  // Ensure the container has a minimum height
+    alignItems: "center",  // Center content vertically
+    justifyContent: "center",  // Center content horizontally
+    width: "100%",
+    marginTop: "20px",
+  }}
+>
+  <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+</div>
+
+
+            </div>
+  
+            {/* Summary and Projects Section */}
+            <div
+              className="summary-and-projects"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "30px",
+              }}
+            >
+              <div
+                className="summary-section"
                 style={{
-                  flex: "1",
                   padding: "20px",
                   backgroundColor: "#ffffff",
                   borderRadius: "15px",
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                  display: "flex",
-                  height: '100%',
-                  alignItems: "center", // Vertically center the content
-                  justifyContent: "center", // Horizontally center the content
                 }}
               >
-                <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+                <SummarySection
+                  Summarys={summarys}
+                  onEdit={handleEditSum}
+                  onDelete={handleDeleteSum}
+                />
+              </div>
+              <div
+                className="projects-section"
+                style={{
+                  padding: "20px",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "15px",
+                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                }}
+              >
+                <ProjectsSection
+                  onEdit={handleEditPro}
+                  onDelete={handleDeletePro}
+                  Projects={projects}
+                />
               </div>
             </div>
   
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                
-              }}
-            >
-              <ProjectsSection
-                onEdit={handleEditPro}
-                onDelete={handleDeletePro}
-                Projects={projects}
-              />
-            </div>
             <div
               style={{
                 padding: "20px",
@@ -634,22 +669,10 @@ const Profile: React.FC = () => {
               display: "flex",
               flexDirection: "column",
               gap: "30px",
+              width: "100%",
+              marginTop: "20px",
             }}
           >
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              }}
-            >
-              <SummarySection
-                Summarys={summarys}
-                onEdit={handleEditSum}
-                onDelete={handleDeleteSum}
-              />
-            </div>
             <div
               style={{
                 padding: "20px",
@@ -699,7 +722,7 @@ const Profile: React.FC = () => {
       <Footer />
     </>
   );
-   
+  
   
 };
 
