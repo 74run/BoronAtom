@@ -147,7 +147,7 @@ app.post('/store-latex', (req, res) => {
 });
 
 // Endpoint to view LaTeX code via GET
-app.get('/view-latex', (req, res) => {
+app.get('/:firstName_Resume', (req, res) => {
   if (!storedLatexCode) {
     return res.status(404).send('No LaTeX code stored');
   }
