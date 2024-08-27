@@ -3,6 +3,8 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const router = express.Router();
 
+const axios = require('axios');
+
 const UserProfile = require('./models/UserprofileModel');
 
 require('dotenv').config();
@@ -13,7 +15,6 @@ const API  = process.env.REACT_APP_GOOGLE_API;
 const genAI = new GoogleGenerativeAI(API);
 
 
-// Define an endpoint to generate project description
 router.get('/generate-project-description/:userID/:projectName', async (req, res) => {
   try {
     const userId = req.params.userID;
@@ -22,35 +23,38 @@ router.get('/generate-project-description/:userID/:projectName', async (req, res
     // Query the database to get user details by ID
     const user = await UserProfile.findOne({ userID: userId });
 
+    console.log(projectName);
+
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
     // Find the specific project based on the project name
-    const project = user.project.find(p => p.name.toLowerCase() === projectName.toLowerCase());
+    const project = user.project.find(proj => proj.name.toLowerCase() === projectName.toLowerCase());
 
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found' });
     }
 
-    // For text-only input, use the gemini-pro model
+    // Instantiate the generative model (adjust according to your specific SDK or API)
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using the project data
-    const prompt = `Write a 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}.
-    "Note: Do not use any numbering. Start the point with *"`;
+    const prompt = `Write 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}. 
+    Note: Do not use any numbering. Start each point with *`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Send the generated text to the front end
     res.json({ text });
   } catch (error) {
     console.error('Error generating project description:', error);
-    res.status(500).json({ error: 'An error occurred while generating project description' });
+    res.status(500).json({ error: 'An error occurred while generating the project description' });
   }
 });
+
 
 router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
   try {
