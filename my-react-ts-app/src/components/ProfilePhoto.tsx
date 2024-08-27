@@ -28,10 +28,8 @@ const Profile: React.FC<ProfileProps> = () => {
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   
-  const avatarUrl = useRef<string>("https://avatarfiles.alphacoders.com/161/161002.jpg");
+  const avatarUrl = useRef<string>(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [fullImageModalOpen, setFullImageModalOpen] = useState<boolean>(false);
-  
   const { userID } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -48,6 +46,7 @@ const Profile: React.FC<ProfileProps> = () => {
   };
 
   useEffect(() => {
+    // Fetch user details
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
       .then(response => {
         setUserDetails(response.data.user);
@@ -55,18 +54,23 @@ const Profile: React.FC<ProfileProps> = () => {
       .catch(error => {
         console.error('Error fetching user details:', error);
       });
-  }, [userID]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`);
-        setContactDetails(response.data[0]);
-      } catch (error) {
-        console.error('Error fetching contact details:', error);
-      }
-    };
-    fetchData();
+    // Fetch the profile image
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
+      .then(response => {
+        const base64Image = btoa(
+          new Uint8Array(response.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        const contentType = response.headers['content-type'];
+        avatarUrl.current = `data:${contentType};base64,${base64Image}`;
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+      });
+
   }, [userID]);
 
   return (
@@ -98,6 +102,7 @@ const Profile: React.FC<ProfileProps> = () => {
               boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               objectFit: "cover",
             }}
+            loading="lazy" // Apply lazy loading
           />
           <button
             onClick={() => setModalOpen(true)}
@@ -148,8 +153,6 @@ const Profile: React.FC<ProfileProps> = () => {
         </button>
         </div>
   
-        {/* Edit Contact Info Button */}
-        
       </div>
   
       {/* Edit Avatar Modal */}
@@ -165,7 +168,6 @@ const Profile: React.FC<ProfileProps> = () => {
       <ModalContact isOpen={isModalOpen} closeModal={closeModal} />
     </div>
   );
-  
 };
 
 export default Profile;

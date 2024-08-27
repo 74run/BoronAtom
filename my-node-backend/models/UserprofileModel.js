@@ -26,7 +26,11 @@ const UserProfileSchema = new mongoose.Schema({
     certification: [certSchema],
     involvement: [invSchema],
     skills: [skillSchema],
-    contact: [contactSchema] 
+    contact: [contactSchema],
+    image: {
+      type: Buffer,  // You can use String if you want to store it as Base64
+      contentType: String, // To store the image MIME type (e.g., 'image/png')
+  }
 
 });
 

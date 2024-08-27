@@ -5,9 +5,11 @@ import ReactCrop, {
   makeAspectCrop,
   Crop,
 } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css"; // Ensure you include the necessary CSS
 
+import { useParams } from 'react-router-dom';
 import setCanvasPreview from "../setCanvasPreview";
-import axios from "axios"; // Import Axios for making HTTP requests
+import axios from "axios";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
@@ -30,6 +32,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const [crop, setCrop] = useState<Crop | undefined>();
   const [error, setError] = useState<string>("");
 
+  const { userID } = useParams();
   useEffect(() => {
     setImgSrc(currentAvatar);
   }, [currentAvatar]);
@@ -77,31 +80,28 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
 
   const handleCropImage = async () => {
     if (!previewCanvasRef.current || !imgRef.current || !crop) return;
-
+  
     setCanvasPreview(
       imgRef.current,
       previewCanvasRef.current,
       convertToPixelCrop(crop, imgRef.current.width, imgRef.current.height)
     );
     const dataUrl = previewCanvasRef.current.toDataURL();
-
+  
     try {
       // Send cropped image data to backend
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/saveImage`, { imageData: dataUrl });
-      // Handle success response (if needed)
-      // console.log("Image saved successfully:", response.data);
-      // Update the avatar with the cropped image
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { imageData: dataUrl });
       updateAvatar(dataUrl);
       closeModal();
     } catch (error) {
-      // Handle error
       console.error("Error saving image:", error);
     }
   };
+  
 
   return (
     <>
-      {error && <p className="text-danger text-sm">{error}</p>}
+      {error && <p className="text-danger text-center mb-3">{error}</p>}
       {imgSrc && (
         <div className="d-flex flex-column align-items-center">
           <ReactCrop
@@ -117,21 +117,28 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
               src={imgSrc}
               alt="Upload"
               style={{
-                width: "400px",
-                height: "auto",
+                maxWidth: "100%",
+                maxHeight: "400px",
                 objectFit: "contain",
+                borderRadius: "10px",
                 overflow: "visible",
-                zIndex: "1",
+                zIndex: 1,
               }}
               onLoad={onImageLoad}
-              className="img-fluid"
+              className="img-fluid shadow-sm"
             />
           </ReactCrop>
-          <hr />
+          <hr className="w-100" />
           <button
-            className="btn btn-primary mt-4"
+            className="btn btn-warning mt-4"
             onClick={handleCropImage}
-            style={{ position: "absolute", bottom: "16px", left: "50%", transform: "translateX(-50%)" }}
+            style={{
+              borderRadius: "25px",
+              padding: "10px 20px",
+              fontSize: "1rem",
+              position: "relative",
+              bottom: "10px",
+            }}
           >
             Crop Image
           </button>
@@ -140,9 +147,8 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       {crop && (
         <canvas
           ref={previewCanvasRef}
-          className="mt-4"
+          className="d-none"
           style={{
-            display: "none",
             border: "1px solid black",
             objectFit: "contain",
             width: 150,
@@ -150,20 +156,25 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           }}
         />
       )}
-      <label className="block mb-3 custom-file-label-container position-absolute bottom-0 end-0 m-3">
-        <div className="custom-file">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={onSelectFile}
-            className="custom-file-input visually-hidden"
-            id="fileInput"
-          />
-          <label className="custom-file-label" htmlFor="fileInput">
-            Choose file
-          </label>
-        </div>
+      <label className="custom-file-label" htmlFor="fileInput"
+      style={{
+        borderRadius: "25px",
+        padding: "10px 20px",
+        fontSize: "1rem",
+        cursor: "pointer",
+        transition: "background-color 0.3s ease",
+      }}>Upload New Photo
+       
       </label>
+      <input
+          type="file"
+          accept="image/*"
+          onChange={onSelectFile}
+          style={{ display: "none" }}
+          className="custom-file-input visually-hidden"
+            id="fileInput"
+
+        />
     </>
   );
 };

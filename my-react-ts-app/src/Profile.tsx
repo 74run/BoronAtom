@@ -531,7 +531,7 @@ const Profile: React.FC = () => {
           overflow: "hidden"
         }}
       >
-        <NavigationBar />
+        <NavigationBar UserDetail={userDetails} />
         {/* Main Content Area */}
         <div
           style={{
