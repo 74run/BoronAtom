@@ -105,7 +105,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 />
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn btn-outline-neutral"
                   onClick={togglePasswordVisibility}
                 >
                   <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
