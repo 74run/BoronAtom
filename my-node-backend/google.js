@@ -3,7 +3,6 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const router = express.Router();
 
-const axios = require('axios');
 
 const UserProfile = require('./models/UserprofileModel');
 
