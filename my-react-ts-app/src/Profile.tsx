@@ -515,7 +515,7 @@ const Profile: React.FC = () => {
   
   return (
     <>
-      <NavigationBar />
+      
   
       {/* Full page layout */}
       <div
@@ -523,13 +523,15 @@ const Profile: React.FC = () => {
         style={{
           display: "flex",
           flexDirection: "column",
-          backgroundColor: "#f8f9fa",
+          backgroundColor: "black",
           paddingTop: "80px",
           paddingBottom: "50px",
-          paddingLeft: "15px",
+          paddingLeft: "25px",
           paddingRight: "15px",
+          overflow: "hidden"
         }}
       >
+        <NavigationBar />
         {/* Main Content Area */}
         <div
           style={{
@@ -543,7 +545,7 @@ const Profile: React.FC = () => {
           {/* Left Column (Profile Info and Main Content) */}
           <div
             style={{
-              flex: "2",
+              flex: "1.30",
               display: "flex",
               flexDirection: "column",
               gap: "30px",
@@ -572,6 +574,7 @@ const Profile: React.FC = () => {
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "stretch",
+                  minHeight: "300px",
                   width: "100%",
                 }}
               >
@@ -582,23 +585,26 @@ const Profile: React.FC = () => {
               </div>
   
               {/* PDFResume Section */}
-              <div
-  style={{
-    flex: "1",
-    padding: "20px",
-    backgroundColor: "#ffffff",
-    borderRadius: "15px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-    display: "flex",
-    minHeight: "300px",  // Ensure the container has a minimum height
-    alignItems: "center",  // Center content vertically
-    justifyContent: "center",  // Center content horizontally
-    width: "100%",
-    marginTop: "20px",
-  }}
->
-  <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
-</div>
+          <div
+              style={{
+                flex: "1",
+                padding: "10px",
+                backgroundColor: "#ffffff",
+                borderRadius: "15px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                display: "flex",
+                minHeight: "300px",  // Ensure the container has a minimum height
+                 // Center content vertically
+                justifyContent: "center",
+                flexDirection: "column",
+                
+                alignItems: "stretch",  // Center content horizontally
+                width: "100%",
+                
+              }}
+            >
+              <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+            </div>
 
 
             </div>
@@ -683,7 +689,7 @@ const Profile: React.FC = () => {
               flexDirection: "column",
               gap: "30px",
               width: "100%",
-              marginTop: "20px",
+              
             }}
           >
             <div
@@ -692,6 +698,7 @@ const Profile: React.FC = () => {
                 backgroundColor: "#ffffff",
                 borderRadius: "15px",
                 boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+                width: "100%"
               }}
             >
               <Skills

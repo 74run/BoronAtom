@@ -28,87 +28,90 @@ const Navbar: React.FC<NavbarProps> = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-md navbar-light bg-white shadow">
+    <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar">
       <div className="container-fluid">
-        <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
-          
-          <Link to="/" className="navbar-brand d-flex align-items-center">
-            <Image 
-              src={logo} 
-              alt="Boron Atom Logo" 
-              height="40" 
-              className="d-inline-block align-top" 
-              style={{ marginLeft: '30px', maxHeight: '30px', width: 'auto' }} // Adjusted size for better appearance
-            /> 
-             {/* Adjusted font size for the company name */}
-          </Link>
-          <div className="input-group mx-auto" style={{ maxWidth: '400px' }}> {/* Centered with max width */}
-            <input 
-              type="text" 
-              className="form-control rounded-start" 
-              placeholder="Search" 
-              aria-label="Search" 
-              aria-describedby="button-addon2" 
-              style={{ borderRadius: '50px 0 0 50px', boxShadow: 'none', paddingRight: '10px' }} // Added paddingRight to adjust for the button width
-            />
-            <div className="input-group-append">
-              <button 
-                className="btn btn-outline-success rounded-end" 
-                type="button" 
-                id="button-addon2" 
-                style={{ borderRadius: '0 50px 50px 0', boxShadow: 'none', width: '38px', padding: '8px' }} // Adjusted width and padding
-              >
-                <FontAwesomeIcon icon={faSearch} />
-              </button>
+        <Link to="/" className="navbar-brand d-flex align-items-center">
+          <Image 
+            src={logo} 
+            alt="Boron Atom Logo" 
+            className="d-inline-block align-top img-fluid" 
+            style={{ marginLeft: '10px', height: 'auto', maxHeight: '25px', width: 'auto' }} 
+          />
+        </Link>
+
+        <BootstrapNavbar.Toggle aria-controls="navbarResponsive">
+          <FontAwesomeIcon icon={faBars} />
+        </BootstrapNavbar.Toggle>
+
+        <BootstrapNavbar.Collapse id="navbarResponsive">
+          <div className="d-flex flex-column flex-md-row align-items-center w-100">
+            <div className="input-group mx-md-auto" style={{ maxWidth: '400px' }}> {/* Centered with max width */}
+              {/* <input 
+                type="text" 
+                className="form-control rounded-start" 
+                placeholder="Search" 
+                aria-label="Search" 
+                aria-describedby="button-addon2" 
+                style={{ borderRadius: '50px 0 0 50px', boxShadow: 'none', paddingRight: '10px' }} // Added paddingRight to adjust for the button width
+              />
+              <div className="input-group-append">
+                <button 
+                  className="btn btn-outline-success rounded-end" 
+                  type="button" 
+                  id="button-addon2" 
+                  style={{ borderRadius: '0 50px 50px 0', boxShadow: 'none', width: '38px', padding: '8px' }} // Adjusted width and padding
+                >
+                  <FontAwesomeIcon icon={faSearch} />
+                </button>
+              </div> */}
             </div>
+
+            <BootstrapNav className="ms-md-auto"> {/* Added class for left alignment on larger screens */}
+              {/* Normal navigation */}
+              <div className="d-flex flex-column flex-md-row align-items-center">
+                <Link
+                  to="/"
+                  className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
+                  onClick={() => handleItemClick('home')}
+                >
+                  <FontAwesomeIcon icon={faHome} /> Home
+                </Link>
+                <Link
+                  to="/notifications"
+                  className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
+                  onClick={() => handleItemClick('notifications')}
+                >
+                  <FontAwesomeIcon icon={faBell} /> Notifications
+                </Link>
+                <Link
+                  to="/add-friends"
+                  className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
+                  onClick={() => handleItemClick('add-friends')}
+                >
+                  <FontAwesomeIcon icon={faUserFriends} /> Add Friends
+                </Link>
+              </div>
+
+              <div style={{ display: 'flex', marginLeft: '10px' }}>
+                <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />} align="end">
+                  <NavDropdown.Item>
+                    <Image src={pic} alt="Profile" roundedCircle className="profile-pic" />
+                    Your Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item>Notifications</NavDropdown.Item>
+                  <NavDropdown.Item>Add Friends</NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item>Settings</NavDropdown.Item>
+                  <NavDropdown.Item>Privacy</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
+                </NavDropdown>
+              </div>
+            </BootstrapNav>
           </div>
-
-          <BootstrapNav className="ms-auto"> {/* Added class for left alignment */}
-            {/* Normal navigation */}
-            <div className="d-none d-md-flex"> {/* Display only on larger screens */}
-              <Link
-                to="/"
-                className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
-                onClick={() => handleItemClick('home')}
-              >
-                <FontAwesomeIcon icon={faHome} /> Home
-              </Link>
-              <Link
-                to="/notifications"
-                className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
-                onClick={() => handleItemClick('notifications')}
-              >
-                <FontAwesomeIcon icon={faBell} /> Notifications
-              </Link>
-              <Link
-                to="/add-friends"
-                className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
-                onClick={() => handleItemClick('add-friends')}
-              >
-                <FontAwesomeIcon icon={faUserFriends} /> Add Friends
-              </Link>
-            </div>
-
-            <div style={{ display: 'flex' }}>
-              <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />} align="end">
-                <NavDropdown.Item>
-                  <Image src={pic} alt="Profile" roundedCircle className="profile-pic" />
-                  Your Profile
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item>Notifications</NavDropdown.Item>
-                <NavDropdown.Item>Add Friends</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item>Settings</NavDropdown.Item>
-                <NavDropdown.Item>Privacy</NavDropdown.Item>
-                <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
-              </NavDropdown>
-            </div>
-            
-          </BootstrapNav>
-        </BootstrapNavbar>
+        </BootstrapNavbar.Collapse>
       </div>
-    </nav>
+    </BootstrapNavbar>
   );
 };
 
