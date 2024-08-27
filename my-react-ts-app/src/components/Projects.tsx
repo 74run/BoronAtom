@@ -224,17 +224,29 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
   const handleGenerateDescription = (projectName: string) => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`)
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`, {
+        params: { projectName },
+      })
       .then((response) => {
         const generatedDescription = response.data.text;
         if (editData) {
-          setEditData({ ...editData, description: generatedDescription });
+          setEditData((prevData) => ({
+            ...prevData!,
+            description: generatedDescription,
+          }));
+        } else {
+          setNewProject((prevProject) => ({
+            ...prevProject,
+            description: generatedDescription,
+          }));
         }
       })
       .catch((error) => {
-        console.error('Error generating project description:', error.message);
+        console.error('Error generating project description:', error);
       });
   };
+  
+  
 
   return (
     <div
@@ -480,20 +492,20 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               </button>
               </div>
               <button
-                className="btn btn-info me-2"
-                onClick={() => handleGenerateDescription(editData.name)}
-                style={{
-                  backgroundColor: '#17a2b8',
-                  color: '#fff',
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                  transition: 'all 0.3s',
-                }}
-              >
-                <FontAwesomeIcon icon={faMagic} className="me-2" />
-                AI Description
-              </button>
+  className="btn btn-info me-2"
+  onClick={()=> handleGenerateDescription(editData.name)}
+  style={{
+    backgroundColor: '#17a2b8',
+    color: '#fff',
+    borderRadius: '8px',
+    padding: '10px 20px',
+    fontSize: '1rem',
+    transition: 'all 0.3s',
+  }}
+>
+  <FontAwesomeIcon icon={faMagic} className="me-2" />
+  AI Description
+</button>
               </div>
             </div>
           ) : (
