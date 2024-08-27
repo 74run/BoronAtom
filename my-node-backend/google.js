@@ -4,7 +4,6 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const router = express.Router();
 
 
-
 const UserProfile = require('./models/UserprofileModel');
 
 require('dotenv').config();
