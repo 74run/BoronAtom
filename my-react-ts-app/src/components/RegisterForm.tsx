@@ -170,12 +170,13 @@ const RegisterForm: React.FC = () => {
                   required
                 />
                 <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={togglePasswordVisibility}
-                >
-                  <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-                </button>
+  type="button"
+  className="btn btn-outline-visibility-toggle"
+  onClick={togglePasswordVisibility}
+>
+  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+</button>
+
               </div>
             </div>
             <div className="mb-4">
@@ -188,13 +189,14 @@ const RegisterForm: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-                <button
-                  type="button"
-                  className="btn btn-outline-secondary"
-                  onClick={toggleConfirmPasswordVisibility}
-                >
-                  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-                </button>
+               <button
+  type="button"
+  className="btn btn-outline-visibility-toggle"
+  onClick={toggleConfirmPasswordVisibility}
+>
+  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+</button>
+
               </div>
             </div>
 

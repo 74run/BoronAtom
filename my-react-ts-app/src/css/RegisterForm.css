@@ -1,3 +1,8 @@
+
+
+
+
+
 /* RegisterForm.css */
 
 /* General styling for the entire register page */
@@ -53,9 +58,8 @@
   position: relative;
 }
 
-.password-input-group input {
-  width: 100%;
-  padding-right: 60px; /* Space for the eye icon */
+.input-group .form-control {
+  padding-right: 40px;
 }
 
 .password-input-group .btn {
@@ -66,21 +70,6 @@
   border: none;
   background: none;
   padding: 0;
-}
-
-
-.input-group .form-control {
-  padding-right: 40px;
-}
-
-.btn-outline-secondary {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: transparent;
-  color: #6c757d;
 }
 
 /* Styling for buttons */
