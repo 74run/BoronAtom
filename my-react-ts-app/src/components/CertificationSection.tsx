@@ -388,8 +388,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                   </select>
                 </div>
               </div>
-              <input
-                type="text"
+              <textarea
+                
                 className="form-control mb-3"
                 placeholder="Certificate URL"
                 value={editData.url}
@@ -492,15 +492,19 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 {certification.expirationDate.year}
               </div>
               <div
-                style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
-                }}
-              >
-                <strong>Certificate URL:</strong> {certification.url}
-              </div>
+  style={{
+    fontFamily: "'Roboto', sans-serif",
+    fontSize: '0.9rem',
+    marginBottom: '0.5rem',
+    color: '#555',
+    overflowWrap: 'break-word',  // Ensure long words or URLs wrap
+    wordBreak: 'break-all',      // Force the text to break within words if necessary
+    textOverflow: 'ellipsis',    // Add ellipsis for overflowing text
+    whiteSpace: 'normal',        // Allow the text to wrap normally
+  }}
+>
+  <strong>Certificate URL:</strong> {certification.url}
+</div>
               <div>
                 <button
                   className="btn btn-outline-primary me-2"
@@ -721,8 +725,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               </select>
             </div>
           </div>
-          <input
-            type="text"
+          <textarea
+            
             className="form-control mb-3"
             placeholder="Certificate URL"
             value={newCertification.url}

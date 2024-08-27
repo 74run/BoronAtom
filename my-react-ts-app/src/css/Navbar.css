@@ -1,20 +1,26 @@
-/* Navbar.css */
 
-.custom-navbar {
-    background-color: #333; /* Change the background color */
-  }
-  
-  .custom-navbar .nav-link {
-    color: #fff; /* Change the text color */
-  }
-  
-  .custom-navbar .nav-link.active {
-    color: #ffcc00; /* Change the active link color */
-  }
-  
   .profile-pic {
     width: 30px; /* Adjust the width of the profile picture */
     height: 30px; /* Adjust the height of the profile picture */
     margin-right: 10px; /* Adjust the margin */
+  }
+  
+
+  .large-logo {
+    display: block;
+  }
+  
+  .small-logo {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .large-logo {
+      display: none;
+    }
+  
+    .small-logo {
+      display: block;
+    }
   }
   
