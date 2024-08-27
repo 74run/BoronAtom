@@ -6,6 +6,7 @@ const certSchema = new mongoose.Schema({
     issuedDate: { month: String, year: String },
     expirationDate: { month: String, year: String },
     url: String,
+    includeInResume: { type: Boolean, default: true },
 });
 
 // const Cert = mongoose.model('Cert', certSchema);

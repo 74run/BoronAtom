@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/experience', async (req, res) => {
   try {
-      const { jobTitle, company, location, startDate, endDate, description } = req.body;
+      const { jobTitle, company, location, startDate, endDate, description, includeInResume } = req.body;
       const userId = req.params.userID;
 
       let userProfile = await UserProfile.findOne({ userID: userId });
@@ -22,6 +22,7 @@ router.post('/:userID/experience', async (req, res) => {
           startDate: startDate,
           endDate: endDate,
           description: description,
+          includeInResume
       });
 
       const savedUserProfile = await userProfile.save();

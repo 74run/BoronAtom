@@ -15,9 +15,10 @@ interface SummarySectionProps {
   Summarys: Summary[];
   onEdit: (id: string, data: { content: string }) => void;
   onDelete: (id: string) => void;
+  viewOnly?: boolean;
 }
 
-const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDelete }) => {
+const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDelete, viewOnly = false  }) => {
   const [summarys, setSummarys] = useState<Summary[]>(Summarys);
   const [editData, setEditData] = useState<{ id: string; content: string } | null>(null);
   const [newSummary, setNewSummary] = useState<Summary>({

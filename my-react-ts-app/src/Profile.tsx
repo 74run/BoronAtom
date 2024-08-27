@@ -55,6 +55,7 @@ interface EduDetails {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
+    includeInResume: boolean;
   }>;
   experience: Array<{
     jobTitle: string;
@@ -63,6 +64,7 @@ interface EduDetails {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
   }>
   summary: Array<{
       content: string;
@@ -82,6 +84,7 @@ interface EduDetails {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
   }>
   certification: Array<{
   name: string;
@@ -89,6 +92,7 @@ interface EduDetails {
   issuedDate: { month: string; year: string };
   expirationDate: { month: string; year: string };
   url: string;
+  includeInResume: boolean;
   }>
   skills: Array<{
     domain: string;
@@ -118,6 +122,7 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+  includeInResume: boolean;
 }
 
 interface Summary {
@@ -133,6 +138,7 @@ interface Experience {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
 }
 
 interface Involvement {
@@ -142,6 +148,7 @@ interface Involvement {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
  
 }
 
@@ -152,6 +159,7 @@ interface Certification {
   issuedDate: { month: string; year: string };
   expirationDate: { month: string; year: string };
   url: string;
+  includeInResume: boolean;
   
 }
 
@@ -276,6 +284,7 @@ const Profile: React.FC = () => {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
+    includeInResume: boolean;
   }) => {
     // console.log('Sending data to server:', data);
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
@@ -343,7 +352,7 @@ const Profile: React.FC = () => {
     location: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; }) => {
+    description: string; includeInResume: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
@@ -364,7 +373,7 @@ const Profile: React.FC = () => {
     issuedBy: string;
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
-    url: string; }) => {
+    url: string; includeInResume: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'PUT',
       headers: {
@@ -385,7 +394,7 @@ const Profile: React.FC = () => {
     role: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; }) => {
+    description: string; includeInResume: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faSave, faPlus, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
+import { faTrash, faEdit, faSave, faPlus, faToggleOn, faToggleOff, faMagic } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -222,6 +222,20 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     }
   };
 
+  const handleGenerateDescription = (projectName: string) => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`)
+      .then((response) => {
+        const generatedDescription = response.data.text;
+        if (editData) {
+          setEditData({ ...editData, description: generatedDescription });
+        }
+      })
+      .catch((error) => {
+        console.error('Error generating project description:', error.message);
+      });
+  };
+
   return (
     <div
       style={{
@@ -279,23 +293,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   marginBottom: '1rem',
                 }}
               />
-              <textarea
-                className="form-control mb-3"
-                placeholder="Description"
-                value={editData.description}
-                onChange={handleEditDescriptionChange}
-                style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
-                }}
-              />
+             
               <input
                 type="text"
                 className="form-control mb-3"
-                placeholder="Skills Acquired"
+                placeholder="Organization"
                 value={editData.skills}
                 onChange={(e) =>
                   setEditData({ ...editData, skills: e.target.value })
@@ -436,6 +438,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   </select>
                 </div>
               </div>
+              <textarea
+                className="form-control mb-3"
+                placeholder="Description"
+                value={editData.description}
+                onChange={handleEditDescriptionChange}
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #ddd',
+                  padding: '12px',
+                  fontSize: '1rem',
+                  marginBottom: '1rem',
+                  height: '250px',
+                }}
+              />
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+            
               <button
                 className="btn btn-success me-2"
                 onClick={handleUpdate}
@@ -459,6 +478,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               >
                 Cancel
               </button>
+              </div>
+              <button
+                className="btn btn-info me-2"
+                onClick={() => handleGenerateDescription(editData.name)}
+                style={{
+                  backgroundColor: '#17a2b8',
+                  color: '#fff',
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                  transition: 'all 0.3s',
+                }}
+              >
+                <FontAwesomeIcon icon={faMagic} className="me-2" />
+                AI Description
+              </button>
+              </div>
             </div>
           ) : (
             // View mode
@@ -622,23 +658,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               marginBottom: '1rem',
             }}
           />
-          <textarea
-            className="form-control mb-3"
-            placeholder="Description"
-            value={newProject.description}
-            onChange={(e) => handleDescriptionChange(e)}
-            style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
-            }}
-          />
+         
           <input
             type="text"
             className="form-control mb-3"
-            placeholder="Skills Acquired"
+            placeholder="Organization"
             value={newProject.skills}
             onChange={(e) =>
               setNewProject({ ...newProject, skills: e.target.value })
@@ -779,6 +803,20 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               </select>
             </div>
           </div>
+          <textarea
+            className="form-control mb-3"
+            placeholder="Description"
+            value={newProject.description}
+            onChange={(e) => handleDescriptionChange(e)}
+            style={{
+              borderRadius: '8px',
+              border: '1px solid #ddd',
+              padding: '12px',
+              fontSize: '1rem',
+              marginBottom: '1rem',
+              height: '250px'
+            }}
+          />
           <button
             className="btn btn-success"
             onClick={handleSaveClick}

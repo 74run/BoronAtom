@@ -7,6 +7,7 @@ const expSchema = new mongoose.Schema({
   description: String,
   startDate: { month: String, year: String },
   endDate: { month: String, year: String },
+  includeInResume: { type: Boolean, default: true },
   
 });
 
