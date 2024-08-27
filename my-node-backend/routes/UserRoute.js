@@ -1,10 +1,12 @@
 const express = require('express');
 const bcryptjs = require('bcryptjs');
 const User = require('../models/UserModel');
+const UserProfile = require('../models/UserprofileModel')
 const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 
+const PendingUser = require('../models/PendingUsers')
 const crypto = require('crypto');
 
 const generateRandomString = (length) => {
@@ -80,42 +82,68 @@ router.post("/verifyOTP", async (req, res) => {
   try {
     let { userId, otp } = req.body;
     if (!userId || !otp) {
-      throw Error("Empty otp details re not allowed");
+      throw Error("Empty OTP details are not allowed");
     } else {
-      const UserOTPVerificationRecords = await UserOTPVerification.find({
-        userId,
-      });
+      const UserOTPVerificationRecords = await UserOTPVerification.find({ userId });
+
       if (UserOTPVerificationRecords.length <= 0) {
-        //no record found
-        throw new Error("Account record doesn't exist or has been verified already. please sign up or log in.");
+        throw new Error("Account record doesn't exist or has been verified already. Please sign up or log in.");
       } else {
-        // user otp record exists
         const { expiresAt } = UserOTPVerificationRecords[0];
         const hashedOTP = UserOTPVerificationRecords[0].otp;
         
         if (expiresAt < Date.now()) {
-          //user otp record has expired
-          
-          UserOTPVerification.deleteMany({ userId });
+          await UserOTPVerification.deleteMany({ userId });
           throw new Error("Code has expired. Please request again.");
         } else {
           const validOTP = await bcryptjs.compare(otp, hashedOTP);
-          if(!validOTP) {
-            //supplied otp is wrong
+          if (!validOTP) {
             throw new Error("Invalid code passed. Check your inbox.");
           } else {
-            //success
-            await User.updateOne({_id: userId }, { verified: true });
-            await UserOTPVerification.deleteMany({ userId });
+            // OTP is valid, move the user data from PendingUsers to Users
+            const pendingUser = await PendingUser.findById(userId);
+            if (!pendingUser) {
+              throw new Error("User not found in pending records.");
+            }
+
+            // Move user data to the main User collection
+            const user = new User({
+              firstName: pendingUser.firstName,
+              lastName: pendingUser.lastName,
+              email: pendingUser.email,
+              username: pendingUser.username,
+              password: pendingUser.password,
+              confirmPassword: pendingUser.confirmPassword,
+            });
+
+            await user.save();
+
+            // Create a UserProfile entry with contact details
+            const contactDetails = {
+              name: `${pendingUser.firstName} ${pendingUser.lastName}`,
+              email: pendingUser.email,
+            };
+
+            const userProfile = new UserProfile({
+              userID: user._id,
+              contact: contactDetails,
+              // other fields as needed...
+            });
+
+            await userProfile.save();
+
+            await PendingUser.deleteMany({ _id: userId }); // Clean up pending record
+            await UserOTPVerification.deleteMany({ userId }); // Clean up OTP records
+
             return res.json({
               status: "VERIFIED",
-              message: `User email verified successfully.`,
+              message: "User email verified successfully.",
             });
           }
         }
       }
     }
-  } catch(error) {
+  } catch (error) {
     res.json({
       status: "FAILED",
       message: error.message,
@@ -123,29 +151,52 @@ router.post("/verifyOTP", async (req, res) => {
   }
 });
 
-router.post('/register', async (req, res) => {
-    try {
-        const { firstName, lastName, email, username, password, confirmPassword } = req.body;
-        // console.log(email);
-        const existingUser = await User.findOne({ username });
 
-        // console.log('exsisting user is:', existingUser);
-        if (existingUser) {
-          return res.status(400).json({ success: false, message: 'User already exists.' });
-        }
-        const hashedPassword = await bcryptjs.hash(password, 10);
-        const hpc = await bcryptjs.hash(confirmPassword, 10);
-        const user = new User({ firstName, lastName, email, username, password: hashedPassword, confirmPassword: hpc });
-        // console.log('after user schema');
-        await user.save().then((result) => {
-          //Handle account verification
-          sendOTPVerificationEmail(email, result._id, res);
-        });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-      }
+
+router.post('/register', async (req, res) => {
+  try {
+    const { firstName, lastName, email, username, password, confirmPassword } = req.body;
+
+    // Check if the email already exists in the User collection
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ success: false, message: 'Email is already registered.' });
+    }
+
+    // Check if the email already exists in the PendingUser collection
+    const existingPendingUser = await PendingUser.findOne({ email });
+    if (existingPendingUser) {
+      return res.status(400).json({ success: false, message: 'A registration with this email is pending verification.' });
+    }
+
+    // Check if the username already exists
+    const existingUsername = await User.findOne({ username });
+    if (existingUsername) {
+      return res.status(400).json({ success: false, message: 'Username is already taken.' });
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 10);
+    const hashedConfirmPassword = await bcryptjs.hash(confirmPassword, 10);
+
+    const pendingUser = new PendingUser({
+      firstName,
+      lastName,
+      email,
+      username,
+      password: hashedPassword,
+      confirmPassword: hashedConfirmPassword,
+    });
+
+    await pendingUser.save().then((result) => {
+      // Send OTP verification email
+      sendOTPVerificationEmail(email, result._id, res);
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
 });
+
 
 router.post('/forgotpassword', async (req, res) => {
     try {
