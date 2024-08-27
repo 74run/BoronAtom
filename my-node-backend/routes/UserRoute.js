@@ -215,7 +215,7 @@ router.post('/forgotpassword', async (req, res) => {
       const token = jwt.sign({ id: user._id }, "jwt_secret_key", { expiresIn: "1d" });
 
       // Construct the reset password link
-      const resetLink = `http://localhost:3000/resetpassword?token=${token}`;
+      const resetLink = `http://boronatom.me/resetpassword?token=${token}`;
 
       // Define email options
       const mailOptions = {
