@@ -1,71 +1,139 @@
-/* frontend/src/components/RegisterForm.css */
-.register-container {
-  display:flow-root;
- height: 100vh;
-  background: linear-gradient(to right, #6c7070, #000b01);
-  }
-  
-  .register-box {
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #0c0101;
-    border-radius: 12px;
-    
-  margin-top: 10px;
-    background-color: rgba(255,255,255,0.5);
-    box-shadow: 0 15px 25px rgba(0,0,0,.5);
+/* RegisterForm.css */
+
+/* General styling for the entire register page */
+.register-page {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 60px; /* To adjust for the fixed navbar */
 }
 
-  .form-label {
-    font-weight: bold;
-  }
-  
-  .form-control {
-    border: 1px solid #0c0101;
-    border-radius: 10px;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-  }
-  
+/* Styling for the registration form container */
+.register-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+}
 
-  .login-link {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .login-link p {
-    margin: 0;
-  }
-  
-  .btn-link {
-    cursor: pointer;
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  
-  .btn-link:hover {
-    color: #0056b3;
-  }
-  
+/* Styling for the registration form box */
+.register-box {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  .password-input-group {
-    position: relative;
-  }
-  
-  .password-input-group button {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 70px; /* Set a fixed width for both buttons */
+/* Header styling for the form */
+.register-box h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Margin between form fields */
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+/* Input field styling */
+.form-control {
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  font-size: 16px;
+}
+
+/* Styling for the input group containing password fields */
+.password-input-group {
+  position: relative;
+}
+
+.password-input-group input {
+  width: 100%;
+  padding-right: 60px; /* Space for the eye icon */
+}
+
+.password-input-group .btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+
+.input-group .form-control {
+  padding-right: 40px;
+}
+
+.btn-outline-secondary {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #6c757d;
+}
+
+/* Styling for buttons */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  border-radius: 6px;
+}
+
+.btn-outline-primary {
+  border-color: #007bff;
+  color: #007bff;
+  border-radius: 6px;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Styling for error messages */
+.text-danger {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Navbar styling */
+.custom-navbar {
+  background-color: #343a40; /* Dark background */
+}
+
+.custom-navbar .navbar-brand img {
+  height: 40px;
+}
+
+.custom-navbar .nav-link {
+  color: #fff !important;
+}
+
+.custom-navbar .nav-link:hover {
+  color: #ccc !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .register-box {
+    padding: 30px;
   }
 
-.password-input-group button.btn-light,
-.password-input-group button.btn-primary {
-  width: 70px;
+  .register-container {
+    padding: 10px;
+  }
 }

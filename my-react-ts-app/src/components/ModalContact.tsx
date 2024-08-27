@@ -60,12 +60,14 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
 
   const handleEditClick = () => {
     setIsEditing(true);
-    setEditedContactDetails({ ...contactDetails! }); // Add null check (!) or provide default values
+    setEditedContactDetails({ ...contactDetails! }); // Ensure contactDetails is not null
   };
 
   const handleSaveClick = () => {
     const method = contactDetails?._id ? 'PUT' : 'POST';
-    const url = contactDetails?._id ? `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact/${contactDetails._id}` : `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`;
+    const url = contactDetails?._id 
+      ? `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact/${contactDetails._id}` 
+      : `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`;
     axios({
       method: method,
       url: url,
@@ -75,17 +77,17 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
       },
     })
       .then((response) => {
-        fetchContactDetails(); // Fetch updated contact details after saving
+        setContactDetails(editedContactDetails); // Update the contact details state
         setIsEditing(false);
       })
       .catch((error) => {
         console.error('Error saving contact details:', error);
       });
   };
-  
 
   const handleCancelClick = () => {
     setIsEditing(false);
+    setEditedContactDetails(contactDetails!); // Reset edited details to original values
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,119 +98,107 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
     }));
   };
 
-  if (!contactDetails) {
-    return null; // Or render a loading indicator
+  if (!isOpen) {
+    return null; // If the modal is not open, render nothing
   }
 
   return (
-    <>
-      {isOpen && (
-        <div className="modal fade show" style={{ display: 'block' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
-                <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+    <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
+            <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+          </div>
+          <div className="modal-body">
+            <form onSubmit={(e) => e.preventDefault()}>
+              <div className="mb-3">
+                <label htmlFor="name" className="form-label">Name</label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="name"
+                    name="name"
+                    value={editedContactDetails.name}
+                    onChange={handleInputChange}
+                  />
+                ) : (
+                  <div>{contactDetails?.name}</div>
+                )}
               </div>
-              <div className="modal-body">
-                <form onSubmit={(e) => e.preventDefault()}>
-                  <div className="mb-3">
-                    <label htmlFor="name" className="form-label">
-                      Name
-                    </label>
-                    {isEditing || !contactDetails.name ? (
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="name"
-                        name="name"
-                        value={editedContactDetails.name}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <div>{contactDetails.name}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email
-                    </label>
-                    {isEditing || !contactDetails.email ? (
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="email"
-                        name="email"
-                        value={editedContactDetails.email}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <div>{contactDetails.email}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="phoneNumber" className="form-label">
-                      Phone Number
-                    </label>
-                    {isEditing || !contactDetails.phoneNumber ? (
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        value={editedContactDetails.phoneNumber}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <div>{contactDetails.phoneNumber}</div>
-                    )}
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="linkedIn" className="form-label">
-                      LinkedIn Profile
-                    </label>
-                    {isEditing || !contactDetails.linkedIn ? (
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="linkedIn"
-                        name="linkedIn"
-                        value={editedContactDetails.linkedIn}
-                        onChange={handleInputChange}
-                      />
-                    ) : (
-                      <div>{contactDetails.linkedIn}</div>
-                    )}
-                  </div>
-                  {isEditing ? (
-                    <div>
-                      <button
-                        type="button"
-                        className="btn btn-success"
-                        onClick={handleSaveClick}
-                        style={{ marginRight: '0.5rem' }}
-                      >
-                        <FontAwesomeIcon icon={faSave} className="me-2" />
-                        Save
-                      </button>
-                      <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
-                        <FontAwesomeIcon icon={faTimes} className="me-2" />
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <button type="button" className="btn btn-primary" onClick={handleEditClick}>
-                      <FontAwesomeIcon icon={faEdit} className="me-2" />
-                      Edit
-                    </button>
-                  )}
-                </form>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">Email</label>
+                {isEditing ? (
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    name="email"
+                    value={editedContactDetails.email}
+                    onChange={handleInputChange}
+                  />
+                ) : (
+                  <div>{contactDetails?.email}</div>
+                )}
               </div>
-            </div>
+              <div className="mb-3">
+                <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={editedContactDetails.phoneNumber}
+                    onChange={handleInputChange}
+                  />
+                ) : (
+                  <div>{contactDetails?.phoneNumber}</div>
+                )}
+              </div>
+              <div className="mb-3">
+                <label htmlFor="linkedIn" className="form-label">LinkedIn Profile</label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="linkedIn"
+                    name="linkedIn"
+                    value={editedContactDetails.linkedIn}
+                    onChange={handleInputChange}
+                  />
+                ) : (
+                  <div>{contactDetails?.linkedIn}</div>
+                )}
+              </div>
+              {isEditing ? (
+                <div>
+                  <button
+                    type="button"
+                    className="btn btn-success"
+                    onClick={handleSaveClick}
+                    style={{ marginRight: '0.5rem' }}
+                  >
+                    <FontAwesomeIcon icon={faSave} className="me-2" />
+                    Save
+                  </button>
+                  <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
+                    <FontAwesomeIcon icon={faTimes} className="me-2" />
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button type="button" className="btn btn-primary" onClick={handleEditClick}>
+                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  Edit
+                </button>
+              )}
+            </form>
           </div>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 };
 

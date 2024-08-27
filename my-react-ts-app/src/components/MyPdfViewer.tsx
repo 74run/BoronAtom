@@ -373,7 +373,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         ? contacts[0].email
         : `${userDetails?.email}`
     }} \\quad
-        \\faLinkedin\\ \\url{${contacts[0].linkedIn}}
+        \\faLinkedin\\ \\url{${contacts[0]?.linkedIn}}
       \\end{center}
      \\vspace*{4pt}%
       \\header{Summary}

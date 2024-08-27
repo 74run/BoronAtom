@@ -931,22 +931,6 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
           </button>
         </div>
 
-<button
-onClick={() => handleGenerateDescription(newExperience.jobTitle)}
-className="btn btn-info me-2"
-style={{
-  backgroundColor: '#17a2b8',
-      color: '#fff',
-      borderRadius: '8px',
-      padding: '10px 20px',
-      fontSize: '1rem',
-      transition: 'all 0.3s',
-}}
->
-<FontAwesomeIcon icon={faMagic} className="me-2" />
-AI Description
-</button>
-
 
 </div>
             </div>

@@ -31,6 +31,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     <nav className="navbar navbar-expand-md navbar-light bg-white shadow">
       <div className="container-fluid">
         <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
+          
           <Link to="/" className="navbar-brand d-flex align-items-center">
             <Image 
               src={logo} 
