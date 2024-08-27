@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faSave, faTrash, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
 interface UserDetails {
@@ -12,7 +12,6 @@ interface UserDetails {
   // Add other fields as needed
 }
 
-
 interface Education {
   _id: string;
   university: string;
@@ -21,20 +20,28 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+  includeInResume: boolean;
   isEditing?: boolean;
 }
 
 interface EducationProps {
   Educations: Education[];
   UserDetail: UserDetails | null;
-  onEdit: (id: string, data: {university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }})=> void;
-  onDelete :(id: string)=> void;
-  
+  onEdit: (id: string, data: { university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; includeInResume: boolean }) => void;
+  onDelete: (id: string) => void;
 }
 
-
-const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEdit, onDelete}) => {
-  const [editData, setEditData] = useState<{id: string; university: string; cgpa: string;  degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }} | null>(null);
+const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, onEdit, onDelete }) => {
+  const [editData, setEditData] = useState<{
+    id: string;
+    university: string;
+    cgpa: string;
+    degree: string;
+    major: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    includeInResume: boolean;
+  } | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
@@ -46,9 +53,9 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
     major: '',
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
+    includeInResume: true,
   });
   const { userID } = useParams();
-
   const [isAdding, setIsAdding] = useState(false);
 
   const months = [
@@ -58,55 +65,48 @@ const EducationSection: React.FC<EducationProps>= ({Educations, UserDetail, onEd
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
+  useEffect(() => {
+    // Fetch user details
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+      .then(response => {
+        setUserDetails(response.data.user);
+      })
+      .catch(error => {
+        console.error('Error fetching user details:', error);
+      });
+  }, [userID]);
 
   useEffect(() => {
-    // Make an HTTP request to fetch user details based on the user ID
-    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
-        .then(response => {
-            setUserDetails(response.data.user);
-        })
-        .catch(error => {
-            console.error('Error fetching user details:', error);
-        });
-}, [userID]);
+    fetchEducation();
+  }, []);
 
+  const fetchEducation = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch educations');
+        }
+        return response.json(); // Parse the response JSON
+      })
+      .then(data => {
+        setEducations(data); // Set educations state with the fetched data
+      })
+      .catch(error => {
+        console.error('Error fetching educations:', error);
+      });
+  };
 
-useEffect(() => {
-  fetchEducation();
-}, []);
-
-const fetchEducation = () => {
-  fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch educations');
-      }
-      return response.json(); // Parse the response JSON
-    })
-    .then(data => {
-      // console.log("Project data:",data)
-      setEducations(data); // Set projects state with the fetched data
-    })
-    .catch(error => {
-      console.error('Error fetching projects:', error);
-    });
-};
-
-
-
-
-
-
-
-
-  const handleEditClick = (    id: string,
+  const handleEditClick = (
+    id: string,
     university: string,
     cgpa: string,
     degree: string,
     major: string,
     startDate: { month: string; year: string },
-    endDate: { month: string; year: string }) => {
-    setEditData({  id, university, cgpa, degree, major, startDate, endDate });
+    endDate: { month: string; year: string },
+    includeInResume: boolean
+  ) => {
+    setEditData({ id, university, cgpa, degree, major, startDate, endDate, includeInResume });
   };
 
   const handleCancelEdit = () => {
@@ -122,31 +122,29 @@ const fetchEducation = () => {
         major: editData.major,
         startDate: { ...editData.startDate },
         endDate: { ...editData.endDate },
+        includeInResume: editData.includeInResume,
       });
-  
+
       const updatedItems = educations.map((education) =>
         education._id === editData.id
           ? {
-              ...education,
-              university: editData.university,
-              cgpa: editData.cgpa,
-              degree: editData.degree,
-              major: editData.major,
-              startDate: { ...editData.startDate },
-              endDate: { ...editData.endDate },
-            }
+            ...education,
+            university: editData.university,
+            cgpa: editData.cgpa,
+            degree: editData.degree,
+            major: editData.major,
+            startDate: { ...editData.startDate },
+            endDate: { ...editData.endDate },
+            includeInResume: editData.includeInResume,
+          }
           : education
       );
-  
+
       setEducations(updatedItems);
-  
-      // Update local storage
-      // localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedItems));
-  
       setEditData(null);
     }
   };
-  
+
   const handleDelete = (id: string) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
       method: 'DELETE',
@@ -158,89 +156,57 @@ const fetchEducation = () => {
         if (!res.ok) {
           throw new Error(`Failed to delete education. Status: ${res.status}`);
         }
-  
+
         // Update the state to remove the deleted education
         const updatedEducations = educations.filter((education) => education._id !== id);
         setEducations(updatedEducations);
-  
-        // Update local storage
-        // localStorage.setItem(`educations_${userID}`, JSON.stringify(updatedEducations));
-  
-        // Reset the editData state
+
         setEditData(null);
       })
       .catch((error) => {
         console.error('Error deleting education:', error.message);
       });
   };
-  
-  // Rest of the code remains unchanged
-  
-  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/universities`);
-        // setUniversities(response.data.universities);
         setFilteredUniversities(response.data.universities);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching universities:', error);
       }
     };
-
     fetchData();
-    
   }, []);
 
+  const handleToggleInclude = (id: string) => {
+    const updatedEducations = educations.map((education) =>
+      education._id === id ? { ...education, includeInResume: !education.includeInResume } : education
+    );
+    setEducations(updatedEducations);
 
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // const storageKey = `educations_${userID}`;
-  
-  //       // Check if data exists in local storage
-  //       // const storedData = localStorage.getItem(storageKey);
-  //       if (storedData) {
-  //         setEducations(JSON.parse(storedData));
-  //       } else {
-  //         // If not, fetch data from the server
-  //         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/educations`);
-  //         const fetchedEducations = response.data.educations;
-  
-  //         // Update state
-  //         setEducations(fetchedEducations);
-  
-  //         // Store the fetched data in local storage
-  //         // localStorage.setItem(storageKey, JSON.stringify(fetchedEducations));
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  
-  //   fetchData();
-  // }, [userID]);
-  
-
-  // useEffect(() => {
-  //   fetch('/api/items')
-  //     .then((res) => res.json())
-  //     .then((data) => setEducations(data));
-  // }, []);
-
-
-
+    const educationToUpdate = updatedEducations.find(education => education._id === id);
+    if (educationToUpdate) {
+      onEdit(id, {
+        university: educationToUpdate.university,
+        cgpa: educationToUpdate.cgpa,
+        degree: educationToUpdate.degree,
+        major: educationToUpdate.major,
+        startDate: educationToUpdate.startDate,
+        endDate: educationToUpdate.endDate,
+        includeInResume: educationToUpdate.includeInResume
+      });
+    }
+  };
 
   const handleSaveClick = () => {
     // Form validation check
     if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
       console.error('Please fill in all required fields');
-      // You can display an error message to the user or handle it as appropriate
       return;
     }
-  
+
     const formattedEducation = {
       ...newEducation,
       startDate: {
@@ -252,51 +218,45 @@ const fetchEducation = () => {
         year: newEducation.endDate.year,
       },
     };
-  
-    // const storageKey = `educations_${userID}`;
 
-  axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`, formattedEducation)
-    .then((response) => {
-      const newEducationFromServer = response.data.education;
-      const newEduData = newEducationFromServer[newEducationFromServer.length - 1];
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education`, formattedEducation)
+      .then((response) => {
+        const newEducationFromServer = response.data.education;
+        const newEduData = newEducationFromServer[newEducationFromServer.length - 1];
 
-      // Update state
-      setEducations([...educations, newEduData]);
+        // Update state
+        setEducations([...educations, newEduData]);
 
-      // Update local storage
-      const updatedEducations = [...educations, newEduData];
-      // localStorage.setItem(storageKey, JSON.stringify(updatedEducations));
+        setNewEducation({
+          _id: '',
+          university: '',
+          cgpa: '',
+          degree: '',
+          major: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+          includeInResume: true,
+        });
 
-      setNewEducation({
-        _id: '',
-        university: '',
-        cgpa: '',
-        degree: '',
-        major: '',
-        startDate: { month: '', year: '' },
-        endDate: { month: '', year: '' },
+        setIsAdding(false);
+      })
+      .catch((error) => {
+        console.error('Error saving education:', error.message);
       });
-
-      setIsAdding(false);
-    })
-    .catch((error) => {
-      console.error('Error saving education:', error.message);
-      // Handle errors by displaying an error message to the user or logging it as appropriate
-    });
-};
-  
-
+  };
 
   const handleAddClick = () => {
-    setNewEducation({     _id: '',
-    university: '',
-    cgpa: '',
-    degree: '',
-    major: '',
-    startDate: { month: '', year: '' },
-    endDate: { month: '', year: '' }, });
+    setNewEducation({
+      _id: '',
+      university: '',
+      cgpa: '',
+      degree: '',
+      major: '',
+      startDate: { month: '', year: '' },
+      endDate: { month: '', year: '' },
+      includeInResume: true,
+    });
     setIsAdding(true);
-    // setNewEducationSearchTerm('');
   };
 
   return (
@@ -494,7 +454,7 @@ const fetchEducation = () => {
                       marginRight: '0.5rem',
                     }}
                   >
-                    {!editData.startDate.month && (
+                    {!editData.endDate.month && (
                       <option value="" disabled>
                         Select Month
                       </option>
@@ -652,7 +612,8 @@ const fetchEducation = () => {
                       education.degree,
                       education.major,
                       education.startDate,
-                      education.endDate
+                      education.endDate,
+                      education.includeInResume
                     )
                   }
                   style={{
@@ -681,6 +642,23 @@ const fetchEducation = () => {
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
+                </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(education._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: education.includeInResume ? '#28a745' : '#dc3545',
+                    color: education.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={education.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {education.includeInResume ? 'Included' : 'Excluded'}
                 </button>
               </div>
             </div>
@@ -943,10 +921,6 @@ const fetchEducation = () => {
       )}
     </div>
   );
-  
-  
-  
 };
 
 export default EducationSection;
-

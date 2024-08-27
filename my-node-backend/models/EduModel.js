@@ -7,6 +7,7 @@ const EduSchema = new mongoose.Schema({
   major: String,
   startDate: { month: String, year: String },
   endDate: { month: String, year: String },
+  includeInResume: { type: Boolean, default: true },
 });
 
 // const Edu = mongoose.model('Edu', EduSchema);

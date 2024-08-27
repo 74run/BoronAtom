@@ -22,6 +22,7 @@ interface EduDetails {
       major: string;
       startDate: { month: string; year: string };
       endDate: { month: string; year: string };
+      includeInResume: boolean;
     }>;
     experience: Array<{
       jobTitle: string;
@@ -30,6 +31,7 @@ interface EduDetails {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string;
+    includeInResume: boolean;
     }>
     summary: Array<{
         content: string;
@@ -49,6 +51,7 @@ interface EduDetails {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     description: string;
+    includeInResume: boolean;
     }>
     certification: Array<{
     name: string;
@@ -56,6 +59,7 @@ interface EduDetails {
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
     url: string;
+    includeInResume: boolean;
     }>
     skills: Array<{
       domain: string;
@@ -86,32 +90,32 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     const { userID } = useParams();
   
 
-    useEffect(() => {
-      // Make an HTTP request to fetch user details based on the user ID
-      axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
-        .then(response => {
-          setUserDetails(response.data.user);
-        })
-        .catch(error => {
-          console.error('Error fetching user details:', error);
-        });
-    }, [userID]);
+    // useEffect(() => {
+    //   // Make an HTTP request to fetch user details based on the user ID
+    //   axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+    //     .then(response => {
+    //       setUserDetails(response.data.user);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching user details:', error);
+    //     });
+    // }, [userID]);
   
   
-    useEffect(() => {
-      axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
-        .then(response => {
-          if (response.data && response.data.success) {
-            console.log('user details:',response.data.user)
-            setEduDetails(response.data.user);
-          } else {
-            console.error('Error fetching user details:', response.data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching user details:', error);
-        });
-    }, [userID]);
+    // useEffect(() => {
+    //   axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
+    //     .then(response => {
+    //       if (response.data && response.data.success) {
+    //         console.log('user details:',response.data.user)
+    //         setEduDetails(response.data.user);
+    //       } else {
+    //         console.error('Error fetching user details:', response.data.message);
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching user details:', error);
+    //     });
+    // }, [userID]);
     
   
    
@@ -137,21 +141,42 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
   
     
   const previewPdf = async () => {
+
+
+    await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+    .then(response => {
+      setUserDetails(response.data.user);
+    })
+    .catch(error => {
+      console.error('Error fetching user details:', error);
+    });
+
+  await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
+    .then(response => {
+      if (response.data && response.data.success) {
+        setEduDetails(response.data.user);
+      } else {
+        console.error('Error fetching user details:', response.data.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching user details:', error);
+    });
   
-        const educations = eduDetails?.education || [];
+    const educations = (eduDetails?.education || []).filter(education => education.includeInResume);
+
+    const experiences = (eduDetails?.experience || []).filter(experience => experience.includeInResume);
     
-      const experiences = eduDetails?.experience || [];
-  
-      const summarys = eduDetails?.summary || [];
-  
-      const projects = (eduDetails?.project || []).filter(project => project.includeInResume);
-  
-      const certifications = eduDetails?.certification || [];
-  
-      const involvements = eduDetails?.involvement || [];
-
-      const skills = (eduDetails?.skills || []).filter(skill => skill.includeInResume);
-
+    const summarys = eduDetails?.summary || [];
+    
+    const projects = (eduDetails?.project || []).filter(project => project.includeInResume);
+    
+    const certifications = (eduDetails?.certification || []).filter(certification => certification.includeInResume);
+    
+    const involvements = (eduDetails?.involvement || []).filter(involvement => involvement.includeInResume);
+    
+    const skills = (eduDetails?.skills || []).filter(skill => skill.includeInResume);
+    
       const contacts = eduDetails?.contact || [];
       // Add sections for projects, certifications, skills, involvements as needed
   
@@ -338,7 +363,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
               ? contacts[0].name // If it exists, use it
               : `${userDetails?.firstName} ${userDetails?.lastName}` // If not, fallback to userDetails?.firstName
       }}} \\\\
-        \\faPhone\\ ${contacts[0].phoneNumber} \\quad
+        \\faPhone\\ ${contacts[0]?.phoneNumber} \\quad
         \\faEnvelope\\ \\href{mailto:  ${
           contacts[0]?.email
           ? contacts[0].email

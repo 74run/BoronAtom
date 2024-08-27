@@ -73,6 +73,8 @@ const App: React.FC = () => {
           element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
         />
 
+        
+
         {/* Public Routes */}
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />

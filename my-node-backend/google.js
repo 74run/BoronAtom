@@ -12,6 +12,126 @@ const API  = process.env.REACT_APP_GOOGLE_API;
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(API);
 
+
+// Define an endpoint to generate project description
+router.get('/generate-project-description/:userID/:projectName', async (req, res) => {
+  try {
+    const userId = req.params.userID;
+    const projectName = req.params.projectName;
+
+    // Query the database to get user details by ID
+    const user = await UserProfile.findOne({ userID: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Find the specific project based on the project name
+    const project = user.project.find(p => p.name.toLowerCase() === projectName.toLowerCase());
+
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // For text-only input, use the gemini-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create a prompt using the project data
+    const prompt = `Write a 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    // Send the generated text to the front end
+    res.json({ text });
+  } catch (error) {
+    console.error('Error generating project description:', error);
+    res.status(500).json({ error: 'An error occurred while generating project description' });
+  }
+});
+
+router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
+  try {
+    const userId = req.params.userID;
+    const jobTitle = req.params.jobTitle;
+
+    // Query the database to get user details by ID
+    const user = await UserProfile.findOne({ userID: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Find the specific experience based on the job title
+    const experience = user.experience.find(exp => exp.jobTitle.toLowerCase() === jobTitle.toLowerCase());
+
+    if (!experience) {
+      return res.status(404).json({ success: false, message: 'Experience not found' });
+    }
+
+    // For text-only input, use the gemini-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create a prompt using the experience data
+    const prompt = `Write a 4 job description points for the role "${experience.jobTitle}". The role involved working at ${experience.company} in ${experience.location} with responsibilities including ${experience.description}.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Send the generated text to the front end
+    res.json({ text });
+  } catch (error) {
+    console.error('Error generating job description:', error);
+    res.status(500).json({ error: 'An error occurred while generating job description' });
+  }
+});
+
+
+router.get('/generate-involvement-description/:userID/:organization/:role', async (req, res) => {
+  try {
+    const { userID, organization, role } = req.params;
+
+    // Query the database to get user details by ID
+    const user = await UserProfile.findOne({ userID: userID });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Find the specific involvement based on the organization and role
+    const involvement = user.involvement.find(inv => 
+      inv.organization.toLowerCase() === organization.toLowerCase() && 
+      inv.role.toLowerCase() === role.toLowerCase()
+    );
+
+    if (!involvement) {
+      return res.status(404).json({ success: false, message: 'Involvement not found' });
+    }
+
+    // For text-only input, use the gemini-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create a prompt using the involvement data
+    const prompt = `Write a 4 description points for the role of "${involvement.role}" at "${involvement.organization}". The role involved the following activities: ${involvement.description}.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    // Send the generated text to the front end
+    res.json({ text });
+  } catch (error) {
+    console.error('Error generating involvement description:', error);
+    res.status(500).json({ error: 'An error occurred while generating involvement description' });
+  }
+});
+
+
+
+
+
 // Define an endpoint to generate text
 router.get('/generate/:userID', async (req, res) => {
   try {
@@ -28,7 +148,7 @@ router.get('/generate/:userID', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `Write a short 50 words Resume summary based on ${user.experience}, ${user.project}, ${user.education} and ${user.skills}`;
+    const prompt = `Write a short 50 words Resume summary based on experience: ${user.experience}, projects: ${user.project}, education: ${user.education} and skills: ${user.skills}`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;

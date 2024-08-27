@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faSave, faTimes, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-
 
 interface Certification {
   _id: string;
@@ -12,17 +11,18 @@ interface Certification {
   issuedDate: { month: string; year: string };
   expirationDate: { month: string; year: string };
   url: string;
+  includeInResume: boolean;
   isEditing?: boolean;
 }
 
 interface CertificationProps {
   Certifications: Certification[];
-  onEdit: (id: string, data: { name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string }) => void;
+  onEdit: (id: string, data: { name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string; includeInResume: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
 const CertificationSection: React.FC<CertificationProps> = ({ Certifications, onEdit, onDelete }) => {
-  const [editData, setEditData] = useState<{ id: string; name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string } | null>(null);
+  const [editData, setEditData] = useState<{ id: string; name: string; issuedBy: string; issuedDate: { month: string; year: string }; expirationDate: { month: string; year: string }; url: string; includeInResume: boolean } | null>(null);
   const [certifications, setCertifications] = useState<Certification[]>(Certifications);
   const [newCertification, setNewCertification] = useState<Certification>({
     _id: '',
@@ -31,6 +31,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
     issuedDate: { month: '', year: '' },
     expirationDate: { month: '', year: '' },
     url: '',
+    includeInResume: true,
   });
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
@@ -42,29 +43,23 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
-  // useEffect(() => {
-  //   const storedCertifications = JSON.parse(localStorage.getItem(`certifications_${userID}`) || '[]');
-  //   setCertifications(storedCertifications);
-  // }, []);
-  
   useEffect(() => {
     fetchCertification();
   }, []);
-  
+
   const fetchCertification = () => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch educations');
+          throw new Error('Failed to fetch certifications');
         }
         return response.json(); // Parse the response JSON
       })
       .then(data => {
-        // console.log("Project data:",data)
-        setCertifications(data); // Set projects state with the fetched data
+        setCertifications(data); // Set certifications state with the fetched data
       })
       .catch(error => {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching certifications:', error);
       });
   };
 
@@ -74,13 +69,11 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
     issuedBy: string,
     issuedDate: { month: string; year: string },
     expirationDate: { month: string; year: string },
-    url: string
+    url: string,
+    includeInResume: boolean
   ) => {
-    setEditData({ id, name, issuedBy, issuedDate, expirationDate, url });
+    setEditData({ id, name, issuedBy, issuedDate, expirationDate, url, includeInResume });
   };
-  
-
-  
 
   const handleCancelEdit = () => {
     setEditData(null);
@@ -88,18 +81,30 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate, url: editData.url });
-      
+      onEdit(editData.id, {
+        name: editData.name,
+        issuedBy: editData.issuedBy,
+        issuedDate: editData.issuedDate,
+        expirationDate: editData.expirationDate,
+        url: editData.url,
+        includeInResume: editData.includeInResume,
+      });
+
       const updatedItems = certifications.map((certification) =>
         certification._id === editData.id
-          ? { ...certification, name: editData.name, issuedBy: editData.issuedBy, issuedDate: editData.issuedDate, expirationDate: editData.expirationDate, url: editData.url }
+          ? {
+              ...certification,
+              name: editData.name,
+              issuedBy: editData.issuedBy,
+              issuedDate: editData.issuedDate,
+              expirationDate: editData.expirationDate,
+              url: editData.url,
+              includeInResume: editData.includeInResume,
+            }
           : certification
       );
 
       setCertifications(updatedItems);
-
-      // localStorage.setItem(`certifications_${userID}`, JSON.stringify(updatedItems));
-      
       setEditData(null);
     }
   };
@@ -117,16 +122,13 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       },
     };
 
-    // const storageKey = `certifications_${userID}`;
-    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification`, formattedCertification)
-    .then((response) => {
-      const newCertificationFromServer = response.data.certification;
-      const newCertData = newCertificationFromServer[newCertificationFromServer.length-1]
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification`, formattedCertification)
+      .then((response) => {
+        const newCertificationFromServer = response.data.certification;
+        const newCertData = newCertificationFromServer[newCertificationFromServer.length - 1];
         setCertifications([...certifications, newCertData]);
-  
-        const updatedCertifications = [...certifications, newCertData];
-        // localStorage.setItem(storageKey, JSON.stringify(updatedCertifications));
-        // Reset the newCertification state
+
         setNewCertification({
           _id: '',
           name: '',
@@ -134,28 +136,23 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           issuedDate: { month: '', year: '' },
           expirationDate: { month: '', year: '' },
           url: '',
+          includeInResume: true,
         });
-  
-        // Set isAdding to false
+
         setIsAdding(false);
       })
       .catch((error) => {
-        // Handle errors by logging them to the console
         console.error('Error saving certification:', error.message);
       });
   };
-  
 
   const handleDelete = (id: string) => {
-    axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`)
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`)
       .then((response) => {
-        // Update the state to remove the deleted certification
         const updatedCertifications = certifications.filter((certification) => certification._id !== id);
         setCertifications(updatedCertifications);
-
-        // Reset the editData state
         setEditData(null);
-        // localStorage.setItem(`certifications_${userID}`, JSON.stringify(updatedCertifications));
       })
       .catch((error) => {
         console.error('Error deleting certification:', error.message);
@@ -170,20 +167,29 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       issuedDate: { month: '', year: '' },
       expirationDate: { month: '', year: '' },
       url: '',
+      includeInResume: true,
     });
     setIsAdding(true);
   };
 
-  // useEffect(() => {
-  //   fetch('${process.env.REACT_APP_API_URL}/api/certifications')
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setCertifications(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching certifications:', error);
-  //     });
-  // }, []);
+  const handleToggleInclude = (id: string) => {
+    const updatedCertifications = certifications.map((certification) =>
+      certification._id === id ? { ...certification, includeInResume: !certification.includeInResume } : certification
+    );
+    setCertifications(updatedCertifications);
+
+    const certificationToUpdate = updatedCertifications.find((certification) => certification._id === id);
+    if (certificationToUpdate) {
+      onEdit(id, {
+        name: certificationToUpdate.name,
+        issuedBy: certificationToUpdate.issuedBy,
+        issuedDate: certificationToUpdate.issuedDate,
+        expirationDate: certificationToUpdate.expirationDate,
+        url: certificationToUpdate.url,
+        includeInResume: certificationToUpdate.includeInResume,
+      });
+    }
+  };
 
   return (
     <div
@@ -231,9 +237,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 className="form-control mb-3"
                 placeholder="Certification Name"
                 value={editData.name}
-                onChange={(e) =>
-                  setEditData({ ...editData, name: e.target.value })
-                }
+                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -247,9 +251,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 className="form-control mb-3"
                 placeholder="Issued By"
                 value={editData.issuedBy}
-                onChange={(e) =>
-                  setEditData({ ...editData, issuedBy: e.target.value })
-                }
+                onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -391,9 +393,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 className="form-control mb-3"
                 placeholder="Certificate URL"
                 value={editData.url}
-                onChange={(e) =>
-                  setEditData({ ...editData, url: e.target.value })
-                }
+                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -511,7 +511,8 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                       certification.issuedBy,
                       certification.issuedDate,
                       certification.expirationDate,
-                      certification.url
+                      certification.url,
+                      certification.includeInResume
                     )
                   }
                   style={{
@@ -539,6 +540,23 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
                 </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(certification._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: certification.includeInResume ? '#28a745' : '#dc3545',
+                    color: certification.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={certification.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {certification.includeInResume ? 'Included' : 'Excluded'}
+                </button>
               </div>
             </div>
           )}
@@ -552,9 +570,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             className="form-control mb-3"
             placeholder="Certification Name"
             value={newCertification.name}
-            onChange={(e) =>
-              setNewCertification({ ...newCertification, name: e.target.value })
-            }
+            onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
             style={{
               borderRadius: '8px',
               border: '1px solid #ddd',
@@ -568,12 +584,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             className="form-control mb-3"
             placeholder="Issued By"
             value={newCertification.issuedBy}
-            onChange={(e) =>
-              setNewCertification({
-                ...newCertification,
-                issuedBy: e.target.value,
-              })
-            }
+            onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
             style={{
               borderRadius: '8px',
               border: '1px solid #ddd',
@@ -715,9 +726,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             className="form-control mb-3"
             placeholder="Certificate URL"
             value={newCertification.url}
-            onChange={(e) =>
-              setNewCertification({ ...newCertification, url: e.target.value })
-            }
+            onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
             style={{
               borderRadius: '8px',
               border: '1px solid #ddd',
@@ -771,7 +780,6 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       )}
     </div>
   );
-  
-}
+};
 
 export default CertificationSection;

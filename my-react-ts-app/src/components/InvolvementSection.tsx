@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faSave, faTimes, faToggleOn, faToggleOff, faMagic } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -11,19 +11,20 @@ interface Involvement {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
   isEditing?: boolean;
 }
 
 interface InvolvementProps {
   Involvements: Involvement[];
   onEdit: (id: string, data: { organization: string; role: string; startDate: { month: string; year: string };
-    endDate: { month: string; year: string }; description: string }) => void;
+    endDate: { month: string; year: string }; description: string; includeInResume: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
 const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{ id: string; organization: string; role: string; startDate: { month: string; year: string };
-  endDate: { month: string; year: string }; description: string } | null>(null);
+    endDate: { month: string; year: string }; description: string; includeInResume: boolean } | null>(null);
   const [involvements, setInvolvements] = useState<Involvement[]>(Involvements);
   const [newInvolvement, setNewInvolvement] = useState<Involvement>({
     _id: '',
@@ -32,6 +33,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
     description: '',
+    includeInResume: true,
   });
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
@@ -41,37 +43,30 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   ];
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
- 
-  // useEffect(() => {
-  //   const storedInvolvements = JSON.parse(localStorage.getItem(`involvements_${userID}`) || '[]');
-  //   setInvolvements(storedInvolvements);
-  // }, []);
 
   useEffect(() => {
     fetchInvolvement();
   }, []);
-  
+
   const fetchInvolvement = () => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch educations');
+          throw new Error('Failed to fetch involvements');
         }
         return response.json(); // Parse the response JSON
       })
       .then(data => {
-        // console.log("Project data:",data)
-        setInvolvements(data); // Set projects state with the fetched data
+        setInvolvements(data); // Set involvements state with the fetched data
       })
       .catch(error => {
-        console.error('Error fetching projects:', error);
+        console.error('Error fetching involvements:', error);
       });
   };
 
-  
   const handleEditClick = (id: string, organization: string, role: string, startDate: { month: string; year: string },
-    endDate: { month: string; year: string }, description: string) => {
-    setEditData({ id, organization, role, startDate, endDate, description });
+    endDate: { month: string; year: string }, description: string, includeInResume: boolean) => {
+    setEditData({ id, organization, role, startDate, endDate, description, includeInResume });
   };
 
   const handleCancelEdit = () => {
@@ -80,31 +75,27 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { organization: editData.organization, role: editData.role, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description });
+      onEdit(editData.id, {
+        organization: editData.organization,
+        role: editData.role,
+        startDate: { ...editData.startDate },
+        endDate: { ...editData.endDate },
+        description: editData.description,
+        includeInResume: editData.includeInResume
+      });
 
       const updatedItems = involvements.map((involvement) =>
         involvement._id === editData.id
-          ? { ...involvement, organization: editData.organization, role: editData.role, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description }
+          ? { ...involvement, organization: editData.organization, role: editData.role, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume }
           : involvement
       );
 
       setInvolvements(updatedItems);
-
-      // localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedItems));
-      
-
       setEditData(null);
     }
   };
 
   const handleSaveClick = () => {
-    // // Form validation check
-    // if (!newInvolvement.organization || !newInvolvement.role || !newInvolvement.startDate.month || !newInvolvement.startDate.year || !newInvolvement.endDate.month || !newInvolvement.endDate.year || !newInvolvement.description) {
-    //   console.error('Please fill in all required fields');
-    //   // You can display an error message to the user or handle it as appropriate
-    //   return;
-    // }
-
     const formattedInvolvement = {
       ...newInvolvement,
       startDate: {
@@ -117,56 +108,29 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       },
     };
 
-    // const storageKey = `involvements_${userID}`;
     axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement`, formattedInvolvement)
       .then((response) => {
         const newInvolvementFromServer = response.data.involvement;
-        const newInvData = newInvolvementFromServer[newInvolvementFromServer.length-1]
+        const newInvData = newInvolvementFromServer[newInvolvementFromServer.length - 1];
         setInvolvements([...involvements, newInvData]);
-  
-        // Reset the newExperience state
-        setNewInvolvement({ _id: '', organization: '', role: '', startDate: { month: '', year: '' },
-        endDate: { month: '', year: '' }, description: '' });
 
-        const updatedInvolvements = [...involvements, newInvData];
-        // localStorage.setItem(storageKey, JSON.stringify(updatedInvolvements));
-  
-        // Set isAdding to false
+        // Reset the newInvolvement state
+        setNewInvolvement({
+          _id: '',
+          organization: '',
+          role: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+          description: '',
+          includeInResume: true,
+        });
+
         setIsAdding(false);
       })
       .catch((error) => {
-        // Handle errors by logging them to the console
         console.error('Error saving involvement:', error.message);
       });
   };
-
-
-
-
-  //   fetch('${process.env.REACT_APP_API_URL}/api/involvements', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(formattedInvolvement),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((newInvolvementFromServer: Involvement) => {
-  //       // Update the involvements state with the new involvement
-  //       setInvolvements([...involvements, newInvolvementFromServer]);
-
-  //       // Reset the newInvolvement state
-  //       setNewInvolvement({ _id: '', organization: '', role: '', startDate: { month: '', year: '' },
-  //       endDate: { month: '', year: '' }, description: '' });
-
-  //       // Set isAdding to false
-  //       setIsAdding(false);
-  //     })
-  //     .catch((error) => {
-  //       // Handle errors by logging them to the console
-  //       console.error('Error saving involvement:', error.message);
-  //     });
-  // };
 
   const handleDelete = (id: string) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
@@ -176,10 +140,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         // Update the state to remove the deleted involvement
         const updatedInvolvements = involvements.filter((involvement) => involvement._id !== id);
         setInvolvements(updatedInvolvements);
-
-        // Reset the editData state
         setEditData(null);
-        // localStorage.setItem(`involvements_${userID}`, JSON.stringify(updatedInvolvements));
       })
       .catch((error) => {
         console.error('Error deleting involvement:', error);
@@ -194,76 +155,93 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       startDate: { month: '', year: '' },
       endDate: { month: '', year: '' },
       description: '',
+      includeInResume: true,
     });
     setIsAdding(true);
   };
 
-  // useEffect(() => {
-  //   fetch('${process.env.REACT_APP_API_URL}/api/involvements')
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setInvolvements(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error fetching involvements:', error);
-  //     });
-  // }, []);
+  const handleToggleInclude = (id: string) => {
+    const updatedInvolvements = involvements.map((involvement) =>
+      involvement._id === id ? { ...involvement, includeInResume: !involvement.includeInResume } : involvement
+    );
+    setInvolvements(updatedInvolvements);
+
+    const involvementToUpdate = updatedInvolvements.find(involvement => involvement._id === id);
+    if (involvementToUpdate) {
+      onEdit(id, {
+        organization: involvementToUpdate.organization,
+        role: involvementToUpdate.role,
+        startDate: involvementToUpdate.startDate,
+        endDate: involvementToUpdate.endDate,
+        description: involvementToUpdate.description,
+        includeInResume: involvementToUpdate.includeInResume
+      });
+    }
+  };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-  
-    // Check if the first line already starts with a star, if not, prepend a star
+
     if (lines.length > 0 && !lines[0].startsWith('*')) {
       lines[0] = '* ' + lines[0];
     }
-  
-    // Add a star to the beginning of each new line
+
     for (let i = 1; i < lines.length; i++) {
       if (lines[i] !== '' && !lines[i].startsWith('*')) {
         lines[i] = '* ' + lines[i];
       }
     }
-  
-    // Join the lines back together with newlines
+
     const newDescription = lines.join('\n');
-  
-    // Update the state
     setNewInvolvement({ ...newInvolvement, description: newDescription });
   };
-
 
   const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-    
-    // Add asterisk at the beginning of each line
+
     const linesWithAsterisks = lines.map(line => {
-      // Check if the line is not empty and doesn't start with an asterisk
       if (line.trim() !== '' && !line.trim().startsWith('*')) {
         return `* ${line}`;
       } else {
         return line;
       }
     });
-    
-    // Join the lines back together with newlines
+
     const newDescription = linesWithAsterisks.join('\n');
-    
-    // Ensure editData is not null before updating
+
     if (editData) {
-      setEditData({ 
-        ...editData, 
+      setEditData({
+        ...editData,
         description: newDescription
       });
     }
   };
-  
-  
 
-  
-
-  
+  const handleGenerateDescription = (organization: string, role: string) => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-involvement-description/${userID}/${organization}/${role}`, {
+        params: { organization, role },
+      })
+      .then((response) => {
+        const generatedDescription = response.data.text;
+        if (editData) {
+          setEditData((prevData) => ({
+            ...prevData!,
+            description: generatedDescription,
+          }));
+        } else {
+          setNewInvolvement((prevData) => ({
+            ...prevData,
+            description: generatedDescription,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.error('Error generating description:', error);
+      });
+  };
 
   return (
     <div
@@ -424,7 +402,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                       marginRight: '0.5rem',
                     }}
                   >
-                    {!editData.startDate.month && (
+                    {!editData.endDate.month && (
                       <option value="" disabled>
                         Select Month
                       </option>
@@ -477,8 +455,23 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                   padding: '12px',
                   fontSize: '1rem',
                   marginBottom: '1rem',
+                  height: '250px',
                 }}
               />
+              <button
+                className="btn btn-info me-2"
+                onClick={() => handleGenerateDescription(editData.organization, editData.role)}
+                style={{
+                  borderRadius: '8px',
+                  padding: '10px 20px',
+                  fontSize: '1rem',
+                  backgroundColor: '#17a2b8',
+                  color: '#fff',
+                }}
+              >
+                <FontAwesomeIcon icon={faMagic} className="me-2" />
+                AI Description
+              </button>
               <button
                 className="btn btn-success me-2"
                 onClick={handleUpdate}
@@ -583,7 +576,6 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     {part}
                   </p>
                 ))}
-  
               <div>
                 <button
                   className="btn btn-outline-primary me-2"
@@ -594,7 +586,8 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                       involvement.role,
                       involvement.startDate,
                       involvement.endDate,
-                      involvement.description
+                      involvement.description,
+                      involvement.includeInResume
                     )
                   }
                   style={{
@@ -623,6 +616,23 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 >
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
+                </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(involvement._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: involvement.includeInResume ? '#28a745' : '#dc3545',
+                    color: involvement.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={involvement.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {involvement.includeInResume ? 'Included' : 'Excluded'}
                 </button>
               </div>
             </div>
@@ -806,10 +816,25 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               padding: '12px',
               fontSize: '1rem',
               marginBottom: '1rem',
+              height: '250px',
             }}
           />
           <button
-            className="btn btn-success"
+            className="btn btn-info me-2"
+            onClick={() => handleGenerateDescription(newInvolvement.organization, newInvolvement.role)}
+            style={{
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+              backgroundColor: '#17a2b8',
+              color: '#fff',
+            }}
+          >
+            <FontAwesomeIcon icon={faMagic} className="me-2" />
+            AI Description
+          </button>
+          <button
+            className="btn btn-success me-2"
             onClick={handleSaveClick}
             style={{
               borderRadius: '8px',
@@ -853,8 +878,6 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       )}
     </div>
   );
-  
-  
 };
 
 export default InvolvementSection;

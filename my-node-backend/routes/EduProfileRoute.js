@@ -13,7 +13,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/education', async (req, res) => {
   try {
-    const { university, cgpa, degree, major, startDate, endDate } = req.body;
+    const { university, cgpa, degree, major, startDate, endDate, includeInResume } = req.body;
     const userId = req.params.userID;
 
     if (!university || !cgpa || !degree || !major || !startDate || !endDate) {
@@ -33,6 +33,7 @@ router.post('/:userID/education', async (req, res) => {
       major: major,
       startDate: startDate,
       endDate: endDate,
+      includeInResume
     });
 
     const savedUserProfile = await userProfile.save();

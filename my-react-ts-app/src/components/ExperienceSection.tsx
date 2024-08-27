@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
-
+import { faEdit, faTrash, faPlus, faSave, faToggleOn, faToggleOff, faMagic } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
-
 
 interface Experience {
   _id: string;
@@ -14,17 +12,36 @@ interface Experience {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
   isEditing?: boolean;
 }
 
 interface ExperienceProps {
-  Experiences: Experience[]; 
-  onEdit: (id: string, data: { jobTitle: string; company: string; location: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; description: string }) => void;
+  Experiences: Experience[];
+  onEdit: (id: string, data: {
+    jobTitle: string;
+    company: string;
+    location: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    description: string;
+    includeInResume: boolean;
+  }) => void;
   onDelete: (id: string) => void;
 }
 
 const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onDelete }) => {
-  const [editData, setEditData] = useState<{ id: string; jobTitle: string; company: string; location: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; description: string} | null>(null);
+  const [editData, setEditData] = useState<{
+    id: string;
+    jobTitle: string;
+    company: string;
+    location: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    description: string;
+    includeInResume: boolean;
+  } | null>(null);
+
   const [experiences, setExperiences] = useState<Experience[]>(Experiences);
   const [newExperience, setNewExperience] = useState<Experience>({
     _id: '',
@@ -34,9 +51,10 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
     description: '',
+    includeInResume: true,
   });
-  const [isAdding, setIsAdding] = useState(false);
 
+  const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
   const months = [
@@ -46,36 +64,61 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 
   const graduationYears = Array.from({ length: 57 }, (_, index) => (new Date()).getFullYear() + 7 - index);
 
-// useEffect(() => {
-//   const storedExperiences = JSON.parse(localStorage.getItem(`experiences_${userID}`) || '[]');
-//   setExperiences(storedExperiences);
-// }, []);
+  useEffect(() => {
+    fetchExperience();
+  }, []);
 
-useEffect(() => {
-  fetchExperience();
-}, []);
+  const fetchExperience = () => {
+    fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch experiences');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setExperiences(data);
+      })
+      .catch(error => {
+        console.error('Error fetching experiences:', error);
+      });
+  };
 
-const fetchExperience = () => {
-  fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch educations');
-      }
-      return response.json(); // Parse the response JSON
-    })
-    .then(data => {
-      // console.log("Project data:",data)
-      setExperiences(data); // Set projects state with the fetched data
-    })
-    .catch(error => {
-      console.error('Error fetching projects:', error);
-    });
-};
-  
+  const handleGenerateDescription = (jobTitle: string) => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-job-description/${userID}/${jobTitle}`, {
+        params: { jobTitle },
+      })
+      .then((response) => {
+        const generatedDescription = response.data.text;
+        if (editData) {
+          setEditData((prevData) => ({
+            ...prevData!,
+            description: generatedDescription,
+          }));
+        } else {
+          setNewExperience((prevExperience) => ({
+            ...prevExperience,
+            description: generatedDescription,
+          }));
+        }
+      })
+      .catch((error) => {
+        console.error('Error generating description:', error);
+      });
+  };
 
-
-  const handleEditClick = (id: string, jobTitle: string, company: string, location: string, startDate: { month: string; year: string }, endDate: { month: string; year: string }, description: string) => {
-    setEditData({ id, jobTitle, company, location, startDate, endDate, description });
+  const handleEditClick = (
+    id: string,
+    jobTitle: string,
+    company: string,
+    location: string,
+    startDate: { month: string; year: string },
+    endDate: { month: string; year: string },
+    description: string,
+    includeInResume: boolean
+  ) => {
+    setEditData({ id, jobTitle, company, location, startDate, endDate, description, includeInResume });
   };
 
   const handleCancelEdit = () => {
@@ -84,26 +127,28 @@ const fetchExperience = () => {
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { jobTitle: editData.jobTitle, company: editData.company, location: editData.location, startDate: { ...editData.startDate },
-        endDate: { ...editData.endDate }, description: editData.description});
-       
-      
+      onEdit(editData.id, {
+        jobTitle: editData.jobTitle,
+        company: editData.company,
+        location: editData.location,
+        startDate: { ...editData.startDate },
+        endDate: { ...editData.endDate },
+        description: editData.description,
+        includeInResume: editData.includeInResume
+      });
+
       const updatedItems = experiences.map((experience) =>
-      experience._id === editData.id
-        ? { ...experience, jobTitle: editData.jobTitle, company: editData.company, location: editData.location, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description }
-        : experience
-    );
+        experience._id === editData.id
+          ? { ...experience, jobTitle: editData.jobTitle, company: editData.company, location: editData.location, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume }
+          : experience
+      );
 
-    setExperiences(updatedItems);
-
-    // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedItems));
-      
+      setExperiences(updatedItems);
       setEditData(null);
     }
   };
 
   const handleSaveClick = () => {
-
     const formattedExperience = {
       ...newExperience,
       startDate: {
@@ -116,39 +161,36 @@ const fetchExperience = () => {
       },
     };
 
-    // const storageKey = `experiences_${userID}`;
- 
     axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience`, formattedExperience)
       .then((response) => {
         const newExperienceFromServer = response.data.experience;
-        const newExpData = newExperienceFromServer[newExperienceFromServer.length-1]
+        const newExpData = newExperienceFromServer[newExperienceFromServer.length - 1];
         setExperiences([...experiences, newExpData]);
 
-        const updatedExperiences = [...experiences, newExpData];
-        // localStorage.setItem(storageKey, JSON.stringify(updatedExperiences));
-        // Reset the newExperience state
-        setNewExperience({ _id: '', jobTitle: '', company: '', location: '', startDate: { month: '', year: '' },
-        endDate: { month: '', year: '' }, description:'' });
-  
-        // Set isAdding to false
+        setNewExperience({
+          _id: '',
+          jobTitle: '',
+          company: '',
+          location: '',
+          startDate: { month: '', year: '' },
+          endDate: { month: '', year: '' },
+          description: '',
+          includeInResume: true,
+        });
+
         setIsAdding(false);
       })
       .catch((error) => {
-        // Handle errors by logging them to the console
         console.error('Error saving experience:', error.message);
       });
   };
-  
 
   const handleDelete = (id: string) => {
     axios.delete(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`)
-      .then((response) => {
+      .then(() => {
         const updatedExperiences = experiences.filter((experience) => experience._id !== id);
         setExperiences(updatedExperiences);
-  
-        // Reset the editData state
         setEditData(null);
-        // localStorage.setItem(`experiences_${userID}`, JSON.stringify(updatedExperiences));
       })
       .catch((error) => {
         console.error('Error deleting experience:', error.message);
@@ -164,55 +206,66 @@ const fetchExperience = () => {
       startDate: { month: '', year: '' },
       endDate: { month: '', year: '' },
       description: '',
+      includeInResume: true,
     });
     setIsAdding(true);
+  };
+
+  const handleToggleInclude = (id: string) => {
+    const updatedExperiences = experiences.map((experience) =>
+      experience._id === id ? { ...experience, includeInResume: !experience.includeInResume } : experience
+    );
+    setExperiences(updatedExperiences);
+
+    const experienceToUpdate = updatedExperiences.find(exp => exp._id === id);
+    if (experienceToUpdate) {
+      onEdit(id, {
+        jobTitle: experienceToUpdate.jobTitle,
+        company: experienceToUpdate.company,
+        location: experienceToUpdate.location,
+        startDate: experienceToUpdate.startDate,
+        endDate: experienceToUpdate.endDate,
+        description: experienceToUpdate.description,
+        includeInResume: experienceToUpdate.includeInResume,
+      });
+    }
   };
 
   const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-  
-    // Check if the first line already starts with a star, if not, prepend a star
+
     if (lines.length > 0 && !lines[0].startsWith('*')) {
       lines[0] = '* ' + lines[0];
     }
-  
-    // Add a star to the beginning of each new line
+
     for (let i = 1; i < lines.length; i++) {
       if (lines[i] !== '' && !lines[i].startsWith('*')) {
         lines[i] = '* ' + lines[i];
       }
     }
-  
-    // Join the lines back together with newlines
+
     const newDescription = lines.join('\n');
-  
-    // Update the state
     setNewExperience({ ...newExperience, description: newDescription });
   };
-
 
   const handleEditDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const description = e.target.value;
     const lines = description.split('\n');
-    
-    // Add asterisk at the beginning of each line
+
     const linesWithAsterisks = lines.map(line => {
-      // Check if the line is not empty and doesn't start with an asterisk
       if (line.trim() !== '' && !line.trim().startsWith('*')) {
         return `* ${line}`;
       } else {
         return line;
       }
     });
-    
-    // Join the lines back together with newlines
+
     const newDescription = linesWithAsterisks.join('\n');
-    
-    // Ensure editData is not null before updating
+
     if (editData) {
-      setEditData({ 
-        ...editData, 
+      setEditData({
+        ...editData,
         description: newDescription
       });
     }
@@ -275,6 +328,7 @@ const fetchExperience = () => {
                   marginBottom: '1rem',
                 }}
               />
+             
               <input
                 type="text"
                 className="form-control mb-3"
@@ -446,8 +500,11 @@ const fetchExperience = () => {
                   padding: '12px',
                   fontSize: '1rem',
                   marginBottom: '1rem',
+                  height: '250px',
                 }}
               />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
               <button
                 className="btn btn-success me-2"
                 onClick={handleUpdate}
@@ -472,6 +529,25 @@ const fetchExperience = () => {
                 Cancel
               </button>
             </div>
+             <button
+             onClick={() => handleGenerateDescription(editData.jobTitle)}
+             className="btn btn-info me-2"
+             style={{
+              backgroundColor: '#17a2b8',
+              color: '#fff',
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '1rem',
+              transition: 'all 0.3s',
+             }}
+           >
+             <FontAwesomeIcon icon={faMagic} className="me-2" />
+             AI Description
+           </button>
+           </div>
+           </div>
+
+            
           ) : (
             // View mode
             <div
@@ -566,7 +642,7 @@ const fetchExperience = () => {
                     {part}
                   </p>
                 ))}
-  
+
               <div>
                 <button
                   className="btn btn-outline-primary me-2"
@@ -578,7 +654,8 @@ const fetchExperience = () => {
                       experience.location,
                       experience.startDate,
                       experience.endDate,
-                      experience.description
+                      experience.description,
+                      experience.includeInResume
                     )
                   }
                   style={{
@@ -608,6 +685,23 @@ const fetchExperience = () => {
                   <FontAwesomeIcon icon={faTrash} className="me-2" />
                   Delete
                 </button>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={() => handleToggleInclude(experience._id)}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: experience.includeInResume ? '#28a745' : '#dc3545',
+                    color: experience.includeInResume ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={experience.includeInResume ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {experience.includeInResume ? 'Included' : 'Excluded'}
+                </button>
               </div>
             </div>
           )}
@@ -632,6 +726,21 @@ const fetchExperience = () => {
               marginBottom: '1rem',
             }}
           />
+          <button
+            onClick={() => handleGenerateDescription(newExperience.jobTitle)}
+            className="btn btn-info me-2"
+            style={{
+              backgroundColor: '#17a2b8',
+              color: '#fff',
+              padding: '0.3rem 0.8rem',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              marginBottom: '1rem',
+            }}
+          >
+            <FontAwesomeIcon icon={faMagic} className="me-2" />
+            AI Description
+          </button>
           <input
             type="text"
             className="form-control mb-3"
@@ -803,6 +912,7 @@ const fetchExperience = () => {
               padding: '12px',
               fontSize: '1rem',
               marginBottom: '1rem',
+              height: '250px'
             }}
           />
           <button
@@ -850,9 +960,6 @@ const fetchExperience = () => {
       )}
     </div>
   );
-  
-  
-  
-}
+};
 
 export default ExperienceSection;
