@@ -726,21 +726,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
               marginBottom: '1rem',
             }}
           />
-          <button
-            onClick={() => handleGenerateDescription(newExperience.jobTitle)}
-            className="btn btn-info me-2"
-            style={{
-              backgroundColor: '#17a2b8',
-              color: '#fff',
-              padding: '0.3rem 0.8rem',
-              borderRadius: '8px',
-              fontSize: '0.9rem',
-              marginBottom: '1rem',
-            }}
-          >
-            <FontAwesomeIcon icon={faMagic} className="me-2" />
-            AI Description
-          </button>
+          
           <input
             type="text"
             className="form-control mb-3"
@@ -915,6 +901,11 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
               height: '250px'
             }}
           />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+         
+
           <button
             className="btn btn-success"
             onClick={handleSaveClick}
@@ -939,6 +930,26 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             Cancel
           </button>
         </div>
+
+<button
+onClick={() => handleGenerateDescription(newExperience.jobTitle)}
+className="btn btn-info me-2"
+style={{
+  backgroundColor: '#17a2b8',
+      color: '#fff',
+      borderRadius: '8px',
+      padding: '10px 20px',
+      fontSize: '1rem',
+      transition: 'all 0.3s',
+}}
+>
+<FontAwesomeIcon icon={faMagic} className="me-2" />
+AI Description
+</button>
+
+
+</div>
+            </div>
       )}
       {!isAdding && (
         // Show "Add Experience" button

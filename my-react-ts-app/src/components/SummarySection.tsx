@@ -356,26 +356,21 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                 className="btn btn-success"
                 onClick={handleSaveClick}
                 style={{
-                  backgroundColor: '#28a745',
-                  color: '#fff',
                   borderRadius: '8px',
                   padding: '10px 20px',
-                  transition: 'all 0.3s',
                   fontSize: '1rem',
                 }}
               >
-                Save
+               <FontAwesomeIcon icon={faSave} className="me-2" />
+               Save
               </button>
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary ms-2"
                 onClick={() => setIsAdding(false)}
                 style={{
-                  backgroundColor: '#6c757d',
-                  color: '#fff',
                   borderRadius: '8px',
-                  padding: '10px 20px',
-                  transition: 'all 0.3s',
-                  fontSize: '1rem',
+              padding: '10px 20px',
+              fontSize: '1rem',
                 }}
               >
                 Cancel

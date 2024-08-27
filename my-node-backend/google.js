@@ -37,7 +37,8 @@ router.get('/generate-project-description/:userID/:projectName', async (req, res
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using the project data
-    const prompt = `Write a 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}.`;
+    const prompt = `Write a 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}.
+    "Note: Do not use any numbering. Start the point with *"`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -59,6 +60,8 @@ router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
     // Query the database to get user details by ID
     const user = await UserProfile.findOne({ userID: userId });
 
+    console.log(jobTitle)
+
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -74,7 +77,8 @@ router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using the experience data
-    const prompt = `Write a 4 job description points for the role "${experience.jobTitle}". The role involved working at ${experience.company} in ${experience.location} with responsibilities including ${experience.description}.`;
+    const prompt = `Write a 4 job description points for the role "${experience.jobTitle}". The role involved working at ${experience.company} in ${experience.location} with responsibilities including ${experience.description}.
+    "Note: Do not use any numbering. Start the point with *"`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -114,7 +118,8 @@ router.get('/generate-involvement-description/:userID/:organization/:role', asyn
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using the involvement data
-    const prompt = `Write a 4 description points for the role of "${involvement.role}" at "${involvement.organization}". The role involved the following activities: ${involvement.description}.`;
+    const prompt = `Write a 4 description points for the role of "${involvement.role}" at "${involvement.organization}". The role involved the following activities: ${involvement.description}. 
+    "Note: Do not use any numbering. Start the point with *"`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
