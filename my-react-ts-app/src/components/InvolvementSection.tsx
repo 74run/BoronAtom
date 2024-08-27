@@ -819,20 +819,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               height: '250px',
             }}
           />
-          <button
-            className="btn btn-info me-2"
-            onClick={() => handleGenerateDescription(newInvolvement.organization, newInvolvement.role)}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-              backgroundColor: '#17a2b8',
-              color: '#fff',
-            }}
-          >
-            <FontAwesomeIcon icon={faMagic} className="me-2" />
-            AI Description
-          </button>
+          
           <button
             className="btn btn-success me-2"
             onClick={handleSaveClick}

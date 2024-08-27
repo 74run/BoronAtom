@@ -559,7 +559,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   color: '#555',
                 }}
               >
-                <strong>Skills:</strong> {project.skills}
+                <strong>Organization:</strong> {project.skills}
               </div>
               {project.description
                 .split('*')
