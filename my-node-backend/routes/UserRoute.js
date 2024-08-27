@@ -199,60 +199,63 @@ router.post('/register', async (req, res) => {
 
 
 router.post('/forgotpassword', async (req, res) => {
-    try {
-        const {email} = req.body;
-        const Email = email
-        // console.log('the email from reqbody is:', email);
-        const ForgotPasswordRecords = await User.findOne({email: email});
-        if (ForgotPasswordRecords.length <= 0) {
-          //no record found
-          throw new Error("User doesn't exist. Please register first or enter correct email address ");
-        } else {
-          // console.log('inside else loop');
-          if (!email) {
-            throw new Error("Enter Your email address");
-          }
-          // const token = jwt.sign({id: ForgotPasswordRecords.userId}, "jwt_secret_key", {expiresIn: "1d"});
-          // console.log('before mail options');
-          const mailOptions = {
-            from: 'pvsndeepak@gmail.com',
-            to: email,
-            subject: "Reset Your Password",
-            html: `http://localhost:3000/resetpassword`
-          };
-          // console.log('after mail options');
-          await transporter.sendMail(mailOptions);
-          // console.log('after transporter send mail');
-          return res.json({
-            status: "PENDING",
-            message: "Reset Password email sent",
-            data: {
-              Email,
-            },
-          });
-          // return res.json({
-          //   status: "PASSWORD RESET SUCCESS",
-          //   message: `Password has been changed successfully.`,
-          // });
-        }
-    } catch (error) {
-      res.json({
-        status: "PASSWORD RESET FAILED",
-        message: error.message,
+  try {
+      const { email } = req.body;
+
+      if (!email) {
+          return res.status(400).json({ status: "FAILED", message: "Enter your email address" });
+      }
+
+      const user = await User.findOne({ email: email });
+      if (!user) {
+          return res.status(404).json({ status: "FAILED", message: "User doesn't exist. Please register first or enter correct email address." });
+      }
+
+      // Generate a reset token (optional but recommended for security)
+      const token = jwt.sign({ id: user._id }, "jwt_secret_key", { expiresIn: "1d" });
+
+      // Construct the reset password link
+      const resetLink = `http://localhost:3000/resetpassword?token=${token}`;
+
+      // Define email options
+      const mailOptions = {
+          from: 'tarunjanapati7@gmail.com',
+          to: email,
+          subject: "Reset Your Password",
+          html: `<p>You requested to reset your password. Click the link below to reset it:</p><a href="${resetLink}">Reset Password</a>`
+      };
+
+      // Send email
+      await transporter.sendMail(mailOptions);
+
+      return res.status(200).json({
+          status: "PENDING",
+          message: "Reset Password email sent",
+          data: { email },
       });
-    }
-})
+  } catch (error) {
+      return res.status(500).json({
+          status: "PASSWORD RESET FAILED",
+          message: error.message,
+      });
+  }
+});
 
 
 router.post('/resetpassword', async (req, res) => {
- 
-  const { email, password } = req.body;
+  const { token, password } = req.body;
 
   try {
-    // Find the user by email
-    const user = await User.findOne({ email });
+    if (!token) {
+      return res.status(400).json({ message: 'Token is required' });
+    }
 
-    // If user not found, return an error
+    // Verify the token
+    const decoded = jwt.verify(token, "jwt_secret_key");
+    
+    // Find the user by the id embedded in the token
+    const user = await User.findById(decoded.id);
+
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -262,7 +265,6 @@ router.post('/resetpassword', async (req, res) => {
 
     // Update user's password with the new hashed password
     user.password = hashedPassword;
-    user.confirmPassword = hashedPassword;
 
     // Save the updated user
     await user.save();
