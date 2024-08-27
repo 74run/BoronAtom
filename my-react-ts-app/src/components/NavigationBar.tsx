@@ -1,18 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../css/Navbar.css'; // Import custom CSS for Navbar styling
 import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBell, faUserFriends, faSearch, faBars } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons
-import pic from './Gold.png';
+import { faHome, faBell, faUserFriends, faBars } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons
+import axios from 'axios';
 import logo from './logo-no-background.png'; 
 
+interface UserDetails {
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+}
+
 interface NavbarProps {
+  UserDetail: UserDetails | null;
   // Add any props you need
 }
 
 const Navbar: React.FC<NavbarProps> = () => {
   const [activeItem, setActiveItem] = useState<string>('home');
+  const [profileImage, setProfileImage] = useState<string>('');
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const navigate = useNavigate();
 
   const handleItemClick = (itemName: string) => {
@@ -26,6 +36,27 @@ const Navbar: React.FC<NavbarProps> = () => {
     localStorage.removeItem('UserID');
     navigate('/login');
   };
+
+  useEffect(() => {
+    const userID = localStorage.getItem('UserID');
+
+    if (userID) {
+      axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
+        .then(response => {
+          const base64Image = btoa(
+            new Uint8Array(response.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          );
+          const contentType = response.headers['content-type'];
+          setProfileImage(`data:${contentType};base64,${base64Image}`);
+        })
+        .catch(error => {
+          console.error('Error fetching profile image:', error);
+        });
+    }
+  }, []);
 
   return (
     <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar">
@@ -45,29 +76,11 @@ const Navbar: React.FC<NavbarProps> = () => {
 
         <BootstrapNavbar.Collapse id="navbarResponsive">
           <div className="d-flex flex-column flex-md-row align-items-center w-100">
-            <div className="input-group mx-md-auto" style={{ maxWidth: '400px' }}> {/* Centered with max width */}
-              {/* <input 
-                type="text" 
-                className="form-control rounded-start" 
-                placeholder="Search" 
-                aria-label="Search" 
-                aria-describedby="button-addon2" 
-                style={{ borderRadius: '50px 0 0 50px', boxShadow: 'none', paddingRight: '10px' }} // Added paddingRight to adjust for the button width
-              />
-              <div className="input-group-append">
-                <button 
-                  className="btn btn-outline-success rounded-end" 
-                  type="button" 
-                  id="button-addon2" 
-                  style={{ borderRadius: '0 50px 50px 0', boxShadow: 'none', width: '38px', padding: '8px' }} // Adjusted width and padding
-                >
-                  <FontAwesomeIcon icon={faSearch} />
-                </button>
-              </div> */}
+            <div className="input-group mx-md-auto" style={{ maxWidth: '400px' }}>
+              {/* Commented out the search bar for now */}
             </div>
 
-            <BootstrapNav className="ms-md-auto"> {/* Added class for left alignment on larger screens */}
-              {/* Normal navigation */}
+            <BootstrapNav className="ms-md-auto">
               <div className="d-flex flex-column flex-md-row align-items-center">
                 <Link
                   to="/"
@@ -93,9 +106,9 @@ const Navbar: React.FC<NavbarProps> = () => {
               </div>
 
               <div style={{ display: 'flex', marginLeft: '10px' }}>
-                <NavDropdown title={<Image src={pic} alt="Logo" roundedCircle className="profile-pic" />} align="end">
+                <NavDropdown title={<Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic" />} align="end">
                   <NavDropdown.Item>
-                    <Image src={pic} alt="Profile" roundedCircle className="profile-pic" />
+                    <Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic" />
                     Your Profile
                   </NavDropdown.Item>
                   <NavDropdown.Divider />

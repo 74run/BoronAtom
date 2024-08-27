@@ -10,6 +10,7 @@ const { exec } = require('child_process');
 
 const { GridFSBucket, ObjectId } = require('mongodb');
 
+const UserProfile = require('./models/UserprofileModel');
 const allowCors = require('./cors');
 
 require("dotenv").config();
@@ -43,6 +44,7 @@ const corsOptions = {
   credentials: true, // If your frontend needs to send cookies or credentials with the request
   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
 };
+
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -229,24 +231,51 @@ const imageSchema = new mongoose.Schema({
 const Image = mongoose.model("Image", imageSchema);
 
 
-app.post("/api/saveImage", async (req, res) => {
-  const imageData = req.body.imageData;
+app.post('/api/userprofile/:userID/image', async (req, res) => {
+  const { userID } = req.params;
+  const { imageData } = req.body;
 
-  // Create a unique filename for the image
-  const filename = "avatar_" + Date.now() + ".png";
-
-  // Decode base64 image data
-  const base64Data = imageData.replace(/^data:image\/png;base64,/, "");
-
-  // Save the image to the MongoDB database
   try {
-    const image = new Image({ imageData: Buffer.from(base64Data, "base64"), filename });
-    await image.save();
-    // console.log("Image saved successfully:", filename);
-    res.json({ success: true, filename: filename });
+      // Decode the base64 image
+      const matches = imageData.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
+      const contentType = matches[1];
+      const imageBuffer = Buffer.from(matches[2], 'base64');
+
+      // Find the user profile by userID
+      const userProfile = await UserProfile.findOne({ userID });
+
+      if (!userProfile) {
+          return res.status(404).json({ message: 'User profile not found' });
+      }
+
+      // Update the profile with the image
+      userProfile.image = imageBuffer;
+      userProfile.image.contentType = contentType;
+
+      await userProfile.save();
+
+      res.status(200).json({ message: 'Image saved successfully' });
   } catch (error) {
-    console.error("Error saving image:", error);
-    res.status(500).json({ error: "Error saving image" });
+      res.status(500).json({ message: 'Error saving image', error });
+  }
+});
+
+
+
+app.get('/api/userprofile/:userID/image', async (req, res) => {
+  const { userID } = req.params;
+
+  try {
+      const userProfile = await UserProfile.findOne({ userID });
+
+      if (!userProfile || !userProfile.image) {
+          return res.status(404).json({ message: 'Image not found' });
+      }
+
+      res.set('Content-Type', userProfile.image.contentType);
+      res.send(userProfile.image);
+  } catch (error) {
+      res.status(500).json({ message: 'Error retrieving image', error });
   }
 });
 
