@@ -1,136 +1,181 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Navbar as BootstrapNavbar, Nav } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
+import '../css/VerifyOTP.css'; // Import your custom CSS file
+import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome CSS
+
+import logo from './logo-no-background.png';
 
 const VerifyOTP: React.FC = () => {
   const [otp, setOtp] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
 
   const API_BASE_URL = process.env.REACT_APP_API_URL;
+  const userId = localStorage.getItem('userId');
 
-  const checkAndClearLocalStorage = () => {
-    const storedData = localStorage.getItem('userId');
-  
-    if (storedData) {
-      const { data, timestamp } = JSON.parse(storedData);
-      const currentTime = new Date().getTime();
-      const timeDifference = currentTime - timestamp;
-  
-      // Set your desired time limit
-      const timeLimit = 3 * 60 * 1000; // 3 min in milliseconds
-  
-      if (timeDifference > timeLimit) {
-        // Clear localStorage after the specified time
-        localStorage.removeItem('userId');
-        return null; // If data is cleared, return null
-      }
-      const parsedObject = JSON.parse(storedData);
-      const userId = parsedObject.userId;
-      return userId; // If data is within the time limit, return the data
+  useEffect(() => {
+    if (!userId) {
+      setErrorMessage('User ID is missing. Please register again.');
     }
-  
-    return null; // If no data is found, return null
-  };
-  
-  
+  }, [userId]);
 
   const handleVerification = async () => {
+    if (!userId) {
+      setErrorMessage('User ID is missing. Please try again.');
+      return;
+    }
+
     try {
-      const userId = checkAndClearLocalStorage();
-
-      // console.log('userid from checkAndClearLocalStorage is: ', userId);
-      const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, { userId, otp });
-      const msg = response.data.message;
-
-      if (msg === 'User email verified successfully.') {
+      const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, {
+        otp,
+        userId // Pass userId from local storage
+      });
+      const { message } = response.data;
+  
+      if (response.data.success) {
+        localStorage.removeItem('userId'); // Clear userId from local storage after successful verification
         navigate('/login');
       } else {
-        // Set the error message
-        setErrorMessage(msg);
-        setIsVerified(false); // Assuming you want to set isVerified state to false
+        setErrorMessage(message || 'Verification failed. Please try again.');
       }
-
-      // console.log('Response is:', response.data);
     } catch (error: any) {
-      // Explicitly specify the type of 'error' as 'any'
       console.error('Verification error:', error.message || 'Unknown error');
+      setErrorMessage('An error occurred during verification. Please try again.');
     }
   };
+
+  const handleResendOTP = async () => {
+    if (!userId) {
+      setErrorMessage('User ID is missing. Please try again.');
+      return;
+    }
+
+    setIsResending(true); // Indicate that the OTP is being resent
+
+    try {
+      const response = await axios.post(`${API_BASE_URL}/api/resendOTP`, { userId });
+      const { message } = response.data;
+
+      if (response.data.success) {
+        setSuccessMessage('OTP has been resent. Please check your email.');
+      } else {
+        setErrorMessage(message || 'Failed to resend OTP. Please try again.');
+      }
+    } catch (error: any) {
+      console.error('Resend OTP error:', error.message || 'Unknown error');
+      setErrorMessage('An error occurred while resending the OTP. Please try again.');
+    } finally {
+      setIsResending(false); // Reset the resending state
+    }
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
+
   return (
-    <div className="verification-container">
-      <h2>Enter Verification OTP</h2>
-      <label htmlFor="otpInput">OTP:</label>
-      <input
-        type="text"
-        id="otpInput"
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        className="otp-input"
-      />
-      <button onClick={handleVerification} className="verify-button">Verify</button>
-  
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
-      {isVerified && <p className="success-message">Verification successful! You can proceed.</p>}
-  
-      <style >{`
-        .verification-container {
-          max-width: 400px;
-          margin: 0 auto;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          background-color: #f9f9f9;
+    <div className="verify-page">
+      <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
+        <div className="container">
+          <a className="navbar-brand" href="/">
+            <img src={logo} alt="Logo" height="40" />
+          </a>
+          <Nav className="ms-auto">
+            <Nav.Link onClick={handleLoginClick}>Login</Nav.Link>
+            <Nav.Link onClick={handleRegisterClick}>Register</Nav.Link>
+          </Nav>
+        </div>
+      </BootstrapNavbar>
+
+      <div className="verify-container">
+        <div className="verify-box shadow p-5 rounded">
+          <h2 className="text-center mb-4">Verify Your Account</h2>
+          <p className="text-center mb-4">Enter the OTP sent to your email</p>
+          <div className="mb-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+          </div>
+          <div className="d-grid gap-2">
+            <button onClick={handleVerification} className="btn btn-primary btn-lg">
+              Verify
+            </button>
+          </div>
+
+          <div className="mt-3 text-center">
+            <button onClick={handleResendOTP} className="btn btn-link" disabled={isResending}>
+              {isResending ? 'Resending...' : 'Resend OTP'}
+            </button>
+          </div>
+
+          {successMessage && <p className="text-success mt-3 text-center">{successMessage}</p>}
+          {errorMessage && <p className="text-danger mt-3 text-center">{errorMessage}</p>}
+        </div>
+      </div>
+
+      <style>{`
+        .verify-page {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-color: #f8f9fa;
         }
-  
+
+        .verify-container {
+          max-width: 400px;
+          width: 100%;
+          margin: auto;
+        }
+
+        .verify-box {
+          background-color: #ffffff;
+        }
+
         h2 {
           font-size: 24px;
           margin-bottom: 20px;
+          color: #343a40;
         }
-  
-        label {
-          font-size: 16px;
-          margin-bottom: 10px;
-          display: block;
+
+        p {
+          color: #6c757d;
         }
-  
-        .otp-input {
-          width: 100%;
-          padding: 10px;
-          font-size: 16px;
-          margin-bottom: 20px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-        }
-  
-        .verify-button {
-          padding: 10px 20px;
-          font-size: 16px;
+
+        .btn-primary {
           background-color: #007bff;
-          color: #fff;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
+          border-color: #007bff;
         }
-  
-        .verify-button:hover {
+
+        .btn-primary:hover {
           background-color: #0056b3;
+          border-color: #004085;
         }
-  
-        .error-message {
-          color: red;
-          margin-top: 10px;
+
+        .text-danger {
+          color: #dc3545 !important;
         }
-  
-        .success-message {
-          color: green;
-          margin-top: 10px;
+
+        .text-success {
+          color: #28a745 !important;
         }
       `}</style>
     </div>
   );
-  
 };
 
 export default VerifyOTP;

@@ -31,125 +31,161 @@ let transporter = nodemailer.createTransport({
 
 const router = express.Router();
 
-const sendOTPVerificationEmail = async (email, _id,res) => {
+const sendOTPVerificationEmail = async (email, _id) => {
   try {
-    // console.log('Inside sendotpverificationemail method');
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
 
-    //mail options
     const mailOptions = {
       from: 'tarunjanapati7@gmail.com',
       to: email,
       subject: "Verify Your Email",
-      html: `<p> Enter <b>${otp}</b> in the app to verify your email address and complete your verification </p>
+      html: `<p>Enter <b>${otp}</b> in the app to verify your email address and complete your verification</p>
              <p>This code <b>expires in 1 hour</b>.</p>`
     };
 
-    // console.log('before hashedOTP');
-
-    //hash the otp
+    // Hash the OTP
     const saltRounds = 10;
-    
     const hashedOTP = await bcryptjs.hash(otp, saltRounds);
-    const newOTPVerification = await new UserOTPVerification({
+
+    // Create a new OTP verification record
+    const newOTPVerification = new UserOTPVerification({
       userId: _id,
       otp: hashedOTP,
       createdAt: Date.now(),
-      expiresAt: Date.now() + 3600000,
+      expiresAt: Date.now() + 3600000, // 1 hour expiration
     });
-    //save otp record
+
+    // Save the OTP record
     await newOTPVerification.save();
+
+    // Send the email
     await transporter.sendMail(mailOptions);
-    res.json({
-      status: "PENDING",
-      message: "Verification Otp email sent",
-      data: {
-        userId: _id,
-        email,
-      },
-    });
+
   } catch (error) {
-    console.log("Error in sending OTP verification email");
-    res.json({
-      status: "FAILED",
-      message: error.message,
-    });
+    console.log("Error in sending OTP verification email:", error);
+    throw new Error("Failed to send OTP verification email");
   }
 };
 
-//verify otp email
-router.post("/verifyOTP", async (req, res) => {
+
+
+router.post('/verifyOTP', async (req, res) => {
   try {
-    let { userId, otp } = req.body;
-    if (!userId || !otp) {
-      throw Error("Empty OTP details are not allowed");
-    } else {
-      const UserOTPVerificationRecords = await UserOTPVerification.find({ userId });
+    const { otp, userId } = req.body;
 
-      if (UserOTPVerificationRecords.length <= 0) {
-        throw new Error("Account record doesn't exist or has been verified already. Please sign up or log in.");
-      } else {
-        const { expiresAt } = UserOTPVerificationRecords[0];
-        const hashedOTP = UserOTPVerificationRecords[0].otp;
-        
-        if (expiresAt < Date.now()) {
-          await UserOTPVerification.deleteMany({ userId });
-          throw new Error("Code has expired. Please request again.");
-        } else {
-          const validOTP = await bcryptjs.compare(otp, hashedOTP);
-          if (!validOTP) {
-            throw new Error("Invalid code passed. Check your inbox.");
-          } else {
-            // OTP is valid, move the user data from PendingUsers to Users
-            const pendingUser = await PendingUser.findById(userId);
-            if (!pendingUser) {
-              throw new Error("User not found in pending records.");
-            }
+   
 
-            // Move user data to the main User collection
-            const user = new User({
-              firstName: pendingUser.firstName,
-              lastName: pendingUser.lastName,
-              email: pendingUser.email,
-              username: pendingUser.username,
-              password: pendingUser.password,
-              confirmPassword: pendingUser.confirmPassword,
-            });
-
-            await user.save();
-
-            // Create a UserProfile entry with contact details
-            const contactDetails = {
-              name: `${pendingUser.firstName} ${pendingUser.lastName}`,
-              email: pendingUser.email,
-            };
-
-            const userProfile = new UserProfile({
-              userID: user._id,
-              contact: contactDetails,
-              // other fields as needed...
-            });
-
-            await userProfile.save();
-
-            await PendingUser.deleteMany({ _id: userId }); // Clean up pending record
-            await UserOTPVerification.deleteMany({ userId }); // Clean up OTP records
-
-            return res.json({
-              status: "VERIFIED",
-              message: "User email verified successfully.",
-            });
-          }
-        }
-      }
+    if (!otp || !userId) {
+      return res.status(400).json({ success: false, message: 'OTP and userId are required.' });
     }
-  } catch (error) {
-    res.json({
-      status: "FAILED",
-      message: error.message,
+
+ 
+
+    // Check if the user exists in the PendingUser collection
+    const pendingUser = await PendingUser.findById(userId);
+    if (!pendingUser) {
+      console.log('Invalid request. User not found.');
+      return res.status(400).json({ success: false, message: 'Invalid request. User not found.' });
+    }
+
+    // Find the OTP verification record
+    const otpRecord = await UserOTPVerification.findOne({ userId });
+    if (!otpRecord) {
+      console.log('OTP not found or already used.');
+      return res.status(400).json({ success: false, message: 'OTP not found or already used.' });
+    }
+
+    // Check if the OTP has expired
+    if (otpRecord.expiresAt < Date.now()) {
+      await UserOTPVerification.deleteOne({ userId }); // Delete the expired OTP record
+      console.log('OTP has expired.');
+      return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
+    }
+
+    // Verify the OTP
+    const isOtpValid = await bcryptjs.compare(otp, otpRecord.otp);
+    if (!isOtpValid) {
+      console.log('Invalid OTP.');
+      return res.status(400).json({ success: false, message: 'Invalid OTP. Please try again.' });
+    }
+
+    console.log('OTP is valid. Moving user from PendingUser to User.');
+
+    // OTP is valid - move user from PendingUser to User
+    const newUser = new User({
+      firstName: pendingUser.firstName,
+      lastName: pendingUser.lastName,
+      email: pendingUser.email,
+      username: pendingUser.username,
+      password: pendingUser.password,
+      confirmPassword: pendingUser.confirmPassword,
     });
+
+    await newUser.save();
+
+    // Clean up: Delete the pending user and OTP record
+    await PendingUser.findByIdAndDelete(userId);
+    await UserOTPVerification.deleteOne({ userId });
+
+    console.log('User email verified successfully.');
+
+    // Respond with success
+    res.status(200).json({ success: true, message: 'User email verified successfully. Redirecting to login...' });
+
+  } catch (error) {
+    console.error('OTP verification error:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 });
+
+
+router.post('/resendOTP', async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ success: false, message: 'User ID is required.' });
+    }
+
+    // Find the user in the PendingUser collection
+    const user = await PendingUser.findById(userId);
+    if (!user) {
+      return res.status(400).json({ success: false, message: 'User not found.' });
+    }
+
+    // Generate a new OTP
+    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+    const saltRounds = 10;
+    const hashedOTP = await bcryptjs.hash(otp, saltRounds);
+
+    // Find the existing OTP record and update it
+    const otpRecord = await UserOTPVerification.findOneAndUpdate(
+      { userId: userId },
+      {
+        otp: hashedOTP,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 3600000, // 1 hour expiration
+      },
+      { new: true, upsert: true } // Create a new record if one doesn't exist
+    );
+
+    // Send the new OTP to the user's email
+    const mailOptions = {
+      from: 'tarunjanapati7@gmail.com',
+      to: user.email,
+      subject: "Your New OTP Code",
+      html: `<p>Enter <b>${otp}</b> in the app to verify your email address. This code <b>expires in 1 hour</b>.</p>`
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ success: true, message: 'OTP resent successfully.' });
+  } catch (error) {
+    console.error('Error in resending OTP:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+});
+
 
 
 
@@ -157,26 +193,30 @@ router.post('/register', async (req, res) => {
   try {
     const { firstName, lastName, email, username, password, confirmPassword } = req.body;
 
-    // Check if the email already exists in the User collection
+    if (!firstName || !lastName || !email || !username || !password || !confirmPassword) {
+      return res.status(400).json({ success: false, message: 'All fields are required.' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Passwords do not match.' });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ success: false, message: 'Email is already registered.' });
     }
 
-    // Check if the email already exists in the PendingUser collection
     const existingPendingUser = await PendingUser.findOne({ email });
     if (existingPendingUser) {
       return res.status(400).json({ success: false, message: 'A registration with this email is pending verification.' });
     }
 
-    // Check if the username already exists
     const existingUsername = await User.findOne({ username });
     if (existingUsername) {
       return res.status(400).json({ success: false, message: 'Username is already taken.' });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 10);
-    const hashedConfirmPassword = await bcryptjs.hash(confirmPassword, 10);
 
     const pendingUser = new PendingUser({
       firstName,
@@ -184,23 +224,31 @@ router.post('/register', async (req, res) => {
       email,
       username,
       password: hashedPassword,
-      confirmPassword: hashedConfirmPassword,
+      confirmPassword: hashedPassword,
     });
 
-    await pendingUser.save().then((result) => {
-      // Send OTP verification email
-      sendOTPVerificationEmail(email, result._id, res);
-    });
+    const result = await pendingUser.save();
+
+    // Attempt to send OTP email
+    await sendOTPVerificationEmail(email, result._id);
+
+    // Send the success response only after OTP is successfully sent
+    res.status(200).json({ success: true, userId: result._id, message: "Registration successful. OTP sent to email." });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Internal server error' });
+    console.error('Error during registration:', error);
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
   }
 });
+
 
 
 router.post('/forgotpassword', async (req, res) => {
   try {
       const { email } = req.body;
+      
 
       if (!email) {
           return res.status(400).json({ status: "FAILED", message: "Enter your email address" });

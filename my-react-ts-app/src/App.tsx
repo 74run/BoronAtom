@@ -7,6 +7,8 @@ import VerifyOTP from './components/VerifyOTP';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 
+import { useParams } from 'react-router-dom';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -16,6 +18,7 @@ const App: React.FC = () => {
     return localStorage.getItem('isLoggedIn') === 'true';
   });
   const [isLoading, setIsLoading] = useState(true);
+  const { userId } = useParams();
 
   const decode = (token: string) => {
     const payload = token.split('.')[1]; // Assuming token structure: header.payload.signature
@@ -80,7 +83,7 @@ const App: React.FC = () => {
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path="/verifyotp" element={<VerifyOTP />} />
+        <Route path= {`/verifyOTP`} element={<VerifyOTP />} />
 
         {/* Default Redirect */}
         <Route

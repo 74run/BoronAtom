@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Navbar as BootstrapNavbar, Nav as BootstrapNav } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
-import '../css/RegisterForm.css'; // Import your custom CSS file
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Import Font Awesome CSS
-
+import { Navbar as BootstrapNavbar } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../css/RegisterForm.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import logo from './logo-no-background.png';
+import PasswordCriteria from './PasswordCriteria';
 
 const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -17,7 +17,8 @@ const RegisterForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null); // State to hold the error message
+  const [showCriteria, setShowCriteria] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +57,8 @@ const RegisterForm: React.FC = () => {
     }
 
     try {
+      setError(null);
+
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, {
         firstName,
         lastName,
@@ -66,13 +69,22 @@ const RegisterForm: React.FC = () => {
       });
 
       const { data } = response;
-      localStorage.setItem('userId', data.userId);
 
-      setError(null);
-      navigate('/verifyotp');
+      if (data.success) {
+        localStorage.setItem('userId', data.userId); // Extract userId from the response
+        navigate('/verifyOTP'); // Redirect to OTP verification page
+      } else {
+        setError(data.message || 'Registration failed. Please try again.');
+      }
     } catch (error: any) {
-      setError(error.message || 'Unknown error');
-      console.error('Registration error:', error.message || 'Unknown error');
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else if (error.message) {
+        setError(error.message);
+      } else {
+        setError('Unknown error occurred. Please try again.');
+      }
+      console.error('Registration error:', error.response?.data?.message || error.message || 'Unknown error');
     }
   };
 
@@ -93,6 +105,8 @@ const RegisterForm: React.FC = () => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
+
+  const isPasswordMatch = () => password === confirmPassword && confirmPassword !== '';
 
   return (
     <div className="register-page">
@@ -166,18 +180,20 @@ const RegisterForm: React.FC = () => {
                   className="form-control"
                   value={password}
                   placeholder="Password*"
+                  onFocus={() => setShowCriteria(true)}
+                  onBlur={() => setShowCriteria(false)}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button
-  type="button"
-  className="btn btn-outline-visibility-toggle"
-  onClick={togglePasswordVisibility}
->
-  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-</button>
-
+                  type="button"
+                  className="btn btn-outline-visibility-toggle"
+                  onClick={togglePasswordVisibility}
+                >
+                  <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+                </button>
               </div>
+              {showCriteria && <PasswordCriteria password={password} />}
             </div>
             <div className="mb-4">
               <div className="password-input-group input-group">
@@ -189,15 +205,20 @@ const RegisterForm: React.FC = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
-               <button
-  type="button"
-  className="btn btn-outline-visibility-toggle"
-  onClick={toggleConfirmPasswordVisibility}
->
-  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-</button>
-
+                <button
+                  type="button"
+                  className="btn btn-outline-visibility-toggle"
+                  onClick={toggleConfirmPasswordVisibility}
+                >
+                  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+                </button>
               </div>
+              {/* Password match message */}
+              {confirmPassword && (
+                <p className={isPasswordMatch() ? 'text-success' : 'text-danger'}>
+                  {isPasswordMatch() ? 'Passwords match' : 'Passwords do not match'}
+                </p>
+              )}
             </div>
 
             {error && <p className="text-danger">{error}</p>}
