@@ -13,6 +13,7 @@ import axios from "axios";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB in bytes
 
 interface ImageCropperProps {
   currentAvatar: string;
@@ -33,6 +34,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const [error, setError] = useState<string>("");
 
   const { userID } = useParams();
+
   useEffect(() => {
     setImgSrc(currentAvatar);
   }, [currentAvatar]);
@@ -40,6 +42,11 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File size exceeds the 2 MB limit. Please choose a smaller file.");
+      return;
+    }
 
     const reader = new FileReader();
     reader.addEventListener("load", () => {
@@ -93,11 +100,15 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { imageData: dataUrl });
       updateAvatar(dataUrl);
       closeModal();
-    } catch (error) {
-      console.error("Error saving image:", error);
+    } catch (error: any) {
+      if (error.response && error.response.status === 413) {
+        setError("The image is too large. Please choose a smaller file.");
+      } else {
+        console.error("Error saving image:", error);
+        setError("An error occurred while saving the image. Please try again.");
+      }
     }
   };
-  
 
   return (
     <>
@@ -172,8 +183,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           onChange={onSelectFile}
           style={{ display: "none" }}
           className="custom-file-input visually-hidden"
-            id="fileInput"
-
+          id="fileInput"
         />
     </>
   );

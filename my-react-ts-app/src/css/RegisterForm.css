@@ -58,6 +58,36 @@
   position: relative;
 }
 
+.password-criteria {
+  list-style-type: none;
+  padding-left: 0;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.password-criteria li {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.text-success {
+  color: #28a745 !important;
+}
+
+.text-danger {
+  color: #dc3545 !important;
+}
+
+
+.btn-outline-visibility-toggle {
+  border: none;
+  background: none;
+  outline: none;
+  padding: 0;
+}
+
+
 .input-group .form-control {
   padding-right: 40px;
 }
