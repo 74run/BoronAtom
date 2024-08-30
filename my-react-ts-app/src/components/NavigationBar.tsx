@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import '../css/Navbar.css'; // Import custom CSS for Navbar styling
 import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faBell, faUserFriends, faBars } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons
+import { faBars } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons
 import axios from 'axios';
 import logo from './logo-no-background.png'; 
 
@@ -20,7 +20,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const [activeItem, setActiveItem] = useState<string>('home');
+  const [activeItem, setActiveItem] = useState<string>('ai-resume');
   const [profileImage, setProfileImage] = useState<string>('');
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const navigate = useNavigate();
@@ -59,14 +59,14 @@ const Navbar: React.FC<NavbarProps> = () => {
   }, []);
 
   return (
-    <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar">
+    <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar shadow-sm">
       <div className="container-fluid">
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <Image 
             src={logo} 
-            alt="Boron Atom Logo" 
+            alt="Brand Logo" 
             className="d-inline-block align-top img-fluid" 
-            style={{ marginLeft: '10px', height: 'auto', maxHeight: '25px', width: 'auto' }} 
+            style={{ height: 'auto', maxHeight: '30px', marginRight: '15px' }} 
           />
         </Link>
 
@@ -76,47 +76,33 @@ const Navbar: React.FC<NavbarProps> = () => {
 
         <BootstrapNavbar.Collapse id="navbarResponsive">
           <div className="d-flex flex-column flex-md-row align-items-center w-100">
-            <div className="input-group mx-md-auto" style={{ maxWidth: '400px' }}>
-              {/* Commented out the search bar for now */}
-            </div>
+            <BootstrapNav className="ms-md-auto d-flex align-items-center">
+            <Link
+                to="/ai-resume"
+                className={`nav-link ${activeItem === 'ai-resume' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+                onClick={() => handleItemClick('ai-resume')}
+              >
+                AI Resume
+              </Link>
+              <Link
+                to="/ai-cover-letter"
+                className={`nav-link ${activeItem === 'ai-cover-letter' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+                onClick={() => handleItemClick('ai-cover-letter')}
+              >
+                AI Cover Letter
+              </Link>
+            
 
-            <BootstrapNav className="ms-md-auto">
-              <div className="d-flex flex-column flex-md-row align-items-center">
-                <Link
-                  to="/"
-                  className={`nav-link ${activeItem === 'home' ? 'active' : ''}`}
-                  onClick={() => handleItemClick('home')}
-                >
-                  <FontAwesomeIcon icon={faHome} /> Home
-                </Link>
-                <Link
-                  to="/notifications"
-                  className={`nav-link ${activeItem === 'notifications' ? 'active' : ''}`}
-                  onClick={() => handleItemClick('notifications')}
-                >
-                  <FontAwesomeIcon icon={faBell} /> Notifications
-                </Link>
-                <Link
-                  to="/add-friends"
-                  className={`nav-link ${activeItem === 'add-friends' ? 'active' : ''}`}
-                  onClick={() => handleItemClick('add-friends')}
-                >
-                  <FontAwesomeIcon icon={faUserFriends} /> Add Friends
-                </Link>
-              </div>
-
-              <div style={{ display: 'flex', marginLeft: '10px' }}>
-                <NavDropdown title={<Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic" />} align="end">
+              <div className="mx-3 d-flex align-items-center">
+                <NavDropdown title={<Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic shadow-sm" />} align="end" className="custom-dropdown">
                   <NavDropdown.Item>
-                    <Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic" />
+                    <Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic me-2" />
                     Your Profile
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
-                  <NavDropdown.Item>Notifications</NavDropdown.Item>
-                  <NavDropdown.Item>Add Friends</NavDropdown.Item>
-                  <NavDropdown.Divider />
                   <NavDropdown.Item>Settings</NavDropdown.Item>
                   <NavDropdown.Item>Privacy</NavDropdown.Item>
+                  <NavDropdown.Divider />
                   <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
                 </NavDropdown>
               </div>

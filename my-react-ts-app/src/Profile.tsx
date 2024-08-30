@@ -14,7 +14,10 @@ import ProfilePhoto from './components/ProfilePhotoWithUpload';
 import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
+import ResumeUpload from './components/ResumeUpload'
 import ProfileNew from './components/ProfilePhoto';
+
+import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
 
 import LatexComponent from './latex/latex';
@@ -37,6 +40,22 @@ interface UserDetails {
   email: string;
   username: string;
   // Add other fields as needed
+}
+
+interface ParsedData {
+  name?: string;
+  contact?: {
+    email?: string;
+    phone?: string;
+    linkedin?: string;
+  };
+  summary?: string;
+  skills?: string[];
+  education?: string[];
+  experience?: string[];
+  projects?: string[];
+  certifications?: string[];
+  involvements?: string[];
 }
 
 
@@ -189,6 +208,50 @@ const Profile: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isButtonHovered, setIsButtonHovered] = useState<boolean>(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setMessage('Please select a file to upload.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('resume', selectedFile);
+
+    setUploading(true);
+    setMessage(null);
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/userprofile/upload-resume`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+
+      setMessage('File uploaded successfully!');
+      setParsedData(response.data.parsedData);
+    } catch (error) {
+      setMessage('Failed to upload file. Please try again.');
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
   // Fetch user details and educations data
   useEffect(() => {
     const fetchData = async () => {
@@ -230,23 +293,23 @@ const Profile: React.FC = () => {
   //     });
   // }, []); // Empty dependency array means this effect runs once on mount
 
-  const handleFileChange = (newFile: File | null) => {
-    setFile(newFile);
+  // const handleFileChange = (newFile: File | null) => {
+  //   setFile(newFile);
 
-    if (newFile) {
-      const formData = new FormData();
-      formData.append('photo', newFile);
+  //   if (newFile) {
+  //     const formData = new FormData();
+  //     formData.append('photo', newFile);
 
-      // Upload the new photo and update the profile photo URL
-      axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
-        .then((response) => {
-          setImageUrl(response.data.imageUrl);
-        })
-        .catch((error) => {
-          console.error('Error uploading photo:', error);
-        });
-    }
-  };
+  //     // Upload the new photo and update the profile photo URL
+  //     axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
+  //       .then((response) => {
+  //         setImageUrl(response.data.imageUrl);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error uploading photo:', error);
+  //       });
+  //   }
+  // };
 
   const handleDeleteProfile = () => {
     // Implement logic for image deletion on the client side
@@ -582,6 +645,7 @@ const Profile: React.FC = () => {
                   UserDetail={userDetails}
                   ContactDetail={contactDetails}
                 />
+                   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
               </div>
   
               {/* PDFResume Section */}
@@ -593,9 +657,10 @@ const Profile: React.FC = () => {
                 borderRadius: "15px",
                 boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                 display: "flex",
-                minHeight: "300px",  // Ensure the container has a minimum height
+                marginTop: "10px",
+                maxHeight: "300px",  // Ensure the container has a minimum height
                  // Center content vertically
-                justifyContent: "center",
+               
                 flexDirection: "column",
                 
                 alignItems: "stretch",  // Center content horizontally
@@ -603,7 +668,35 @@ const Profile: React.FC = () => {
                 
               }}
             >
-              <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+               <div style={styles.container}>
+      <h2 style={styles.header}>Upload Your Resume</h2>
+      <div style={styles.uploadContainer}>
+      <input
+          type="file"
+          onChange={handleFileChange}
+          accept=".pdf,.doc,.docx"
+          style={styles.fileInput}
+        />
+    <button
+          onClick={handleUpload}
+          disabled={uploading}
+          style={{
+            ...styles.uploadButton,
+            ...(isButtonHovered && !uploading ? styles.uploadButtonHover : {}),
+          }}
+          onMouseEnter={() => setIsButtonHovered(true)}
+          onMouseLeave={() => setIsButtonHovered(false)}
+        >
+          {uploading ? 'Uploading...' : 'Upload'}
+        </button>
+        {message && <p style={styles.message}>{message}</p>}
+
+
+
+</div>
+  </div>
+
+           
             </div>
 
 
@@ -627,11 +720,13 @@ const Profile: React.FC = () => {
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                 }}
               >
-                <SummarySection
-                  Summarys={summarys}
-                  onEdit={handleEditSum}
-                  onDelete={handleDeleteSum}
-                />
+                
+  <SummarySection
+        Summarys={summarys}
+        onEdit={handleEditSum}
+        onDelete={handleDeleteSum}
+        parsedSummary={parsedData?.summary || ''} // Pass the parsed summary if available
+      />
               </div>
               <div
                 className="projects-section"
@@ -744,6 +839,56 @@ const Profile: React.FC = () => {
   );
   
   
+};
+
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    maxWidth: '500px',
+    margin: '50px auto',
+    padding: '20px',
+    borderRadius: '10px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#fff',
+    textAlign: 'center',
+  },
+  header: {
+    marginBottom: '20px',
+    fontSize: '24px',
+    color: '#333',
+  },
+  uploadContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '10px',
+  },
+  fileInput: {
+    padding: '10px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    width: '100%',
+    cursor: 'pointer',
+    marginBottom: '10px',
+  },
+  uploadButton: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '16px',
+    transition: 'background-color 0.3s ease',
+  },
+  uploadButtonHover: {
+    backgroundColor: '#218838',
+  },
+  message: {
+    marginTop: '20px',
+    fontSize: '16px',
+    color: '#333',
+  },
+
 };
 
 export default Profile;
