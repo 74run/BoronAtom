@@ -8,7 +8,7 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const path = require('path');
 
-const Resume = require('./models/Resume');
+
 
 const UserProfile = require('./models/UserprofileModel');
 
