@@ -256,7 +256,7 @@ user.summary.forEach((summary, index) => {
   res.json({ message: aiMessage });
 });
 
-const upload = multer({ dest: 'uploads/' })
+
 
 const extractTextFromDocx = async (filePath) => {
   try {
@@ -394,6 +394,7 @@ const parseTextResponse = (aiResponse) => {
     other: '',
   };
 
+
   // Example patterns for parsing the text
   const nameMatch = aiResponse.match(/Full Name:\s*(.+)/i);
   const emailMatch = aiResponse.match(/Email:\s*(.+)/i);
@@ -485,7 +486,8 @@ const parseTextResponse = (aiResponse) => {
   return parsedData;
 };
 
-
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Resume upload and parsing route
 router.post('/upload-resume', upload.single('resume'), async (req, res) => {
