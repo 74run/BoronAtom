@@ -259,11 +259,10 @@ user.summary.forEach((summary, index) => {
 
 
 
-
-
-const extractTextFromDocx = async (filePath) => {
+// Function to extract text from DOCX files
+const extractTextFromDocx = async (fileBuffer) => {
   try {
-      const result = await mammoth.extractRawText({ path: filePath });
+      const result = await mammoth.extractRawText({ buffer: fileBuffer });
       return result.value;
   } catch (error) {
       console.error('Error extracting text from DOCX:', error);
@@ -272,10 +271,14 @@ const extractTextFromDocx = async (filePath) => {
 };
 
 // Function to extract text from PDF files
-const extractTextFromPdf = async (filePath) => {
-  const dataBuffer = fs.readFileSync(filePath);
-  const pdfData = await pdfParse(dataBuffer);
-  return pdfData.text;
+const extractTextFromPdf = async (fileBuffer) => {
+  try {
+      const pdfData = await pdfParse(fileBuffer);
+      return pdfData.text;
+  } catch (error) {
+      console.error('Error extracting text from PDF:', error);
+      throw error;
+  }
 };
 
 // Function to parse the resume using Google AI Gemini
@@ -494,44 +497,40 @@ const upload = multer({ storage: storage });
 
 // Resume upload and parsing route
 router.post('/upload-resume', upload.single('resume'), async (req, res) => {
-  try {
-      const { path: filePath, mimetype } = req.file; // Get the path and mimetype of the uploaded file
-      let extractedText = '';
+    try {
+        const { buffer, mimetype } = req.file; // Get the buffer and mimetype of the uploaded file
+        let extractedText = '';
 
-      // Extract text based on file type
-      if (mimetype === 'application/pdf') {
-          extractedText = await extractTextFromPdf(filePath);
-      } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-          extractedText = await extractTextFromDocx(filePath);
-      } else {
-          return res.status(400).json({ success: false, message: 'Unsupported file format' });
-      }
+        // Extract text based on file type
+        if (mimetype === 'application/pdf') {
+            extractedText = await extractTextFromPdf(buffer);
+        } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            extractedText = await extractTextFromDocx(buffer);
+        } else {
+            return res.status(400).json({ success: false, message: 'Unsupported file format' });
+        }
 
-      const aiResponse = await parseWithGemini(extractedText);
+        const aiResponse = await parseWithGemini(extractedText);
 
-      // Convert the AI response text to the ParsedData structure
-      const parsedData = parseTextResponse(aiResponse);
+        // Convert the AI response text to the ParsedData structure
+        const parsedData = parseTextResponse(aiResponse);
 
-      console.log("AI Response")
-      console.log(aiResponse)
+        console.log("AI Response:");
+        console.log(aiResponse);
 
-      console.log("Parsed Data")
+        console.log("Parsed Data:");
+        console.log(parsedData);
 
-      console.log(parsedData)
+        // Send the parsed data back to the frontend
+        res.json({
+            success: true,
+            parsedData,
+        });
 
-      // Send the parsed data back to the frontend
-      res.json({
-          success: true,
-          parsedData,
-      });
-
-      // Delete the file after processing
-      fs.unlinkSync(filePath);
-
-  } catch (error) {
-      console.error('Error processing resume:', error);
-      res.status(500).json({ success: false, message: 'Failed to process resume' });
-  }
+    } catch (error) {
+        console.error('Error processing resume:', error);
+        res.status(500).json({ success: false, message: 'Failed to process resume' });
+    }
 });
 
 
