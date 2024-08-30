@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const pdfParse = require('pdf-parse');
+const mammoth = require('mammoth');
 const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
@@ -364,8 +366,173 @@ app.get('/api/userprofile/:userID/image', async (req, res) => {
 ////////////////////////////Profile Photo Code///////////////////////////////////////
 
 
+// const upload = multer({ dest: 'uploads/' });
+
+// const parseResume = (extractedText) => {
+//   // Initialize an object to hold the extracted information
+//   const parsedData = {
+//     name: '',
+//     contact: {
+//       email: '',
+//       phone: '',
+//       linkedin: '',
+//     },
+//     summary: '',
+//     skills: [],
+//     education: [],
+//     experience: [],
+//     projects: [],
+//     certifications: [],
+//     involvements: []
+//   };
+
+//   // Regular expressions to match different sections
+//   const nameRegex = /^[A-Z][a-z]+\s+[A-Z][a-z]+/m;
+//   const emailRegex = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
+//   const phoneRegex = /(\+?\d{1,4}[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g;
+//   const linkedinRegex = /(linkedin\.com\/in\/[a-zA-Z0-9-]+)/i;
+
+//   // Example section headers - may need to be adjusted based on the resumes being parsed
+//   const summaryRegex = /summary|objective/i;
+//   const skillsRegex = /skills/i;
+//   const educationRegex = /education/i;
+//   const experienceRegex = /experience|employment history|professional experience/i;
+//   const projectRegex = /projects|relevant projects/i;
+//   const certificationRegex = /certifications|licenses/i;
+//   const involvementRegex = /involvements|volunteer work|extracurricular/i;
+
+//   // Extract name
+//   const nameMatch = extractedText.match(nameRegex);
+//   if (nameMatch) {
+//     parsedData.name = nameMatch[0];
+//   }
+
+//   // Extract contact information
+//   const emailMatch = extractedText.match(emailRegex);
+//   if (emailMatch) {
+//     parsedData.contact.email = emailMatch[0];
+//   }
+
+//   const phoneMatch = extractedText.match(phoneRegex);
+//   if (phoneMatch) {
+//     parsedData.contact.phone = phoneMatch[0];
+//   }
+
+//   const linkedinMatch = extractedText.match(linkedinRegex);
+//   if (linkedinMatch) {
+//     parsedData.contact.linkedin = linkedinMatch[0];
+//   }
+
+//   // Extract sections
+//   const sections = extractedText.split(/(?:\r\n|\r|\n)/);
+
+//   let currentSection = '';
+//   sections.forEach((line) => {
+//     // Determine the section
+//     if (summaryRegex.test(line)) {
+//       currentSection = 'summary';
+//     } else if (skillsRegex.test(line)) {
+//       currentSection = 'skills';
+//     } else if (educationRegex.test(line)) {
+//       currentSection = 'education';
+//     } else if (experienceRegex.test(line)) {
+//       currentSection = 'experience';
+//     } else if (projectRegex.test(line)) {
+//       currentSection = 'projects';
+//     } else if (certificationRegex.test(line)) {
+//       currentSection = 'certifications';
+//     } else if (involvementRegex.test(line)) {
+//       currentSection = 'involvements';
+//     } else if (line.trim().length === 0) {
+//       // Skip empty lines
+//       return;
+//     } else {
+//       // Process the line based on the current section
+//       switch (currentSection) {
+//         case 'summary':
+//           parsedData.summary += line.trim() + ' ';
+//           break;
+//         case 'skills':
+//           parsedData.skills.push(line.trim());
+//           break;
+//         case 'education':
+//           parsedData.education.push(line.trim());
+//           break;
+//         case 'experience':
+//           parsedData.experience.push(line.trim());
+//           break;
+//         case 'projects':
+//           parsedData.projects.push(line.trim());
+//           break;
+//         case 'certifications':
+//           parsedData.certifications.push(line.trim());
+//           break;
+//         case 'involvements':
+//           parsedData.involvements.push(line.trim());
+//           break;
+//         default:
+//           break;
+//       }
+//     }
+//   });
+
+//   // Clean up any trailing spaces in the summary
+//   parsedData.summary = parsedData.summary.trim();
+
+//   return parsedData;
+// };
 
 
+// // Function to extract text from DOCX files
+// const extractTextFromDocx = async (filePath) => {
+//   try {
+//       const result = await mammoth.extractRawText({ path: filePath });
+//       return result.value;
+//   } catch (error) {
+//       console.error('Error extracting text from DOCX:', error);
+//       throw error;
+//   }
+// };
+
+// // Function to extract text from PDF files
+// const extractTextFromPdf = async (filePath) => {
+//   const dataBuffer = fs.readFileSync(filePath);
+//   const pdfData = await pdfParse(dataBuffer);
+//   return pdfData.text;
+// };
+
+// // Endpoint to handle resume upload, read PDF or DOCX, and print text
+// app.post('/upload-resume', upload.single('resume'), async (req, res) => {
+//   try {
+//       const { path: filePath, mimetype } = req.file; // Get the path and mimetype of the uploaded file
+//       let extractedText = '';
+
+//       // Extract text based on file type
+//       if (mimetype === 'application/pdf') {
+//           extractedText = await extractTextFromPdf(filePath);
+//       } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+//           extractedText = await extractTextFromDocx(filePath);
+//       } else {
+//           return res.status(400).json({ success: false, message: 'Unsupported file format' });
+//       }
+
+//       // Parse the extracted text
+//       const parsedData = parseResume(extractedText);
+
+//       // Send the parsed data back to the frontend
+//       res.json({
+//           success: true,
+//           parsedData,
+//       });
+
+//       // Delete the file after processing
+//       fs.unlinkSync(filePath);
+
+//   } catch (error) {
+//       console.error('Error processing resume:', error);
+//       res.status(500).json({ success: false, message: 'Failed to process resume' });
+//   }
+// });
 
 
 

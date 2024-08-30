@@ -6,7 +6,7 @@ import RegisterForm from './components/RegisterForm';
 import VerifyOTP from './components/VerifyOTP';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
-
+import CoverLetter from './components/Cover/AiCoverLetter';
 import { useParams } from 'react-router-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -84,6 +84,7 @@ const App: React.FC = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path= {`/verifyOTP`} element={<VerifyOTP />} />
+        <Route path="/ai-cover-letter/:userID" element={isLoggedIn ?<CoverLetter /> : <Navigate to="/login" />} />
 
         {/* Default Redirect */}
         <Route

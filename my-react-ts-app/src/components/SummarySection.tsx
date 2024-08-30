@@ -16,9 +16,10 @@ interface SummarySectionProps {
   onEdit: (id: string, data: { content: string }) => void;
   onDelete: (id: string) => void;
   viewOnly?: boolean;
+  parsedSummary?: string; 
 }
 
-const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDelete, viewOnly = false  }) => {
+const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDelete, viewOnly = false ,parsedSummary, }) => {
   const [summarys, setSummarys] = useState<Summary[]>(Summarys);
   const [editData, setEditData] = useState<{ id: string; content: string } | null>(null);
   const [newSummary, setNewSummary] = useState<Summary>({
@@ -29,7 +30,26 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
+
+
   const API_BASE_URL = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    if (parsedSummary) {
+      setNewSummary({ _id: '', content: parsedSummary });
+      console.log(parsedSummary);
+   
+    }
+  }, [parsedSummary]);
+
+  useEffect(() => {
+    // Save only if newSummary.content is not an empty string
+    if (newSummary.content) {
+      handleSaveClick();
+      
+      setIsAdding(false);
+    }
+  }, [newSummary.content]);
 
   useEffect(() => {
     fetchSummary();
@@ -109,6 +129,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
           content: '',
         });
         setIsAdding(false);
+        window.location.reload();
       })
       .catch((error) => {
         console.error('Error saving summary:', error.message);

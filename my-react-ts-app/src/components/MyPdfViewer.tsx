@@ -106,7 +106,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
         .then(response => {
           if (response.data && response.data.success) {
-            console.log('user details:',response.data.user)
+            
             setEduDetails(response.data.user);
           } else {
             console.error('Error fetching user details:', response.data.message);
