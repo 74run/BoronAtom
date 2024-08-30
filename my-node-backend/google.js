@@ -259,7 +259,7 @@ user.summary.forEach((summary, index) => {
 
 
 
-const upload = multer({ dest: 'uploads/' })
+
 
 const extractTextFromDocx = async (filePath) => {
   try {
