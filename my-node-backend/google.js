@@ -256,6 +256,9 @@ user.summary.forEach((summary, index) => {
   res.json({ message: aiMessage });
 });
 
+
+
+
 const upload = multer({ dest: 'uploads/' })
 
 const extractTextFromDocx = async (filePath) => {
