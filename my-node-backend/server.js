@@ -115,28 +115,6 @@
 
 
 
-// ////////////////////////////Profile Photo Code///////////////////////////////////////
-
-// // // Define the destination folder and storage for Multer
-// const storage = multer.diskStorage({
-//   destination: './uploads',
-//   filename: (req, file, cb) => {
-//     const uniqueFilename = `${uuidv4()}${path.extname(file.originalname)}`;
-//     cb(null, uniqueFilename);
-//   },
-// });
-
-// const upload = multer({ storage });
-
-// // Serve static files from the 'uploads' folder
-// const profilePhotoSchema = new mongoose.Schema({
-//   imageUrl: String,
-// });
-
-// const ProfilePhoto = mongoose.model('ProfilePhoto', profilePhotoSchema);
-
-
-// app.use('/uploads', express.static('uploads'));
 
 
 
