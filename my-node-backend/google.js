@@ -8,7 +8,7 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const path = require('path');
 
-const Resume = require('./models/Resume');
+
 
 const UserProfile = require('./models/UserprofileModel');
 
@@ -256,7 +256,7 @@ user.summary.forEach((summary, index) => {
   res.json({ message: aiMessage });
 });
 
-const upload = multer({ dest: 'uploads/' });
+
 
 const extractTextFromDocx = async (filePath) => {
   try {

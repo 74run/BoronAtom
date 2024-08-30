@@ -74,8 +74,8 @@ const Navbar: React.FC<NavbarProps> = () => {
           <div className="d-flex flex-column flex-md-row align-items-center w-100">
             <BootstrapNav className="ms-md-auto d-flex align-items-center">
               <Link
-                to="/ai-resume"
-                className={`nav-link ${location.pathname === '/ai-resume' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+                to= {`/profile/${userID}`}
+                className={`nav-link ${location.pathname === `/profile/${userID}` ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
               >
                 AI Resume
               </Link>
