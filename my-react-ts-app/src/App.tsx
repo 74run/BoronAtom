@@ -84,7 +84,7 @@ const App: React.FC = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path= {`/verifyOTP`} element={<VerifyOTP />} />
-        <Route path="/ai-cover-letter" element={<CoverLetter />} />
+        <Route path="/ai-cover-letter/:userID" element={isLoggedIn ?<CoverLetter /> : <Navigate to="/login" />} />
 
         {/* Default Redirect */}
         <Route

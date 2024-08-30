@@ -555,6 +555,42 @@ router.get('/get-parsed-resume/:userID', (req, res) => {
 });
 
 
+router.post('/generate-cover-letter/:userID', async (req, res) => {
+  try {
+    const { jobDescription } = req.body;
+    const userId = req.params.userID;
+
+    // Query the database to get user details by ID
+    const user = await UserProfile.findOne({ userID: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // For text-only input, use the gemini-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create a prompt using user data
+    const prompt = `Write a professional cover letter for a job application based on the following information: 
+    contact: ${user.contact[0]},
+    Experience: ${user.experience}, 
+    Projects: ${user.project}, 
+    Education: ${user.education}, 
+    Skills: ${user.skills}. 
+    Tailor the cover letter for a position in ${jobDescription}.`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = await response.text();
+
+    // Send the generated cover letter text to the front end
+    res.json({ coverLetter: text });
+  } catch (error) {
+    console.error('Error generating cover letter:', error);
+    res.status(500).json({ error: 'An error occurred while generating the cover letter' });
+  }
+});
+
 
 
 module.exports = router;

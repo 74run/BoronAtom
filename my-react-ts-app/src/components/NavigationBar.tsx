@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import '../css/Navbar.css'; // Import custom CSS for Navbar styling
 import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,22 +20,10 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = () => {
-  const [activeItem, setActiveItem] = useState<string>('ai-resume');
   const [profileImage, setProfileImage] = useState<string>('');
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const navigate = useNavigate();
-
-  const handleItemClick = (itemName: string) => {
-    setActiveItem(itemName);
-    // You can add additional logic here if needed
-  };
-
-  const handleLogout = () => {
-    // Perform the logout actions here
-    localStorage.removeItem('Token');
-    localStorage.removeItem('UserID');
-    navigate('/login');
-  };
+  const location = useLocation(); // Get the current location
 
   useEffect(() => {
     const userID = localStorage.getItem('UserID');
@@ -58,6 +46,14 @@ const Navbar: React.FC<NavbarProps> = () => {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('Token');
+    localStorage.removeItem('UserID');
+    navigate('/login');
+  };
+
+  const userID = localStorage.getItem('UserID'); // Retrieve userID to use in links
+
   return (
     <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar shadow-sm">
       <div className="container-fluid">
@@ -77,21 +73,18 @@ const Navbar: React.FC<NavbarProps> = () => {
         <BootstrapNavbar.Collapse id="navbarResponsive">
           <div className="d-flex flex-column flex-md-row align-items-center w-100">
             <BootstrapNav className="ms-md-auto d-flex align-items-center">
-            <Link
+              <Link
                 to="/ai-resume"
-                className={`nav-link ${activeItem === 'ai-resume' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
-                onClick={() => handleItemClick('ai-resume')}
+                className={`nav-link ${location.pathname === '/ai-resume' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
               >
                 AI Resume
               </Link>
               <Link
-                to="/ai-cover-letter"
-                className={`nav-link ${activeItem === 'ai-cover-letter' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
-                onClick={() => handleItemClick('ai-cover-letter')}
+                to={`/ai-cover-letter/${userID}`}
+                className={`nav-link ${location.pathname === `/ai-cover-letter/${userID}` ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
               >
                 AI Cover Letter
               </Link>
-            
 
               <div className="mx-3 d-flex align-items-center">
                 <NavDropdown title={<Image src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`} alt="Profile" roundedCircle className="profile-pic shadow-sm" />} align="end" className="custom-dropdown">
