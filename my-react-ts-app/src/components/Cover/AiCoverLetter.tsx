@@ -134,9 +134,9 @@ const CoverLetter: React.FC = () => {
 
   return (
     
-    <Container className="mt-5" style={{ paddingBottom: '50px' }}>
+    <Container className="mt-5" style={{ paddingBottom: '50px', paddingTop: '50px' }}>
         <NavigationBar UserDetail={userDetails}/>
-      <h1 className="text-center mb-4">AI-Powered Cover Letter Generator</h1>
+      <h1 className="text-center mb-4"><strong>AI-Powered Cover Letter Generator</strong></h1>
       <Form>
         <Form.Group controlId="jobDescription">
           <Form.Label>Job Description</Form.Label>
