@@ -16,6 +16,7 @@ import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
 import ResumeUpload from './components/ResumeUpload'
 import ProfileNew from './components/ProfilePhoto';
+import { AiOutlineFileAdd } from 'react-icons/ai';
 
 import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
@@ -587,7 +588,7 @@ const Profile: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           backgroundColor: "black",
-          paddingTop: "80px",
+          paddingTop: "110px",
           paddingBottom: "50px",
           paddingLeft: "25px",
           paddingRight: "15px",
@@ -628,7 +629,7 @@ const Profile: React.FC = () => {
               {/* ProfileNew Section */}
               <div
                 style={{
-                  flex: "2",
+                  flex: "1.5",
                   padding: "10px",
                   backgroundColor: "#ffffff",
                   borderRadius: "15px",
@@ -658,7 +659,7 @@ const Profile: React.FC = () => {
                 boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                 display: "flex",
                 marginTop: "10px",
-                maxHeight: "300px",  // Ensure the container has a minimum height
+                minHeight: "300px",  // Ensure the container has a minimum height
                  // Center content vertically
                
                 flexDirection: "column",
@@ -668,34 +669,38 @@ const Profile: React.FC = () => {
                 
               }}
             >
-               <div style={styles.container}>
+          <div style={styles.container}>
       <h2 style={styles.header}>Upload Your Resume</h2>
       <div style={styles.uploadContainer}>
-      <input
+        <input
           type="file"
+          id="fileInput"
           onChange={handleFileChange}
           accept=".pdf,.doc,.docx"
-          style={styles.fileInput}
+          style={styles.hiddenFileInput}
         />
-    <button
-          onClick={handleUpload}
-          disabled={uploading}
-          style={{
-            ...styles.uploadButton,
-            ...(isButtonHovered && !uploading ? styles.uploadButtonHover : {}),
-          }}
-          onMouseEnter={() => setIsButtonHovered(true)}
-          onMouseLeave={() => setIsButtonHovered(false)}
+        <label
+          htmlFor="fileInput"
+          style={styles.uploadButton}
         >
-          {uploading ? 'Uploading...' : 'Upload'}
-        </button>
-        {message && <p style={styles.message}>{message}</p>}
-
-
-
-</div>
-  </div>
-
+          <AiOutlineFileAdd style={styles.icon} />
+          <span style={styles.fileName}>
+            {selectedFile ? selectedFile.name : "Upload file"}
+          </span>
+        </label>
+   
+      </div>
+      {selectedFile && (
+          <button
+            onClick={handleUpload}
+            disabled={uploading}
+            style={styles.confirmButton}
+          >
+            {uploading ? 'Uploading...' : 'Upload'}
+          </button>
+        )}
+      {message && <p style={styles.message}>{message}</p>}
+    </div>
            
             </div>
 
@@ -844,8 +849,8 @@ const Profile: React.FC = () => {
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     maxWidth: '500px',
-    margin: '50px auto',
-    padding: '20px',
+    margin: '0px auto',
+    padding: '10px',
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     backgroundColor: '#fff',
@@ -853,42 +858,75 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   header: {
     marginBottom: '20px',
-    fontSize: '24px',
+    fontSize: '18px',
     color: '#333',
+    fontFamily: 'Arial, sans-serif',
   },
   uploadContainer: {
+    width: '200px',
+    height: '150px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '10px',
-  },
-  fileInput: {
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    width: '100%',
+    border: '2px dashed #4A90E2',
+    borderRadius: '10px',
+    backgroundColor: '#F9F9F9',
     cursor: 'pointer',
-    marginBottom: '10px',
+    transition: 'background-color 0.3s ease, border-color 0.3s ease',
+    textAlign: 'center',
+  },
+  hiddenFileInput: {
+    display: 'none',
   },
   uploadButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    
+    cursor: 'pointer',
+    textAlign: 'center',
+    fontSize: '16px',
+    color: '#333',
+    fontFamily: 'Arial, sans-serif',
+  },
+  fileName: {
+    marginTop: '10px',
+    maxWidth: '160px', // Explicitly define max-width to ensure truncation happens within a limited space
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    display: 'block', // block or inline-block ensures the max-width is respected
+    textAlign: 'center', // Center the text within its own space
+  },
+  icon: {
+    fontSize: '40px',
+    color: '#4A90E2',
+    marginTop: '20px',
+  },
+  confirmButton: {
+    marginTop: '20px',
     padding: '10px 20px',
-    borderRadius: '5px',
+    borderRadius: '30px',
     backgroundColor: '#28a745',
     color: '#fff',
     border: 'none',
     cursor: 'pointer',
     fontSize: '16px',
-    transition: 'background-color 0.3s ease',
-  },
-  uploadButtonHover: {
-    backgroundColor: '#218838',
+    fontFamily: 'Arial, sans-serif',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
   },
   message: {
     marginTop: '20px',
     fontSize: '16px',
     color: '#333',
+    fontFamily: 'Arial, sans-serif',
   },
-
 };
+
+
 
 export default Profile;

@@ -4,7 +4,6 @@ import axios from 'axios';
 interface ParsedData {
   name?: string;
   contact?: {
-    
     email?: string;
     phone?: string;
     linkedin?: string;
@@ -13,7 +12,7 @@ interface ParsedData {
   skills?: {
     domain?: string[];
     skill?: string[];
-  }
+  };
   education?: string[];
   experience?: string[];
   projects?: string[];
@@ -59,7 +58,6 @@ const ResumeUpload: React.FC = () => {
 
       setMessage('File uploaded successfully!');
       setParsedData(response.data.parsedData);
-  
     } catch (error) {
       setMessage('Failed to upload file. Please try again.');
       console.error('Error uploading file:', error);
@@ -74,10 +72,20 @@ const ResumeUpload: React.FC = () => {
       <div style={styles.uploadContainer}>
         <input
           type="file"
+          id="fileInput"
           onChange={handleFileChange}
           accept=".pdf,.doc,.docx"
-          style={styles.fileInput}
+          style={styles.hiddenFileInput}
         />
+        <label
+          htmlFor="fileInput"
+          style={{
+            ...styles.customFileLabel,
+            ...(selectedFile ? styles.customFileLabelSelected : {}),
+          }}
+        >
+          {selectedFile ? selectedFile.name : "Choose a file"}
+        </label>
         <button
           onClick={handleUpload}
           disabled={uploading}
@@ -92,93 +100,6 @@ const ResumeUpload: React.FC = () => {
         </button>
       </div>
       {message && <p style={styles.message}>{message}</p>}
-
-      {/* {parsedData && (
-        <div>
-          <h3>Parsed Resume Data:</h3>
-          <p>
-            <strong>Name:</strong> {parsedData.name || 'N/A'}
-          </p>
-          <p>
-            <strong>Email:</strong> {parsedData.contact?.email || 'N/A'}
-          </p>
-          <p>
-            <strong>Phone:</strong> {parsedData.contact?.phone || 'N/A'}
-          </p>
-          <p>
-            <strong>LinkedIn:</strong> {parsedData.contact?.linkedin || 'N/A'}
-          </p>
-          <p>
-            <strong>Summary:</strong> {parsedData.summary || 'N/A'}
-          </p>
-
-          {parsedData.skills && parsedData.skills.length > 0 && (
-            <div>
-              <strong>Skills:</strong>
-              <ul>
-                {parsedData.skills.map((skill, index) => (
-                  <li key={index}>{skill}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsedData.education && parsedData.education.length > 0 && (
-            <div>
-              <strong>Education:</strong>
-              <ul>
-                {parsedData.education.map((edu, index) => (
-                  <li key={index}>{edu}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsedData.experience && parsedData.experience.length > 0 && (
-            <div>
-              <strong>Experience:</strong>
-              <ul>
-                {parsedData.experience.map((exp, index) => (
-                  <li key={index}>{exp}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsedData.projects && parsedData.projects.length > 0 && (
-            <div>
-              <strong>Projects:</strong>
-              <ul>
-                {parsedData.projects.map((project, index) => (
-                  <li key={index}>{project}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsedData.certifications && parsedData.certifications.length > 0 && (
-            <div>
-              <strong>Certifications:</strong>
-              <ul>
-                {parsedData.certifications.map((cert, index) => (
-                  <li key={index}>{cert}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {parsedData.involvements && parsedData.involvements.length > 0 && (
-            <div>
-              <strong>Involvements:</strong>
-              <ul>
-                {parsedData.involvements.map((involvement, index) => (
-                  <li key={index}>{involvement}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )} */}
     </div>
   );
 };
@@ -197,6 +118,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginBottom: '20px',
     fontSize: '24px',
     color: '#333',
+    fontFamily: 'Arial, sans-serif',
   },
   uploadContainer: {
     display: 'flex',
@@ -204,31 +126,49 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: 'center',
     gap: '10px',
   },
-  fileInput: {
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    width: '100%',
+  hiddenFileInput: {
+    display: 'none',
+  },
+  customFileLabel: {
+    display: 'inline-block',
+    padding: '12px 24px',
+    color: '#fff',
+    backgroundColor: '#4A90E2', // Blue color
+    borderRadius: '30px',
     cursor: 'pointer',
-    marginBottom: '10px',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
+    fontSize: '16px',
+    fontFamily: 'Arial, sans-serif',
+    width: '100%', // Make the label take the full width
+    maxWidth: '300px', // Set a max width for better appearance
+  },
+  customFileLabelSelected: {
+    backgroundColor: '#357ABD', // Darker blue when file is selected
   },
   uploadButton: {
     padding: '10px 20px',
-    borderRadius: '5px',
-    backgroundColor: '#28a745',
+    borderRadius: '30px',
+    backgroundColor: '#28a745', // Green color
     color: '#fff',
     border: 'none',
     cursor: 'pointer',
     fontSize: '16px',
-    transition: 'background-color 0.3s ease',
+    fontFamily: 'Arial, sans-serif',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
   },
   uploadButtonHover: {
-    backgroundColor: '#218838',
+    backgroundColor: '#218838', // Darker green for hover
+    boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.3)',
   },
   message: {
     marginTop: '20px',
     fontSize: '16px',
     color: '#333',
+    fontFamily: 'Arial, sans-serif',
   },
 };
 
