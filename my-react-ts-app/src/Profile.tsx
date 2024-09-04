@@ -86,6 +86,7 @@ interface EduDetails {
   endDate: { month: string; year: string };
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean;
   }>
   summary: Array<{
       content: string;
@@ -98,6 +99,7 @@ interface EduDetails {
     skills: string;
     description: string;
     includeInResume: boolean;
+    isPresent?: boolean;
   }>
   involvement: Array<{
   organization: string;
@@ -106,6 +108,7 @@ interface EduDetails {
   endDate: { month: string; year: string };
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean;
   }>
   certification: Array<{
   name: string;
@@ -161,6 +164,7 @@ interface Experience {
   endDate: { month: string; year: string };
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 interface Involvement {
@@ -171,6 +175,7 @@ interface Involvement {
   endDate: { month: string; year: string };
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean;
  
 }
 
@@ -193,6 +198,7 @@ interface Project {
   skills: string;
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 
@@ -419,7 +425,7 @@ const Profile: React.FC = () => {
     location: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; includeInResume: boolean; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
@@ -461,7 +467,7 @@ const Profile: React.FC = () => {
     role: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; includeInResume: boolean; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {
@@ -482,7 +488,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     skills: string;
-    description: string; includeInResume: boolean; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {

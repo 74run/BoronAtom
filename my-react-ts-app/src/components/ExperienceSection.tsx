@@ -13,6 +13,7 @@ interface Experience {
   endDate: { month: string; year: string };
   description: string;
   includeInResume: boolean;
+  isPresent?: boolean; // Add this field to track if the end date is 'Present'
   isEditing?: boolean;
 }
 
@@ -26,6 +27,7 @@ interface ExperienceProps {
     endDate: { month: string; year: string };
     description: string;
     includeInResume: boolean;
+    isPresent: boolean;
   }) => void;
   onDelete: (id: string) => void;
 }
@@ -40,6 +42,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     endDate: { month: string; year: string };
     description: string;
     includeInResume: boolean;
+    isPresent: boolean;
   } | null>(null);
 
   const [experiences, setExperiences] = useState<Experience[]>(Experiences);
@@ -52,6 +55,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     endDate: { month: '', year: '' },
     description: '',
     includeInResume: true,
+    isPresent: false, // Initialize as false
   });
 
   const [isAdding, setIsAdding] = useState(false);
@@ -116,9 +120,10 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
     description: string,
-    includeInResume: boolean
+    includeInResume: boolean,
+    isPresent: boolean
   ) => {
-    setEditData({ id, jobTitle, company, location, startDate, endDate, description, includeInResume });
+    setEditData({ id, jobTitle, company, location, startDate, endDate, description, includeInResume, isPresent });
   };
 
   const handleCancelEdit = () => {
@@ -134,12 +139,13 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         startDate: { ...editData.startDate },
         endDate: { ...editData.endDate },
         description: editData.description,
-        includeInResume: editData.includeInResume
+        includeInResume: editData.includeInResume,
+        isPresent: editData.isPresent,
       });
 
       const updatedItems = experiences.map((experience) =>
         experience._id === editData.id
-          ? { ...experience, jobTitle: editData.jobTitle, company: editData.company, location: editData.location, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume }
+          ? { ...experience, jobTitle: editData.jobTitle, company: editData.company, location: editData.location, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume, isPresent: editData.isPresent }
           : experience
       );
 
@@ -176,6 +182,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
           endDate: { month: '', year: '' },
           description: '',
           includeInResume: true,
+          isPresent: false, // Reset to false
         });
 
         setIsAdding(false);
@@ -207,6 +214,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
       endDate: { month: '', year: '' },
       description: '',
       includeInResume: true,
+      isPresent: false, // Initialize as false
     });
     setIsAdding(true);
   };
@@ -227,6 +235,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         endDate: experienceToUpdate.endDate,
         description: experienceToUpdate.description,
         includeInResume: experienceToUpdate.includeInResume,
+        isPresent: experienceToUpdate.isPresent ?? false, // Provide default value if undefined
       });
     }
   };
@@ -268,6 +277,14 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         ...editData,
         description: newDescription
       });
+    }
+  };
+
+  const handleTogglePresent = () => {
+    if (editData) {
+      setEditData({ ...editData, isPresent: !editData.isPresent });
+    } else {
+      setNewExperience({ ...newExperience, isPresent: !newExperience.isPresent });
     }
   };
 
@@ -440,6 +457,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -447,7 +465,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                       marginRight: '0.5rem',
                     }}
                   >
-                    {!editData.startDate.month && (
+                    {!editData.endDate.month && (
                       <option value="" disabled>
                         Select Month
                       </option>
@@ -470,6 +488,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -488,6 +507,23 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     ))}
                   </select>
                 </div>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={handleTogglePresent}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: editData.isPresent ? '#28a745' : '#dc3545',
+                    color: editData.isPresent ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={editData.isPresent ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {editData.isPresent ? 'Present' : 'Not Present'}
+                </button>
               </div>
               <textarea
                 className="form-control mb-3"
@@ -624,8 +660,10 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                 }}
               >
                 <strong>End Date:</strong>{' '}
-                {experience.endDate &&
-                  `${experience.endDate.month} ${experience.endDate.year}`}
+                {experience.isPresent
+                  ? 'Present'
+                  : experience.endDate &&
+                    `${experience.endDate.month} ${experience.endDate.year}`}
               </p>
               {experience.description
                 .split('*')
@@ -655,7 +693,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                       experience.startDate,
                       experience.endDate,
                       experience.description,
-                      experience.includeInResume
+                      experience.includeInResume,
+                      experience.isPresent || false
                     )
                   }
                   style={{
@@ -838,6 +877,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     },
                   })
                 }
+                disabled={newExperience.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -868,6 +908,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     },
                   })
                 }
+                disabled={newExperience.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -885,6 +926,23 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-outline-secondary ms-2"
+                onClick={handleTogglePresent}
+                style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  borderColor: newExperience.isPresent ? '#28a745' : '#dc3545',
+                  color: newExperience.isPresent ? '#28a745' : '#dc3545',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={newExperience.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {newExperience.isPresent ? 'Present' : 'Not Present'}
+              </button>
             </div>
           </div>
           <textarea

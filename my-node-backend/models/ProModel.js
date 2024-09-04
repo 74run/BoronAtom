@@ -7,6 +7,7 @@ const proSchema = new mongoose.Schema({
     skills: String,
     description: String,
     includeInResume: { type: Boolean, default: true },
+    isPresent: { type: Boolean, default: false },
 });
 
 // const Pro = mongoose.model('Pro', proSchema);
