@@ -23,6 +23,7 @@ interface EduDetails {
       startDate: { month: string; year: string };
       endDate: { month: string; year: string };
       includeInResume: boolean;
+      isPresent?: boolean;
     }>;
     experience: Array<{
       jobTitle: string;
@@ -171,11 +172,13 @@ const previewPdf = async () => {
     ` : '';
 
     const educationSection = educations.length > 0 ? `
-      \\header{Education}
-      ${educations.map(education => `
-        \\school{${education.university}}{${education.degree}}{Graduation: ${education.endDate.month}/${education.endDate.year}}{\\textit{${education.major} \\labelitemi GPA: ${education.cgpa}}}
-      `).join("\n")}
-    ` : '';
+  \\header{Education}
+  ${educations.map(education => `
+    \\school{${education.university}}{${education.degree}}{
+      Graduation: ${education.isPresent ? 'Present' : `${education.endDate.month}/${education.endDate.year}`}
+    }{\\textit{${education.major} \\labelitemi GPA: ${education.cgpa}}}
+  `).join("\n")}
+` : '';
 
     const experienceSection = experiences.length > 0 ? `
       \\header{Experience}
