@@ -13,13 +13,14 @@ interface Project {
   description: string;
   includeInResume: boolean;
   isEditing?: boolean;
+  isPresent?: boolean; // Add this field to track if the end date is 'Present'
 }
 
 interface ProjectsSectionProps {
   Projects: Project[];
   onEdit: (id: string, data: { name: string; startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    skills: string; description: string; includeInResume: boolean }) => void;
+    skills: string; description: string; includeInResume: boolean, isPresent: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -27,7 +28,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   const [editData, setEditData] = useState<{
     id: string; name: string; startDate: { month: string; year: string },
     endDate: { month: string; year: string },
-    skills: string; description: string; includeInResume: boolean
+    skills: string; description: string; includeInResume: boolean, isPresent: boolean
   } | null>(null);
   const [projects, setProjects] = useState<Project[]>(Projects);
   const [newProject, setNewProject] = useState<Project>({
@@ -38,6 +39,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     skills: '',
     description: '',
     includeInResume: true,
+    isPresent: false, // Initialize as false
   });
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
@@ -73,8 +75,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
     skills: string, 
-    description: string, includeInResume: boolean) => {
-    setEditData({ id, name, startDate, endDate, skills, description, includeInResume });
+    description: string, includeInResume: boolean, isPresent: boolean) => {
+    setEditData({ id, name, startDate, endDate, skills, description, includeInResume, isPresent });
   };
 
   const handleCancelEdit = () => {
@@ -83,11 +85,19 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
   const handleUpdate = () => {
     if (editData) {
-      onEdit(editData.id, { name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description, includeInResume: editData.includeInResume });
+      onEdit(editData.id, { 
+        name: editData.name, 
+        startDate: { ...editData.startDate }, 
+        endDate: { ...editData.endDate }, 
+        skills: editData.skills, 
+        description: editData.description, 
+        includeInResume: editData.includeInResume, 
+        isPresent: editData.isPresent 
+      });
 
       const updatedItems = projects.map((project) =>
         project._id === editData.id
-          ? { ...project, name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description, includeInResume: editData.includeInResume }
+          ? { ...project, name: editData.name, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, skills: editData.skills, description: editData.description, includeInResume: editData.includeInResume, isPresent: editData.isPresent }
           : project
       );
 
@@ -97,7 +107,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleSaveClick = () => {
-    const formattedExperience = {
+    const formattedProject = {
       ...newProject,
       startDate: {
         month: newProject.startDate.month,
@@ -109,7 +119,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       },
     };
 
-    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedExperience)
+    axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedProject)
       .then((response) => {
         const newProjectFromServer = response.data.project;
         const newProData = newProjectFromServer[newProjectFromServer.length - 1]
@@ -125,6 +135,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
           skills: '',
           description: '',
           includeInResume: true,
+          isPresent: false, // Reset to false
         });
 
         // Set isAdding to false
@@ -159,6 +170,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       skills: '',
       description: '',
       includeInResume: true,
+      isPresent: false, // Initialize as false
     });
     setIsAdding(true);
   };
@@ -177,7 +189,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         endDate: projectToUpdate.endDate,
         skills: projectToUpdate.skills,
         description: projectToUpdate.description,
-        includeInResume: projectToUpdate.includeInResume
+        includeInResume: projectToUpdate.includeInResume,
+        isPresent: projectToUpdate.isPresent ?? false, // Use nullish coalescing operator to provide a default value
       });
     }
   };
@@ -245,9 +258,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         console.error('Error generating project description:', error);
       });
   };
-  
-  
 
+  const handleTogglePresent = () => {
+    if (editData) {
+      setEditData({ ...editData, isPresent: !editData.isPresent });
+    } else {
+      setNewProject({ ...newProject, isPresent: !newProject.isPresent });
+    }
+  };
+  
   return (
     <div
       style={{
@@ -401,6 +420,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -431,6 +451,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -449,6 +470,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     ))}
                   </select>
                 </div>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={handleTogglePresent}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: editData.isPresent ? '#28a745' : '#dc3545',
+                    color: editData.isPresent ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={editData.isPresent ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {editData.isPresent ? 'Present' : 'Not Present'}
+                </button>
               </div>
               <textarea
                 className="form-control mb-3"
@@ -560,8 +598,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   color: '#555',
                 }}
               >
-                <strong>End Date:</strong> {project.endDate.month}{' '}
-                {project.endDate.year}
+                <strong>End Date:</strong> {project.isPresent ? 'Present' : `${project.endDate.month} ${project.endDate.year}`}
               </div>
               <div
                 style={{
@@ -600,7 +637,8 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                       project.endDate,
                       project.skills,
                       project.description,
-                      project.includeInResume
+                      project.includeInResume,
+                      project.isPresent || false
                     )
                   }
                   style={{
@@ -767,6 +805,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     },
                   })
                 }
+                disabled={newProject.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -797,6 +836,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     },
                   })
                 }
+                disabled={newProject.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -814,6 +854,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-outline-secondary ms-2"
+                onClick={handleTogglePresent}
+                style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  borderColor: newProject.isPresent ? '#28a745' : '#dc3545',
+                  color: newProject.isPresent ? '#28a745' : '#dc3545',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={newProject.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {newProject.isPresent ? 'Present' : 'Not Present'}
+              </button>
             </div>
           </div>
           <textarea

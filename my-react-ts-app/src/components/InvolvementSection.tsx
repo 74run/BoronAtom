@@ -13,18 +13,19 @@ interface Involvement {
   description: string;
   includeInResume: boolean;
   isEditing?: boolean;
+  isPresent?: boolean; // Add this field to track if the end date is 'Present'
 }
 
 interface InvolvementProps {
   Involvements: Involvement[];
   onEdit: (id: string, data: { organization: string; role: string; startDate: { month: string; year: string };
-    endDate: { month: string; year: string }; description: string; includeInResume: boolean }) => void;
+    endDate: { month: string; year: string }; description: string; includeInResume: boolean, isPresent: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
 const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{ id: string; organization: string; role: string; startDate: { month: string; year: string };
-    endDate: { month: string; year: string }; description: string; includeInResume: boolean } | null>(null);
+    endDate: { month: string; year: string }; description: string; includeInResume: boolean, isPresent: boolean } | null>(null);
   const [involvements, setInvolvements] = useState<Involvement[]>(Involvements);
   const [newInvolvement, setNewInvolvement] = useState<Involvement>({
     _id: '',
@@ -34,6 +35,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
     endDate: { month: '', year: '' },
     description: '',
     includeInResume: true,
+    isPresent: false, // Initialize as false
   });
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
@@ -65,8 +67,8 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
   };
 
   const handleEditClick = (id: string, organization: string, role: string, startDate: { month: string; year: string },
-    endDate: { month: string; year: string }, description: string, includeInResume: boolean) => {
-    setEditData({ id, organization, role, startDate, endDate, description, includeInResume });
+    endDate: { month: string; year: string }, description: string, includeInResume: boolean, isPresent: boolean) => {
+    setEditData({ id, organization, role, startDate, endDate, description, includeInResume, isPresent });
   };
 
   const handleCancelEdit = () => {
@@ -81,12 +83,13 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         startDate: { ...editData.startDate },
         endDate: { ...editData.endDate },
         description: editData.description,
-        includeInResume: editData.includeInResume
+        includeInResume: editData.includeInResume,
+        isPresent: editData.isPresent
       });
 
       const updatedItems = involvements.map((involvement) =>
         involvement._id === editData.id
-          ? { ...involvement, organization: editData.organization, role: editData.role, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume }
+          ? { ...involvement, organization: editData.organization, role: editData.role, startDate: { ...editData.startDate }, endDate: { ...editData.endDate }, description: editData.description, includeInResume: editData.includeInResume, isPresent: editData.isPresent }
           : involvement
       );
 
@@ -123,6 +126,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
           endDate: { month: '', year: '' },
           description: '',
           includeInResume: true,
+          isPresent: false, // Reset to false
         });
 
         setIsAdding(false);
@@ -156,6 +160,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       endDate: { month: '', year: '' },
       description: '',
       includeInResume: true,
+      isPresent: false, // Initialize as false
     });
     setIsAdding(true);
   };
@@ -174,7 +179,8 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         startDate: involvementToUpdate.startDate,
         endDate: involvementToUpdate.endDate,
         description: involvementToUpdate.description,
-        includeInResume: involvementToUpdate.includeInResume
+        includeInResume: involvementToUpdate.includeInResume,
+        isPresent: involvementToUpdate.isPresent ?? false, // Use nullish coalescing operator to provide a default value
       });
     }
   };
@@ -241,6 +247,14 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       .catch((error) => {
         console.error('Error generating description:', error);
       });
+  };
+
+  const handleTogglePresent = () => {
+    if (editData) {
+      setEditData({ ...editData, isPresent: !editData.isPresent });
+    } else {
+      setNewInvolvement({ ...newInvolvement, isPresent: !newInvolvement.isPresent });
+    }
   };
 
   return (
@@ -395,6 +409,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -425,6 +440,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -443,6 +459,23 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     ))}
                   </select>
                 </div>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={handleTogglePresent}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: editData.isPresent ? '#28a745' : '#dc3545',
+                    color: editData.isPresent ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={editData.isPresent ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {editData.isPresent ? 'Present' : 'Not Present'}
+                </button>
               </div>
               <textarea
                 className="form-control mb-3"
@@ -558,8 +591,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                   color: '#555',
                 }}
               >
-                <strong>End Date:</strong> {involvement.endDate.month}{' '}
-                {involvement.endDate.year}
+                <strong>End Date:</strong> {involvement.isPresent ? 'Present' : `${involvement.endDate.month} ${involvement.endDate.year}`}
               </div>
               {involvement.description
                 .split('*')
@@ -587,7 +619,8 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                       involvement.startDate,
                       involvement.endDate,
                       involvement.description,
-                      involvement.includeInResume
+                      involvement.includeInResume,
+                      involvement.isPresent || false
                     )
                   }
                   style={{
@@ -756,6 +789,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     },
                   })
                 }
+                disabled={newInvolvement.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -786,6 +820,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     },
                   })
                 }
+                disabled={newInvolvement.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -803,6 +838,23 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-outline-secondary ms-2"
+                onClick={handleTogglePresent}
+                style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  borderColor: newInvolvement.isPresent ? '#28a745' : '#dc3545',
+                  color: newInvolvement.isPresent ? '#28a745' : '#dc3545',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={newInvolvement.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {newInvolvement.isPresent ? 'Present' : 'Not Present'}
+              </button>
             </div>
           </div>
           <textarea

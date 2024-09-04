@@ -8,7 +8,7 @@ const expSchema = new mongoose.Schema({
   startDate: { month: String, year: String },
   endDate: { month: String, year: String },
   includeInResume: { type: Boolean, default: true },
-  
+  isPresent: { type: Boolean, default: false },
 });
 
 // const Exp = mongoose.model('Exp', expSchema);

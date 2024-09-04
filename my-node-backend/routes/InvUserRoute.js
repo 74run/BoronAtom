@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/involvement', async (req, res) => {
     try {
-        const { organization, role, startDate, endDate, description, includeInResume  } = req.body;
+        const { organization, role, startDate, endDate, description, includeInResume, isPresent   } = req.body;
       const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -25,7 +25,8 @@ router.post('/:userID/involvement', async (req, res) => {
         startDate: startDate,
         endDate: endDate,
         description: description,
-        includeInResume
+        includeInResume, 
+        isPresent 
       });
   
       const savedUserProfile = await userProfile.save();

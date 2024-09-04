@@ -7,6 +7,7 @@ const invSchema = new mongoose.Schema({
     endDate: { month: String, year: String },
     description: String,
     includeInResume: { type: Boolean, default: true },
+    isPresent: { type: Boolean, default: false },
 });
 
 // const Inv = mongoose.model('Inv', invSchema);

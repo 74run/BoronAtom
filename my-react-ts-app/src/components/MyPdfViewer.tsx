@@ -33,6 +33,7 @@ interface EduDetails {
     endDate: { month: string; year: string };
     description: string;
     includeInResume: boolean;
+    isPresent?: boolean;
     }>
     summary: Array<{
         content: string;
@@ -45,7 +46,9 @@ interface EduDetails {
       skills: string;
       description: string;
       includeInResume: boolean;
+      isPresent?: boolean;
     }>
+
     involvement: Array<{
     organization: string;
     role: string;
@@ -53,6 +56,7 @@ interface EduDetails {
     endDate: { month: string; year: string };
     description: string;
     includeInResume: boolean;
+    isPresent?: boolean;
     }>
     certification: Array<{
     name: string;
@@ -183,7 +187,7 @@ const previewPdf = async () => {
     const experienceSection = experiences.length > 0 ? `
       \\header{Experience}
       ${experiences.map(experience => `
-        \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.month}/${experience.startDate.year} -- ${experience.endDate.month}/${experience.endDate.year}}{${experience.location}}
+        \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.month}/${experience.startDate.year} -- ${experience.isPresent ? 'Present' : `${experience.endDate.month}/${experience.endDate.year}`}{${experience.location}}
         ${experience.description && experience.description.trim() !== '' ? `
         \\begin{bullet-list-minor}
           ${convertToLatex(experience.description.split('*').slice(1).map(part => `\\item ${part.trim()}`).join('\n'))}
@@ -194,7 +198,7 @@ const previewPdf = async () => {
     const projectSection = projects.length > 0 ? `
       \\header{Projects}
       ${projects.map(project => `
-        \\project{${project.name}}{${project.skills}}{${project.startDate.month}/${project.startDate.year} -- ${project.endDate.month}/${project.endDate.year}}{
+        \\project{${project.name}}{${project.skills}}{${project.startDate.month}/${project.startDate.year} -- ${project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`}{
           \\begin{bullet-list-minor}
             ${convertToLatex(project.description.split('*').slice(1).map(part => `\\item ${part.trim()}`).join('\n'))}
           \\end{bullet-list-minor}
@@ -215,7 +219,7 @@ const previewPdf = async () => {
       \\header{Involvements}
       ${involvements.map(involvement => `
         \\begin{bullet-list-major}
-          \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.month}/${involvement.startDate.year} -- ${involvement.endDate.month}/${involvement.endDate.year}
+          \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.month}/${involvement.startDate.year} -- ${involvement.isPresent ? 'Present' : `${involvement.endDate.month}/${involvement.endDate.year}`}
           ${involvement.description.split('*').slice(1).map(part => `\\newline -{${part}}`).join('')}
         \\end{bullet-list-major}
       `).join("\n")}
