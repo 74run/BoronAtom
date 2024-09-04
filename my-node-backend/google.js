@@ -177,6 +177,57 @@ router.get('/generate/:userID', async (req, res) => {
   }
 });
 
+
+// Endpoint to generate domain and skill name using Google AI
+router.get('/generate/:userID/skills', async (req, res) => {
+  try {
+    const userId = req.params.userID;
+
+    // Query the database to get user details by ID
+    const user = await UserProfile.findOne({ userID: userId });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // For text-only input, use the gemini-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    // Create a prompt using user data
+    const prompt = `Generate one new skill domain and their associated skills based on the following user information:
+User Experience: ${user.project}
+User Projects: ${user.experience}
+User Certifications: ${user.certification}
+User Involvements: ${user.involvement}
+Do not repeat already existing User Skills : ${user.skills}
+For each relevant domain, provide a domain name followed by a colon, then list the specific skills associated with that domain. Separate each skill with a comma. Use the following format:
+Most Importantly
+**Do not print any of these Domain Name: ${user.skills.domain} and skills : ${user.skills.name}**
+**"Domain Name: Skill 1, Skill 2, Skill 3, ..."**
+
+
+Avoid Unnecessory texts and bolding any words`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text_1 = await response.text();
+
+    const text = text_1.replace(/\*/g, '')
+
+    console.log(text)
+
+    // Assuming the response contains domain and name in the text
+    // Parse the AI-generated text to extract domain and name (this might depend on the structure of AI's response)
+    const [domain, name] = text.split(':');
+
+    // Send the generated domain and name to the front end
+    res.json({ domain: domain.trim(), name: name.trim() });
+  } catch (error) {
+    console.error('Error generating content:', error);
+    res.status(500).json({ error: 'An error occurred while generating content' });
+  }
+});
+
 router.post('/chat/:userID', async (req, res) => {
   const { text } = req.body;
   const userId = req.params.userID;
