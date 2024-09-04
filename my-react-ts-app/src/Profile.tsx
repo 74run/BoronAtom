@@ -76,6 +76,7 @@ interface EduDetails {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     includeInResume: boolean;
+    isPresent?: boolean;
   }>;
   experience: Array<{
     jobTitle: string;
@@ -143,6 +144,7 @@ interface Education {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 interface Summary {
@@ -349,6 +351,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     includeInResume: boolean;
+    isPresent?: boolean;
   }) => {
     // console.log('Sending data to server:', data);
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {

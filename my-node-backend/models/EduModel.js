@@ -8,6 +8,7 @@ const EduSchema = new mongoose.Schema({
   startDate: { month: String, year: String },
   endDate: { month: String, year: String },
   includeInResume: { type: Boolean, default: true },
+  isPresent: { type: Boolean, default: false },
 });
 
 // const Edu = mongoose.model('Edu', EduSchema);

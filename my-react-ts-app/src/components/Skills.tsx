@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faEdit, faSave, faToggleOn, faToggleOff } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash, faEdit, faSave, faToggleOn, faToggleOff, faRobot } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 
@@ -124,6 +124,22 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       includeInResume: true,
     });
     setIsAdding(true);
+  };
+
+  const handleAISuggestions = () => {
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate/${userID}/skills`)
+      .then((response) => {
+        const { domain, name } = response.data;
+        setNewSkill({
+          _id: '',
+          domain,
+          name,
+          includeInResume: true,
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching AI suggestions:', error);
+      });
   };
 
   return (
@@ -365,29 +381,46 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               marginBottom: '1rem',
             }}
           />
-          <button
-            className="btn btn-success"
-            onClick={handleSaveClick}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-            }}
-          >
-            <FontAwesomeIcon icon={faSave} className="me-2" />
-            Save
-          </button>
-          <button
-            className="btn btn-secondary ms-2"
-            onClick={() => setIsAdding(false)}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-            }}
-          >
-            Cancel
-          </button>
+          <div className="d-flex gap-2">
+            <button
+              className="btn btn-outline-secondary"
+              onClick={handleAISuggestions}
+              style={{
+                backgroundColor: '#6c757d',
+                color: '#fff',
+                border: '1px solid #6c757d',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                fontSize: '1rem',
+              }}
+            >
+              <FontAwesomeIcon icon={faRobot} className="me-2" />
+              Add with AI
+            </button>
+            <button
+              className="btn btn-success"
+              onClick={handleSaveClick}
+              style={{
+                borderRadius: '8px',
+                padding: '10px 20px',
+                fontSize: '1rem',
+              }}
+            >
+              <FontAwesomeIcon icon={faSave} className="me-2" />
+              Save
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setIsAdding(false)}
+              style={{
+                borderRadius: '8px',
+                padding: '10px 20px',
+                fontSize: '1rem',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
       {!isAdding && (

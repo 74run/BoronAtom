@@ -22,12 +22,13 @@ interface Education {
   endDate: { month: string; year: string };
   includeInResume: boolean;
   isEditing?: boolean;
+  isPresent?: boolean; // Add this field to track if the end date is 'Present'
 }
 
 interface EducationProps {
   Educations: Education[];
   UserDetail: UserDetails | null;
-  onEdit: (id: string, data: { university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; includeInResume: boolean }) => void;
+  onEdit: (id: string, data: { university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; includeInResume: boolean, isPresent: boolean }) => void;
   onDelete: (id: string) => void;
 }
 
@@ -41,6 +42,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     includeInResume: boolean;
+    isPresent: boolean;
   } | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
@@ -54,6 +56,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
     includeInResume: true,
+    isPresent: false, // Initialize as false
   });
   const { userID } = useParams();
   const [isAdding, setIsAdding] = useState(false);
@@ -104,9 +107,10 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     major: string,
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
-    includeInResume: boolean
+    includeInResume: boolean,
+    isPresent: boolean
   ) => {
-    setEditData({ id, university, cgpa, degree, major, startDate, endDate, includeInResume });
+    setEditData({ id, university, cgpa, degree, major, startDate, endDate, includeInResume, isPresent });
   };
 
   const handleCancelEdit = () => {
@@ -123,6 +127,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         startDate: { ...editData.startDate },
         endDate: { ...editData.endDate },
         includeInResume: editData.includeInResume,
+        isPresent: editData.isPresent,
       });
 
       const updatedItems = educations.map((education) =>
@@ -136,6 +141,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             startDate: { ...editData.startDate },
             endDate: { ...editData.endDate },
             includeInResume: editData.includeInResume,
+            isPresent: editData.isPresent,
           }
           : education
       );
@@ -185,7 +191,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       education._id === id ? { ...education, includeInResume: !education.includeInResume } : education
     );
     setEducations(updatedEducations);
-
+  
     const educationToUpdate = updatedEducations.find(education => education._id === id);
     if (educationToUpdate) {
       onEdit(id, {
@@ -195,14 +201,16 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         major: educationToUpdate.major,
         startDate: educationToUpdate.startDate,
         endDate: educationToUpdate.endDate,
-        includeInResume: educationToUpdate.includeInResume
+        includeInResume: educationToUpdate.includeInResume,
+        isPresent: educationToUpdate.isPresent ?? false, // Use nullish coalescing operator to provide a default value
       });
     }
   };
+  
 
   const handleSaveClick = () => {
     // Form validation check
-    if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || !newEducation.endDate.month || !newEducation.endDate.year) {
+    if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || (!newEducation.endDate.month && !newEducation.isPresent) || (!newEducation.endDate.year && !newEducation.isPresent)) {
       console.error('Please fill in all required fields');
       return;
     }
@@ -236,6 +244,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           startDate: { month: '', year: '' },
           endDate: { month: '', year: '' },
           includeInResume: true,
+          isPresent: false, // Reset to false
         });
 
         setIsAdding(false);
@@ -255,8 +264,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       startDate: { month: '', year: '' },
       endDate: { month: '', year: '' },
       includeInResume: true,
+      isPresent: false, // Initialize as false
     });
     setIsAdding(true);
+  };
+
+  const handleTogglePresent = () => {
+    if (editData) {
+      setEditData({ ...editData, isPresent: !editData.isPresent });
+    } else {
+      setNewEducation({ ...newEducation, isPresent: !newEducation.isPresent });
+    }
   };
 
   return (
@@ -447,6 +465,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -477,6 +496,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                         },
                       })
                     }
+                    disabled={editData.isPresent}
                     style={{
                       borderRadius: '8px',
                       border: '1px solid #ddd',
@@ -495,6 +515,23 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     ))}
                   </select>
                 </div>
+                <button
+                  className="btn btn-outline-secondary ms-2"
+                  onClick={handleTogglePresent}
+                  style={{
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    borderColor: editData.isPresent ? '#28a745' : '#dc3545',
+                    color: editData.isPresent ? '#28a745' : '#dc3545',
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={editData.isPresent ? faToggleOn : faToggleOff}
+                    className="me-2"
+                  />
+                  {editData.isPresent ? 'Present' : 'Not Present'}
+                </button>
               </div>
               <button
                 className="btn btn-success me-2"
@@ -598,8 +635,10 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 }}
               >
                 <strong>End Date:</strong>{' '}
-                {education.endDate &&
-                  `${education.endDate.month} ${education.endDate.year}`}
+                {education.isPresent
+                  ? 'Present'
+                  : education.endDate &&
+                    `${education.endDate.month} ${education.endDate.year}`}
               </p>
               <div>
                 <button
@@ -613,7 +652,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                       education.major,
                       education.startDate,
                       education.endDate,
-                      education.includeInResume
+                      education.includeInResume,
+                      education.isPresent || false
                     )
                   }
                   style={{
@@ -827,6 +867,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     },
                   })
                 }
+                disabled={newEducation.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -857,6 +898,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     },
                   })
                 }
+                disabled={newEducation.isPresent}
                 style={{
                   borderRadius: '8px',
                   border: '1px solid #ddd',
@@ -874,6 +916,23 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-outline-secondary ms-2"
+                onClick={handleTogglePresent}
+                style={{
+                  padding: '0.3rem 0.8rem',
+                  borderRadius: '8px',
+                  fontSize: '0.9rem',
+                  borderColor: newEducation.isPresent ? '#28a745' : '#dc3545',
+                  color: newEducation.isPresent ? '#28a745' : '#dc3545',
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={newEducation.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {newEducation.isPresent ? 'Present' : 'Not Present'}
+              </button>
             </div>
           </div>
           <button
