@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container, Button, Collapse } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
@@ -63,13 +63,31 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         fontFamily: "'Roboto', sans-serif",
       }}
     >
+      {/* Navbar */}
       <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow" style={{ borderBottom: "1px solid #333" }}>
         <BootstrapNavbar expand="md" bg="dark" variant="dark" fixed="top" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
-          <Container>
-            <BootstrapNavbar.Brand href="/">
-              <img src={logo} alt="Logo" height="40" />
+          <Container fluid>
+            <BootstrapNavbar.Brand href="/" className="d-flex align-items-center">
+              <img
+                src={logo}
+                alt="Logo"
+                className="img-fluid"
+                style={{
+                  height: "25px",
+                  width: "auto",
+                }}
+              />
             </BootstrapNavbar.Brand>
-            <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
+            <BootstrapNavbar.Toggle
+              aria-controls="basic-navbar-nav"
+              onClick={() => setExpanded(!expanded)}
+              className="ms-auto"
+              style={{
+                position: 'relative',
+                top: 0,
+                marginLeft: 'auto',
+              }}
+            />
             <BootstrapNavbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto">
                 <Nav.Link href="/register">Register</Nav.Link>
@@ -80,6 +98,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         </BootstrapNavbar>
       </nav>
 
+      {/* Login Form */}
       <div className="login-container d-flex justify-content-center align-items-center vh-100">
         <div
           className="login-box shadow-lg p-5 rounded"
@@ -180,7 +199,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
               type="button"
               className="btn btn-outline-primary"
               onClick={handleRegisterClick}
-   
+              style={{
+                borderRadius: "8px",
+                padding: "10px 20px",
+              }}
             >
               Register
             </button>

@@ -113,7 +113,10 @@ const RegisterForm: React.FC = () => {
       <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
         <div className="container">
           <a className="navbar-brand" href="/">
-            <img src={logo} alt="Logo" height="40" />
+            <img src={logo} alt="Logo" style={{
+                  height: "25px",
+                  width: "auto",
+                }} />
           </a>
         </div>
       </BootstrapNavbar>
