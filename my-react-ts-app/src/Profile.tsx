@@ -18,6 +18,7 @@ import ResumeUpload from './components/ResumeUpload'
 import ProfileNew from './components/ProfilePhoto';
 import { AiOutlineFileAdd } from 'react-icons/ai';
 
+
 import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
 
@@ -223,44 +224,7 @@ const Profile: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [isButtonHovered, setIsButtonHovered] = useState<boolean>(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
 
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      setMessage('Please select a file to upload.');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('resume', selectedFile);
-
-    setUploading(true);
-    setMessage(null);
-
-    try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/userprofile/upload-resume`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      setMessage('File uploaded successfully!');
-      setParsedData(response.data.parsedData);
-    } catch (error) {
-      setMessage('Failed to upload file. Please try again.');
-      console.error('Error uploading file:', error);
-    } finally {
-      setUploading(false);
-    }
-  };
   // Fetch user details and educations data
   useEffect(() => {
     const fetchData = async () => {
@@ -619,9 +583,7 @@ const Profile: React.FC = () => {
           <div
             style={{
               flex: "1.30",
-              display: "flex",
-              flexDirection: "column",
-              gap: "30px",
+          
             }}
           >
             <div
@@ -633,6 +595,7 @@ const Profile: React.FC = () => {
                 flexDirection: "row",
                 flexWrap: "wrap",
                 height: "auto",
+                marginTop: "-40px",
               }}
             >
               {/* ProfileNew Section */}
@@ -640,7 +603,7 @@ const Profile: React.FC = () => {
                 style={{
                   flex: "1.5",
                   padding: "10px",
-                  backgroundColor: "#ffffff",
+                  marginBottom: '50px',
                   borderRadius: "15px",
                   boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
                   display: "flex",
@@ -654,65 +617,14 @@ const Profile: React.FC = () => {
                 <ProfileNew
                   UserDetail={userDetails}
                   ContactDetail={contactDetails}
+
+                  
                 />
-                   <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+                   
               </div>
   
               {/* PDFResume Section */}
-          <div
-              style={{
-                flex: "1",
-                padding: "10px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                display: "flex",
-                marginTop: "10px",
-                minHeight: "300px",  // Ensure the container has a minimum height
-                 // Center content vertically
-               
-                flexDirection: "column",
-                
-                alignItems: "stretch",  // Center content horizontally
-                width: "100%",
-                
-              }}
-            >
-          <div style={styles.container}>
-      <h2 style={styles.header}>Upload Your Resume</h2>
-      <div style={styles.uploadContainer}>
-        <input
-          type="file"
-          id="fileInput"
-          onChange={handleFileChange}
-          accept=".pdf,.doc,.docx"
-          style={styles.hiddenFileInput}
-        />
-        <label
-          htmlFor="fileInput"
-          style={styles.uploadButton}
-        >
-          <AiOutlineFileAdd style={styles.icon} />
-          <span style={styles.fileName}>
-            {selectedFile ? selectedFile.name : "Upload file"}
-          </span>
-        </label>
-   
-      </div>
-      {selectedFile && (
-          <button
-            onClick={handleUpload}
-            disabled={uploading}
-            style={styles.confirmButton}
-          >
-            {uploading ? 'Uploading...' : 'Upload'}
-          </button>
-        )}
-      {message && <p style={styles.message}>{message}</p>}
-    </div>
-           
-            </div>
-
+       
 
             </div>
   
@@ -722,18 +634,10 @@ const Profile: React.FC = () => {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                gap: "30px",
+                gap: "20px",
               }}
             >
-              <div
-                className="summary-section"
-                style={{
-                  padding: "20px",
-                  backgroundColor: "#ffffff",
-                  borderRadius: "15px",
-                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                }}
-              >
+        
                 
   <SummarySection
         Summarys={summarys}
@@ -741,53 +645,33 @@ const Profile: React.FC = () => {
         onDelete={handleDeleteSum}
         parsedSummary={parsedData?.summary || ''} // Pass the parsed summary if available
       />
-              </div>
-              <div
-                className="projects-section"
-                style={{
-                  padding: "20px",
-                  backgroundColor: "#ffffff",
-                  borderRadius: "15px",
-                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                }}
-              >
+           
+    
                 <ProjectsSection
                   onEdit={handleEditPro}
                   onDelete={handleDeletePro}
                   Projects={projects}
                 />
-              </div>
+         
             </div>
   
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              }}
-            >
+       
               <ExperienceSection
                 Experiences={experiences}
                 onEdit={handleEditExp}
                 onDelete={handleDeleteExp}
               />
-            </div>
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              }}
-            >
+
+
+         
+            
               <EducationSection
                 Educations={educations}
                 onEdit={handleEditEdu}
                 onDelete={handleDeleteEdu}
                 UserDetail={userDetails}
               />
-            </div>
+      
           </div>
   
           {/* Right Column (Sidebar) */}
@@ -798,52 +682,34 @@ const Profile: React.FC = () => {
               flexDirection: "column",
               gap: "30px",
               width: "100%",
+              marginTop: "18px"
               
             }}
           >
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                width: "100%"
-              }}
-            >
+       
               <Skills
                 Skills={skills}
                 onEdit={handleEditSkill}
                 onDelete={handleDeleteSkill}
               />
-            </div>
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              }}
-            >
+         
+    
               <CertificationSection
                 Certifications={certifications}
                 onEdit={handleEditCert}
                 onDelete={handleDeleteCert}
               />
-            </div>
-            <div
-              style={{
-                padding: "20px",
-                backgroundColor: "#ffffff",
-                borderRadius: "15px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-              }}
-            >
-              <InvolvementSection
+
+
+<InvolvementSection
                 Involvements={involvements}
                 onEdit={handleEditInv}
                 onDelete={handleDeleteInv}
               />
-            </div>
+           
+     
+      
+         
           </div>
         </div>
       </div>
@@ -855,86 +721,7 @@ const Profile: React.FC = () => {
   
 };
 
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: '500px',
-    margin: '0px auto',
-    padding: '10px',
-    borderRadius: '10px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    backgroundColor: '#fff',
-    textAlign: 'center',
-  },
-  header: {
-    marginBottom: '20px',
-    fontSize: '18px',
-    color: '#333',
-    fontFamily: 'Arial, sans-serif',
-  },
-  uploadContainer: {
-    width: '200px',
-    height: '150px',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '10px',
-    border: '2px dashed #4A90E2',
-    borderRadius: '10px',
-    backgroundColor: '#F9F9F9',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease, border-color 0.3s ease',
-    textAlign: 'center',
-  },
-  hiddenFileInput: {
-    display: 'none',
-  },
-  uploadButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    
-    cursor: 'pointer',
-    textAlign: 'center',
-    fontSize: '16px',
-    color: '#333',
-    fontFamily: 'Arial, sans-serif',
-  },
-  fileName: {
-    marginTop: '10px',
-    maxWidth: '160px', // Explicitly define max-width to ensure truncation happens within a limited space
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    display: 'block', // block or inline-block ensures the max-width is respected
-    textAlign: 'center', // Center the text within its own space
-  },
-  icon: {
-    fontSize: '40px',
-    color: '#4A90E2',
-    marginTop: '20px',
-  },
-  confirmButton: {
-    marginTop: '20px',
-    padding: '10px 20px',
-    borderRadius: '30px',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '16px',
-    fontFamily: 'Arial, sans-serif',
-    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
-    boxShadow: '0px 4px 15px rgba(0, 0, 0, 0.2)',
-  },
-  message: {
-    marginTop: '20px',
-    fontSize: '16px',
-    color: '#333',
-    fontFamily: 'Arial, sans-serif',
-  },
-};
+
 
 
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Navbar as BootstrapNavbar, Image } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/ForgotPassword.css'; // Import custom CSS
 
@@ -32,6 +32,7 @@ const ForgotPassword: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Verification error:', error.message || 'Unknown error');
+      setErrorMessage('An error occurred. Please try again.');
     }
   };
 
@@ -45,8 +46,8 @@ const ForgotPassword: React.FC = () => {
         </div>
       </BootstrapNavbar>
 
-      <div className="forgot-password-container">
-        <div className="forgot-password-box shadow p-5 rounded">
+      <div className="forgot-password-container d-flex justify-content-center align-items-center">
+        <div className="forgot-password-box shadow-lg p-5 rounded">
           <h2 className="text-center mb-4">Forgot your Password?</h2>
           <p className="text-center mb-4">Enter your email address to receive a password reset link.</p>
           <div className="mb-4">
@@ -57,23 +58,86 @@ const ForgotPassword: React.FC = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                padding: "12px",
+              }}
             />
             {isResetLinkSent && <p className="text-success mt-3">Reset Password Link has been sent!</p>}
             {errorMessage && <p className="text-danger mt-3">{errorMessage}</p>}
           </div>
           <div className="d-grid gap-2">
-            <button type="button" className="btn btn-primary btn-lg" onClick={handleSendClick}>
+            <button type="button" className="btn btn-primary btn-lg" onClick={handleSendClick} style={{ backgroundColor: "#4CAF50", border: "none", padding: "10px 20px", borderRadius: "8px" }}>
               Send
             </button>
           </div>
           <div className="text-center mt-4">
             <p>Don't have an account?</p>
-            <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
+            <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick} style={{ borderColor: "#4CAF50", color: "#4CAF50", borderRadius: "8px", transition: "all 0.3s" }}>
               Register
             </button>
           </div>
         </div>
       </div>
+
+      <style>{`
+        .forgot-password-page {
+          background-color: #1c1c1e;
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #f5f5f5;
+          font-family: 'Roboto', sans-serif;
+          padding-top: 80px;
+        }
+
+        .forgot-password-container {
+          max-width: 500px;
+          width: 100%;
+          margin: auto;
+          padding: 20px;
+        }
+
+        .forgot-password-box {
+          background-color: #2d2d30;
+          border-radius: 12px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          padding: 40px;
+        }
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #4CAF50;
+          margin-bottom: 20px;
+          font-family: 'Roboto Slab', serif;
+        }
+
+        p {
+          color: #f5f5f5;
+        }
+
+        .btn-primary:hover {
+          background-color: #45a049;
+        }
+
+        .btn-outline-primary:hover {
+          background-color: #4CAF50;
+          color: white;
+        }
+
+        .text-success {
+          color: #4CAF50 !important;
+        }
+
+        .text-danger {
+          color: #dc3545 !important;
+        }
+      `}</style>
     </div>
   );
 };

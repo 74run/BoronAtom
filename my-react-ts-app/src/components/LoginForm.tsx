@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container, Button, Collapse } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
 
@@ -16,6 +16,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null); // State to hold the error message
+  const [expanded, setExpanded] = useState(false); // State to handle navbar expansion
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -53,35 +54,47 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="login-page">
-      <nav className="navbar navbar-expand-md navbar-light bg-white shadow">
-      <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            <img src={logo} alt="Logo" height="40" />
-          </a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link" href="/register">Register</a>
-              </li>
-              <li className="nav-item">
-                <a className="nav-link" href="/forgotpassword">Forgot Password</a>
-              </li>
-            </ul>
-          </div>
-        </div>
+    <div
+      className="login-page"
+      style={{
+        backgroundColor: "#1c1c1e",
+        minHeight: "100vh",
+        color: "#f5f5f5",
+        fontFamily: "'Roboto', sans-serif",
+      }}
+    >
+      <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow" style={{ borderBottom: "1px solid #333" }}>
+        <BootstrapNavbar expand="md" bg="dark" variant="dark" fixed="top" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
+          <Container>
+            <BootstrapNavbar.Brand href="/">
+              <img src={logo} alt="Logo" height="40" />
+            </BootstrapNavbar.Brand>
+            <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
+            <BootstrapNavbar.Collapse id="basic-navbar-nav">
+              <Nav className="ms-auto">
+                <Nav.Link href="/register">Register</Nav.Link>
+                <Nav.Link href="/forgotpassword">Forgot Password</Nav.Link>
+              </Nav>
+            </BootstrapNavbar.Collapse>
+          </Container>
         </BootstrapNavbar>
       </nav>
 
-    
-
-      <div className="login-container">
-        <div className="login-box shadow p-5 rounded">
-          <h2 className="text-center mb-4">Welcome Back</h2>
+      <div className="login-container d-flex justify-content-center align-items-center vh-100">
+        <div
+          className="login-box shadow-lg p-5 rounded"
+          style={{
+            backgroundColor: "#2d2d30",
+            borderRadius: "12px",
+            width: "100%",
+            maxWidth: "400px",
+            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+            padding: "40px",
+          }}
+        >
+          <h2 className="text-center mb-4" style={{ fontFamily: "'Roboto Slab', serif", fontSize: "1.5rem", fontWeight: 700, color: "#4CAF50" }}>
+            Welcome Back
+          </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -91,40 +104,84 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  padding: "12px",
+                }}
               />
             </div>
             <div className="mb-4">
               <div className="password-input-group input-group">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   className="form-control"
                   value={password}
                   placeholder="Password*"
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    padding: "12px",
+                  }}
                 />
                 <button
                   type="button"
                   className="btn btn-outline-neutral"
                   onClick={togglePasswordVisibility}
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    backgroundColor: "#444",
+                    color: "#f5f5f5",
+                    padding: "0.5rem 1rem",
+                  }}
                 >
-                  <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
+                  <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
                 </button>
               </div>
             </div>
             {error && <p className="text-danger">{error}</p>}
             <div className="d-grid gap-2">
-              <button type="submit" className="btn btn-primary btn-lg">
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                style={{
+                  backgroundColor: "#4CAF50",
+                  border: "none",
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  transition: "all 0.3s",
+                }}
+              >
                 Login
               </button>
-              <button type="button" className="btn btn-link" onClick={handleForgotPasswordClick}>
+              <button
+                type="button"
+                className="btn btn-link"
+                onClick={handleForgotPasswordClick}
+                style={{
+                  color: "#007bff",
+                  textDecoration: "none",
+                }}
+              >
                 Forgot Password?
               </button>
             </div>
           </form>
           <div className="text-center mt-4">
             <p>Don't have an account?</p>
-            <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick}>
+            <button
+              type="button"
+              className="btn btn-outline-primary"
+              onClick={handleRegisterClick}
+   
+            >
               Register
             </button>
           </div>

@@ -194,24 +194,24 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
   return (
     <div
       style={{
-        border: 'none',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '30px',
+        border: "none",
+        borderRadius: "12px",
+        padding: "24px",
+        marginBottom: "30px",
         fontFamily: "'Roboto', sans-serif",
-        color: '#333',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+        color: "#f5f5f5",
+        backgroundColor: "#1c1c1e",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
       }}
     >
       <h4
         style={{
-          color: '#4CAF50',
-          textAlign: 'left',
-          marginBottom: '1.5rem',
+          color: "#4CAF50",
+          textAlign: "left",
+          marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: '1.5rem',
+          fontSize: "1.5rem",
         }}
       >
         Certifications
@@ -219,295 +219,280 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       {certifications.map((certification) => (
         <div
           key={certification._id}
-          className="mb-3"
+          className="certification-card"
           style={{
-            border: '1px solid #e0e0e0',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '1.5rem',
-            backgroundColor: '#f8f9fa',
-            transition: 'transform 0.3s, box-shadow 0.3s',
+            border: "1px solid #333",
+            borderRadius: "12px",
+            padding: "14px",
+            marginBottom: "1.5rem",
+            backgroundColor: "#2d2d30",
+            transition: "transform 0.3s, box-shadow 0.3s",
+            cursor: "pointer",
+            position: "relative",
           }}
         >
           {editData && editData.id === certification._id ? (
-            // Edit mode
-            <div>
+            <div style={{
+              border: "1px solid #333",
+              borderRadius: "12px",
+              padding: "14px",
+              marginBottom: "1.5rem",
+              backgroundColor: "#2d2d30",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+              position: "relative",
+            }}>
               <input
                 type="text"
-                className="form-control mb-3"
                 placeholder="Certification Name"
                 value={editData.name}
                 onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
+  
               <input
                 type="text"
-                className="form-control mb-3"
                 placeholder="Issued By"
                 value={editData.issuedBy}
                 onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-              <div className="date-dropdowns mb-3">
-                <label>Issued Date:</label>
-                <div className="flex-container">
-                  <select
-                    className="form-control mb-2"
-                    value={editData.issuedDate.month}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        issuedDate: {
-                          ...editData.issuedDate,
-                          month: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                      marginRight: '0.5rem',
-                    }}
-                  >
-                    {!editData.issuedDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                    {months.map((month) => (
-                      <option key={month} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    className="form-control mb-2"
-                    value={editData.issuedDate.year}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        issuedDate: {
-                          ...editData.issuedDate,
-                          year: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                    }}
-                  >
-                    {!editData.issuedDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                    {graduationYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+  
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap"  }}>
+                <select
+                  value={editData.issuedDate.month}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      issuedDate: { ...editData.issuedDate, month: e.target.value },
+                    })
+                  }
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+  
+                <select
+                  value={editData.issuedDate.year}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      issuedDate: { ...editData.issuedDate, year: e.target.value },
+                    })
+                  }
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                  {graduationYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="date-dropdowns mb-3">
-                <label>Expiration Date:</label>
-                <div className="flex-container">
-                  <select
-                    className="form-control mb-2"
-                    value={editData.expirationDate.month}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        expirationDate: {
-                          ...editData.expirationDate,
-                          month: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                      marginRight: '0.5rem',
-                    }}
-                  >
-                    {!editData.expirationDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                    {months.map((month) => (
-                      <option key={month} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    className="form-control mb-2"
-                    value={editData.expirationDate.year}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        expirationDate: {
-                          ...editData.expirationDate,
-                          year: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                    }}
-                  >
-                    {!editData.expirationDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                    {graduationYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+  
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "1rem" }}>
+                <select
+                  value={editData.expirationDate.month}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      expirationDate: { ...editData.expirationDate, month: e.target.value },
+                    })
+                  }
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+  
+                <select
+                  value={editData.expirationDate.year}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      expirationDate: { ...editData.expirationDate, year: e.target.value },
+                    })
+                  }
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                  {graduationYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
+  
               <textarea
-                
-                className="form-control mb-3"
                 placeholder="Certificate URL"
                 value={editData.url}
                 onChange={(e) => setEditData({ ...editData, url: e.target.value })}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginTop: "1rem",
+                  width: "100%",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-              <button
-                className="btn btn-success me-2"
-                onClick={handleUpdate}
-                style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                }}
-              >
-                <FontAwesomeIcon icon={faSave} className="me-2" />
-                Update
-              </button>
-              <button
-                className="btn btn-secondary"
-                onClick={handleCancelEdit}
-                style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                }}
-              >
-                Cancel
-              </button>
+  
+              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                <button
+                  onClick={handleUpdate}
+                  style={{
+                    backgroundColor: "#4CAF50",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faSave} />
+                  Update
+                </button>
+  
+                <button
+                  onClick={handleCancelEdit}
+                  style={{
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           ) : (
-            // View mode
             <div
               style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '12px',
-                backgroundColor: '#ffffff',
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                cursor: 'pointer',
+                borderRadius: "8px",
+                padding: "12px",
+                backgroundColor: "#1c1c1e",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                cursor: "pointer",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow =
-                  '0 10px 30px rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 8px rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
               }}
             >
               <h5
                 style={{
-                  color: '#333',
+                  color: "#f5f5f5",
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: '1.2rem',
-                  marginBottom: '0.5rem',
+                  fontSize: "1.2rem",
+                  marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
               >
                 {certification.name}
               </h5>
-              <div
-                style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
-                }}
-              >
+  
+              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
                 <strong>Issued By:</strong> {certification.issuedBy}
-              </div>
-              <div
-                style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
-                }}
-              >
-                <strong>Issued Date:</strong> {certification.issuedDate.month}{' '}
+              </p>
+  
+              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+                <strong>Issued Date:</strong> {certification.issuedDate.month}{" "}
                 {certification.issuedDate.year}
-              </div>
-              <div
+              </p>
+  
+              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+                <strong>Expiration Date:</strong>{" "}
+                {certification.expirationDate.month} {certification.expirationDate.year}
+              </p>
+  
+              <p
                 style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
+                  fontSize: "0.9rem",
+                  color: "#bbb",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-all",
+                  whiteSpace: "normal",
                 }}
               >
-                <strong>Expiration Date:</strong> {certification.expirationDate.month}{' '}
-                {certification.expirationDate.year}
-              </div>
-              <div
-  style={{
-    fontFamily: "'Roboto', sans-serif",
-    fontSize: '0.9rem',
-    marginBottom: '0.5rem',
-    color: '#555',
-    overflowWrap: 'break-word',  // Ensure long words or URLs wrap
-    wordBreak: 'break-all',      // Force the text to break within words if necessary
-    textOverflow: 'ellipsis',    // Add ellipsis for overflowing text
-    whiteSpace: 'normal',        // Allow the text to wrap normally
-  }}
->
-  <strong>Certificate URL:</strong> {certification.url}
-</div>
-              <div>
+                <strong>Certificate URL:</strong> {certification.url}
+              </p>
+  
+              <div style={{ display: "flex", gap: "10px", marginTop: "1rem" }}>
                 <button
-                  className="btn btn-outline-primary me-2"
                   onClick={() =>
                     handleEditClick(
                       certification._id,
@@ -520,270 +505,278 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                     )
                   }
                   style={{
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    borderRadius: '8px',
-                    padding: '0.3rem 0.8rem',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  <FontAwesomeIcon icon={faEdit} />
                   Edit
                 </button>
+  
                 <button
-                  className="btn btn-outline-danger"
                   onClick={() => handleDelete(certification._id)}
                   style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  <FontAwesomeIcon icon={faTrash} />
                   Delete
                 </button>
+  
                 <button
-                  className="btn btn-outline-secondary ms-2"
                   onClick={() => handleToggleInclude(certification._id)}
                   style={{
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    borderColor: certification.includeInResume ? '#28a745' : '#dc3545',
-                    color: certification.includeInResume ? '#28a745' : '#dc3545',
+                    backgroundColor: certification.includeInResume
+                      ? "#28a745"
+                      : "#dc3545",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
                   }}
                 >
                   <FontAwesomeIcon
                     icon={certification.includeInResume ? faToggleOn : faToggleOff}
-                    className="me-2"
                   />
-                  {certification.includeInResume ? 'Included' : 'Excluded'}
+                  {certification.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
           )}
         </div>
       ))}
+  
       {isAdding && (
-        // Add certification entry
         <div>
           <input
             type="text"
-            className="form-control mb-3"
             placeholder="Certification Name"
             value={newCertification.name}
             onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              width: "100%",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
+  
           <input
             type="text"
-            className="form-control mb-3"
             placeholder="Issued By"
             value={newCertification.issuedBy}
             onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              width: "100%",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
-          <div className="date-dropdowns mb-3">
-            <label>Issued Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newCertification.issuedDate.month}
-                onChange={(e) =>
-                  setNewCertification({
-                    ...newCertification,
-                    issuedDate: {
-                      ...newCertification.issuedDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginRight: '0.5rem',
-                }}
-              >
-                {!newCertification.issuedDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newCertification.issuedDate.year}
-                onChange={(e) =>
-                  setNewCertification({
-                    ...newCertification,
-                    issuedDate: {
-                      ...newCertification.issuedDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                }}
-              >
-                {!newCertification.issuedDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+  
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <select
+              value={newCertification.issuedDate.month}
+              onChange={(e) =>
+                setNewCertification({
+                  ...newCertification,
+                  issuedDate: { ...newCertification.issuedDate, month: e.target.value },
+                })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                padding: "10px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                flex: "1",
+              }}
+            >
+              <option value="" disabled>
+                Select Month
+              </option>
+              {months.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </select>
+  
+            <select
+              value={newCertification.issuedDate.year}
+              onChange={(e) =>
+                setNewCertification({
+                  ...newCertification,
+                  issuedDate: { ...newCertification.issuedDate, year: e.target.value },
+                })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                padding: "10px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                flex: "1",
+              }}
+            >
+              <option value="" disabled>
+                Select Year
+              </option>
+              {graduationYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="date-dropdowns mb-3">
-            <label>Expiration Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newCertification.expirationDate.month}
-                onChange={(e) =>
-                  setNewCertification({
-                    ...newCertification,
-                    expirationDate: {
-                      ...newCertification.expirationDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginRight: '0.5rem',
-                }}
-              >
-                {!newCertification.expirationDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newCertification.expirationDate.year}
-                onChange={(e) =>
-                  setNewCertification({
-                    ...newCertification,
-                    expirationDate: {
-                      ...newCertification.expirationDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                }}
-              >
-                {!newCertification.expirationDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
+  
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "1rem" }}>
+            <select
+              value={newCertification.expirationDate.month}
+              onChange={(e) =>
+                setNewCertification({
+                  ...newCertification,
+                  expirationDate: { ...newCertification.expirationDate, month: e.target.value },
+                })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                padding: "10px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                flex: "1",
+              }}
+            >
+              <option value="" disabled>
+                Select Month
+              </option>
+              {months.map((month) => (
+                <option key={month} value={month}>
+                  {month}
+                </option>
+              ))}
+            </select>
+  
+            <select
+              value={newCertification.expirationDate.year}
+              onChange={(e) =>
+                setNewCertification({
+                  ...newCertification,
+                  expirationDate: { ...newCertification.expirationDate, year: e.target.value },
+                })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                padding: "10px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                flex: "1",
+              }}
+            >
+              <option value="" disabled>
+                Select Year
+              </option>
+              {graduationYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
           </div>
+  
           <textarea
-            
-            className="form-control mb-3"
             placeholder="Certificate URL"
             value={newCertification.url}
             onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
+              marginTop: "1rem",
+              width: "100%",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
-          <button
-            className="btn btn-success"
-            onClick={handleSaveClick}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-            }}
-          >
-            <FontAwesomeIcon icon={faSave} className="me-2" />
-            Save
-          </button>
-          <button
-            className="btn btn-secondary ms-2"
-            onClick={() => setIsAdding(false)}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-            }}
-          >
-            Cancel
-          </button>
+  
+          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+            <button
+              onClick={handleSaveClick}
+              style={{
+                backgroundColor: "#4CAF50",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                flex: "1",
+              }}
+            >
+              <FontAwesomeIcon icon={faSave} />
+              Save
+            </button>
+  
+            <button
+              onClick={() => setIsAdding(false)}
+              style={{
+                backgroundColor: "#6c757d",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                flex: "1",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
+  
       {!isAdding && (
-        // Show "Add Certification" button
         <button
-          className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: '1px solid #007bff',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            fontSize: '1rem',
+            backgroundColor: "#007bff",
+            color: "#fff",
+            borderRadius: "8px",
+            padding: "10px 20px",
+            width: "100%",
+            marginTop: "20px",
+            border: "none",
+            cursor: "pointer",
+            transition: "all 0.3s",
           }}
         >
-          <FontAwesomeIcon icon={faPlus} className="me-2" />
+          <FontAwesomeIcon icon={faPlus} />
           Add Certification
         </button>
       )}
     </div>
   );
+  
 };
 
 export default CertificationSection;
