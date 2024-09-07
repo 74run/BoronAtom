@@ -17,6 +17,11 @@ const ForgotPassword: React.FC = () => {
     navigate('/register');
   };
 
+  const handleLoginClick = () => {
+    navigate('/login');
+  };
+
+
   const handleSendClick = async () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/forgotpassword`, { email });
@@ -41,14 +46,17 @@ const ForgotPassword: React.FC = () => {
       <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
         <div className="container">
           <a className="navbar-brand" href="/">
-            <img src={logo} alt="Logo" height="40" />
+            <img src={logo} alt="Logo" style={{
+                  height: "25px",
+                  width: "auto",
+                }} />
           </a>
         </div>
       </BootstrapNavbar>
 
       <div className="forgot-password-container d-flex justify-content-center align-items-center">
         <div className="forgot-password-box shadow-lg p-5 rounded">
-          <h2 className="text-center mb-4">Forgot your Password?</h2>
+          <h2 className="text-center mb-4" style={{ fontFamily: "'Roboto Slab', serif", fontSize: "1.5rem", fontWeight: 700, color: "#4CAF50" }}>Forgot your Password?</h2>
           <p className="text-center mb-4">Enter your email address to receive a password reset link.</p>
           <div className="mb-4">
             <input
@@ -78,6 +86,13 @@ const ForgotPassword: React.FC = () => {
             <p>Don't have an account?</p>
             <button type="button" className="btn btn-outline-primary" onClick={handleRegisterClick} style={{ borderColor: "#4CAF50", color: "#4CAF50", borderRadius: "8px", transition: "all 0.3s" }}>
               Register
+            </button>
+          </div>
+
+          <div className="text-center mt-4">
+            <p>Already have an account?</p>
+            <button type="button" className="btn btn-outline-primary" onClick={handleLoginClick}>
+              Login
             </button>
           </div>
         </div>
