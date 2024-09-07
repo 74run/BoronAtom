@@ -71,8 +71,8 @@ const RegisterForm: React.FC = () => {
       const { data } = response;
 
       if (data.success) {
-        localStorage.setItem('userId', data.userId); // Extract userId from the response
-        navigate('/verifyOTP'); // Redirect to OTP verification page
+        localStorage.setItem('userId', data.userId);
+        navigate('/verifyOTP');
       } else {
         setError(data.message || 'Registration failed. Please try again.');
       }
@@ -115,22 +115,12 @@ const RegisterForm: React.FC = () => {
           <a className="navbar-brand" href="/">
             <img src={logo} alt="Logo" height="40" />
           </a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <a className="nav-link" href="/login">Login</a>
-              </li>
-            </ul>
-          </div>
         </div>
       </BootstrapNavbar>
 
       <div className="register-container">
-        <div className="register-box shadow p-5 rounded">
-          <h2 className="text-center mb-4">Create an Account</h2>
+        <div className="register-box">
+          <h2>Create an Account</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -213,7 +203,6 @@ const RegisterForm: React.FC = () => {
                   <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
                 </button>
               </div>
-              {/* Password match message */}
               {confirmPassword && (
                 <p className={isPasswordMatch() ? 'text-success' : 'text-danger'}>
                   {isPasswordMatch() ? 'Passwords match' : 'Passwords do not match'}

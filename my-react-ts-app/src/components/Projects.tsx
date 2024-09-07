@@ -267,368 +267,402 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     }
   };
   
+
   return (
     <div
       style={{
-        border: 'none',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '30px',
+        border: "none",
+        borderRadius: "12px",
+        padding: "24px",
+        marginBottom: "30px",
         fontFamily: "'Roboto', sans-serif",
-        color: '#333',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+        color: "#f5f5f5",
+        backgroundColor: "#1c1c1e",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
       }}
     >
       <h4
         style={{
-          color: '#4CAF50',
-          textAlign: 'left',
-          marginBottom: '1.5rem',
+          color: "#4CAF50",
+          textAlign: "left",
+          marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: '1.5rem',
+          fontSize: "1.5rem",
         }}
       >
         Projects
       </h4>
+
+      {/* Map over Projects */}
       {projects.map((project) => (
         <div
           key={project._id}
-          className="mb-3"
+          className="project-card"
           style={{
-            border: '1px solid #e0e0e0',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '1.5rem',
-            backgroundColor: '#f8f9fa',
-            transition: 'transform 0.3s, box-shadow 0.3s',
+            border: "1px solid #333",
+            borderRadius: "12px",
+            padding: "14px",
+            marginBottom: "1.5rem",
+            backgroundColor: "#2d2d30",
+            transition: "transform 0.3s, box-shadow 0.3s",
+            cursor: "pointer",
+            position: "relative",
           }}
         >
           {editData && editData.id === project._id ? (
             // Edit mode
-            <div>
+            <div style={{
+              border: "1px solid #333",
+              borderRadius: "12px",
+              padding: "14px",
+              marginBottom: "1.5rem",
+              backgroundColor: "#2d2d30",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+              position: "relative",
+            }}>
               <input
                 type="text"
-                className="form-control mb-3"
                 placeholder="Project Name"
                 value={editData.name}
                 onChange={(e) =>
                   setEditData({ ...editData, name: e.target.value })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-             
+
               <input
                 type="text"
-                className="form-control mb-3"
                 placeholder="Organization"
                 value={editData.skills}
                 onChange={(e) =>
                   setEditData({ ...editData, skills: e.target.value })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-              <div className="date-dropdowns mb-3">
-                <label>Start Date:</label>
-                <div className="flex-container">
-                  <select
-                    className="form-control mb-2"
-                    value={editData.startDate.month}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        startDate: {
-                          ...editData.startDate,
-                          month: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                      marginRight: '0.5rem',
-                    }}
-                  >
-                    {!editData.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                    {months.map((month) => (
-                      <option key={month} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    className="form-control mb-2"
-                    value={editData.startDate.year}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        startDate: {
-                          ...editData.startDate,
-                          year: e.target.value,
-                        },
-                      })
-                    }
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                    }}
-                  >
-                    {!editData.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                    {graduationYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="date-dropdowns mb-3">
-                <label>End Date:</label>
-                <div className="flex-container">
-                  <select
-                    className="form-control mb-2"
-                    value={editData.endDate.month}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        endDate: {
-                          ...editData.endDate,
-                          month: e.target.value,
-                        },
-                      })
-                    }
-                    disabled={editData.isPresent}
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                      marginRight: '0.5rem',
-                    }}
-                  >
-                    {!editData.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                    {months.map((month) => (
-                      <option key={month} value={month}>
-                        {month}
-                      </option>
-                    ))}
-                  </select>
-                  <select
-                    className="form-control mb-2"
-                    value={editData.endDate.year}
-                    onChange={(e) =>
-                      setEditData({
-                        ...editData,
-                        endDate: {
-                          ...editData.endDate,
-                          year: e.target.value,
-                        },
-                      })
-                    }
-                    disabled={editData.isPresent}
-                    style={{
-                      borderRadius: '8px',
-                      border: '1px solid #ddd',
-                      padding: '10px',
-                    }}
-                  >
-                    {!editData.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                    {graduationYears.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button
-                  className="btn btn-outline-secondary ms-2"
-                  onClick={handleTogglePresent}
+
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <select
+                  value={editData.startDate.month}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      startDate: {
+                        ...editData.startDate,
+                        month: e.target.value,
+                      },
+                    })
+                  }
                   style={{
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    borderColor: editData.isPresent ? '#28a745' : '#dc3545',
-                    color: editData.isPresent ? '#28a745' : '#dc3545',
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={editData.isPresent ? faToggleOn : faToggleOff}
-                    className="me-2"
-                  />
-                  {editData.isPresent ? 'Present' : 'Not Present'}
-                </button>
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={editData.startDate.year}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      startDate: {
+                        ...editData.startDate,
+                        year: e.target.value,
+                      },
+                    })
+                  }
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                  {graduationYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={editData.endDate.month}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      endDate: {
+                        ...editData.endDate,
+                        month: e.target.value,
+                      },
+                    })
+                  }
+                  disabled={editData.isPresent}
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Month
+                  </option>
+                  {months.map((month) => (
+                    <option key={month} value={month}>
+                      {month}
+                    </option>
+                  ))}
+                </select>
+
+                <select
+                  value={editData.endDate.year}
+                  onChange={(e) =>
+                    setEditData({
+                      ...editData,
+                      endDate: {
+                        ...editData.endDate,
+                        year: e.target.value,
+                      },
+                    })
+                  }
+                  disabled={editData.isPresent}
+                  style={{
+                    borderRadius: "8px",
+                    border: "1px solid #444",
+                    padding: "10px",
+                    backgroundColor: "#1c1c1e",
+                    color: "#f5f5f5",
+                    flex: "1",
+                  }}
+                >
+                  <option value="" disabled>
+                    Select Year
+                  </option>
+                  {graduationYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              <button
+                className={`toggle-btn ${
+                  editData.isPresent ? "present" : "not-present"
+                }`}
+                onClick={handleTogglePresent}
+                style={{
+                  padding: "0.5rem 1rem",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  marginTop: "10px",
+                  marginBottom: "20px",
+                  border: "none",
+                  backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
+                  color: "#fff",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={editData.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {editData.isPresent ? "Present" : "Not Present"}
+              </button>
+
               <textarea
-                className="form-control mb-3"
                 placeholder="Description"
                 value={editData.description}
-                onChange={handleEditDescriptionChange}
+                onChange={handleDescriptionChange}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
-                  height: '250px',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  width: "100%",
+                  height: "200px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-            
-              <button
-                className="btn btn-success me-2"
-                onClick={handleUpdate}
+
+              {/* Action buttons */}
+              <div
                 style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "10px",
+                  flexWrap: "wrap",
                 }}
               >
-                <FontAwesomeIcon icon={faSave} className="me-2" />
-                Update
-              </button>
-              <button
-                className="btn btn-secondary"
-                onClick={handleCancelEdit}
-                style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                }}
-              >
-                Cancel
-              </button>
-              </div>
-              <button
-  className="btn btn-info me-2"
-  onClick={()=> handleGenerateDescription(editData.name)}
-  style={{
-    backgroundColor: '#17a2b8',
-    color: '#fff',
-    borderRadius: '8px',
-    padding: '10px 20px',
-    fontSize: '1rem',
-    transition: 'all 0.3s',
-  }}
->
-  <FontAwesomeIcon icon={faMagic} className="me-2" />
-  AI Description
-</button>
+                <button
+                  onClick={handleUpdate}
+                  style={{
+                    backgroundColor: "#4CAF50",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faSave} />
+                  Update
+                </button>
+
+                <button
+                  onClick={handleCancelEdit}
+                  style={{
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                  }}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={() => handleGenerateDescription(editData.name)}
+                  style={{
+                    backgroundColor: "#17a2b8",
+                    color: "#fff",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faMagic} />
+                  AI Description
+                </button>
               </div>
             </div>
           ) : (
             // View mode
             <div
-              style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '12px',
-                backgroundColor: '#ffffff',
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow =
-                  '0 10px 30px rgba(0, 0, 0, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 8px rgba(0, 0, 0, 0.1)';
-              }}
-            >
+            style={{
+             
+              borderRadius: "8px",
+              padding: "12px",
+              backgroundColor: "#1c1c1e",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-5px)";
+              e.currentTarget.style.boxShadow =
+                "0 10px 30px rgba(0, 0, 0, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow =
+                "0 4px 8px rgba(0, 0, 0, 0.1)";
+            }}>
               <h5
                 style={{
-                  color: '#333',
+                  color: "#f5f5f5",
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: '1.2rem',
-                  marginBottom: '0.5rem',
+                  fontSize: "1.2rem",
+                  marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
               >
                 {project.name}
               </h5>
-              <div
+
+              <p
                 style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
+                  fontSize: "0.9rem",
+                  color: "#bbb",
                 }}
               >
-                <strong>Start Date:</strong> {project.startDate.month}{' '}
+                <strong>Start Date:</strong> {project.startDate.month}{" "}
                 {project.startDate.year}
-              </div>
-              <div
+              </p>
+
+              <p
                 style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
+                  fontSize: "0.9rem",
+                  color: "#bbb",
                 }}
               >
-                <strong>End Date:</strong> {project.isPresent ? 'Present' : `${project.endDate.month} ${project.endDate.year}`}
-              </div>
-              <div
+                <strong>End Date:</strong>{" "}
+                {project.isPresent
+                  ? "Present"
+                  : `${project.endDate.month} ${project.endDate.year}`}
+              </p>
+
+              <p
                 style={{
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  marginBottom: '0.5rem',
-                  color: '#555',
+                  fontSize: "0.9rem",
+                  color: "#bbb",
                 }}
               >
                 <strong>Organization:</strong> {project.skills}
-              </div>
+              </p>
+
               {project.description
-                .split('*')
+                .split("*")
                 .slice(1)
                 .map((part, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      marginBottom: '0.5rem',
-                      fontSize: '0.9rem',
-                      color: '#666',
-                    }}
-                  >
+                  <p key={index} style={{ color: "#aaa", fontSize: "0.9rem" }}>
                     {part}
                   </p>
                 ))}
-              <div>
-                
+
+              {/* Action buttons */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                }}
+              >
                 <button
-                  className="btn btn-outline-primary me-2"
                   onClick={() =>
                     handleEditClick(
                       project._id,
@@ -642,88 +676,98 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     )
                   }
                   style={{
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: '1px solid #007bff',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  <FontAwesomeIcon icon={faEdit} />
                   Edit
                 </button>
+
                 <button
-                  className="btn btn-outline-danger"
                   onClick={() => handleDelete(project._id)}
                   style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    padding: '0.3rem 0.8rem',
-                    border: '1px solid #dc3545',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  <FontAwesomeIcon icon={faTrash} />
                   Delete
                 </button>
+
                 <button
-                  className="btn btn-outline-secondary ms-2"
                   onClick={() => handleToggleInclude(project._id)}
                   style={{
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    borderColor: project.includeInResume ? '#28a745' : '#dc3545',
-                    color: project.includeInResume ? '#28a745' : '#dc3545',
+                    backgroundColor: project.includeInResume
+                      ? "#28a745"
+                      : "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    flex: "1",
                   }}
                 >
                   <FontAwesomeIcon
                     icon={project.includeInResume ? faToggleOn : faToggleOff}
-                    className="me-2"
                   />
-                  {project.includeInResume ? 'Included' : 'Excluded'}
+                  {project.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
           )}
         </div>
       ))}
+
+      {/* Add Project Form */}
       {isAdding && (
         // Add project entry
         <div>
           <input
             type="text"
-            className="form-control mb-3"
+           
             placeholder="Project Name"
             value={newProject.name}
             onChange={(e) =>
               setNewProject({ ...newProject, name: e.target.value })
             }
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              width: "100%",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
          
           <input
             type="text"
-            className="form-control mb-3"
+          
             placeholder="Organization"
             value={newProject.skills}
             onChange={(e) =>
               setNewProject({ ...newProject, skills: e.target.value })
             }
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              width: "100%",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
           <div className="date-dropdowns mb-3">
@@ -742,10 +786,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginRight: '0.5rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  flex: "1",
                 }}
               >
                 {!newProject.startDate.month && (
@@ -772,9 +818,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  flex: "1",
                 }}
               >
                 {!newProject.startDate.year && (
@@ -807,10 +856,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 }
                 disabled={newProject.isPresent}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
-                  marginRight: '0.5rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  flex: "1",
                 }}
               >
                 {!newProject.endDate.month && (
@@ -838,9 +889,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 }
                 disabled={newProject.isPresent}
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '10px',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  flex: "1",
                 }}
               >
                 {!newProject.endDate.year && (
@@ -858,11 +912,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 className="btn btn-outline-secondary ms-2"
                 onClick={handleTogglePresent}
                 style={{
-                  padding: '0.3rem 0.8rem',
-                  borderRadius: '8px',
-                  fontSize: '0.9rem',
-                  borderColor: newProject.isPresent ? '#28a745' : '#dc3545',
-                  color: newProject.isPresent ? '#28a745' : '#dc3545',
+                  padding: "0.5rem 1rem",
+                  borderRadius: "8px",
+                  fontSize: "1rem",
+                  marginTop: "10px",
+                  border: "none",
+                  backgroundColor: newProject.isPresent ? "#28a745" : "#dc3545",
+                  color: "#fff",
                 }}
               >
                 <FontAwesomeIcon
@@ -874,59 +930,76 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             </div>
           </div>
           <textarea
-            className="form-control mb-3"
+           
             placeholder="Description"
             value={newProject.description}
             onChange={(e) => handleDescriptionChange(e)}
             style={{
               borderRadius: '8px',
-              border: '1px solid #ddd',
+              border: '1px solid #444',
               padding: '12px',
               fontSize: '1rem',
+              width: "100%",
               marginBottom: '1rem',
-              height: '250px'
+              backgroundColor: "#1c1c1e",
+              height: '250px',
             }}
           />
-          <button
-            className="btn btn-success"
-            onClick={handleSaveClick}
+
+          <div
             style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
+              display: "flex",
+              gap: "10px",
+              flexWrap: "wrap",
+              justifyContent: "center",
             }}
           >
-            <FontAwesomeIcon icon={faSave} className="me-2" />
-            Save
-          </button>
-          <button
-            className="btn btn-secondary ms-2"
-            onClick={() => setIsAdding(false)}
-            style={{
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
-            }}
-          >
-            Cancel
-          </button>
+            <button
+              onClick={handleSaveClick}
+              style={{
+                backgroundColor: "#4CAF50",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                flex: "1",
+              }}
+            >
+              <FontAwesomeIcon icon={faSave} />
+              Save
+            </button>
+
+            <button
+              onClick={() => setIsAdding(false)}
+              style={{
+                backgroundColor: "#6c757d",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                flex: "1",
+              }}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
+
       {!isAdding && (
-        // Show "Add Project" button
         <button
-          className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: '1px solid #007bff',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            fontSize: '1rem',
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "10px 20px",
+            width: "100%",
+            marginTop: "20px",
           }}
         >
-          <FontAwesomeIcon icon={faPlus} className="me-2" />
+          <FontAwesomeIcon icon={faPlus} />
           Add Project
         </button>
       )}

@@ -144,47 +144,57 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
   return (
     <div
-      className="container"
-      style={{
-        border: 'none',
-        borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '30px',
-        fontFamily: "'Roboto', sans-serif",
-        color: '#333',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
-      }}
+    style={{
+      border: "none",
+      borderRadius: "12px",
+      padding: "24px",
+      marginBottom: "30px",
+      fontFamily: "'Roboto', sans-serif",
+      color: "#f5f5f5",
+      backgroundColor: "#1c1c1e",
+      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+    }}
     >
       <h4
-        style={{
-          color: '#4CAF50',
-          textAlign: 'left',
-          marginBottom: '1.5rem',
-          fontFamily: "'Roboto Slab', serif",
-          fontWeight: 700,
-          fontSize: '1.5rem',
-        }}
+       style={{
+        color: "#4CAF50",
+        textAlign: "left",
+        marginBottom: "1.5rem",
+        fontFamily: "'Roboto Slab', serif",
+        fontWeight: 700,
+        fontSize: "1.5rem",
+      }}
       >
         Skills
       </h4>
+  
+      {/* Map over Skills */}
       {skills.map((skill) => (
         <div
           key={skill._id}
           className="mb-3"
           style={{
-            border: '1px solid #e0e0e0',
-            borderRadius: '12px',
-            padding: '20px',
-            marginBottom: '1.5rem',
-            backgroundColor: '#f8f9fa',
-            transition: 'transform 0.3s, box-shadow 0.3s',
-            position: 'relative',
+            border: "1px solid #444",
+            borderRadius: "12px",
+            padding: "20px",
+            marginBottom: "1.5rem",
+            backgroundColor: "#3a3a3c",
+            transition: "transform 0.3s, box-shadow 0.3s",
+            position: "relative",
           }}
         >
           {editData && editData.id === skill._id ? (
             // Edit mode
-            <div>
+            <div  style={{
+              border: "1px solid #333",
+              borderRadius: "12px",
+              padding: "14px",
+              marginBottom: "1.5rem",
+              backgroundColor: "#2d2d30",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+              position: "relative",
+            }}>
               <input
                 type="text"
                 className="form-control mb-3"
@@ -194,11 +204,13 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                   setEditData({ ...editData, domain: e.target.value })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
               <input
@@ -210,65 +222,77 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                   setEditData({ ...editData, name: e.target.value })
                 }
                 style={{
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
-                  fontSize: '1rem',
-                  marginBottom: '1rem',
+                  borderRadius: "8px",
+                  border: "1px solid #666",
+                  padding: "12px",
+                  fontSize: "1rem",
+                  marginBottom: "1rem",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
                 }}
               />
-              <button
-                className="btn btn-success me-2"
-                onClick={handleUpdate}
-                style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                }}
-              >
-                <FontAwesomeIcon icon={faSave} className="me-2" />
-                Update
-              </button>
-              <button
-                className="btn btn-secondary"
-                onClick={handleCancelEdit}
-                style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
-                  fontSize: '1rem',
-                }}
-              >
-                Cancel
-              </button>
+  
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                  className="btn btn-success"
+                  onClick={handleUpdate}
+                  style={{
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    flex: 1,
+                    backgroundColor: "#28a745",
+                    color: "#fff",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faSave} className="me-2" />
+                  Update
+                </button>
+  
+                <button
+                  className="btn btn-secondary"
+                  onClick={handleCancelEdit}
+                  style={{
+                    borderRadius: "8px",
+                    padding: "10px 20px",
+                    fontSize: "1rem",
+                    flex: 1,
+                    backgroundColor: "#6c757d",
+                    color: "#fff",
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           ) : (
             // View mode
             <div
               style={{
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                padding: '12px',
-                backgroundColor: '#ffffff',
-                transition: 'transform 0.3s, box-shadow 0.3s',
-                cursor: 'pointer',
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "12px",
+                backgroundColor: "#1c1c1e",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                cursor: "pointer",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
+                e.currentTarget.style.transform = "translateY(-5px)";
                 e.currentTarget.style.boxShadow =
-                  '0 10px 30px rgba(0, 0, 0, 0.1)';
+                  "0 10px 30px rgba(0, 0, 0, 0.3)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.transform = "translateY(0)";
                 e.currentTarget.style.boxShadow =
-                  '0 4px 8px rgba(0, 0, 0, 0.1)';
+                  "0 4px 8px rgba(0, 0, 0, 0.1)";
               }}
             >
               <h6
                 style={{
-                  color: '#333',
+                  color: "#f5f5f5",
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: '1.2rem',
-                  marginBottom: '0.5rem',
+                  fontSize: "1.2rem",
+                  marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
               >
@@ -276,36 +300,40 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               </h6>
               <p
                 style={{
-                  marginBottom: '0.5rem',
-                  fontSize: '0.9rem',
-                  color: '#555',
+                  marginBottom: "0.5rem",
+                  fontSize: "0.9rem",
+                  color: "#bbb",
                   fontFamily: "'Roboto', sans-serif",
                 }}
               >
                 {skill.name}
               </p>
-
+  
               <div
+                className="button-group"
                 style={{
-                  position: 'absolute',
-                  top: '10px',
-                  right: '10px',
-                  display: 'flex',
-                  gap: '10px',
+                  display: "flex",
+                  gap: "10px",
+                  flexWrap: "wrap", // Allow buttons to wrap on smaller screens
                 }}
               >
                 <button
                   className="btn btn-outline-primary"
                   onClick={() =>
-                    handleEditClick(skill._id, skill.domain, skill.name, skill.includeInResume)
+                    handleEditClick(
+                      skill._id,
+                      skill.domain,
+                      skill.name,
+                      skill.includeInResume
+                    )
                   }
                   style={{
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: '1px solid #007bff',
-                    padding: '0.3rem 0.6rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#007bff",
+                    color: "#fff",
+                    border: "none",
+                    padding: "0.3rem 0.6rem",
+                    borderRadius: "8px",
+                    fontSize: "0.9rem",
                   }}
                 >
                   <FontAwesomeIcon icon={faEdit} />
@@ -314,40 +342,44 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                   className="btn btn-outline-danger"
                   onClick={() => handleDelete(skill._id)}
                   style={{
-                    backgroundColor: '#dc3545',
-                    color: '#fff',
-                    padding: '0.3rem 0.6rem',
-                    border: '1px solid #dc3545',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
+                    backgroundColor: "#dc3545",
+                    color: "#fff",
+                    border: "none",
+                    padding: "0.3rem 0.6rem",
+                    borderRadius: "8px",
+                    fontSize: "0.9rem",
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
                 <button
-                  className="btn btn-outline-secondary ms-2"
+                  className="btn btn-outline-secondary"
                   onClick={() => handleToggleInclude(skill._id)}
                   style={{
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.9rem',
-                    borderColor: skill.includeInResume ? '#28a745' : '#dc3545',
-                    color: skill.includeInResume ? '#28a745' : '#dc3545',
+                    padding: "0.3rem 0.8rem",
+                    borderRadius: "8px",
+                    fontSize: "0.9rem",
+                    backgroundColor: skill.includeInResume
+                      ? "#28a745"
+                      : "#dc3545",
+                    color: "#fff",
+                    border: "none",
                   }}
                 >
                   <FontAwesomeIcon
                     icon={skill.includeInResume ? faToggleOn : faToggleOff}
                     className="me-2"
                   />
-                  {skill.includeInResume ? 'Included' : 'Excluded'}
+                  {skill.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
           )}
         </div>
       ))}
+  
+      {/* Add skill entry */}
       {isAdding && (
-        // Add skill entry
         <div>
           <input
             type="text"
@@ -358,11 +390,13 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               setNewSkill({ ...newSkill, domain: e.target.value })
             }
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #666",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
           <input
@@ -374,48 +408,59 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               setNewSkill({ ...newSkill, name: e.target.value })
             }
             style={{
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
-              fontSize: '1rem',
-              marginBottom: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #666",
+              padding: "12px",
+              fontSize: "1rem",
+              marginBottom: "1rem",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
             }}
           />
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-2" style={{ display: "flex", gap: "10px" }}>
             <button
               className="btn btn-outline-secondary"
               onClick={handleAISuggestions}
               style={{
-                backgroundColor: '#6c757d',
-                color: '#fff',
-                border: '1px solid #6c757d',
-                padding: '10px 20px',
-                borderRadius: '8px',
-                fontSize: '1rem',
+                backgroundColor: "#6c757d",
+                color: "#fff",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "8px",
+                fontSize: "1rem",
+                flex: 1,
               }}
             >
               <FontAwesomeIcon icon={faRobot} className="me-2" />
               Add with AI
             </button>
+  
             <button
               className="btn btn-success"
               onClick={handleSaveClick}
               style={{
-                borderRadius: '8px',
-                padding: '10px 20px',
-                fontSize: '1rem',
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                flex: 1,
+                backgroundColor: "#28a745",
+                color: "#fff",
               }}
             >
               <FontAwesomeIcon icon={faSave} className="me-2" />
               Save
             </button>
+  
             <button
               className="btn btn-secondary"
               onClick={() => setIsAdding(false)}
               style={{
-                borderRadius: '8px',
-                padding: '10px 20px',
-                fontSize: '1rem',
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                flex: 1,
+                backgroundColor: "#6c757d",
+                color: "#fff",
               }}
             >
               Cancel
@@ -423,26 +468,37 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
           </div>
         </div>
       )}
+  
       {!isAdding && (
-        // Show "Add Skill" button
         <button
           className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            border: '1px solid #007bff',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            fontSize: '1rem',
+            backgroundColor: "#007bff",
+            color: "#fff",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "8px",
+            fontSize: "1rem",
+            width: "100%", // Full width on smaller screens
+            marginTop: "20px",
           }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />
           Add Skill
         </button>
       )}
+  
+      <style >{`
+        @media (max-width: 768px) {
+          .button-group {
+            flex-direction: row;
+          }
+        }
+      `}</style>
     </div>
   );
+  
 };
 
 export default Skills;

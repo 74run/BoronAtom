@@ -7,30 +7,28 @@ import Footer from '../Footer';
 import jsPDF from 'jspdf';
 
 interface UserDetails {
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-    // Add other fields as needed
-  }
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+}
+
+const COVER_LETTER_EXPIRATION_TIME = 3600000; // 1 hour in milliseconds
 
 const CoverLetter: React.FC = () => {
   const [jobDescription, setJobDescription] = useState<string>('');
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [coverLetter, setCoverLetter] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isEditable, setIsEditable] = useState<boolean>(false); // New state to control edit mode
   const { userID } = useParams();
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`);
         setUserDetails(userResponse.data.user);
-
-       
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -39,13 +37,23 @@ const CoverLetter: React.FC = () => {
     fetchData();
   }, [userID]);
 
-
   // Load the saved cover letter from local storage
   useEffect(() => {
     const savedCoverLetter = localStorage.getItem('coverLetter');
-    if (savedCoverLetter) {
-      setCoverLetter(savedCoverLetter);
-      setIsEditable(false);
+    const savedTimestamp = localStorage.getItem('coverLetterTimestamp');
+
+    if (savedCoverLetter && savedTimestamp) {
+      const currentTime = new Date().getTime();
+      const storedTime = parseInt(savedTimestamp, 10);
+
+      // Check if the saved cover letter has expired
+      if (currentTime - storedTime > COVER_LETTER_EXPIRATION_TIME) {
+        localStorage.removeItem('coverLetter');
+        localStorage.removeItem('coverLetterTimestamp');
+      } else {
+        setCoverLetter(savedCoverLetter);
+        setIsEditable(false);
+      }
     }
   }, []);
 
@@ -63,8 +71,12 @@ const CoverLetter: React.FC = () => {
         jobDescription,
       });
 
-      setCoverLetter(response.data.coverLetter);
-      localStorage.setItem('coverLetter', response.data.coverLetter); // Save to local storage
+      const generatedCoverLetter = response.data.coverLetter;
+      setCoverLetter(generatedCoverLetter);
+
+      // Save the generated cover letter and current time to local storage
+      localStorage.setItem('coverLetter', generatedCoverLetter);
+      localStorage.setItem('coverLetterTimestamp', new Date().getTime().toString());
     } catch (err: any) {
       if (err.response) {
         setError(`Error: ${err.response.status} - ${err.response.data.message || 'Failed to generate cover letter. Please try again.'}`);
@@ -78,7 +90,8 @@ const CoverLetter: React.FC = () => {
 
   const handleCoverLetterChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCoverLetter(e.target.value);
-    localStorage.setItem('coverLetter', e.target.value); // Save changes to local storage
+    localStorage.setItem('coverLetter', e.target.value);
+    localStorage.setItem('coverLetterTimestamp', new Date().getTime().toString()); // Update timestamp when changes are made
   };
 
   const handleEditToggle = () => {
@@ -87,142 +100,130 @@ const CoverLetter: React.FC = () => {
 
   const handleSaveCoverLetter = () => {
     localStorage.setItem('coverLetter', coverLetter);
-    alert('Cover letter saved successfully!');
+    localStorage.setItem('coverLetterTimestamp', new Date().getTime().toString()); // Update timestamp when saving
+    setIsEditable(false); 
   };
 
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
-    const pageHeight = doc.internal.pageSize.height;
     const marginLeft = 15;
     const marginTop = 20;
-  
-
-    const lineHeight = 0.85; // Decreased line height for tighter spacing
     const maxLineWidth = 180; // Width of the text
-    const paragraphSpacing = 0.5;
     const fontSize = 10; // Smaller font size for better fit
-    const verticalMargin = marginTop;
 
-    doc.setFont('Times New Roman', ''); // Set font style
+    doc.setFont('Times New Roman', '');
     doc.setFontSize(fontSize);
 
     const lines = doc.splitTextToSize(coverLetter, maxLineWidth);
-
     let verticalOffset = marginTop;
 
-    
-
     lines.forEach((line: any, index: any) => {
-        // Check if adding this line will exceed the page height
-        if (verticalOffset + fontSize * lineHeight > pageHeight - marginTop) {
-            doc.addPage(); // Add a new page
-            verticalOffset = marginTop; // Reset vertical offset for the new page
-        }
+      if (verticalOffset + fontSize > doc.internal.pageSize.height - marginTop) {
+        doc.addPage();
+        verticalOffset = marginTop;
+      }
 
-        doc.text(line, marginLeft, verticalOffset);
-
-        // Check if the current line is the last line of a paragraph
-        if (index < lines.length - 1 && lines[index + 1] === '') {
-            verticalOffset += fontSize * paragraphSpacing; // Add extra space after a paragraph
-        } else {
-            verticalOffset += fontSize * lineHeight; // Regular line spacing
-        }
+      doc.text(line, marginLeft, verticalOffset);
+      verticalOffset += fontSize;
     });
 
     doc.save('cover-letter.pdf');
   };
 
   return (
-    
-    <Container className="mt-5" style={{ paddingBottom: '50px', paddingTop: '50px' }}>
-        <NavigationBar UserDetail={userDetails}/>
-      <h1 className="text-center mb-4"><strong>AI-Powered Cover Letter Generator</strong></h1>
-      <Form>
-        <Form.Group controlId="jobDescription">
-          <Form.Label>Job Description</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows={10}
-            placeholder="Paste the job description here..."
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-            className="mb-4"
-            disabled={loading} // Disable input while loading
-          />
-        </Form.Group>
-        <Button
-          variant="primary"
-          onClick={handleGenerateCoverLetter}
-          disabled={loading}
-          className="w-100"
-        >
-          {loading ? <Spinner animation="border" size="sm" /> : 'Generate Cover Letter'}
-        </Button>
-      </Form>
-  
-      {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
-  
-      {coverLetter && (
-        <div className="mt-4" >
-         <div style={{ textAlign: 'center', width: '100%', marginBottom: '20px' }}>
-  <h2><strong>Generated Cover Letter</strong></h2>
-  
-  <Button
-    variant="secondary"
-    onClick={handleEditToggle}
-    className="mt-3"
-  >
-    {isEditable ? 'Stop Editing' : 'Edit Cover Letter'}
-  </Button>
-  
-  {isEditable && (
-    <Button
-      variant="success"
-      onClick={handleSaveCoverLetter}
-      className="mt-3 ms-2"
-    >
-      Save Cover Letter
-    </Button>
-  )}
-  
-  <Button
-    variant="info"
-    onClick={handleDownloadPDF}
-    className="mt-3 ms-2"
-  >
-    Download as PDF
-  </Button>
-</div>
+    <div style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', minHeight: '100vh', paddingBottom: '50px', paddingTop: '50px' }}>
+      <NavigationBar UserDetail={userDetails} />
+      <Container className="mt-5" style={{ paddingBottom: '50px', paddingTop: '50px', backgroundColor: '#2d2d30', borderRadius: '12px', boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)' }}>
+        <h1 className="text-center mb-4" style={{ color: '#4CAF50', fontFamily: "'Roboto Slab', serif", fontSize: '2rem', fontWeight: 700 }}>
+          <strong>AI-Powered Cover Letter Generator</strong>
+        </h1>
+        <Form>
+          <Form.Group controlId="jobDescription">
+            <Form.Label style={{ color: '#f5f5f5' }}>Job Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={10}
+              placeholder="Paste the job description here..."
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+              className="mb-4"
+              style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444', borderRadius: '8px' }}
+              disabled={loading} // Disable input while loading
+            />
+          </Form.Group>
+          <Button
+            variant="primary"
+            onClick={handleGenerateCoverLetter}
+            disabled={loading}
+            className="w-100"
+            style={{ backgroundColor: '#007bff', borderRadius: '8px', transition: 'background-color 0.3s' }}
+          >
+            {loading ? <Spinner animation="border" size="sm" /> : 'Generate Cover Letter'}
+          </Button>
+        </Form>
 
+        {error && <Alert variant="danger" className="mt-4">{error}</Alert>}
 
-          <Form.Control
-            as="textarea"
-            rows={30}
-            value={coverLetter}
-            onChange={handleCoverLetterChange}
-            className="p-3 border rounded"
-            style={{
+        {coverLetter && (
+          <div className="mt-4">
+            <div style={{ textAlign: 'center', width: '100%', marginBottom: '20px' }}>
+              <h2 style={{ color: '#4CAF50', fontFamily: "'Roboto Slab', serif", fontSize: '1.5rem', fontWeight: 700 }}>
+                <strong>Generated Cover Letter</strong>
+              </h2>
+
+              <Button
+                variant="secondary"
+                onClick={handleEditToggle}
+                className="mt-3"
+                style={{ backgroundColor: '#6c757d', borderRadius: '8px', transition: 'background-color 0.3s' }}
+              >
+                {isEditable ? 'Stop Editing' : 'Edit Cover Letter'}
+              </Button>
+
+              {isEditable && (
+                <Button
+                  variant="success"
+                  onClick={handleSaveCoverLetter}
+                  className="mt-3 ms-2"
+                  style={{ backgroundColor: '#28a745', borderRadius: '8px', transition: 'background-color 0.3s' }}
+                >
+                  Save Cover Letter
+                </Button>
+              )}
+
+              <Button
+                variant="info"
+                onClick={handleDownloadPDF}
+                className="mt-3 ms-2"
+                style={{ backgroundColor: '#17a2b8', borderRadius: '8px', transition: 'background-color 0.3s' }}
+              >
+                Download as PDF
+              </Button>
+            </div>
+
+            <Form.Control
+              as="textarea"
+              rows={30}
+              value={coverLetter}
+              onChange={handleCoverLetterChange}
+              className="p-3 border rounded"
+              style={{
                 width: '80%',
-                margin: '0 auto', // Centers the textarea
-                display: 'block', // Ensures the element is treated as a block-level element
+                margin: '0 auto',
+                display: 'block',
                 whiteSpace: 'pre-wrap',
-                backgroundColor: '#f8f9fa'
+                backgroundColor: '#1c1c1e',
+                color: '#f5f5f5',
+                border: '1px solid #444',
+                borderRadius: '8px'
               }}
-            readOnly={!isEditable} // Set to readonly if not editable
-          />
-         
-        </div>
-      )}
-  
-    </Container>
-
-
+              readOnly={!isEditable}
+            />
+          </div>
+        )}
+      </Container>
+    </div>
   );
- 
-
-  
 };
-
-
 
 export default CoverLetter;

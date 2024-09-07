@@ -300,7 +300,10 @@ user.summary.forEach((summary, index) => {
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
-  const aiMessage = response.text();
+  const aiMessage_1 = response.text();
+
+  
+  const aiMessage = aiMessage_1.replace(/\*/g, '')
 
   // console.log('Resume:', aiMessage)
 

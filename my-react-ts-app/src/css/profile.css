@@ -52,6 +52,40 @@
   }
 
   
+  
+  @media (min-width: 768px) {
+    .Full-Profile {
+      flex-direction: row;
+    }
+  
+    /* Ensure two columns for larger screens */
+    .summary-and-projects,
+    .right-column {
+      flex-direction: row;
+      justify-content: space-between;
+
+    }
+  
+    .summary-and-projects > div,
+    .right-column > div {
+      width: 100%; /* Adjust width to fit two columns */
+    }
+  }
+  
+  @media (max-width: 767px) {
+    /* For mobile screens, stack everything in a column */
+    .summary-and-projects,
+    .right-column {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .summary-and-projects > div,
+    .right-column > div {
+      width: 100%; /* Full width for mobile screens */
+    }
+  }
+  
 
 
  

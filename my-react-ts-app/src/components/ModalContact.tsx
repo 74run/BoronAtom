@@ -41,14 +41,15 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
       .get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`)
       .then((response) => {
         const fetchedContactDetails = response.data[0];
-        setContactDetails(fetchedContactDetails || {
-          _id: '',
-          name: '',
-          email: '',
-          phoneNumber: '',
-          linkedIn: '',
-        });
-        // If contact details are undefined, open edit mode immediately
+        setContactDetails(
+          fetchedContactDetails || {
+            _id: '',
+            name: '',
+            email: '',
+            phoneNumber: '',
+            linkedIn: '',
+          }
+        );
         if (!fetchedContactDetails) {
           setIsEditing(true);
         }
@@ -60,24 +61,25 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
 
   const handleEditClick = () => {
     setIsEditing(true);
-    setEditedContactDetails({ ...contactDetails! }); // Ensure contactDetails is not null
+    setEditedContactDetails({ ...contactDetails! });
   };
 
   const handleSaveClick = () => {
     const method = contactDetails?._id ? 'PUT' : 'POST';
-    const url = contactDetails?._id 
-      ? `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact/${contactDetails._id}` 
+    const url = contactDetails?._id
+      ? `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact/${contactDetails._id}`
       : `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/contact`;
+
     axios({
-      method: method,
-      url: url,
+      method,
+      url,
       data: editedContactDetails,
       headers: {
         'Content-Type': 'application/json',
       },
     })
       .then((response) => {
-        setContactDetails(editedContactDetails); // Update the contact details state
+        setContactDetails(editedContactDetails);
         setIsEditing(false);
       })
       .catch((error) => {
@@ -87,7 +89,7 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
 
   const handleCancelClick = () => {
     setIsEditing(false);
-    setEditedContactDetails(contactDetails!); // Reset edited details to original values
+    setEditedContactDetails(contactDetails!);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,22 +100,28 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
     }));
   };
 
-  if (!isOpen) {
-    return null; // If the modal is not open, render nothing
-  }
+  if (!isOpen) return null;
 
   return (
-    <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+    <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
       <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content">
-          <div className="modal-header">
+        <div className="modal-content" style={{ backgroundColor: '#2d2d30', color: '#f5f5f5', borderRadius: '12px' }}>
+          <div className="modal-header" style={{ borderBottom: '1px solid #444' }}>
             <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
-            <button type="button" className="btn-close" aria-label="Close" onClick={closeModal}></button>
+            <button
+              type="button"
+              className="btn-close"
+              aria-label="Close"
+              onClick={closeModal}
+              style={{ backgroundColor: '#444', color: '#f5f5f5' }}
+            ></button>
           </div>
           <div className="modal-body">
             <form onSubmit={(e) => e.preventDefault()}>
               <div className="mb-3">
-                <label htmlFor="name" className="form-label">Name</label>
+                <label htmlFor="name" className="form-label">
+                  Name
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -122,13 +130,16 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
                     name="name"
                     value={editedContactDetails.name}
                     onChange={handleInputChange}
+                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
                   />
                 ) : (
                   <div>{contactDetails?.name}</div>
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email</label>
+                <label htmlFor="email" className="form-label">
+                  Email
+                </label>
                 {isEditing ? (
                   <input
                     type="email"
@@ -137,13 +148,16 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
                     name="email"
                     value={editedContactDetails.email}
                     onChange={handleInputChange}
+                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
                   />
                 ) : (
                   <div>{contactDetails?.email}</div>
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
+                <label htmlFor="phoneNumber" className="form-label">
+                  Phone Number
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -152,13 +166,16 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
                     name="phoneNumber"
                     value={editedContactDetails.phoneNumber}
                     onChange={handleInputChange}
+                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
                   />
                 ) : (
                   <div>{contactDetails?.phoneNumber}</div>
                 )}
               </div>
               <div className="mb-3">
-                <label htmlFor="linkedIn" className="form-label">LinkedIn Profile</label>
+                <label htmlFor="linkedIn" className="form-label">
+                  LinkedIn Profile
+                </label>
                 {isEditing ? (
                   <input
                     type="text"
@@ -167,29 +184,61 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
                     name="linkedIn"
                     value={editedContactDetails.linkedIn}
                     onChange={handleInputChange}
+                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
                   />
                 ) : (
                   <div>{contactDetails?.linkedIn}</div>
                 )}
               </div>
               {isEditing ? (
-                <div>
+                <div className="d-flex">
                   <button
                     type="button"
-                    className="btn btn-success"
+                    className="btn btn-success me-2"
                     onClick={handleSaveClick}
-                    style={{ marginRight: '0.5rem' }}
+                    style={{
+                      backgroundColor: '#4CAF50',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      transition: 'background-color 0.3s',
+                    }}
                   >
                     <FontAwesomeIcon icon={faSave} className="me-2" />
                     Save
                   </button>
-                  <button type="button" className="btn btn-secondary" onClick={handleCancelClick}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={handleCancelClick}
+                    style={{
+                      backgroundColor: '#6c757d',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '10px 20px',
+                      transition: 'background-color 0.3s',
+                    }}
+                  >
                     <FontAwesomeIcon icon={faTimes} className="me-2" />
                     Cancel
                   </button>
                 </div>
               ) : (
-                <button type="button" className="btn btn-primary" onClick={handleEditClick}>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleEditClick}
+                  style={{
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '10px 20px',
+                    transition: 'background-color 0.3s',
+                  }}
+                >
                   <FontAwesomeIcon icon={faEdit} className="me-2" />
                   Edit
                 </button>

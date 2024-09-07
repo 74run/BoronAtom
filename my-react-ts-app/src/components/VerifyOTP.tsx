@@ -96,8 +96,8 @@ const VerifyOTP: React.FC = () => {
         </div>
       </BootstrapNavbar>
 
-      <div className="verify-container">
-        <div className="verify-box shadow p-5 rounded">
+      <div className="verify-container d-flex justify-content-center align-items-center">
+        <div className="verify-box shadow-lg p-5 rounded">
           <h2 className="text-center mb-4">Verify Your Account</h2>
           <p className="text-center mb-4">Enter the OTP sent to your email</p>
           <div className="mb-4">
@@ -108,10 +108,17 @@ const VerifyOTP: React.FC = () => {
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
               required
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #444",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+                padding: "12px",
+              }}
             />
           </div>
           <div className="d-grid gap-2">
-            <button onClick={handleVerification} className="btn btn-primary btn-lg">
+            <button onClick={handleVerification} className="btn btn-primary btn-lg" style={{ backgroundColor: "#4CAF50", border: "none", padding: "10px 20px", borderRadius: "8px" }}>
               Verify
             </button>
           </div>
@@ -129,49 +136,61 @@ const VerifyOTP: React.FC = () => {
 
       <style>{`
         .verify-page {
+          background-color: #1c1c1e;
+          min-height: 100vh;
           display: flex;
           justify-content: center;
           align-items: center;
-          height: 100vh;
-          background-color: #f8f9fa;
+          color: #f5f5f5;
+          font-family: 'Roboto', sans-serif;
+          padding-top: 80px; /* Adjust for navbar */
         }
 
         .verify-container {
-          max-width: 400px;
+          max-width: 500px;
           width: 100%;
           margin: auto;
+          padding: 20px;
         }
 
         .verify-box {
-          background-color: #ffffff;
+          background-color: #2d2d30;
+          border-radius: 12px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+          padding: 40px;
         }
 
         h2 {
-          font-size: 24px;
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #4CAF50;
           margin-bottom: 20px;
-          color: #343a40;
+          font-family: 'Roboto Slab', serif;
         }
 
         p {
-          color: #6c757d;
-        }
-
-        .btn-primary {
-          background-color: #007bff;
-          border-color: #007bff;
+          color: #f5f5f5;
         }
 
         .btn-primary:hover {
-          background-color: #0056b3;
-          border-color: #004085;
+          background-color: #45a049;
+          border-color: #4CAF50;
+        }
+
+        .btn-link {
+          color: #007bff;
+        }
+
+        .btn-link:hover {
+          color: #0056b3;
+        }
+
+        .text-success {
+          color: #4CAF50 !important;
         }
 
         .text-danger {
           color: #dc3545 !important;
-        }
-
-        .text-success {
-          color: #28a745 !important;
         }
       `}</style>
     </div>

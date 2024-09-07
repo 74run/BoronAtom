@@ -64,3 +64,39 @@ body {
 .text-center {
   margin-top: 20px;
 }
+
+
+@media (max-width: 576px) {
+  .login-box {
+    padding: 20px;
+    max-width: 90%;
+    margin-top: 50px;
+  }
+
+  .login-container {
+    padding: 10px;
+  }
+
+  .navbar-brand img {
+    height: 30px;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-box {
+    padding: 30px;
+    max-width: 100%;
+  }
+}
+
+.navbar-brand img {
+  max-height: 40px;
+}

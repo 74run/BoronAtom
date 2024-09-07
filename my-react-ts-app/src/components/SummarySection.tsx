@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faSave, faTimes, faTrash, faMagic } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+
+import { faMagic, faSave, faTimes, faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { motion } from 'framer-motion';
 
 interface Summary {
   _id: string;
@@ -173,121 +175,160 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
     setNewSummary({ _id: '', content: '' });
     setIsAdding(true);
   };
-
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       style={{
         border: 'none',
         borderRadius: '12px',
-        padding: '24px',
-        marginBottom: '30px',
-        fontFamily: "'Roboto', sans-serif",
-        color: '#333',
-        backgroundColor: '#ffffff',
-        boxShadow: '0 10px 20px rgba(0, 0, 0, 0.1)',
+        padding: '32px',
+        marginBottom: '40px',
+        fontFamily: "'Poppins', sans-serif",
+        color: '#f5f5f5',
+        backgroundColor: '#1c1c1e',
+        background: 'linear-gradient(135deg, #1c1c1e 0%, #2d2d30 100%)',
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <motion.div
+        initial={{ width: '0%' }}
+        animate={{ width: '100%' }}
+        transition={{ duration: 2, ease: "easeInOut", loop: Infinity }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '3px',
+          background: 'linear-gradient(90deg, #00cec9, #6c5ce7)',
+        }}
+      />
       <h4
         style={{
-          color: '#4CAF50',
+          color: '#00cec9',
           textAlign: 'left',
-          marginBottom: '1.5rem',
+          marginBottom: '2rem',
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: '1.5rem',
+          fontSize: '2rem',
+          textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
         }}
       >
         Summary
       </h4>
       {summarys.map((summary) => (
-        <div
+        <motion.div
           key={summary._id}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           style={{
             marginBottom: '1.5rem',
-            padding: '20px',
+            padding: '24px',
             borderRadius: '12px',
-            backgroundColor: '#f8f9fa',
-            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.05)',
-            transition: 'transform 0.3s, box-shadow 0.3s',
-            cursor: 'pointer',
-            border: '1px solid #e0e0e0',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-5px)';
-            e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+            backgroundColor: '#2d2d30',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
+            border: '1px solid #444',
+            position: 'relative',
           }}
         >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '3px',
+              background: 'linear-gradient(90deg, #6c5ce7, #00cec9)',
+            }}
+          />
           {editData && editData.id === summary._id ? (
             <>
               <textarea
                 value={editData.content}
-                onChange={(e) =>
-                  setEditData({ ...editData, content: e.target.value })
-                }
-                className="form-control mb-2"
+                onChange={(e) => setEditData({ ...editData, content: e.target.value })}
                 style={{
                   height: '150px',
-                  borderRadius: '8px',
-                  border: '1px solid #ddd',
-                  padding: '12px',
+                  width: '100%',
+                  borderRadius: '10px',
+                  border: '1px solid #444',
+                  padding: '16px',
                   fontSize: '1rem',
                   marginBottom: '1rem',
+                  backgroundColor: '#1c1c1e',
+                  color: '#f5f5f5',
+                  resize: 'vertical',
+                  fontFamily: "'Poppins', sans-serif",
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
                 }}
               />
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={handleGenerateTextClick}
-                  className="btn btn-info me-2"
                   style={{
-                    backgroundColor: '#17a2b8',
+                    backgroundColor: '#00cec9',
                     color: '#fff',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '10px',
                     fontSize: '0.9rem',
-                    transition: 'all 0.3s',
-                  
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                   }}
                 >
-                  <FontAwesomeIcon icon={faMagic} className="me-2" />
+                  <FontAwesomeIcon icon={faMagic} />
                   AI Summary
-                </button>
-                <div>
-                  <button
+                </motion.button>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={handleUpdate}
-                    className="btn btn-success me-2"
                     style={{
-                      backgroundColor: '#28a745',
+                      backgroundColor: '#6c5ce7',
                       color: '#fff',
-                      padding: '0.3rem 0.8rem',
-                      borderRadius: '8px',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '10px',
                       fontSize: '0.9rem',
-                      transition: 'all 0.3s',
-                    
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                     }}
                   >
-                    <FontAwesomeIcon icon={faSave} className="me-2" />
+                    <FontAwesomeIcon icon={faSave} />
                     Update
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={handleCancelClick}
-                    className="btn btn-secondary"
                     style={{
                       backgroundColor: '#6c757d',
                       color: '#fff',
-                      padding: '0.3rem 0.8rem',
-                      borderRadius: '8px',
+                      padding: '0.5rem 1rem',
+                      borderRadius: '10px',
                       fontSize: '0.9rem',
-                      transition: 'all 0.3s',
-                    
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                     }}
                   >
-                    <FontAwesomeIcon icon={faTimes} className="me-2" />
+                    <FontAwesomeIcon icon={faTimes} />
                     Cancel
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </>
@@ -295,131 +336,190 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
             <>
               <p
                 style={{
-                  marginBottom: '1rem',
-                  fontFamily: "'Roboto', sans-serif",
-                  fontSize: '0.9rem',
-                  lineHeight: '1.6',
-                  color: '#495057',
+                  marginBottom: '1.5rem',
+                  fontFamily: "'Poppins', sans-serif",
+                  fontSize: '1rem',
+                  lineHeight: '1.8',
+                  color: '#ddd',
                 }}
               >
                 {summary.content}
               </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <button
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleEditClick(summary._id, summary.content)}
-                  className="btn btn-outline-primary me-2"
                   style={{
-                    backgroundColor: '#007bff',
+                    backgroundColor: '#6c5ce7',
                     color: '#fff',
-                    borderRadius: '8px',
-                    padding: '0.3rem 0.8rem',
+                    borderRadius: '10px',
+                    padding: '0.5rem 1rem',
                     fontSize: '0.9rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  <FontAwesomeIcon icon={faEdit} />
                   Edit
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handleDelete(summary._id)}
-                  className="btn btn-outline-danger"
                   style={{
-                    backgroundColor: '#dc3545',
+                    backgroundColor: '#e74c3c',
                     color: '#fff',
-                    padding: '0.3rem 0.8rem',
-                    borderRadius: '8px',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '10px',
                     fontSize: '0.9rem',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} className="me-2" />
+                  <FontAwesomeIcon icon={faTrash} />
                   Delete
-                </button>
+                </motion.button>
               </div>
             </>
           )}
-        </div>
+        </motion.div>
       ))}
       {isAdding && summarys.length === 0 && (
-        <>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          style={{
+            marginBottom: '2rem',
+            padding: '24px',
+            borderRadius: '12px',
+            backgroundColor: '#2d2d30',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
+            border: '1px solid #444',
+          }}
+        >
           <textarea
             value={newSummary.content}
-            onChange={(e) =>
-              setNewSummary({ ...newSummary, content: e.target.value })
-            }
-            className="form-control mb-2"
+            onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
             style={{
               height: '150px',
-              borderRadius: '8px',
-              border: '1px solid #ddd',
-              padding: '12px',
+              width: '100%',
+              borderRadius: '10px',
+              border: '1px solid #444',
+              padding: '16px',
               fontSize: '1rem',
               marginBottom: '1rem',
+              backgroundColor: '#1c1c1e',
+              color: '#f5f5f5',
+              resize: 'vertical',
+              fontFamily: "'Poppins', sans-serif",
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
             }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={handleGenerateTextClick}
-              className="btn btn-info me-2"
               style={{
-                backgroundColor: '#17a2b8',
+                backgroundColor: '#00cec9',
                 color: '#fff',
-                borderRadius: '8px',
-                padding: '10px 20px',
-                transition: 'all 0.3s',
+                borderRadius: '10px',
+                padding: '0.5rem 1rem',
                 fontSize: '1rem',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
               }}
             >
-              <FontAwesomeIcon icon={faMagic} className="me-2" />
+              <FontAwesomeIcon icon={faMagic} />
               AI Summary
-            </button>
-            <div>
-              <button
-                type="submit"
-                className="btn btn-success"
+            </motion.button>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={handleSaveClick}
                 style={{
-                  borderRadius: '8px',
-                  padding: '10px 20px',
+                  backgroundColor: '#6c5ce7',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  padding: '0.5rem 1rem',
                   fontSize: '1rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                 }}
               >
-               <FontAwesomeIcon icon={faSave} className="me-2" />
-               Save
-              </button>
-              <button
-                className="btn btn-secondary ms-2"
+                <FontAwesomeIcon icon={faSave} />
+                Save
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setIsAdding(false)}
                 style={{
-                  borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '1rem',
+                  backgroundColor: '#6c757d',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  padding: '0.5rem 1rem',
+                  fontSize: '1rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                 }}
               >
+                <FontAwesomeIcon icon={faTimes} />
                 Cancel
-              </button>
+              </motion.button>
             </div>
           </div>
-        </>
+        </motion.div>
       )}
       {!isAdding && summarys.length === 0 && (
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
           onClick={handleAddClick}
-          className="btn btn-outline-primary"
           style={{
-            backgroundColor: '#007bff',
+            backgroundColor: '#6c5ce7',
             color: '#fff',
-            borderRadius: '8px',
-            padding: '10px 20px',
+            borderRadius: '10px',
+            padding: '0.75rem 1.5rem',
             fontSize: '1rem',
-            transition: 'all 0.3s',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+            margin: '0 auto',
           }}
         >
-          <FontAwesomeIcon icon={faEdit} className="me-2" />
+          <FontAwesomeIcon icon={faPlus} />
           Add Summary
-        </button>
+        </motion.button>
       )}
-    </div>
+    </motion.div>
   );
-  
   
 };
 
