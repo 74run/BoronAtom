@@ -943,6 +943,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               marginBottom: '1rem',
               backgroundColor: "#1c1c1e",
               height: '250px',
+              color: "#f5f5f5",
             }}
           />
 

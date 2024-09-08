@@ -933,6 +933,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               width: "100%",
               marginBottom: '1rem',
               backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
               height: '250px',
             }}
           />
