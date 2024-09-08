@@ -510,7 +510,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               <textarea
                 placeholder="Description"
                 value={editData.description}
-                onChange={handleDescriptionChange}
+                onChange={handleEditDescriptionChange}
                 style={{
                   borderRadius: "8px",
                   border: "1px solid #444",
