@@ -109,26 +109,35 @@ const CoverLetter: React.FC = () => {
     const marginLeft = 15;
     const marginTop = 20;
     const maxLineWidth = 180; // Width of the text
-    const fontSize = 10; // Smaller font size for better fit
-
+    const fontSize = 11; // Smaller font size for better fit
+    const lineHeight = 0.5;  // Adjust the line height here
+    const paragraphSpacing = 7;  // Space between paragraphs
+  
     doc.setFont('Times New Roman', '');
     doc.setFontSize(fontSize);
-
+  
     const lines = doc.splitTextToSize(coverLetter, maxLineWidth);
     let verticalOffset = marginTop;
-
-    lines.forEach((line: any, index: any) => {
-      if (verticalOffset + fontSize > doc.internal.pageSize.height - marginTop) {
+  
+    lines.forEach((line: any, index: number) => {
+      if (verticalOffset + fontSize * lineHeight > doc.internal.pageSize.height - marginTop) {
         doc.addPage();
         verticalOffset = marginTop;
       }
-
+  
       doc.text(line, marginLeft, verticalOffset);
-      verticalOffset += fontSize;
+  
+      // Check if the next line starts a new paragraph by detecting double newlines
+      if (index < lines.length - 1 && lines[index + 1] === "") {
+        verticalOffset += paragraphSpacing;  // Extra space for new paragraph
+      } else {
+        verticalOffset += fontSize * lineHeight;  // Normal line height
+      }
     });
-
+  
     doc.save('cover-letter.pdf');
   };
+  
 
   return (
     <div style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', minHeight: '100vh', paddingBottom: '50px', paddingTop: '50px' }}>
