@@ -167,6 +167,14 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
           }}
         />
       )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={onSelectFile}
+          style={{ display: "none" }}
+          className="custom-file-input visually-hidden"
+          id="fileInput"
+        />
       <label className="custom-file-label" htmlFor="fileInput"
       style={{
         borderRadius: "25px",
@@ -177,14 +185,7 @@ const ImageCropper: React.FC<ImageCropperProps> = ({
       }}>Upload New Photo
        
       </label>
-      <input
-          type="file"
-          accept="image/*"
-          onChange={onSelectFile}
-          style={{ display: "none" }}
-          className="custom-file-input visually-hidden"
-          id="fileInput"
-        />
+    
     </>
   );
 };
