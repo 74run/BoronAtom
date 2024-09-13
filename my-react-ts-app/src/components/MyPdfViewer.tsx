@@ -337,7 +337,7 @@ const projectSection = projects.length > 0 ? `
     await axios.post(`${process.env.REACT_APP_API_URL}/store-latex`, { latexCode });
 
     // Step 4: Use the stored LaTeX code URL in the Overleaf link
-    const texFileUrl = `${process.env.REACT_APP_API_URL}/${userDetails?.firstName}_Resume`;
+    const texFileUrl = `${process.env.REACT_APP_API_URL}/${userDetails?.username}_Resume`;
     const encodedUri = encodeURIComponent(texFileUrl);
     const overleafUrl = `https://www.overleaf.com/docs?snip_uri=${encodedUri}`;
 
