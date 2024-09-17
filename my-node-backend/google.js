@@ -315,301 +315,386 @@ user.summary.forEach((summary, index) => {
 // Function to extract text from DOCX files
 const extractTextFromDocx = async (fileBuffer) => {
   try {
-      const result = await mammoth.extractRawText({ buffer: fileBuffer });
-      return result.value;
+    const result = await mammoth.extractRawText({ buffer: fileBuffer });
+    return result.value;
   } catch (error) {
-      console.error('Error extracting text from DOCX:', error);
-      throw error;
+    console.error('Error extracting text from DOCX:', error);
+    throw error;
   }
 };
 
-// Function to extract text from PDF files
 const extractTextFromPdf = async (fileBuffer) => {
   try {
-      const pdfData = await pdfParse(fileBuffer);
-      return pdfData.text;
+    const pdfData = await pdfParse(fileBuffer);
+    return pdfData.text;
   } catch (error) {
-      console.error('Error extracting text from PDF:', error);
-      throw error;
+    console.error('Error extracting text from PDF:', error);
+    throw error;
   }
 };
 
-// Function to parse the resume using Google AI Gemini
 const parseWithGemini = async (extractedText) => {
   try {
-      // Create a prompt for Gemini AI
-      const prompt = `
-  "Resume Text:
-          ${extractedText}"
+    const prompt = `
+      Resume Text:
+      ${extractedText}
 
+      You are an AI language model that has been given structured resume data, and your task is to automatically fill out a web or digital form based on this information. Here's the structured data:
 
-          "You are an AI language model that has been given structured resume data, and your task is to automatically fill out a web or digital form based on this information. Here’s the structured data:
+      Personal Information:
+      Full Name: [Extracted Name]
+      Contact Information:
+      Email: [Extracted Email]
+      Phone: [Extracted Phone Number]
+      LinkedIn Profile: [Extracted LinkedIn Profile]
+      Location: [Extracted Address/City/Country]
 
-Personal Information:
+      Professional Summary:
+      Summary: [Extracted Summary]
 
-Full Name: [Extracted Name]
-Contact Information:
-Email: [Extracted Email]
-Phone: [Extracted Phone Number]
-LinkedIn Profile: [Extracted LinkedIn Profile]
-Location: [Extracted Address/City/Country]
-Professional Summary:
+      Work Experience:
+      Job Title: [Extracted Job Title]
+      Company Name: [Extracted Company Name]
+      Employment Period: [Start Date - End Date]
+      Job Description: [Brief Description of Duties and Achievements]
 
-Summary: [Extracted Summary]
-Work Experience:
+      Education:
+      Degree: [Extracted Degree]
+      Institution: [Extracted Institution Name]
+      Graduation Date: [Graduation Date]
 
-Job Title: [Extracted Job Title]
-Company Name: [Extracted Company Name]
-Employment Period: [Start Date - End Date]
-Job Description: [Brief Description of Duties and Achievements]
-Education:
+      Skills:
+      Technical Skills: [List of Extracted Technical Skills]
+      Soft Skills: [List of Extracted Soft Skills]
 
-Degree: [Extracted Degree]
-Institution: [Extracted Institution Name]
-Graduation Date: [Graduation Date]
-Skills:
+      Certifications & Awards:
+      Certification Name: [Extracted Certification Name]
+      Issuing Organization: [Extracted Issuing Organization]
+      Date Obtained: [Date Obtained]
 
-Technical Skills: [List of Extracted Technical Skills]
-Soft Skills: [List of Extracted Soft Skills]
-Certifications & Awards:
+      Projects:
+      Project Title: [Extracted Project Title]
+      Description: [Brief Description of the Project]
 
-Certification Name: [Extracted Certification Name]
-Issuing Organization: [Extracted Issuing Organization]
-Date Obtained: [Date Obtained]
-Projects:
+      Languages:
+      Language: [Language]
+      Proficiency Level: [Proficiency Level]
 
-Project Title: [Extracted Project Title]
-Description: [Brief Description of the Project]
-Languages:
+      Other Relevant Information:
+      [Any additional information found]
 
-Language: [Language]
-Proficiency Level: [Proficiency Level]
-Other Relevant Information:
+      Instructions for Form Filling:
+      1. Identify the corresponding field in the form for each category of the data provided.
+      2. Automatically input the data from the resume into the matching fields.
+      3. Ensure that all required fields are filled accurately and leave optional fields blank if no relevant data is available.
+      4. If a field requires a specific format (e.g., date format), adjust the data accordingly before filling.
+      5. Once the form is filled, review it for accuracy and completeness, then submit or prepare the form for further user review.
 
-[Any additional information found]
-Instructions for Form Filling:
+      Here is the specific mapping of the fields:
+      Form Field 'Name' -> [Full Name]
+      Form Field 'Email' -> [Email]
+      Form Field 'Phone' -> [Phone]
+      Form Field 'LinkedIn' -> [LinkedIn Profile]
+      Form Field 'Address' -> [Location]
+      Form Field 'Summary' -> [Professional Summary]
+      Form Field 'Work Experience' -> [Job Title], [Company Name], [Employment Period], [Job Description]
+      Form Field 'Education' -> [Degree], [Major], [Institution], [Start Date], [End Date]
+      Form Field 'Skills' -> [Technical Skills], [Soft Skills]
+      Form Field 'Certifications' -> [Certification Name], [Issuing Organization], [Date Obtained]
+      Form Field 'Projects' -> [Project Title], [Organization], [Start Date], [End Date], [Description]
+      Form Field 'Languages' -> [Language], [Proficiency Level]
 
-Identify the corresponding field in the form for each category of the data provided.
-Automatically input the data from the resume into the matching fields.
-Ensure that all required fields are filled accurately and leave optional fields blank if no relevant data is available.
-If a field requires a specific format (e.g., date format), adjust the data accordingly before filling.
-Once the form is filled, review it for accuracy and completeness, then submit or prepare the form for further user review.
-Here is the specific mapping of the fields:
+      Please proceed to fill the form using the structured resume data provided.
+    `;
 
-Form Field 'Name' -> [Full Name]
-Form Field 'Email' -> [Email]
-Form Field 'Phone' -> [Phone]
-Form Field 'LinkedIn' -> [LinkedIn Profile]
-Form Field 'Address' -> [Location]
-Form Field 'Summary' -> [Professional Summary]
-Form Field 'Work Experience' -> [Job Title], [Company Name], [Employment Period], [Job Description]
-Form Field 'Education' -> [Degree], [Institution], [Graduation Date]
-Form Field 'Skills' -> [Technical Skills], [Soft Skills]
-Form Field 'Certifications' -> [Certification Name], [Issuing Organization], [Date Obtained]
-Form Field 'Projects' -> [Project Title], [Description]
-Form Field 'Languages' -> [Language], [Proficiency Level]
-Please proceed to fill the form using the structured resume data provided."
-
-        
-
-        
-      `;
-
-      // Instantiate the generative model (adjust according to your specific SDK or API)
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-
-      // Send the prompt to Gemini AI
-      const result = await model.generateContent( prompt );
-      const response = await result.response;
-      const parsedData = response.text();
-    // This will contain the parsed resume data
-
-      return parsedData;
+    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
   } catch (error) {
-      console.error('Error parsing resume with Google AI Gemini:', error);
-      throw error;
+    console.error('Error parsing resume with Google AI Gemini:', error);
+    throw error;
   }
 };
 
-const parseTextResponse = (aiResponse) => {
-  const parsedData = {
-    name: '',
-    contact: {
-      email: '',
-      phone: '',
-      linkedin: '',
-      location: '',
-    },
-    summary: '',
-    skills: {
-      technical: [],
-      soft: [],
-    },
-    education: [],
-    experience: [],
-    projects: [],
-    certifications: [],
-    languages: [],
-    other: '',
+const parseSummary = (aiResponse) => {
+  // Regular expression to capture the summary but exclude "Summary:" from the capture group
+  const summaryMatch = aiResponse.match(/Professional Summary:\s*Summary:\s*(.+?)(?=(Work Experience|Education|Skills|Certifications|Projects|Languages|Other Relevant Information):)/s);
+
+  // Check if a summary was found and clean it
+  if (summaryMatch) {
+      const summary = summaryMatch[1]
+          .replace(/\n+/g, ' ')   // Replace newlines with spaces
+          .replace(/\s{2,}/g, ' ') // Replace multiple spaces with a single space
+          .trim();                // Trim any leading/trailing whitespace
+
+      return summary;
+  }
+  return null; // Return null if no summary found
+};
+const parseEducation = (aiResponse) => {
+  const educationEntries = [];
+
+  // Regular expression to extract the Education block
+  const educationMatch = aiResponse.match(/Education:\s*(.+?)(?=(Skills|Certifications|Projects|Languages|Other Relevant Information):)/s);
+  
+  if (educationMatch) {
+      const educationBlock = educationMatch[1].trim();
+
+      // Updated regular expression to handle multiple entries and avoid mixing
+      const educationRegex = /Degree:\s*(.+?)\s*Institution:\s*(.+?)\s*Graduation Date:\s*(.+?)\s*GPA:\s*(.+?)(?=\n|Degree|$)/g;
+
+      let match;
+      while ((match = educationRegex.exec(educationBlock)) !== null) {
+          const [_, degree, institution, graduationDate, gpa] = match;
+
+          educationEntries.push({
+              degree: degree.trim(),
+              institution: institution.trim(),
+              graduationDate: graduationDate.trim(),
+              gpa: gpa.trim()
+          });
+      }
+  }
+  return educationEntries;
+};
+
+const parseProjects = (aiResponse) => {
+  const projectEntries = [];
+
+  // Regular expression to extract the Projects block
+  const projectMatch = aiResponse.match(/Projects:\s*(.+?)(?=(Languages|Certifications|Other Relevant Information):)/s);
+  
+  if (projectMatch) {
+      const projectBlock = projectMatch[1].trim();
+
+      // Regular expression to extract each project entry (title and description)
+      const projectRegex = /Project Title:\s*(.+?)\s*Description:\s*(.+?)(?=\n|Project Title|$)/g;
+
+      let match;
+      while ((match = projectRegex.exec(projectBlock)) !== null) {
+          const [_, title, description] = match;
+
+          projectEntries.push({
+              title: title.trim(),
+              description: description.trim()
+          });
+      }
+  }
+  return projectEntries;
+};
+
+const parseExperience = (aiResponse) => {
+  const experienceEntries = [];
+
+  // Extract the Work Experience block
+  const experienceMatch = aiResponse.match(/Work Experience:\s*(.+?)(?=(Education|Skills|Certifications|Projects|Languages|Other Relevant Information):)/s);
+  
+  if (experienceMatch) {
+      const experienceBlock = experienceMatch[1].trim();
+
+      // Regular expression to extract each job experience separately
+      const experienceRegex = /Job Title:\s*(.+?)\s*Company Name:\s*(.+?)\s*Employment Period:\s*(.+?)\s*Job Description:\s*([\s\S]+?)(?=(Job Title|$))/g;
+
+      let match;
+      while ((match = experienceRegex.exec(experienceBlock)) !== null) {
+          const [_, jobTitle, companyName, employmentPeriod, jobDescription] = match;
+
+          // Clean up the job description
+          const cleanedJobDescription = jobDescription.replace(/\n+/g, ' ').trim();
+
+          experienceEntries.push({
+              jobTitle: jobTitle.trim(),
+              companyName: companyName.trim(),
+              employmentPeriod: employmentPeriod.trim(),
+              jobDescription: cleanedJobDescription
+          });
+      }
+  }
+  return experienceEntries;
+};
+
+const parseCertifications = (aiResponse) => {
+  const certificationEntries = [];
+
+  // Extract the Certifications block
+  const certificationMatch = aiResponse.match(/Certifications:\s*(.+?)(?=(Projects|Languages|Other Relevant Information|$))/s);
+  
+  if (certificationMatch) {
+      const certificationBlock = certificationMatch[1].trim();
+
+      // Regular expression to extract each certification entry properly
+      const certificationRegex = /Certification Name:\s*(.+?)\s*Issuing Organization:\s*(.+?)\s*Date Obtained:\s*(.+?)(?=(Certification Name|$))/g;
+
+      let match;
+      while ((match = certificationRegex.exec(certificationBlock)) !== null) {
+          const [_, certificationName, issuingOrganization, dateObtained] = match;
+
+          certificationEntries.push({
+              certificationName: certificationName.trim(),
+              issuingOrganization: issuingOrganization.trim(),
+              dateObtained: dateObtained.trim()
+          });
+      }
+  }
+  return certificationEntries;
+};
+
+
+const cleanAIResponse = (aiResponse) => {
+  return aiResponse
+      .replace(/\*\*/g, '')   // Remove double asterisks used for bold formatting
+      .replace(/^\*\s*/gm, '') // Remove leading asterisks and spaces at the beginning of lines
+      .replace(/\s*\n\s*/g, ' ') // Replace newlines with a single space
+      .replace(/\s{2,}/g, ' ') // Replace multiple spaces with a single space
+      .trim(); // Trim leading and trailing spaces
+};
+
+
+const parseInvolvements = (aiResponse) => {
+  const involvementEntries = [];
+
+  // Regular expression to extract the "Other Relevant Information" block
+  const involvementMatch = aiResponse.match(/Other Relevant Information:\s*(.+?)(?=(Certifications|Projects|Languages|$))/s);
+  
+  if (involvementMatch) {
+      const involvementBlock = involvementMatch[1].trim();
+
+      // Regular expression to capture each involvement entry based on "role, organization" format
+      const involvementRegex = /(.+?),\s*(.+?)\n/g;
+
+      let match;
+      while ((match = involvementRegex.exec(involvementBlock)) !== null) {
+          const [_, role, organization] = match;
+
+          involvementEntries.push({
+              role: role.trim(),
+              organization: organization.trim(),
+          });
+      }
+  }
+  return involvementEntries;
+};
+
+
+const parseSkills = (aiResponse) => {
+  const skills = {
+      technicalSkills: [],
+      softSkills: []
   };
 
+  // Extract the Skills block
+  const skillsMatch = aiResponse.match(/Skills:\s*([\s\S]+?)(?=(Certifications|Projects|Languages|Other Relevant Information|$))/s);
 
-  // Example patterns for parsing the text
-  const nameMatch = aiResponse.match(/Full Name:\s*(.+)/i);
-  const emailMatch = aiResponse.match(/Email:\s*(.+)/i);
-  const phoneMatch = aiResponse.match(/Phone:\s*(.+)/i);
-  const linkedinMatch = aiResponse.match(/LinkedIn Profile:\s*(.+)/i);
-  const locationMatch = aiResponse.match(/Location:\s*(.+)/i);
-  const summaryMatch = aiResponse.match(/Summary:\s*([\s\S]*?)(?=\*\*Work Experience:|\*\*Skills:|$)/i);
-  
-  // Skill extraction can be directly taken from the AI output if provided
-  const technicalSkillsMatch = aiResponse.match(/Technical Skills:\s*([\s\S]*?)(?=\*\*Soft Skills:|\*\*|$)/i);
-  const softSkillsMatch = aiResponse.match(/Soft Skills:\s*([\s\S]*?)(?=\*\*|$)/i);
-  
-  // Education extraction
-  const educationMatches = [...aiResponse.matchAll(/\*\*(.+)\*\*\n(.+)\nGraduation:\s*(.+)\n(.+)\nGPA:\s*(.+)/gi)];
-  
-  // Experience extraction
-  const experienceMatches = [...aiResponse.matchAll(/\*\*(.+)\*\*\n(.+)\n(.+)\n(.+)\n([\s\S]*?)(?=\n\*\*|\n$)/gi)];
+  if (skillsMatch) {
+      const skillsBlock = skillsMatch[1].trim();
 
-  // Project extraction
-  const projectMatches = [...aiResponse.matchAll(/\*\*(.+)\*\*\n([\s\S]*?)(?=\n\*\*|\n$)/gi)];
+      // Regular expression to capture Technical and Soft skills separately
+      const technicalSkillsMatch = skillsBlock.match(/Technical Skills:\s*([\s\S]+?)(?=(Soft Skills|Certifications|Projects|Languages|$))/);
+      const softSkillsMatch = skillsBlock.match(/Soft Skills:\s*([\s\S]+?)(?=(Certifications|Projects|Languages|$))/);
 
-  // Certifications and Languages might need specific patterns depending on your data
-  const certificationsMatch = aiResponse.match(/Certifications & Awards:\s*([\s\S]*?)(?=\*\*Languages:|$)/i);
-  const languagesMatch = aiResponse.match(/Languages:\s*([\s\S]*?)(?=\*\*Other Relevant Information:|$)/i);
+      // Process Technical Skills
+      if (technicalSkillsMatch) {
+          const technicalSkills = technicalSkillsMatch[1]
+              .split(/[\n\*]+/)  // Split on newlines or bullet points
+              .map(skill => skill.trim()) // Trim extra spaces
+              .filter(skill => skill); // Remove empty entries
+          skills.technicalSkills = technicalSkills;
+      }
 
-  const otherMatch = aiResponse.match(/Other Relevant Information:\s*(.+)/i);
-
-  // Assign the matched values to the parsedData structure
-  if (nameMatch) parsedData.name = nameMatch[1].trim();
-  if (emailMatch) parsedData.contact.email = emailMatch[1].trim();
-  if (phoneMatch) parsedData.contact.phone = phoneMatch[1].trim();
-  if (linkedinMatch) parsedData.contact.linkedin = linkedinMatch[1].trim();
-  if (locationMatch) parsedData.contact.location = locationMatch[1].trim();
-  if (summaryMatch) parsedData.summary = summaryMatch[1].trim();
-
-  if (technicalSkillsMatch) {
-    parsedData.skills.technical = technicalSkillsMatch[1].split('\n').map(skill => skill.replace('* ', '').trim());
+      // Process Soft Skills
+      if (softSkillsMatch) {
+          const softSkills = softSkillsMatch[1]
+              .split(/[\n\*]+/)  // Split on newlines or bullet points
+              .map(skill => skill.trim()) // Trim extra spaces
+              .filter(skill => skill); // Remove empty entries
+          skills.softSkills = softSkills;
+      }
   }
 
-  if (softSkillsMatch) {
-    parsedData.skills.soft = softSkillsMatch[1].split('\n').map(skill => skill.replace('* ', '').trim());
-  }
-
-  if (educationMatches.length > 0) {
-    parsedData.education = educationMatches.map(eduParts => ({
-      degree: eduParts[1].trim(),
-      institution: eduParts[2].trim(),
-      graduationDate: eduParts[3].trim(),
-      program: eduParts[4].trim(),
-      gpa: eduParts[5].trim()
-    }));
-  }
-
-  if (experienceMatches.length > 0) {
-    parsedData.experience = experienceMatches.map(expParts => ({
-      jobTitle: expParts[1].trim(),
-      companyName: expParts[2].trim(),
-      employmentPeriod: expParts[3].trim(),
-      location: expParts[4].trim(),
-      jobDescription: expParts[5].trim(),
-    }));
-  }
-
-  if (projectMatches.length > 0) {
-    parsedData.projects = projectMatches.map(projParts => ({
-      projectTitle: projParts[1].trim(),
-      description: projParts[2].trim(),
-    }));
-  }
-
-  if (certificationsMatch) {
-    parsedData.certifications = certificationsMatch[1].split('\n\n').map(cert => cert.trim());
-  }
-
-  if (languagesMatch) {
-    parsedData.languages = languagesMatch[1].split('\n\n').map(lang => {
-      const langParts = lang.match(/\*\*(.+)\*\*\nProficiency Level:\s*(.+)/i);
-      return {
-        language: langParts ? langParts[1].trim() : '',
-        proficiencyLevel: langParts ? langParts[2].trim() : '',
-      };
-    });
-  }
-
-  if (otherMatch) {
-    parsedData.other = otherMatch[1].trim();
-  }
-
-  return parsedData;
+  return skills;
 };
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Resume upload and parsing route
-router.post('/upload-resume', upload.single('resume'), async (req, res) => {
-    try {
-        const { buffer, mimetype } = req.file; // Get the buffer and mimetype of the uploaded file
-        let extractedText = '';
-
-        // Extract text based on file type
-        if (mimetype === 'application/pdf') {
-            extractedText = await extractTextFromPdf(buffer);
-        } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            extractedText = await extractTextFromDocx(buffer);
-        } else {
-            return res.status(400).json({ success: false, message: 'Unsupported file format' });
-        }
-
-        const aiResponse = await parseWithGemini(extractedText);
-
-        // Convert the AI response text to the ParsedData structure
-        const parsedData = parseTextResponse(aiResponse);
-
-        console.log("AI Response:");
-        console.log(aiResponse);
-
-        console.log("Parsed Data:");
-        console.log(parsedData);
-
-        // Send the parsed data back to the frontend
-        res.json({
-            success: true,
-            parsedData,
-        });
-
-    } catch (error) {
-        console.error('Error processing resume:', error);
-        res.status(500).json({ success: false, message: 'Failed to process resume' });
-    }
-});
-
-
-const parsedDataStore = {}; // In-memory storage
-
-router.get('/get-parsed-resume/:userID', (req, res) => {
+// POST request to handle file upload and parsing
+router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) => {
   try {
-      const { userID } = req.params;
+    const { buffer, mimetype } = req.file;
+    let extractedText = '';
 
-      // Retrieve the parsed data from the in-memory store
-      const parsedData = parsedDataStore[userID];
+    // Check for supported file types (PDF or DOCX)
+    if (mimetype === 'application/pdf') {
+      extractedText = await extractTextFromPdf(buffer);
+    } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+      extractedText = await extractTextFromDocx(buffer);
+    } else {
+      return res.status(400).json({ success: false, message: 'Unsupported file format' });
+    }
 
-      if (!parsedData) {
-          return res.status(404).json({ success: false, message: 'No parsed data found for this user' });
-      }
+   
+    // Clean and parse extracted text
+    const cleanedText = cleanAIResponse(extractedText);
+    const parsedSummary = parseSummary(cleanedText);
+    const parsedEducation = parseEducation(cleanedText);
+    const parsedExperience = parseExperience(cleanedText);
+    const parsedCertifications = parseCertifications(cleanedText);
+    const parsedSkills = parseSkills(cleanedText);
+    const parsedProjects = parseProjects(cleanedText);
+    const parsedInvolvements = parseInvolvements(cleanedText);
 
-      // Send the parsed data back to the frontend
-      res.json({
-          success: true,
-          parsedData,
-      });
+    const parsedDataStore = { parsedSummary, parsedEducation, parsedExperience, parsedCertifications };
+
+    // Store the parsed data using user ID (you need to ensure userID is available)
+    const userID = req.params.userID;  // Assuming the user is authenticated and userID is available
+    parsedDataStore.set(userID, {
+      parsedSummary,
+      parsedEducation,
+      parsedExperience,
+      parsedCertifications,
+      parsedSkills,
+      parsedProjects,
+      parsedInvolvements,
+    });
+
+    res.json({
+      success: true,
+      parsedSummary,
+      parsedEducation,
+      parsedExperience,
+      parsedCertifications,
+      parsedSkills,
+      parsedProjects,
+      parsedInvolvements,
+    });
   } catch (error) {
-      console.error('Error retrieving parsed data:', error);
-      res.status(500).json({ success: false, message: 'Failed to retrieve parsed data' });
+    console.error('Error processing resume:', error);
+    res.status(500).json({ success: false, message: 'Failed to process resume' });
   }
 });
+
+// GET request to retrieve parsed resume data by user ID
+router.get('/get-parsed-resume/:userID', (req, res) => {
+  try {
+    const { userID } = req.params;
+    const parsedData = parsedData.get(userID);
+
+    if (!parsedData) {
+      return res.status(404).json({ success: false, message: 'No parsed data found for this user' });
+    }
+
+    res.json({
+      success: true,
+      parsedData,
+    });
+  } catch (error) {
+    console.error('Error retrieving parsed data:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve parsed data' });
+  }
+});
+
 
 
 router.post('/generate-cover-letter/:userID', async (req, res) => {
@@ -628,8 +713,8 @@ router.post('/generate-cover-letter/:userID', async (req, res) => {
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `Write a professional cover letter for a job application based on the following information: 
-    contact: ${user.contact[0]},
+    const prompt = `Write a professional cover letter for a job application. Do not include personal contact details of user like name, address, phone number, or email. Don't even give the boxes to fill.
+    Focus on the user's professional qualifications. Use the following information:
     Experience: ${user.experience}, 
     Projects: ${user.project}, 
     Education: ${user.education}, 
