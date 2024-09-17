@@ -73,37 +73,40 @@ const SummarySection: React.FC<SummarySectionProps> = ({
       .then((response) => {
         const generatedText = response.data.text;
         setGeneratedText(generatedText);
-
+  
         const words = generatedText.split(' ');
-
+  
         const printWords = (index: number) => {
           if (index < words.length) {
             const nextWord = words[index];
-
+  
             if (editData) {
+              // Replace content instead of appending
               setEditData((prevData) => ({
                 ...prevData!,
-                content: prevData!.content + ' ' + nextWord,
+                content: words.slice(0, index + 1).join(' '), // Replace the content
               }));
             } else {
+              // For new summaries, replace content instead of appending
               setNewSummary((prevSummary) => ({
                 ...prevSummary,
-                content: prevSummary.content + ' ' + nextWord,
+                content: words.slice(0, index + 1).join(' '), // Replace the content
               }));
             }
-
+  
             setTimeout(() => {
               printWords(index + 1);
             }, 200);
           }
         };
-
+  
         printWords(0);
       })
       .catch((error) => {
         console.error('Error fetching generated text:', error);
       });
   };
+  
 
   const handleGenerateTextClick = () => {
     fetchGeneratedText();
