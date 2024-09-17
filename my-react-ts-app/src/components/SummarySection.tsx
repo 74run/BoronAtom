@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-
 import { faMagic, faSave, faTimes, faEdit, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
@@ -21,7 +20,13 @@ interface SummarySectionProps {
   parsedSummary?: string; 
 }
 
-const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDelete, viewOnly = false ,parsedSummary, }) => {
+const SummarySection: React.FC<SummarySectionProps> = ({
+  Summarys,
+  onEdit,
+  onDelete,
+  viewOnly = false,
+  parsedSummary,
+}) => {
   const [summarys, setSummarys] = useState<Summary[]>(Summarys);
   const [editData, setEditData] = useState<{ id: string; content: string } | null>(null);
   const [newSummary, setNewSummary] = useState<Summary>({
@@ -32,26 +37,15 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
 
-
-
   const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+  // Prepopulate newSummary with parsedSummary if it's available
   useEffect(() => {
     if (parsedSummary) {
       setNewSummary({ _id: '', content: parsedSummary });
-      console.log(parsedSummary);
-   
+      console.log('Parsed Summary received:', parsedSummary);
     }
   }, [parsedSummary]);
-
-  useEffect(() => {
-    // Save only if newSummary.content is not an empty string
-    if (newSummary.content) {
-      handleSaveClick();
-      
-      setIsAdding(false);
-    }
-  }, [newSummary.content]);
 
   useEffect(() => {
     fetchSummary();
@@ -63,10 +57,10 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }
-        return response.json(); // Parse the response JSON
+        return response.json();
       })
       .then((data) => {
-        setSummarys(data); // Set projects state with the fetched data
+        setSummarys(data);
       })
       .catch((error) => {
         console.error('Error fetching projects:', error);
@@ -80,12 +74,6 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
         const generatedText = response.data.text;
         setGeneratedText(generatedText);
 
-        if (editData) {
-          setEditData((prevData) => ({ ...prevData!, content: '' }));
-        } else {
-          setNewSummary((prevSummary) => ({ ...prevSummary, content: '' }));
-        }
-
         const words = generatedText.split(' ');
 
         const printWords = (index: number) => {
@@ -93,9 +81,15 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
             const nextWord = words[index];
 
             if (editData) {
-              setEditData((prevData) => ({ ...prevData!, content: prevData!.content + ' ' + nextWord }));
+              setEditData((prevData) => ({
+                ...prevData!,
+                content: prevData!.content + ' ' + nextWord,
+              }));
             } else {
-              setNewSummary((prevSummary) => ({ ...prevSummary, content: prevSummary.content + ' ' + nextWord }));
+              setNewSummary((prevSummary) => ({
+                ...prevSummary,
+                content: prevSummary.content + ' ' + nextWord,
+              }));
             }
 
             setTimeout(() => {
@@ -175,11 +169,12 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
     setNewSummary({ _id: '', content: '' });
     setIsAdding(true);
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
       style={{
         border: 'none',
         borderRadius: '12px',
@@ -197,7 +192,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
       <motion.div
         initial={{ width: '0%' }}
         animate={{ width: '100%' }}
-        transition={{ duration: 2, ease: "easeInOut", loop: Infinity }}
+        transition={{ duration: 2, ease: 'easeInOut', loop: Infinity }}
         style={{
           position: 'absolute',
           top: 0,
@@ -256,15 +251,11 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                   border: '1px solid #444',
                   padding: '16px',
                   fontSize: '1rem',
-                  marginBottom: '1rem',
-                  backgroundColor: '#1c1c1e',
+                  backgroundColor: '#333',
                   color: '#f5f5f5',
-                  resize: 'vertical',
-                  fontFamily: "'Poppins', sans-serif",
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
                 }}
               />
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -330,83 +321,75 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                     Cancel
                   </motion.button>
                 </div>
-              </div>
+                </div>
             </>
           ) : (
-            <>
-              <p
+            <p
+            style={{
+              marginBottom: '1.5rem',
+              fontFamily: "'Poppins', sans-serif",
+              fontSize: '1rem',
+              lineHeight: '1.8',
+              color: '#ddd',
+            }}
+          >
+            {summary.content}
+          </p>
+          )}
+          {!viewOnly && !editData && (
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
+          
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleEditClick(summary._id, summary.content)}
                 style={{
-                  marginBottom: '1.5rem',
-                  fontFamily: "'Poppins', sans-serif",
-                  fontSize: '1rem',
-                  lineHeight: '1.8',
-                  color: '#ddd',
+                  backgroundColor: '#6c5ce7',
+                  color: '#fff',
+                  borderRadius: '10px',
+                  padding: '0.5rem 1rem',
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
                 }}
               >
-                {summary.content}
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleEditClick(summary._id, summary.content)}
-                  style={{
-                    backgroundColor: '#6c5ce7',
-                    color: '#fff',
-                    borderRadius: '10px',
-                    padding: '0.5rem 1rem',
-                    fontSize: '0.9rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handleDelete(summary._id)}
-                  style={{
-                    backgroundColor: '#e74c3c',
-                    color: '#fff',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
-                </motion.button>
-              </div>
-            </>
+                <FontAwesomeIcon icon={faEdit} />
+                Edit
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleDelete(summary._id)}
+                style={{
+                  backgroundColor: '#e74c3c',
+                  color: '#fff',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '10px',
+                  fontSize: '0.9rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+                }}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+                Delete
+              </motion.button>
+            </div>
           )}
         </motion.div>
       ))}
-      {isAdding && summarys.length === 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            marginBottom: '2rem',
-            padding: '24px',
-            borderRadius: '12px',
-            backgroundColor: '#2d2d30',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
-            border: '1px solid #444',
-          }}
-        >
+
+
+
+      {isAdding && (
+        <>
           <textarea
             value={newSummary.content}
             onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
@@ -417,13 +400,11 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
               border: '1px solid #444',
               padding: '16px',
               fontSize: '1rem',
-              marginBottom: '1rem',
-              backgroundColor: '#1c1c1e',
+              backgroundColor: '#333',
               color: '#f5f5f5',
-              resize: 'vertical',
-              fontFamily: "'Poppins', sans-serif",
-              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
+              marginBottom: '12px',
             }}
+            placeholder="Write your new summary here..."
           />
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <motion.button
@@ -491,36 +472,41 @@ const SummarySection: React.FC<SummarySectionProps> = ({ Summarys, onEdit, onDel
                 Cancel
               </motion.button>
             </div>
-          </div>
-        </motion.div>
+       
+    
+       
+      </div>
+        </>
       )}
-      {!isAdding && summarys.length === 0 && (
+
+{!isAdding && summarys.length === 0 && (
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleAddClick}
-          style={{
-            backgroundColor: '#6c5ce7',
-            color: '#fff',
-            borderRadius: '10px',
-            padding: '0.75rem 1.5rem',
-            fontSize: '1rem',
-            border: 'none',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-            margin: '0 auto',
-          }}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          Add Summary
-        </motion.button>
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={handleAddClick}
+        style={{
+          backgroundColor: '#6c5ce7',
+          color: '#fff',
+          borderRadius: '10px',
+          padding: '0.75rem 1.5rem',
+          fontSize: '1rem',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+          margin: '0 auto',
+        }}
+      >
+        <FontAwesomeIcon icon={faPlus} />
+        Add Summary
+      </motion.button>
       )}
+
+      
     </motion.div>
   );
-  
 };
 
 export default SummarySection;

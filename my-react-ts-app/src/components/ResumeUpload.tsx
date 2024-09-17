@@ -47,7 +47,7 @@ const ResumeUpload: React.FC = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/userprofile/upload-resume`,
+        `${process.env.REACT_APP_API_URL}/api/userprofile/upload-resume/`,
         formData,
         {
           headers: {
