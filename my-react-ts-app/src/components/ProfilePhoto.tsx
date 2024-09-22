@@ -165,51 +165,6 @@ const Profile: React.FC<ProfileProps> = () => {
           textAlign: "center", // Center text by default on smaller screens
         }}
       >
-        {/* Profile Photo */}
-        <div
-          className="profile-photo"
-          style={{
-            position: "relative",
-            marginBottom: "1.5rem",
-            margin: "0 auto", // Center the photo
-          }}
-        >
-          <img
-          onClick={() => setModalOpen(true)}
-            src={avatarUrl.current}
-            alt="Avatar"
-            className="rounded-circle"
-            style={{
-              width: "160px",
-              height: "160px",
-              borderRadius: "50%",
-              border: "4px solid #2d2d30",
-              boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
-              objectFit: "cover",
-              cursor: "pointer",
-            }}
-            loading="lazy"
-          />
-          <button
-            onClick={() => setModalOpen(true)}
-            style={{
-              position: "absolute",
-              bottom: "10px",
-              right: "10px",
-              backgroundColor: "#007bff",
-              color: "#fff",
-              border: "none",
-              borderRadius: "50%",
-              padding: "10px",
-              cursor: "pointer",
-              boxShadow: "0px 5px 15px rgba(0, 0, 0, 0.2)",
-              transition: "background-color 0.3s",
-            }}
-            title="Change photo"
-          >
-            <Pencil size={20} />
-          </button>
-        </div>
 
         {/* User Details and Edit Contact Info */}
         <div style={{ flex: "1", textAlign: "center", marginTop: "10px" }}>
