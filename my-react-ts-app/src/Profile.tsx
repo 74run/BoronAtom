@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CoverPage from './components/CoverPage';
 import ProjectsSection from './components/Projects';
@@ -18,6 +18,8 @@ import ResumeUpload from './components/ResumeUpload'
 import ProfileNew from './components/ProfilePhoto';
 import { AiOutlineFileAdd } from 'react-icons/ai';
 
+import Modal from "./components/Model";
+
 
 import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
@@ -33,7 +35,8 @@ import './App.css';
 
 import PDFResume from './components/MyPdfViewer';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Cursor, Pencil } from 'react-bootstrap-icons';
 
 
 interface UserDetails {
@@ -213,17 +216,73 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+
+  const [profileImage, setProfileImage] = useState<string>('');
   
   const { userID } = useParams();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [isButtonHovered, setIsButtonHovered] = useState<boolean>(false);
+  
 
+  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
+  
+
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState('Profile'); // Manage active content
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isMobileView, setIsMobileView] = useState<boolean>(window.innerWidth < 768); // Track if screen is small
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const avatarUrl = useRef<string>(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`);
+
+
+
+  useEffect(() => {
+    const handleResize = () => setIsMobileView(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
+
+
+  useEffect(() => {
+    // Fetch user details
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+      .then(response => {
+        setUserDetails(response.data.user);
+      })
+      .catch(error => {
+        console.error('Error fetching user details:', error);
+      });
+
+    // Fetch the profile image
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
+      .then(response => {
+        const base64Image = btoa(
+          new Uint8Array(response.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        const contentType = response.headers['content-type'];
+        avatarUrl.current = `data:${contentType};base64,${base64Image}`;
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+      });
+
+  }, [userID]);
+
+
+  const updateAvatar = (imgSrc: string) => {
+    avatarUrl.current = imgSrc;
+  };
 
   // Fetch user details and educations data
   useEffect(() => {
@@ -550,10 +609,76 @@ const Profile: React.FC = () => {
   
   
   
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'Profile':
+        return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
+      case 'Summary':
+        return (
+          <SummarySection
+            Summarys={summarys}
+            onEdit={handleEditSum}
+            onDelete={handleDeleteSum}
+            parsedSummary={parsedData?.summary || ''}
+          />
+        );
+      case 'Projects':
+        return (
+          <ProjectsSection
+            onEdit={handleEditPro}
+            onDelete={handleDeletePro}
+            Projects={projects}
+          />
+        );
+      case 'Experience':
+        return (
+          <ExperienceSection
+            Experiences={experiences}
+            onEdit={handleEditExp}
+            onDelete={handleDeleteExp}
+          />
+        );
+      case 'Education':
+        return (
+          <EducationSection
+            Educations={educations}
+            onEdit={handleEditEdu}
+            onDelete={handleDeleteEdu}
+            UserDetail={userDetails}
+          />
+        );
+      case 'Skills':
+        return (
+          <Skills
+            Skills={skills}
+            onEdit={handleEditSkill}
+            onDelete={handleDeleteSkill}
+          />
+        );
+      case 'Certifications':
+        return (
+          <CertificationSection
+            Certifications={certifications}
+            onEdit={handleEditCert}
+            onDelete={handleDeleteCert}
+          />
+        );
+      case 'Involvements':
+        return (
+          <InvolvementSection
+            Involvements={involvements}
+            onEdit={handleEditInv}
+            onDelete={handleDeleteInv}
+          />
+        );
+      default:
+        return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
+    }
+  };
+
+ 
   return (
     <>
-      
-  
       {/* Full page layout */}
       <div
         className="Full-Profile"
@@ -561,6 +686,7 @@ const Profile: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           backgroundColor: "black",
+          
           paddingTop: "110px",
           paddingBottom: "50px",
           paddingLeft: "25px",
@@ -573,151 +699,179 @@ const Profile: React.FC = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between", // Change to "space-between" for better separation
             gap: "30px",
+            flexDirection: isMobileView ? "column" : "row",
             paddingBottom: "30px",
-            flexWrap: "wrap",
+            paddingTop: "20px", // Added padding to give spacing from the top
+            height: "100%", // Ensures it takes up the available space
           }}
         >
-          {/* Left Column (Profile Info and Main Content) */}
+          {/* Left Sidebar (Profile Info and Navigation Menu) */}
           <div
             style={{
-              flex: "1.30",
-          
+              flex: "0.3",
+              display: "flex",
+              flexDirection: "column",
+              gap: "30px",
+              marginTop: "-40px",
+              height: "auto",
             }}
           >
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                gap: "30px",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                height: "auto",
-                marginTop: "-40px",
-              }}
-            >
-              {/* ProfileNew Section */}
-              <div
-                style={{
-                  flex: "1.5",
-                  padding: "10px",
-                  marginBottom: '50px',
-                  borderRadius: "15px",
-                  boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "stretch",
-                  minHeight: "300px",
-                  width: "100%",
-                }}
-              >
-                <ProfileNew
-                  UserDetail={userDetails}
-                  ContactDetail={contactDetails}
+        <div className="bg-gray-800 text-white p-6 rounded-lg w-60">
 
-                  
-                />
-                   
-              </div>
-  
-              {/* PDFResume Section */}
        
+        <div
+  className="profile-photo"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+     marginTop: "4.5rem",
+    marginBottom: "1.5rem",
+  }}
+>
+  <img
+    onClick={() => setModalOpen(true)}
+    src={avatarUrl.current}
+    alt="Avatar"
+    className="rounded-circle"
+    style={{
+      width: "100px",
+      height: "100px",
+      borderRadius: "50%",
+      border: "4px solid #2d2d30",
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
+      objectFit: "cover",
+      cursor: "pointer",
+      marginBottom: "1rem", // Add space between image and text
+    }}
+    loading="lazy"
+  />
 
-            </div>
-  
-            {/* Summary and Projects Section */}
-            <div
-              className="summary-and-projects"
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-              }}
-            >
-        
-                
-  <SummarySection
-        Summarys={summarys}
-        onEdit={handleEditSum}
-        onDelete={handleDeleteSum}
-        parsedSummary={parsedData?.summary || ''} // Pass the parsed summary if available
-      />
-           
+{modalOpen && (
+        <Modal
+          updateAvatar={updateAvatar}
+          closeModal={() => setModalOpen(false)}
+          currentAvatar={avatarUrl.current}
+        />
+      )}
+
+  <div style={{ textAlign: "center" }}>
+    <h2 className="text-lg font-semibold">
+      {userDetails?.firstName} {userDetails?.lastName}
+    </h2>
+    <p className="text-gray-400 text-sm">{userDetails?.email}</p>
+  </div>
+</div>
+
+<div className="d-flex flex-column"
+style={{cursor: "pointer"}}>
+  <a
     
-                <ProjectsSection
-                  onEdit={handleEditPro}
-                  onDelete={handleDeletePro}
-                  Projects={projects}
-                />
-         
-            </div>
+    className={`nav-link ${activeSection === 'Profile' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Profile')}
+  >
+    <i className="fas fa-user-circle text-lg me-2"></i> 
+    <span className="text-sm font-medium">Profile</span>
+  </a>
+  <a
+    
+    className={`nav-link ${activeSection === 'Summary' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Summary')}
+  >
+<i className="fas fa-file-alt text-lg me-2"></i> 
+<span className="text-sm font-medium">Summary</span>
+
+  </a>
+  <a
+ 
+    className={`nav-link ${activeSection === 'Projects' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Projects')}
+  >
+    <i className="fas fa-tasks text-lg me-2"></i> 
+    <span className="text-sm font-medium">Projects</span>
+  </a>
+
+  <a
+    
+    className={`nav-link ${activeSection === 'Experience' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Experience')}
+  >
+    <i className="fas fa-briefcase text-lg me-2"></i> 
+    <span className="text-sm font-medium">Experience</span>
+  </a>
+
+  <a
   
-       
-              <ExperienceSection
-                Experiences={experiences}
-                onEdit={handleEditExp}
-                onDelete={handleDeleteExp}
-              />
+    className={`nav-link ${activeSection === 'Education' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Education')}
+  >
+    <i className="fas fa-graduation-cap text-lg me-2"></i> 
+    <span className="text-sm font-medium">Education</span>
+  </a>
 
+  <a
+   
+    className={`nav-link ${activeSection === 'Certifications' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Certifications')}
+  >
+    <i className="fas fa-certificate text-lg me-2"></i> 
+    <span className="text-sm font-medium">Certifications</span>
+  </a>
 
-         
-            
-              <EducationSection
-                Educations={educations}
-                onEdit={handleEditEdu}
-                onDelete={handleDeleteEdu}
-                UserDetail={userDetails}
-              />
-      
+  <a
+    
+    className={`nav-link ${activeSection === 'Involvements' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Involvements')}
+  >
+    <i className="fas fa-users text-lg me-2"></i> 
+    <span className="text-sm font-medium">Involvements</span>
+  </a>
+
+  <a
+   
+    className={`nav-link ${activeSection === 'Skills' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Skills')}
+  >
+    <i className="fas fa-lightbulb text-lg me-2"></i> 
+    <span className="text-sm font-medium">Skills</span>
+  </a>
+</div>
+
+</div>
+
           </div>
   
-          {/* Right Column (Sidebar) */}
+          {/* Right Column (Main Content Area) */}
           <div
             style={{
               flex: "1",
               display: "flex",
               flexDirection: "column",
               gap: "30px",
-              width: "100%",
-              marginTop: "18px"
+              padding: "20px", // Padding to improve spacing
+              borderRadius: "10px", // Rounded edges for the section
               
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Slight shadow for separation
+              overflowY: "auto",
+              maxHeight: "calc(100vh - 160px)", // Ensures it doesn't overflow the viewport
             }}
           >
-       
-              <Skills
-                Skills={skills}
-                onEdit={handleEditSkill}
-                onDelete={handleDeleteSkill}
-              />
-         
-    
-              <CertificationSection
-                Certifications={certifications}
-                onEdit={handleEditCert}
-                onDelete={handleDeleteCert}
-              />
-
-
-<InvolvementSection
-                Involvements={involvements}
-                onEdit={handleEditInv}
-                onDelete={handleDeleteInv}
-              />
-           
-     
-      
-         
+            {/* Section Rendering */}
+            <section className="bg-gray-100 p-6">
+              {renderSection()}
+            </section>
           </div>
         </div>
       </div>
   
-      <Footer />
+        <Footer />
     </>
-  );
   
+  );
+
   
 };
 
