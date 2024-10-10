@@ -83,7 +83,36 @@ router.post('/:userID/project', async (req, res) => {
         res.status(500).json({ message: error.message });
       }
     });
+
+
+// PUT request to reorder projects for a user
+router.put('/:userId/projects/reorder', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
     
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { projects } = req.body;  // Reordered list of projects from the frontend
+
+    // Update the user's profile with the reordered projects
+    const updatedUserProfile = await UserProfile.findOneAndUpdate(
+      { userID: user._id },
+      { $set: { project: projects } },  // Replace the old array with the new ordered array
+      { new: true }  // Return the updated document
+    );
+
+    if (!updatedUserProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+
+    res.json(updatedUserProfile);  // Return the updated profile
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
     
   
     router.delete('/:userID/project/:id', async (req, res) => {
