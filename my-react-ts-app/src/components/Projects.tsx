@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash, faEdit, faSave, faPlus, faToggleOn, faToggleOff, faMagic } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTrash, faEdit, faSave, faPlus, faToggleOn, faToggleOff, faMagic, faArrowUp, faArrowDown
+} from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
@@ -61,16 +63,16 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }
-        return response.json(); // Parse the response JSON
+        return response.json();  // Parse the response JSON
       })
       .then(data => {
-        setProjects(data); // Set projects state with the fetched data
+        setProjects(data);  // Set projects state with the fetched data
       })
       .catch(error => {
         console.error('Error fetching projects:', error);
       });
   };
-
+  
   const handleEditClick = (id: string, name: string,
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
@@ -122,7 +124,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     axios.post(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project`, formattedProject)
       .then((response) => {
         const newProjectFromServer = response.data.project;
-        const newProData = newProjectFromServer[newProjectFromServer.length - 1]
+        const newProData = newProjectFromServer[newProjectFromServer.length - 1];
         // Update the projects state with the new project
         setProjects([...projects, newProData]);
 
@@ -236,10 +238,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleGenerateDescription = (projectName: string) => {
+    const jobdescription = localStorage.getItem('jobDescription');
+    
+    console.log(jobdescription);// Get job description from local storage
+    
+    // Send a POST request with the job description in the request body
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`, {
-        params: { projectName },
-      })
+      .post(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`, 
+      { jobdescription }) // Send jobdescription in the body
       .then((response) => {
         const generatedDescription = response.data.text;
         if (editData) {
@@ -259,6 +265,50 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       });
   };
 
+  const moveProjectUp = (index: number) => {
+    if (index > 0) {
+      const newProjects = [...projects];
+      const temp = newProjects[index - 1];
+      newProjects[index - 1] = newProjects[index];
+      newProjects[index] = temp;
+      setProjects(newProjects);
+  
+      // Save the new order to the server
+      saveProjectOrder(newProjects);
+    }
+  };
+  
+  const moveProjectDown = (index: number) => {
+    if (index < projects.length - 1) {
+      const newProjects = [...projects];
+      const temp = newProjects[index + 1];
+      newProjects[index + 1] = newProjects[index];
+      newProjects[index] = temp;
+      setProjects(newProjects);
+  
+      // Save the new order to the server
+      saveProjectOrder(newProjects);
+    }
+  };
+
+  const saveProjectOrder = (updatedProjects: Project[]) => {
+    console.log("Saving updated projects order:", updatedProjects);  // Add a log to check the payload
+  
+    axios
+      .put(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/projects/reorder`, {
+        projects: updatedProjects,  // Send the reordered list
+      })
+      .then((response) => {
+        console.log('Project order updated successfully');
+      })
+      .catch((error) => {
+        console.error('Error updating project order:', error);
+      });
+  };
+  
+  
+  
+
   const handleTogglePresent = () => {
     if (editData) {
       setEditData({ ...editData, isPresent: !editData.isPresent });
@@ -266,6 +316,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       setNewProject({ ...newProject, isPresent: !newProject.isPresent });
     }
   };
+
   
 
   return (
@@ -295,7 +346,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       </h4>
 
       {/* Map over Projects */}
-      {projects.map((project) => (
+      {projects.map((project, index) => (
         <div
           key={project._id}
           className="project-card"
@@ -312,16 +363,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         >
           {editData && editData.id === project._id ? (
             // Edit mode
-            <div style={{
-              border: "1px solid #333",
-              borderRadius: "12px",
-              padding: "14px",
-              marginBottom: "1.5rem",
-              backgroundColor: "#2d2d30",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-              position: "relative",
-            }}>
+            <div>
               <input
                 type="text"
                 placeholder="Project Name"
@@ -583,24 +625,24 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
           ) : (
             // View mode
             <div
-            style={{
-             
-              borderRadius: "8px",
-              padding: "12px",
-              backgroundColor: "#1c1c1e",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow =
-                "0 10px 30px rgba(0, 0, 0, 0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }}>
+              style={{
+                borderRadius: "8px",
+                padding: "12px",
+                backgroundColor: "#1c1c1e",
+                transition: "transform 0.3s, box-shadow 0.3s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-5px)";
+                e.currentTarget.style.boxShadow =
+                  "0 10px 30px rgba(0, 0, 0, 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow =
+                  "0 4px 8px rgba(0, 0, 0, 0.1)";
+              }}
+            >
               <h5
                 style={{
                   color: "#f5f5f5",
@@ -721,6 +763,50 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   />
                   {project.includeInResume ? "Included" : "Excluded"}
                 </button>
+
+                <div
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              display: "flex",
+              flexDirection: "column",
+              opacity: "0.4", // Make arrows less visible
+              transition: "opacity 0.3s ease-in-out",
+            }}
+            className="project-arrows"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = "1"; // Fully visible on hover
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = "0.4"; // Reduce visibility when not hovering
+            }}
+          >
+            <button
+              onClick={() => moveProjectUp(index)}
+              disabled={index === 0}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                marginBottom: "5px",
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowUp} size="lg" color="#ffffff" />
+            </button>
+
+            <button
+              onClick={() => moveProjectDown(index)}
+              disabled={index === projects.length - 1}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              <FontAwesomeIcon icon={faArrowDown} size="lg" color="#ffffff" />
+            </button>
+          </div>
               </div>
             </div>
           )}
@@ -729,11 +815,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
       {/* Add Project Form */}
       {isAdding && (
-        // Add project entry
         <div>
           <input
             type="text"
-           
             placeholder="Project Name"
             value={newProject.name}
             onChange={(e) =>
@@ -750,10 +834,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               color: "#f5f5f5",
             }}
           />
-         
+
           <input
             type="text"
-          
             placeholder="Organization"
             value={newProject.skills}
             onChange={(e) =>
@@ -770,6 +853,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               color: "#f5f5f5",
             }}
           />
+
           <div className="date-dropdowns mb-3">
             <label>Start Date:</label>
             <div className="flex-container">
@@ -805,6 +889,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   </option>
                 ))}
               </select>
+
               <select
                 className="form-control mb-2"
                 value={newProject.startDate.year}
@@ -839,6 +924,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               </select>
             </div>
           </div>
+
           <div className="date-dropdowns mb-3">
             <label>End Date:</label>
             <div className="flex-container">
@@ -875,6 +961,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   </option>
                 ))}
               </select>
+
               <select
                 className="form-control mb-2"
                 value={newProject.endDate.year}
@@ -908,6 +995,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   </option>
                 ))}
               </select>
+
               <button
                 className="btn btn-outline-secondary ms-2"
                 onClick={handleTogglePresent}
@@ -925,24 +1013,24 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   icon={newProject.isPresent ? faToggleOn : faToggleOff}
                   className="me-2"
                 />
-                {newProject.isPresent ? 'Present' : 'Not Present'}
+                {newProject.isPresent ? "Present" : "Not Present"}
               </button>
             </div>
           </div>
+
           <textarea
-           
             placeholder="Description"
             value={newProject.description}
             onChange={(e) => handleDescriptionChange(e)}
             style={{
-              borderRadius: '8px',
-              border: '1px solid #444',
-              padding: '12px',
-              fontSize: '1rem',
+              borderRadius: "8px",
+              border: "1px solid #444",
+              padding: "12px",
+              fontSize: "1rem",
               width: "100%",
-              marginBottom: '1rem',
+              marginBottom: "1rem",
               backgroundColor: "#1c1c1e",
-              height: '250px',
+              height: "250px",
               color: "#f5f5f5",
             }}
           />
@@ -1006,6 +1094,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       )}
     </div>
   );
+
 };
 
 export default ProjectsSection;

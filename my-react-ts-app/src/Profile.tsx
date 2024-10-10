@@ -850,8 +850,9 @@ style={{cursor: "pointer"}}>
               flex: "1",
               display: "flex",
               flexDirection: "column",
+              
               gap: "30px",
-              padding: "20px", // Padding to improve spacing
+              padding: "10px", // Padding to improve spacing
               borderRadius: "10px", // Rounded edges for the section
               
               boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Slight shadow for separation

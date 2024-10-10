@@ -20,15 +20,14 @@ const API  = process.env.REACT_APP_GOOGLE_API;
 const genAI = new GoogleGenerativeAI(API);
 
 
-router.get('/generate-project-description/:userID/:projectName', async (req, res) => {
+router.post('/generate-project-description/:userID/:projectName', async (req, res) => {
   try {
     const userId = req.params.userID;
     const projectName = req.params.projectName;
+    const { jobdescription } = req.body; // Use req.body to get jobdescription
 
     // Query the database to get user details by ID
     const user = await UserProfile.findOne({ userID: userId });
-
-    console.log(projectName);
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
@@ -45,8 +44,43 @@ router.get('/generate-project-description/:userID/:projectName', async (req, res
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using the project data
-    const prompt = `Write 4 project description points for the project named "${project.name}". The project involved ${project.skills} and included the following activities: ${project.description}. 
-    Note: Do not use any numbering. Start each point with *`;
+    const prompt = `Generate 3 impactful and ATS-friendly bullet points starting with "*" for the project "${project.name}" that will impress recruiters and effectively communicate your skills and achievements Important: "DO NOT generate * at all even to bold words. Incorporate the following:
+
+1. Use skills from job description if the project is relevent to it.
+2. Key activities: ${project.description}
+3. Job description to align with: ${jobdescription}
+
+Guidelines:
+
+1. Start each bullet point with a strong, unique action verb
+2. Incorporate relevant keywords and phrases from the job description
+3. Quantify achievements with specific metrics, percentages, or numerical results wherever possible or use own points to quantify
+4. Briefly indicate the challenge or problem addressed by each action
+5. Highlight both technical skills and business/user impact
+6. Use the STAR method (Situation/Task, Action, Result) to structure each point
+7. Keep each bullet point concise (1-2 lines) and impactful
+8. Avoid personal pronouns (I, we, my, our)
+9. Ensure language is professional and industry-appropriate
+10. Do not use any special formatting (NO bold, italics, underlining, or any other text formatting)
+11. Present all text in plain, unformatted text only
+
+Format for each bullet point:
+[Action Verb] [specific task/achievement] by [using/leveraging] [relevant skills/tools], resulting in [quantifiable outcome and benefit to company/users/project]
+
+Additional instructions:
+- If the project details don't fully align with the job description, suggest 1-2 relevant additions or modifications to strengthen the match
+- Prioritize the most impressive and relevant achievements
+- Ensure technical terms are used accurately and appropriately for the industry
+- If exact numbers aren't available, use phrases like "significantly reduced", "substantially improved", or provide estimated ranges
+- Absolutely no text formatting or special characters should be used in the output
+
+Example output structure (note: use plain text only, no special formatting):
+* Developed [specific feature] using [technologies], resulting in [quantifiable outcome]
+* Implemented [solution] to address [challenge], leading to [measurable improvement]
+* Optimized [process/system] by [action taken], increasing [relevant metric] by [percentage/number]
+* Collaborated with [team/stakeholders] to deliver [project outcome], exceeding [specific goal] by [amount]
+
+Remember, the goal is to create clear, impactful, and ATS-friendly bullet points that effectively communicate your skills and achievements in the context of the target job description, using only plain, unformatted text.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
@@ -59,6 +93,7 @@ router.get('/generate-project-description/:userID/:projectName', async (req, res
     res.status(500).json({ error: 'An error occurred while generating the project description' });
   }
 });
+
 
 
 router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
@@ -333,6 +368,8 @@ const extractTextFromPdf = async (fileBuffer) => {
     throw error;
   }
 };
+
+
 
 const parseWithGemini = async (extractedText) => {
   try {
@@ -620,6 +657,9 @@ const parseSkills = (aiResponse) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+const parsedDataStore = new Map();
+
+
 // POST request to handle file upload and parsing
 router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) => {
   try {
@@ -636,6 +676,7 @@ router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) 
     }
 
    
+   
     // Clean and parse extracted text
     const cleanedText = cleanAIResponse(extractedText);
     const parsedSummary = parseSummary(cleanedText);
@@ -646,10 +687,12 @@ router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) 
     const parsedProjects = parseProjects(cleanedText);
     const parsedInvolvements = parseInvolvements(cleanedText);
 
-    const parsedDataStore = { parsedSummary, parsedEducation, parsedExperience, parsedCertifications };
+    
 
     // Store the parsed data using user ID (you need to ensure userID is available)
-    const userID = req.params.userID;  // Assuming the user is authenticated and userID is available
+    const userID = req.params.userID;
+    
+    // Assuming the user is authenticated and userID is available
     parsedDataStore.set(userID, {
       parsedSummary,
       parsedEducation,
@@ -710,16 +753,28 @@ router.post('/generate-cover-letter/:userID', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    // Filter details that are marked for inclusion in the resume
+    const educations = (user.education || []).filter(education => education.includeInResume);
+    const experiences = (user.experience || []).filter(experience => experience.includeInResume);
+    const projects = (user.project || []).filter(project => project.includeInResume);
+    const skills = (user.skills || []).filter(skill => skill.includeInResume);
+
+    // Convert the filtered data to strings for use in the prompt
+    // const educationText = educations.map(ed => `${ed.degree} from ${ed.institution}`).join(', ');
+    // const experienceText = experiences.map(exp => `${exp.title} at ${exp.company}`).join(', ');
+    // const projectText = projects.map(proj => proj.title).join(', ');
+    // const skillsText = skills.map(skill => skill.name).join(', ');
+
     // For text-only input, use the gemini-pro model
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     // Create a prompt using user data
-    const prompt = `Write a professional cover letter for a job application. Do not include personal contact details of user like name, address, phone number, or email. Don't even give the boxes to fill.
+    const prompt = `Write a professional cover letter for a job application. Do not include personal contact details of the user like name, address, phone number, or email. Do not even give the boxes to fill.
     Focus on the user's professional qualifications. Use the following information:
-    Experience: ${user.experience}, 
-    Projects: ${user.project}, 
-    Education: ${user.education}, 
-    Skills: ${user.skills}. 
+    Experience: ${experiences}, 
+    Projects: ${projects}, 
+    Education: ${educations}, 
+    Skills: ${skills}. 
     Tailor the cover letter for a position in ${jobDescription}.`;
 
     const result = await model.generateContent(prompt);
@@ -733,6 +788,7 @@ router.post('/generate-cover-letter/:userID', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while generating the cover letter' });
   }
 });
+
 
 
 
