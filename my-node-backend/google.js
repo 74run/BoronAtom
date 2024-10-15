@@ -347,6 +347,7 @@ user.summary.forEach((summary, index) => {
 
 
 
+
 // Function to extract text from DOCX files
 const extractTextFromDocx = async (fileBuffer) => {
   try {
