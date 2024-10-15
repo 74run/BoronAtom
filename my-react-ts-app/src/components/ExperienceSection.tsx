@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faSave, faToggleOn, faToggleOff, faMagic } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faSave, faToggleOn, faToggleOff, faMagic, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
 interface Experience {
@@ -86,6 +86,32 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
       .catch(error => {
         console.error('Error fetching experiences:', error);
       });
+  };
+
+  const moveExperienceUp = (index: number) => {
+    if (index > 0) {
+      const updatedExperiences = [...experiences];
+      [updatedExperiences[index - 1], updatedExperiences[index]] = 
+        [updatedExperiences[index], updatedExperiences[index - 1]];
+      setExperiences(updatedExperiences);
+      saveExperienceOrder(updatedExperiences);
+    }
+  };
+
+  const moveExperienceDown = (index: number) => {
+    if (index < experiences.length - 1) {
+      const updatedExperiences = [...experiences];
+      [updatedExperiences[index + 1], updatedExperiences[index]] = 
+        [updatedExperiences[index], updatedExperiences[index + 1]];
+      setExperiences(updatedExperiences);
+      saveExperienceOrder(updatedExperiences);
+    }
+  };
+
+  const saveExperienceOrder = (updatedExperiences: Experience[]) => {
+    axios.put(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experiences/reorder`, { experiences: updatedExperiences })
+      .then(() => console.log('Experience order updated'))
+      .catch(error => console.error('Error updating order:', error));
   };
 
   const handleGenerateDescription = (jobTitle: string) => {
@@ -315,7 +341,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
       </h4>
 
       {/* Map over Experiences */}
-      {experiences.map((experience) => (
+      {experiences.map((experience, index) => (
         <div
           key={experience._id}
           className="experience-card"
@@ -774,6 +800,17 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   />
                   {experience.includeInResume ? "Included" : "Excluded"}
                 </button>
+
+                <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
+            <button onClick={() => moveExperienceUp(index)} disabled={index === 0}>
+              <FontAwesomeIcon icon={faArrowUp} />
+            </button>
+            <button onClick={() => moveExperienceDown(index)} disabled={index === experiences.length - 1}>
+              <FontAwesomeIcon icon={faArrowDown} />
+            </button>
+          </div>
+
+                
               </div>
             </div>
           )}
