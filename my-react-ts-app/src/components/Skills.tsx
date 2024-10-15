@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { 
   faPlus, faTrash, faEdit, faSave, 
   faToggleOn, faToggleOff, faRobot, 
-  faArrowUp, faArrowDown 
+  faArrowUp, faArrowDown , faGripVertical 
 } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
@@ -210,23 +210,30 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
         Skills
       </h4>
   
-      {/* Map over Skills */}
-      {skills.map((skill, index) => (
-        <div
-          key={skill._id}
-          className="mb-3"
-          style={{
-            border: "1px solid #444",
-            borderRadius: "12px",
-            padding: "20px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#3a3a3c",
-            transition: "transform 0.3s, box-shadow 0.3s",
-            position: "relative",
-            justifyContent: 'space-between', // Space between skill info and arrows
-            alignItems: 'center', // Align content vertically
-          }}
-        >
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="skills">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {skills.map((skill, index) => (
+                <Draggable key={skill._id} draggableId={skill._id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={{
+                        width: '100%', // Ensures full-width container
+                        backgroundColor: snapshot.isDragging ? '#555' : '#3a3a3c',
+                        padding: '20px',
+                        borderRadius: '12px',
+                        marginBottom: '10px',
+                        border: '1px solid #444',
+                        transition: 'transform 0.3s, box-shadow 0.3s',
+                        position: 'relative',
+                        ...provided.draggableProps.style,
+                      }}
+                    >
+                      {/* Drag handle icon */}
+                   
           {editData && editData.id === skill._id ? (
             // Edit mode
             <div  style={{
@@ -308,6 +315,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                   Cancel
                 </button>
               </div>
+             
             </div>
           ) : (
             // View mode
@@ -315,7 +323,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             key={skill._id}
             className="mb-3"
             style={{
-              display: 'flex',  // Align content horizontally
+              // Align content horizontally
               justifyContent: 'space-between',  // Space between skill info and arrows
               alignItems: 'center',  // Vertically center everything
               border: '1px solid #444',
@@ -324,6 +332,10 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               marginBottom: '1.5rem',
               backgroundColor: '#3a3a3c',
               transition: 'transform 0.3s, box-shadow 0.3s',
+
+              display: 'grid',
+          gridTemplateColumns: '1fr auto', // Skill info takes available space, drag handle stays at right
+       
             }}
           >
             {/* Skill Information with buttons underneath */}
@@ -455,12 +467,43 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                 <FontAwesomeIcon icon={faArrowDown} />
               </button>
             </div>
-          </div>
-          
+
+            <div
+  {...provided.dragHandleProps}
+  style={{
+    cursor: 'grab', // Ensure cursor shows grabbing intent
+    display: 'flex',
+    flexDirection: 'column', // Stack arrows vertically if needed
+    position: 'absolute', // Position relative to the parent container
+    top: '10px', // Adjust distance from the top
+    right: '10px', // Adjust distance from the right
+    zIndex: 10, // Ensure it stays on top of other elements
+  }}
+>
+  <FontAwesomeIcon icon={faGripVertical} size="lg" />
+</div>
+
            
-          )}
-        </div>
-      ))}
+          </div>
+
+
+          
+     )}
+
+     {/* Drag Handle Icon */}
+    
+     
+     </div>
+
+     
+   )}
+ </Draggable>
+))}
+{provided.placeholder}
+</div>
+)}
+</Droppable>
+</DragDropContext>
   
       {/* Add skill entry */}
       {isAdding && (
