@@ -80,6 +80,36 @@ router.post('/:userID/experience', async (req, res) => {
         res.status(500).json({ message: error.message });
       }
     });
+
+
+    // PUT request to reorder experiences for a user
+router.put('/:userId/experiences/reorder', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { experiences } = req.body;  // Reordered list of experiences from the frontend
+
+    // Update the user's profile with the reordered experiences
+    const updatedUserProfile = await UserProfile.findOneAndUpdate(
+      { userID: user._id },
+      { $set: { experience: experiences } },  // Replace old array with the reordered one
+      { new: true }  // Return the updated document
+    );
+
+    if (!updatedUserProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+
+    res.json(updatedUserProfile);  // Return the updated profile
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
     
     
   

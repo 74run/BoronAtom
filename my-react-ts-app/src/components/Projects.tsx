@@ -764,47 +764,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   {project.includeInResume ? "Included" : "Excluded"}
                 </button>
 
-                <div
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              display: "flex",
-              flexDirection: "column",
-              opacity: "0.4", // Make arrows less visible
-              transition: "opacity 0.3s ease-in-out",
-            }}
-            className="project-arrows"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.opacity = "1"; // Fully visible on hover
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.opacity = "0.4"; // Reduce visibility when not hovering
-            }}
-          >
-            <button
-              onClick={() => moveProjectUp(index)}
-              disabled={index === 0}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                marginBottom: "5px",
-              }}
-            >
-              <FontAwesomeIcon icon={faArrowUp} size="lg" color="#ffffff" />
+                <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
+            <button onClick={() => moveProjectUp(index)} disabled={index === 0}>
+              <FontAwesomeIcon icon={faArrowUp} />
             </button>
-
-            <button
-              onClick={() => moveProjectDown(index)}
-              disabled={index === projects.length - 1}
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              <FontAwesomeIcon icon={faArrowDown} size="lg" color="#ffffff" />
+            <button onClick={() => moveProjectDown(index)} disabled={index === projects.length - 1}>
+              <FontAwesomeIcon icon={faArrowDown} />
             </button>
           </div>
               </div>

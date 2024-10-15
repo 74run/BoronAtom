@@ -116,6 +116,32 @@ router.get('/:userID/skill', async (req, res) => {
     }
   });
 
+  router.put('/:userId/skills/reorder', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const { skills } = req.body; // Reordered list of skills from the frontend
+  
+      // Update the user's profile with the reordered skills
+      const updatedUserProfile = await UserProfile.findOneAndUpdate(
+        { userID: user._id },
+        { $set: { skills: skills } }, // Replace old skills array with the reordered one
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedUserProfile) {
+        return res.status(404).json({ message: 'User profile not found' });
+      }
+  
+      res.json(updatedUserProfile); // Return the updated profile
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
 
   module.exports = router;

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash, faEdit, faSave, faToggleOn, faToggleOff, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { 
+  faPlus, faTrash, faEdit, faSave, 
+  faToggleOn, faToggleOff, faRobot, 
+  faArrowUp, faArrowDown 
+} from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useParams } from 'react-router-dom';
 
@@ -142,6 +147,43 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       });
   };
 
+  const moveSkillUp = (index: number) => {
+    if (index > 0) {
+      const updatedSkills = [...skills];
+      [updatedSkills[index - 1], updatedSkills[index]] = [updatedSkills[index], updatedSkills[index - 1]];
+      setSkills(updatedSkills);
+      saveSkillOrder(updatedSkills);
+    }
+  };
+
+  const moveSkillDown = (index: number) => {
+    if (index < skills.length - 1) {
+      const updatedSkills = [...skills];
+      [updatedSkills[index + 1], updatedSkills[index]] = [updatedSkills[index], updatedSkills[index + 1]];
+      setSkills(updatedSkills);
+      saveSkillOrder(updatedSkills);
+    }
+  };
+
+  const saveSkillOrder = (updatedSkills: Skill[]) => {
+    axios.put(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skills/reorder`, { skills: updatedSkills })
+      .then(() => console.log('Skills order updated'))
+      .catch(error => console.error('Error updating skills order:', error));
+  };
+
+  const handleDragEnd = (result: any) => {
+    const { destination, source } = result;
+
+    if (!destination) return;
+
+    const reorderedSkills = Array.from(skills);
+    const [moved] = reorderedSkills.splice(source.index, 1);
+    reorderedSkills.splice(destination.index, 0, moved);
+
+    setSkills(reorderedSkills);
+    saveSkillOrder(reorderedSkills);
+  };
+
   return (
     <div
     style={{
@@ -169,7 +211,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       </h4>
   
       {/* Map over Skills */}
-      {skills.map((skill) => (
+      {skills.map((skill, index) => (
         <div
           key={skill._id}
           className="mb-3"
@@ -181,6 +223,8 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             backgroundColor: "#3a3a3c",
             transition: "transform 0.3s, box-shadow 0.3s",
             position: "relative",
+            justifyContent: 'space-between', // Space between skill info and arrows
+            alignItems: 'center', // Align content vertically
           }}
         >
           {editData && editData.id === skill._id ? (
@@ -268,31 +312,28 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
           ) : (
             // View mode
             <div
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "12px",
-                backgroundColor: "#1c1c1e",
-                transition: "transform 0.3s, box-shadow 0.3s",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow =
-                  "0 10px 30px rgba(0, 0, 0, 0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow =
-                  "0 4px 8px rgba(0, 0, 0, 0.1)";
-              }}
-            >
+            key={skill._id}
+            className="mb-3"
+            style={{
+              display: 'flex',  // Align content horizontally
+              justifyContent: 'space-between',  // Space between skill info and arrows
+              alignItems: 'center',  // Vertically center everything
+              border: '1px solid #444',
+              borderRadius: '12px',
+              padding: '20px',
+              marginBottom: '1.5rem',
+              backgroundColor: '#3a3a3c',
+              transition: 'transform 0.3s, box-shadow 0.3s',
+            }}
+          >
+            {/* Skill Information with buttons underneath */}
+            <div style={{ flex: 1 }}>
               <h6
                 style={{
-                  color: "#f5f5f5",
+                  color: '#f5f5f5',
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
-                  marginBottom: "0.5rem",
+                  fontSize: '1.2rem',
+                  marginBottom: '0.5rem',
                   fontWeight: 700,
                 }}
               >
@@ -300,21 +341,23 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               </h6>
               <p
                 style={{
-                  marginBottom: "0.5rem",
-                  fontSize: "0.9rem",
-                  color: "#bbb",
+                  marginBottom: '0.5rem',
+                  fontSize: '0.9rem',
+                  color: '#bbb',
                   fontFamily: "'Roboto', sans-serif",
                 }}
               >
                 {skill.name}
               </p>
-  
+          
+              {/* Buttons under domain and skill name */}
               <div
                 className="button-group"
                 style={{
-                  display: "flex",
-                  gap: "10px",
-                  flexWrap: "wrap", // Allow buttons to wrap on smaller screens
+                  display: 'flex',
+                  gap: '10px',
+                  marginTop: '10px',
+                  flexWrap: 'wrap', // Ensure wrapping on smaller screens
                 }}
               >
                 <button
@@ -328,52 +371,93 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                     )
                   }
                   style={{
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem",
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '0.3rem 0.6rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
                   }}
                 >
                   <FontAwesomeIcon icon={faEdit} />
                 </button>
+          
                 <button
                   className="btn btn-outline-danger"
                   onClick={() => handleDelete(skill._id)}
                   style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    padding: "0.3rem 0.6rem",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem",
+                    backgroundColor: '#dc3545',
+                    color: '#fff',
+                    border: 'none',
+                    padding: '0.3rem 0.6rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash} />
                 </button>
+          
                 <button
                   className="btn btn-outline-secondary"
                   onClick={() => handleToggleInclude(skill._id)}
                   style={{
-                    padding: "0.3rem 0.8rem",
-                    borderRadius: "8px",
-                    fontSize: "0.9rem",
-                    backgroundColor: skill.includeInResume
-                      ? "#28a745"
-                      : "#dc3545",
-                    color: "#fff",
-                    border: "none",
+                    padding: '0.3rem 0.8rem',
+                    borderRadius: '8px',
+                    fontSize: '0.9rem',
+                    backgroundColor: skill.includeInResume ? '#28a745' : '#dc3545',
+                    color: '#fff',
+                    border: 'none',
                   }}
                 >
                   <FontAwesomeIcon
                     icon={skill.includeInResume ? faToggleOn : faToggleOff}
                     className="me-2"
                   />
-                  {skill.includeInResume ? "Included" : "Excluded"}
+                  {skill.includeInResume ? 'Included' : 'Excluded'}
                 </button>
               </div>
             </div>
+          
+            {/* Arrows aligned to the right */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',  // Stack arrows vertically
+                alignItems: 'center',
+                gap: '5px',  // Space between arrows
+              }}
+            >
+              <button
+                onClick={() => moveSkillUp(index)}
+                disabled={index === 0}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#fff',
+                  padding: '5px',
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowUp} />
+              </button>
+          
+              <button
+                onClick={() => moveSkillDown(index)}
+                disabled={index === skills.length - 1}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#fff',
+                  padding: '5px',
+                }}
+              >
+                <FontAwesomeIcon icon={faArrowDown} />
+              </button>
+            </div>
+          </div>
+          
+           
           )}
         </div>
       ))}
