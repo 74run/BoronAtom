@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faPlus, faSave, faToggleOn, faToggleOff, faMagic, faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faPlus, faSave, faToggleOn, faToggleOff, faMagic, faArrowUp, faArrowDown, faBold  } from '@fortawesome/free-solid-svg-icons';
 import { useParams } from 'react-router-dom';
 
 interface Experience {
@@ -60,6 +60,11 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
+  const [showBoldButton, setShowBoldButton] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -313,6 +318,46 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
       setNewExperience({ ...newExperience, isPresent: !newExperience.isPresent });
     }
   };
+
+   // Detect text selection and show the Bold button
+  const handleSelection = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd } = textarea;
+
+    if (selectionStart !== selectionEnd) {
+      const selection = window.getSelection();
+      const range = selection?.getRangeAt(0);
+      const rect = range?.getBoundingClientRect(); // Get selected text's position
+
+      if (rect) {
+        const top = rect.top + window.scrollY - 30; // Position above the selected text
+        const left = rect.left + window.scrollX; // Align to the left of the selection
+
+        setButtonPosition({ top, left });
+        setShowBoldButton(true);
+      }
+    } else {
+      setShowBoldButton(false); // Hide button if no text is selected
+    }
+  };
+
+  const applyBold = () => {
+    const textarea = textareaRef.current;
+    if (!textarea || !editData) return;
+
+    const { selectionStart, selectionEnd } = textarea;
+    const beforeText = editData.description.substring(0, selectionStart);
+    const selectedText = editData.description.substring(selectionStart, selectionEnd);
+    const afterText = editData.description.substring(selectionEnd);
+
+    const newDescription = `${beforeText}**${selectedText}**${afterText}`;
+
+    setEditData({ ...editData, description: newDescription });
+    setShowBoldButton(false); // Hide button after applying bold
+  };
+
 
   return (
     <div
@@ -572,10 +617,12 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                 {editData.isPresent ? "Present" : "Not Present"}
               </button>
 
-              <textarea
-                placeholder="Description"
+               <textarea
+                ref={textareaRef}
+                placeholder="Edit Description"
                 value={editData.description}
                 onChange={handleEditDescriptionChange}
+                onMouseUp={handleSelection} // Detect selection
                 style={{
                   borderRadius: "8px",
                   border: "1px solid #444",
@@ -588,6 +635,29 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   color: "#f5f5f5",
                 }}
               />
+
+              {showBoldButton && (
+                <button
+                  onClick={applyBold}
+                  style={{
+                    position: "relative",
+                    top: buttonPosition.top,
+                    left: buttonPosition.left,
+                    backgroundColor: "#444",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    cursor: "pointer",
+                    fontSize: "0.8rem",
+                    zIndex: 1000, // Ensure it appears above everything
+                  }}
+                >
+                  <FontAwesomeIcon icon={faBold} />
+                </button>
+
+                 )}
+
 
               {/* Action buttons */}
               <div
@@ -722,14 +792,31 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     `${experience.endDate.month} ${experience.endDate.year}`}
               </p>
 
-              {experience.description
-                .split("*")
-                .slice(1)
-                .map((part, index) => (
-                  <p key={index} style={{ color: "#bbb", fontSize: "0.9rem" }}>
-                    {part}
-                  </p>
-                ))}
+              <div
+  style={{
+    marginTop: "20px",
+    marginBottom: "20px",
+    color: "#f5f5f5", // A softer white for better readability
+    whiteSpace: "pre-wrap", // Maintain whitespace and newlines
+    lineHeight: "1.6", // Increase line spacing for better readability
+    fontSize: "1rem", // Adjust font size
+    fontFamily: "'Roboto', sans-serif", // Set a consistent font family
+    backgroundColor: "#2c2c2e", // Slightly different background for contrast
+    padding: "12px", // Add padding around the text
+    borderRadius: "8px", // Rounded corners for a modern look
+    border: "1px solid #444", // Subtle border for separation
+  }}
+>
+  {experience.description.split("**").map((part, index) =>
+    index % 2 === 1 ? (
+      <b key={index} style={{ fontWeight: 600 }}>{part}</b> // Bold content
+    ) : (
+      <span key={index}>{part}</span> // Regular content
+    )
+  )}
+</div>
+
+              
 
               {/* Action buttons */}
               <div

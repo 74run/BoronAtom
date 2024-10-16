@@ -193,14 +193,29 @@ const previewPdf = async () => {
 ` : '';
 
 const experienceSection = experiences.length > 0 ? `
-\\header{Experience}
-${experiences.map(experience => `
-  \\employer{${experience.jobTitle}}{--${experience.company}}{${experience.startDate.month}/${experience.startDate.year} -- ${experience.isPresent ? 'Present' : `${experience.endDate.month}/${experience.endDate.year}`}}{${experience.location}}
-  ${experience.description && experience.description.trim() !== '' ? `
-  \\begin{bullet-list-minor}
-    ${convertToLatex(experience.description.split('*').slice(1).map(part => `\\item ${part.trim()}`).join('\n'))}
-  \\end{bullet-list-minor}` : ''}
-`).join("\n")}
+  \\header{Experience}
+  ${experiences.map(experience => {
+    const latexDescription = convertToLatex(experience.description); // Convert description to LaTeX
+
+    return `
+      \\employer{${convertToLatex(experience.jobTitle)}}{--${convertToLatex(experience.company)}}{
+        ${experience.startDate.month}/${experience.startDate.year} -- ${
+          experience.isPresent ? 'Present' : `${experience.endDate.month}/${experience.endDate.year}`
+        }
+      }{${convertToLatex(experience.location)}}
+      ${
+        experience.description && experience.description.trim() !== '' ? `
+        \\begin{bullet-list-minor}
+          ${latexDescription
+            .split('*')  // Split by '*'
+            .slice(1)  // Ignore the first empty item, if any
+            .map(part => `\\item ${part.trim()}`)  // Create LaTeX items
+            .join('\n')}
+        \\end{bullet-list-minor}
+        ` : ''
+      }
+    `;
+  }).join('\n')}
 ` : '';
 
 
