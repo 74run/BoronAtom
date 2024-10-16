@@ -214,10 +214,10 @@ const projectSection = projects.length > 0 ? `
       }
     }{
       \\begin{bullet-list-minor}
-        ${project.description
-          .split('*') // Split by '*' for bullet points
-          .slice(1) // Skip the first empty element (if any)
-          .map(part => `\\item ${convertToLatex(part.trim())}`) // Convert each part to LaTeX
+        ${convertToLatex(project.description) // Convert the entire description to LaTeX first
+          .split('*') // Then split by '*' to handle bullet points
+          .slice(1) // Ignore the first empty item, if any
+          .map(part => `\\item ${part.trim()}`) // Create LaTeX items
           .join('\n')} 
       \\end{bullet-list-minor}
     }
