@@ -124,25 +124,33 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
     
   
    
-
-  function convertToLatex(description: string): string {
-    // Define a map of special characters and their LaTeX equivalents
-    const symbolMap: { [key: string]: string } = {
-        '%': '\\%',
-      // Replace % with \%
-        
-        // Add more symbols and their replacements as needed
-    };
-
-    // Replace special symbols with their LaTeX equivalents
-    let convertedDescription: string = description;
-    for (const symbol in symbolMap) {
-        convertedDescription = convertedDescription.replace(new RegExp(symbol, 'g'), symbolMap[symbol]);
+    function convertToLatex(description: string): string {
+      // Define a map of special characters and their LaTeX equivalents
+      const symbolMap: { [key: string]: string } = {
+        '%': '\\%', // Escape %
+        '&': '\\&', // Escape &
+        '#': '\\#', // Escape #
+        '_': '\\_', // Escape _
+        '{': '\\{', // Escape {
+        '}': '\\}', // Escape }
+        '$': '\\$', // Escape $
+        '^': '\\textasciicircum{}', // Escape ^
+        '~': '\\textasciitilde{}', // Escape ~
+      };
+    
+      // Replace special symbols with their LaTeX equivalents
+      let convertedDescription: string = description;
+      for (const symbol in symbolMap) {
+        const regex = new RegExp(`\\${symbol}`, 'g'); // Use regex to replace all occurrences
+        convertedDescription = convertedDescription.replace(regex, symbolMap[symbol]);
+      }
+    
+      // Replace **word** with \textbf{word} for bold text
+      convertedDescription = convertedDescription.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}');
+    
+      return convertedDescription;
     }
-
-    return convertedDescription;
-};
-  
+    
 
     
 const previewPdf = async () => {
@@ -196,12 +204,19 @@ ${experiences.map(experience => `
 ` : '';
 
 
+
 const projectSection = projects.length > 0 ? `
       \\header{Projects}
       ${projects.map(project => `
         \\project{${project.name}}{${project.skills}}{${project.startDate.month}/${project.startDate.year} -- ${project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`}}{
           \\begin{bullet-list-minor}
-            ${convertToLatex(project.description.split('*').slice(1).map(part => `\\item ${part.trim()}`).join('\n'))}
+            ${convertToLatex(
+              project.description
+                .split('*')
+                .slice(1)
+                .map(part => `\\item ${part.trim()}`)
+                .join('\n')
+            )}
           \\end{bullet-list-minor}
         }
       `).join("\n")}
