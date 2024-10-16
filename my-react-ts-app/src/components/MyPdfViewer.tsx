@@ -122,34 +122,34 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
         });
     }, [userID]);
     
-  
-   
-    function convertToLatex(description: string): string {
-      // Define a map of special characters and their LaTeX equivalents
-      const symbolMap: { [key: string]: string } = {
-        '%': '\\%', // Escape %
-        '&': '\\&', // Escape &
-        '#': '\\#', // Escape #
-        '_': '\\_', // Escape _
-        '{': '\\{', // Escape {
-        '}': '\\}', // Escape }
-        '$': '\\$', // Escape $
-        '^': '\\textasciicircum{}', // Escape ^
-        '~': '\\textasciitilde{}', // Escape ~
-      };
-    
-      // Replace special symbols with their LaTeX equivalents
-      let convertedDescription: string = description;
-      for (const symbol in symbolMap) {
-        const regex = new RegExp(`\\${symbol}`, 'g'); // Use regex to replace all occurrences
-        convertedDescription = convertedDescription.replace(regex, symbolMap[symbol]);
-      }
-    
-      // Replace **word** with \textbf{word} for bold text
-      convertedDescription = convertedDescription.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}');
-    
-      return convertedDescription;
-    }
+ 
+function convertToLatex(description: string): string {
+  // Define a map of special characters and their LaTeX equivalents
+  const symbolMap: { [key: string]: string } = {
+    '%': '\\%', // Escape %
+    '&': '\\&', // Escape &
+    '#': '\\#', // Escape #
+    '_': '\\_', // Escape _
+    '{': '\\{', // Escape {
+    '}': '\\}', // Escape }
+    '$': '\\$', // Escape $
+    '^': '\\textasciicircum{}', // Escape ^
+    '~': '\\textasciitilde{}', // Escape ~
+  };
+
+  // Replace special symbols with their LaTeX equivalents
+  let convertedDescription = description;
+  for (const symbol in symbolMap) {
+    const regex = new RegExp(`\\${symbol}`, 'g'); // Use regex to replace all occurrences
+    convertedDescription = convertedDescription.replace(regex, symbolMap[symbol]);
+  }
+
+  // Replace **word** with \textbf{word}
+  convertedDescription = convertedDescription.replace(/\*\*(.*?)\*\*/g, '\\textbf{$1}');
+
+  return convertedDescription;
+}
+
     
 
     
@@ -206,21 +206,23 @@ ${experiences.map(experience => `
 
 
 const projectSection = projects.length > 0 ? `
-      \\header{Projects}
-      ${projects.map(project => `
-        \\project{${project.name}}{${project.skills}}{${project.startDate.month}/${project.startDate.year} -- ${project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`}}{
-          \\begin{bullet-list-minor}
-            ${convertToLatex(
-              project.description
-                .split('*')
-                .slice(1)
-                .map(part => `\\item ${part.trim()}`)
-                .join('\n')
-            )}
-          \\end{bullet-list-minor}
-        }
-      `).join("\n")}
-    ` : '';
+  \\header{Projects}
+  ${projects.map(project => `
+    \\project{${convertToLatex(project.name)}}{${convertToLatex(project.skills)}}{
+      ${project.startDate.month}/${project.startDate.year} -- ${
+        project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`
+      }
+    }{
+      \\begin{bullet-list-minor}
+        ${project.description
+          .split('*') // Split by '*' for bullet points
+          .slice(1) // Skip the first empty element (if any)
+          .map(part => `\\item ${convertToLatex(part.trim())}`) // Convert each part to LaTeX
+          .join('\n')} 
+      \\end{bullet-list-minor}
+    }
+  `).join("\n")}
+` : '';
 
 
     const certificationSection = certifications.length > 0 ? `
