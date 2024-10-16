@@ -207,21 +207,25 @@ ${experiences.map(experience => `
 
 const projectSection = projects.length > 0 ? `
   \\header{Projects}
-  ${projects.map(project => `
-    \\project{${convertToLatex(project.name)}}{${convertToLatex(project.skills)}}{
-      ${project.startDate.month}/${project.startDate.year} -- ${
-        project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`
+  ${projects.map(project => {
+    const latexDescription = convertToLatex(project.description); // Convert description to LaTeX
+
+    return `
+      \\project{${convertToLatex(project.name)}}{${convertToLatex(project.skills)}}{
+        ${project.startDate.month}/${project.startDate.year} -- ${
+          project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`
+        }
+      }{
+        \\begin{bullet-list-minor}
+          ${latexDescription
+            .split('*')  // Now split the LaTeX-converted description by '*'
+            .slice(1)  // Ignore the first empty item, if any
+            .map(part => `\\item ${part.trim()}`)  // Create LaTeX items
+            .join('\n')} 
+        \\end{bullet-list-minor}
       }
-    }{
-      \\begin{bullet-list-minor}
-        ${convertToLatex(project.description) // Convert the entire description to LaTeX first
-          .split('*') // Then split by '*' to handle bullet points
-          .slice(1) // Ignore the first empty item, if any
-          .map(part => `\\item ${part.trim()}`) // Create LaTeX items
-          .join('\n')} 
-      \\end{bullet-list-minor}
-    }
-  `).join("\n")}
+    `;
+  }).join("\n")}
 ` : '';
 
 
