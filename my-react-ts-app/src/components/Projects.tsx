@@ -47,7 +47,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   const { userID } = useParams();
   const [showBoldButton, setShowBoldButton] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const newTextareaRef = useRef<HTMLTextAreaElement>(null);
+  
 
 
 
@@ -323,21 +325,21 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   // Detect text selection and show the Bold button
-  const handleSelection = () => {
-    const textarea = textareaRef.current;
+  const handleSelection = (isEditing: boolean) => {
+    const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
     if (!textarea) return;
-
+  
     const { selectionStart, selectionEnd } = textarea;
-
+  
     if (selectionStart !== selectionEnd) {
       const selection = window.getSelection();
       const range = selection?.getRangeAt(0);
       const rect = range?.getBoundingClientRect(); // Get selected text's position
-
+  
       if (rect) {
         const top = rect.top + window.scrollY - 30; // Position above the selected text
         const left = rect.left + window.scrollX; // Align to the left of the selection
-
+  
         setButtonPosition({ top, left });
         setShowBoldButton(true);
       }
@@ -345,21 +347,35 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
       setShowBoldButton(false); // Hide button if no text is selected
     }
   };
+  
 
-  const applyBold = () => {
-    const textarea = textareaRef.current;
-    if (!textarea || !editData) return;
+  const applyBold = (isEditing: boolean) => {
+  // Choose the correct textarea ref based on the mode
+  const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
+  if (!textarea) return;
 
-    const { selectionStart, selectionEnd } = textarea;
+  const { selectionStart, selectionEnd } = textarea;
+  const selectedText = textarea.value.substring(selectionStart, selectionEnd);
+
+  if (isEditing && editData) {
     const beforeText = editData.description.substring(0, selectionStart);
-    const selectedText = editData.description.substring(selectionStart, selectionEnd);
     const afterText = editData.description.substring(selectionEnd);
 
     const newDescription = `${beforeText}**${selectedText}**${afterText}`;
 
     setEditData({ ...editData, description: newDescription });
-    setShowBoldButton(false); // Hide button after applying bold
-  };
+  } else {
+    const beforeText = newProject.description.substring(0, selectionStart);
+    const afterText = newProject.description.substring(selectionEnd);
+
+    const newDescription = `${beforeText}**${selectedText}**${afterText}`;
+
+    setNewProject({ ...newProject, description: newDescription });
+  }
+
+  setShowBoldButton(false); // Hide the bold button after applying bold
+};
+
 
   return (
     <div
@@ -591,46 +607,45 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 {editData.isPresent ? "Present" : "Not Present"}
               </button>
 
-              <textarea
-                ref={textareaRef}
-                placeholder="Edit Description"
-                value={editData.description}
-                onChange={handleEditDescriptionChange}
-                onMouseUp={handleSelection} // Detect selection
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  height: "200px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
+            <textarea
+  ref={editTextareaRef}
+  placeholder="Edit Description"
+  value={editData.description}
+  onChange={handleEditDescriptionChange}
+  onMouseUp={() => handleSelection(true)} // Detect selection in edit mode
+  style={{
+    borderRadius: "8px",
+    border: "1px solid #444",
+    padding: "12px",
+    fontSize: "1rem",
+    marginBottom: "1rem",
+    width: "100%",
+    height: "200px",
+    backgroundColor: "#1c1c1e",
+    color: "#f5f5f5",
+  }}
+/>
 
-              {showBoldButton && (
-                <button
-                  onClick={applyBold}
-                  style={{
-                    position: "relative",
-                    top: buttonPosition.top,
-                    left: buttonPosition.left,
-                    backgroundColor: "#444",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    zIndex: 1000, // Ensure it appears above everything
-                  }}
-                >
-                  <FontAwesomeIcon icon={faBold} />
-                </button>
-              )}
-
+             {showBoldButton && (
+  <button
+    onClick={() => applyBold(!!editData)} // Pass 'true' if in edit mode, otherwise 'false'
+    style={{
+      position: "absolute",
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+      backgroundColor: "#444",
+      color: "#fff",
+      border: "none",
+      borderRadius: "4px",
+      padding: "4px 8px",
+      cursor: "pointer",
+      fontSize: "0.8rem",
+      zIndex: 1000,
+    }}
+  >
+    <FontAwesomeIcon icon={faBold} />
+  </button>
+)}
 
               {/* Action buttons */}
               <div
@@ -1065,22 +1080,48 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
             </div>
           </div>
 
-          <textarea
-            placeholder="Description"
-            value={newProject.description}
-            onChange={(e) => handleDescriptionChange(e)}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              width: "100%",
-              marginBottom: "1rem",
-              backgroundColor: "#1c1c1e",
-              height: "250px",
-              color: "#f5f5f5",
-            }}
-          />
+        <textarea
+  ref={newTextareaRef} // Attach ref for new project
+  placeholder="Description"
+  value={newProject.description}
+  onChange={(e) => handleDescriptionChange(e)}
+  onMouseUp={() => handleSelection(false)} // Detect selection for new project
+  style={{
+    borderRadius: "8px",
+    border: "1px solid #444",
+    padding: "12px",
+    fontSize: "1rem",
+    width: "100%",
+    marginBottom: "1rem",
+    backgroundColor: "#1c1c1e",
+    height: "250px",
+    color: "#f5f5f5",
+  }}
+/>
+
+{showBoldButton && (
+  <button
+    onClick={() => applyBold(!!editData)} // Pass 'true' if in edit mode, otherwise 'false'
+    style={{
+      position: "absolute",
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+      backgroundColor: "#444",
+      color: "#fff",
+      border: "none",
+      borderRadius: "4px",
+      padding: "4px 8px",
+      cursor: "pointer",
+      fontSize: "0.8rem",
+      zIndex: 1000,
+    }}
+  >
+    <FontAwesomeIcon icon={faBold} />
+  </button>
+)}
+
+
+
 
           <div
             style={{
