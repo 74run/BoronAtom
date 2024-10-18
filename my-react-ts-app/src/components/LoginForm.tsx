@@ -119,7 +119,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Username*"
+                placeholder="Username or Email*"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
