@@ -22,9 +22,13 @@ const genAI = new GoogleGenerativeAI(API);
 
 router.post('/generate-project-description/:userID/:projectName', async (req, res) => {
   try {
-    const userId = req.params.userID;
-    const projectName = req.params.projectName;
-    const { jobdescription } = req.body; // Use req.body to get jobdescription
+    // Trim userId and projectName to remove any extra spaces
+    const userId = req.params.userID.trim();
+    const projectName = req.params.projectName.trim();
+    const { jobdescription = '' } = req.body; // Default to an empty string if jobdescription is undefined
+
+    // Trim jobdescription to avoid trailing spaces
+    const sanitizedJobDescription = jobdescription.trim();
 
     // Query the database to get user details by ID
     const user = await UserProfile.findOne({ userID: userId });
@@ -33,8 +37,8 @@ router.post('/generate-project-description/:userID/:projectName', async (req, re
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // Find the specific project based on the project name
-    const project = user.project.find(proj => proj.name.toLowerCase() === projectName.toLowerCase());
+    // Find the specific project based on the project name (case-insensitive and trimming extra spaces)
+    const project = user.project.find(proj => proj.name.toLowerCase().trim() === projectName.toLowerCase().trim());
 
     if (!project) {
       return res.status(404).json({ success: false, message: 'Project not found' });
@@ -45,13 +49,12 @@ router.post('/generate-project-description/:userID/:projectName', async (req, re
 
     // Create a prompt using the project data
     const prompt = `Generate 3 impactful and ATS-friendly bullet points starting with "*" for the project "${project.name}" that will impress recruiters and effectively communicate your skills and achievements Important: "DO NOT generate * at all even to bold words. Incorporate the following:
-
-1. Use skills from job description if the project is relevent to it.
+    
+1. Use skills from job description if the project is relevant to it.
 2. Key activities: ${project.description}
-3. Job description to align with: ${jobdescription}
+3. Job description to align with: ${sanitizedJobDescription}
 
 Guidelines:
-
 1. Start each bullet point with a strong, unique action verb
 2. Incorporate relevant keywords and phrases from the job description
 3. Quantify achievements with specific metrics, percentages, or numerical results wherever possible or use own points to quantify
@@ -82,17 +85,25 @@ Example output structure (note: use plain text only, no special formatting):
 
 Remember, the goal is to create clear, impactful, and ATS-friendly bullet points that effectively communicate your skills and achievements in the context of the target job description, using only plain, unformatted text.`;
 
+    // Generate content using the model
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+
+    // Depending on how the generative model responds, check the correct structure for text content
+    const generatedText = result.response ? await result.response.text() : result.text;
+
+    if (!generatedText) {
+      return res.status(500).json({ success: false, message: 'Failed to generate description' });
+    }
 
     // Send the generated text to the front end
-    res.json({ text });
+    res.json({ text: generatedText });
+
   } catch (error) {
     console.error('Error generating project description:', error);
     res.status(500).json({ error: 'An error occurred while generating the project description' });
   }
 });
+
 
 
 

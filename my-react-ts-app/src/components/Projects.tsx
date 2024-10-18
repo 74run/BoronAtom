@@ -245,14 +245,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
   const handleGenerateDescription = (projectName: string) => {
-    const jobdescription = localStorage.getItem('jobDescription');
+    let jobdescription = localStorage.getItem('jobDescription');
     
-    console.log(jobdescription);// Get job description from local storage
-    
+    // If jobdescription is null or undefined, set it to an empty string
+    if (!jobdescription) {
+      jobdescription = '';
+    }
+
+    // Check if userID is defined
+    if (!userID) {
+      console.error('Error: userID is undefined.');
+      return;
+    }
+  
     // Send a POST request with the job description in the request body
     axios
       .post(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`, 
-      { jobdescription }) // Send jobdescription in the body
+      { jobdescription }) // Send jobdescription (even if it's an empty string)
       .then((response) => {
         const generatedDescription = response.data.text;
         if (editData) {
@@ -268,9 +277,21 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         }
       })
       .catch((error) => {
-        console.error('Error generating project description:', error);
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          console.error('Error response:', error.response.data);
+          console.error('Error status:', error.response.status);
+          console.error('Error headers:', error.response.headers);
+        } else if (error.request) {
+          // Request was made but no response received
+          console.error('Error request:', error.request);
+        } else {
+          // Something else happened while setting up the request
+          console.error('Error message:', error.message);
+        }
       });
-  };
+};
+
 
   const moveProjectUp = (index: number) => {
     if (index > 0) {

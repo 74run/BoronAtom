@@ -328,34 +328,40 @@ router.post('/resetpassword', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
-  
-      if (!user) {
-        return res.status(401).json({ success: false, message: 'User does not exist!' });
+    const { username, password } = req.body;
+
+    // Find the user by either username or email
+    const user = await User.findOne({
+      $or: [{ username: username }, { email: username }] // Accept username or email
+    });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User does not exist!' });
+    }
+
+    // Compare the password using bcryptjs
+    bcryptjs.compare(password, user.password, (err, result) => {
+      if (err) {
+        // Handle error
+        console.error(err);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
       }
 
-      bcryptjs.compare(password, user.password, (err, result) => {
-        if (err) {
-          // Handle error
-          console.error(err);
-        }
-      
-        if (result) {
-          // Passwords match
-          const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' }); // Convert _id to string
-          // console.log('userID:', user._id.toString());
-          res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token});
-        } else {
-          // Passwords do not match
-          return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-        }
-      });
+      if (result) {
+        // Passwords match, generate the token
+        const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' });
+        res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token });
+      } else {
+        // Passwords do not match
+        return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+      }
+    });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 router.get('/user', async (req, res) => {
   try {
