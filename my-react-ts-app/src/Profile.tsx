@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -14,19 +13,13 @@ import ProfilePhoto from './components/ProfilePhotoWithUpload';
 import NavigationBar from './components/NavigationBar';
 import Footer from './components/Footer';
 import SectionWrapper from './components/SectionWrapper';
-import ResumeUpload from './components/ResumeUpload'
+import ResumeUpload from './components/ResumeUpload';
 import ProfileNew from './components/ProfilePhoto';
 import { AiOutlineFileAdd } from 'react-icons/ai';
-
 import Modal from "./components/Model";
-
-
 import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
-
 import LatexComponent from './latex/latex';
-
-// import LatexTemplate from './components/MyPdfViewer';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 import './index.css';
@@ -34,7 +27,6 @@ import './css/profile.css';
 import './App.css';
 
 import PDFResume from './components/MyPdfViewer';
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Cursor, Pencil } from 'react-bootstrap-icons';
 
@@ -679,42 +671,50 @@ const Profile: React.FC = () => {
  
   return (
     <>
+
+    
       {/* Full page layout */}
       <div
-        className="Full-Profile"
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "black",
-          
-          paddingTop: "110px",
-          paddingBottom: "50px",
-          paddingLeft: "25px",
-          paddingRight: "15px",
-          overflow: "hidden"
-        }}
-      >
+  className="Full-Profile"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    backgroundColor: "#2d3748",
+    paddingTop: "50px",
+    paddingLeft: "25px",
+    paddingRight: "15px",
+    overflow: "hidden"
+  }}
+>
         <NavigationBar UserDetail={userDetails} />
         {/* Main Content Area */}
         <div
+        className="flex-container"
           style={{
             display: "flex",
             justifyContent: "space-between", // Change to "space-between" for better separation
-            gap: "30px",
+            gap: "20px",
+            borderRadius: "10px",
             flexDirection: isMobileView ? "column" : "row",
-            paddingBottom: "30px",
+           
+           
             paddingTop: "20px", // Added padding to give spacing from the top
             height: "100%", // Ensures it takes up the available space
+            marginTop: "20px"
           }}
         >
           {/* Left Sidebar (Profile Info and Navigation Menu) */}
           <div
+          
+          className="sidebar"
             style={{
               flex: "0.3",
               display: "flex",
               flexDirection: "column",
+              borderRadius: "0px",
+              
               gap: "30px",
-              marginTop: "-40px",
+             
               height: "auto",
             }}
           >
@@ -730,6 +730,7 @@ const Profile: React.FC = () => {
     justifyContent: "center",
      marginTop: "4.5rem",
     marginBottom: "1.5rem",
+    
   }}
 >
   <img
@@ -745,7 +746,8 @@ const Profile: React.FC = () => {
       boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
       objectFit: "cover",
       cursor: "pointer",
-      marginBottom: "1rem", // Add space between image and text
+      marginBottom: "1rem",
+      borderColor: 'black', // Add space between image and text
     }}
     loading="lazy"
   />
@@ -765,6 +767,7 @@ const Profile: React.FC = () => {
     <p className="text-gray-400 text-sm">{userDetails?.email}</p>
   </div>
 </div>
+
 
 <div className="d-flex flex-column"
 style={{cursor: "pointer"}}>
@@ -846,27 +849,30 @@ style={{cursor: "pointer"}}>
   
           {/* Right Column (Main Content Area) */}
           <div
+          className="main-content"
             style={{
               flex: "1",
               display: "flex",
               flexDirection: "column",
               
-              gap: "30px",
-              padding: "10px", // Padding to improve spacing
-              borderRadius: "10px", // Rounded edges for the section
+             
+               // Padding to improve spacing
+              borderRadius: "0px", // Rounded edges for the section
               
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)", // Slight shadow for separation
+              // Slight shadow for separation
               overflowY: "auto",
               maxHeight: "calc(100vh - 160px)", // Ensures it doesn't overflow the viewport
             }}
           >
             {/* Section Rendering */}
-            <section className="bg-gray-100 p-6">
+            <section className="bg-gray-100 p-6" >
               {renderSection()}
             </section>
           </div>
         </div>
       </div>
+
+      
   
         <Footer />
     </>

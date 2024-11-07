@@ -413,12 +413,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     >
       <h4
         style={{
-          color: "#4CAF50",
+          color: "#00d084",
           textAlign: "left",
           marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: "1.5rem",
+          fontSize: "1.6rem",
         }}
       >
         Projects
@@ -432,17 +432,36 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
           style={{
             border: "1px solid #333",
             borderRadius: "12px",
-            padding: "14px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#2d2d30",
+            padding: "0px",
+            marginBottom: "20px",
+            backgroundColor: "#1b1b2f",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "transform 0.3s, box-shadow 0.3s",
             cursor: "pointer",
             position: "relative",
           }}
+
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+          }}
         >
           {editData && editData.id === project._id ? (
             // Edit mode
-            <div>
+            <div style={{
+              border: "1px solid #333",
+              borderRadius: "12px",
+              padding: "14px",
+              marginBottom: "1.5rem",
+              backgroundColor: "#2d2d30",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+              position: "relative",
+            }}>
               <input
                 type="text"
                 placeholder="Project Name"
@@ -615,7 +634,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                   borderRadius: "8px",
                   fontSize: "1rem",
                   marginTop: "10px",
-                  marginBottom: "20px",
                   border: "none",
                   backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
                   color: "#fff",
@@ -650,18 +668,18 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
              {showBoldButton && (
   <button
     onClick={() => applyBold(!!editData)} // Pass 'true' if in edit mode, otherwise 'false'
-    style={{
-      position: "absolute",
-      top: buttonPosition.top,
-      left: buttonPosition.left,
-      backgroundColor: "#444",
-      color: "#fff",
-      border: "none",
-      borderRadius: "4px",
-      padding: "4px 8px",
-      cursor: "pointer",
-      fontSize: "0.8rem",
-      zIndex: 1000,
+style={{
+position: "relative",
+top: buttonPosition.top,
+left: buttonPosition.left,
+backgroundColor: "#444",
+color: "#fff",
+border: "none",
+borderRadius: "4px",
+padding: "4px 8px",
+cursor: "pointer",
+fontSize: "0.8rem",
+zIndex: 1000,
     }}
   >
     <FontAwesomeIcon icon={faBold} />
@@ -730,7 +748,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               style={{
                 borderRadius: "8px",
                 padding: "12px",
-                backgroundColor: "#1c1c1e",
+            
                 transition: "transform 0.3s, box-shadow 0.3s",
                 cursor: "pointer",
               }}
@@ -746,10 +764,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
               }}
             >
               <h5
-                style={{
-                  color: "#f5f5f5",
+                 style={{
+                  color: "#00d084", // Light text for dark mode
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
+                  fontSize: "1.4rem",
                   marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
@@ -805,7 +823,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 >
   {project.description.split("**").map((part, index) =>
     index % 2 === 1 ? (
-      <b key={index} style={{ fontWeight: 600 }}>{part}</b> // Bold content
+      <b key={index} style={{ color: "#00d084", fontWeight: 600 }}>{part}</b> // Bold content
     ) : (
       <span key={index}>{part}</span> // Regular content
     )
@@ -844,8 +862,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
 
                 <button
@@ -859,8 +876,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
+                  <FontAwesomeIcon icon={faTrash} /> Delete
                 </button>
 
                 <button
@@ -878,8 +894,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
                 >
                   <FontAwesomeIcon
                     icon={project.includeInResume ? faToggleOn : faToggleOff}
-                  />
-                  {project.includeInResume ? "Included" : "Excluded"}
+                  /> {project.includeInResume ? "Included" : "Excluded"}
                 </button>
 
                 <div style={{ position: 'absolute', right: '10px', top: '10px' }}>

@@ -193,25 +193,25 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
   return (
     <div
-      style={{
-        border: "none",
-        borderRadius: "12px",
-        padding: "24px",
-        marginBottom: "30px",
-        fontFamily: "'Roboto', sans-serif",
-        color: "#f5f5f5",
-        backgroundColor: "#1c1c1e",
-        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
-      }}
+    style={{
+      border: "none",
+      borderRadius: "0px",
+      padding: "24px",
+      marginBottom: "30px",
+      fontFamily: "'Roboto', sans-serif",
+      color: "#f5f5f5",
+      backgroundColor: "#1c1c1e",
+      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+    }}
     >
       <h4
         style={{
-          color: "#4CAF50",
+          color: "#00d084",
           textAlign: "left",
           marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: "1.5rem",
+          fontSize: "1.6rem",
         }}
       >
         Certifications
@@ -223,25 +223,25 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           style={{
             border: "1px solid #333",
             borderRadius: "12px",
-            padding: "14px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#2d2d30",
+            padding: "0px",
+            marginBottom: "20px",
+            backgroundColor: "#1b1b2f",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "transform 0.3s, box-shadow 0.3s",
             cursor: "pointer",
             position: "relative",
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+          }}
         >
           {editData && editData.id === certification._id ? (
-            <div style={{
-              border: "1px solid #333",
-              borderRadius: "12px",
-              padding: "14px",
-              marginBottom: "1.5rem",
-              backgroundColor: "#2d2d30",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-              position: "relative",
-            }}>
+            <div >
               <input
                 type="text"
                 placeholder="Certification Name"
@@ -416,8 +416,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faSave} />
-                  Update
+                  <FontAwesomeIcon icon={faSave} /> Update
                 </button>
   
                 <button
@@ -430,20 +429,20 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                     padding: "10px 20px",
                     flex: "1",
                   }}
-                >
-                  Cancel
+                > Cancel
                 </button>
               </div>
             </div>
           ) : (
             <div
-              style={{
-                borderRadius: "8px",
-                padding: "12px",
-                backgroundColor: "#1c1c1e",
-                transition: "transform 0.3s, box-shadow 0.3s",
-                cursor: "pointer",
-              }}
+            style={{
+             
+              borderRadius: "8px",
+              padding: "20px",
+             
+              transition: "transform 0.3s, box-shadow 0.3s",
+              cursor: "pointer",
+            }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-5px)";
                 e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
@@ -454,13 +453,13 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               }}
             >
               <h5
-                style={{
-                  color: "#f5f5f5",
-                  fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
-                  marginBottom: "0.5rem",
-                  fontWeight: 700,
-                }}
+               style={{
+                color: "#00d084", // Light text for dark mode
+                fontFamily: "'Roboto Slab', serif",
+                fontSize: "1.4rem",
+                marginBottom: "0.5rem",
+                fontWeight: 700,
+              }}
               >
                 {certification.name}
               </h5>
@@ -513,8 +512,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
   
                 <button
@@ -528,8 +526,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
+                  <FontAwesomeIcon icon={faTrash} /> Delete
                 </button>
   
                 <button
@@ -549,8 +546,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 >
                   <FontAwesomeIcon
                     icon={certification.includeInResume ? faToggleOn : faToggleOff}
-                  />
-                  {certification.includeInResume ? "Included" : "Excluded"}
+                  /> {certification.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
@@ -595,6 +591,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           />
   
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+         
             <select
               value={newCertification.issuedDate.month}
               onChange={(e) =>

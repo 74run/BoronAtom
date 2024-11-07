@@ -198,13 +198,13 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
     }}
     >
       <h4
-       style={{
-        color: "#4CAF50",
+      style={{
+        color: "#00d084",
         textAlign: "left",
         marginBottom: "1.5rem",
         fontFamily: "'Roboto Slab', serif",
         fontWeight: 700,
-        fontSize: "1.5rem",
+        fontSize: "1.6rem",
       }}
       >
         Skills
@@ -222,11 +222,11 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                       {...provided.draggableProps}
                       style={{
                         width: '100%', // Ensures full-width container
-                        backgroundColor: snapshot.isDragging ? '#555' : '#3a3a3c',
-                        padding: '20px',
+                        backgroundColor: snapshot.isDragging ? '#555' : '#1b1b2f',
+                        padding: '0px',
                         borderRadius: '12px',
                         marginBottom: '10px',
-                        border: '1px solid #444',
+                       
                         transition: 'transform 0.3s, box-shadow 0.3s',
                         position: 'relative',
                         ...provided.draggableProps.style,
@@ -330,7 +330,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               borderRadius: '12px',
               padding: '20px',
               marginBottom: '1.5rem',
-              backgroundColor: '#3a3a3c',
+              backgroundColor: '#1b1b2f',
               transition: 'transform 0.3s, box-shadow 0.3s',
 
               display: 'grid',

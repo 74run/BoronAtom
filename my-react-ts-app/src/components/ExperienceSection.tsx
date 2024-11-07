@@ -374,12 +374,12 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     >
       <h4
         style={{
-          color: "#4CAF50",
+          color: "#00d084",
           textAlign: "left",
           marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: "1.5rem",
+          fontSize: "1.6rem",
         }}
       >
         Experience
@@ -393,12 +393,22 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
           style={{
             border: "1px solid #333",
             borderRadius: "12px",
-            padding: "14px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#2d2d30",
+            padding: "0px",
+            marginBottom: "20px",
+            backgroundColor: "#1b1b2f",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "transform 0.3s, box-shadow 0.3s",
             cursor: "pointer",
             position: "relative",
+          }}
+
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
           }}
         >
           {editData && editData.id === experience._id ? (
@@ -604,7 +614,6 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   borderRadius: "8px",
                   fontSize: "1rem",
                   marginTop: "10px",
-                  marginBottom: "20px",
                   border: "none",
                   backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
                   color: "#fff",
@@ -721,8 +730,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             style={{
              
               borderRadius: "8px",
-              padding: "12px",
-              backgroundColor: "#1c1c1e",
+              padding: "20px",
+             
               transition: "transform 0.3s, box-shadow 0.3s",
               cursor: "pointer",
             }}
@@ -738,9 +747,9 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             }}>
               <h5
                 style={{
-                  color: "#f5f5f5", // Light text for dark mode
+                  color: "#00d084", // Light text for dark mode
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
+                  fontSize: "1.4rem",
                   marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
@@ -809,7 +818,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 >
   {experience.description.split("**").map((part, index) =>
     index % 2 === 1 ? (
-      <b key={index} style={{ fontWeight: 600 }}>{part}</b> // Bold content
+      <b key={index} style={{ color: "#00d084", fontWeight: 600 }}>{part}</b> // Bold content
     ) : (
       <span key={index}>{part}</span> // Regular content
     )
@@ -850,8 +859,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
 
                 <button
@@ -865,8 +873,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
+                  <FontAwesomeIcon icon={faTrash} /> Delete
                 </button>
 
                 <button
@@ -884,8 +891,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                 >
                   <FontAwesomeIcon
                     icon={experience.includeInResume ? faToggleOn : faToggleOff}
-                  />
-                  {experience.includeInResume ? "Included" : "Excluded"}
+                  /> {experience.includeInResume ? "Included" : "Excluded"}
                 </button>
 
                 <div style={{ position: 'absolute', right: '10px', top: '10px' }}>

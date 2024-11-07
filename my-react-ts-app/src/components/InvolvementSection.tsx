@@ -673,8 +673,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
   
                 <button
@@ -688,8 +687,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
+                  <FontAwesomeIcon icon={faTrash} /> Delete
                 </button>
   
                 <button
@@ -707,8 +705,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 >
                   <FontAwesomeIcon
                     icon={involvement.includeInResume ? faToggleOn : faToggleOff}
-                  />
-                  {involvement.includeInResume ? "Included" : "Excluded"}
+                  /> {involvement.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
