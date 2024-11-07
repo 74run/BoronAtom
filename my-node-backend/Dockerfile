@@ -9,17 +9,21 @@ RUN apk add --no-cache \
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
-COPY package*.json ./
 
-# Install Node.js dependencies
+
 RUN npm install
 
 # Copy the rest of the application code
 COPY . .
 
+
 # Expose the port the app runs on
 EXPOSE 5000
 
-# Start the backend server
-CMD ["node", "index.js"]
+
+# Start the application
+CMD ["npm", "start"]
+
+# Expose the port the app runs on
+EXPOSE 3000
+

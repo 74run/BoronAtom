@@ -384,13 +384,16 @@ const projectSection = projects.length > 0 ? `
   }
 };
 
+
+
+
     return (
       <div className="container mt-(-3)">
       <div className="d-flex flex-column align-items-center pt-0">
          
           {/* PDF Download and Preview Buttons */}
           <div className="d-flex justify-content-end">
-          
+
 
 <button className="btn btn-secondary" onClick={previewPdf} style={{
   padding: "10px 20px",
@@ -403,7 +406,9 @@ const projectSection = projects.length > 0 ? `
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   marginLeft: "auto",// Adjusted font size
 }}>
+
   <FaLeaf />  Preview Overleaf PDF
+
 </button>
   </div>
   

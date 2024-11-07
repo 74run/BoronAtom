@@ -40,11 +40,21 @@ const Google = require('./google');
 const app = express();
 const port = 3001;
 
+// const corsOptions = {
+//   origin: '*', // Explicitly allow your frontend domain
+//   methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
+//   credentials: true, // If your frontend needs to send cookies or credentials with the request
+//   allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+// };
+
+
 const corsOptions = {
-  origin: '*', // Explicitly allow your frontend domain
-  methods: 'GET,POST,PUT,DELETE', // Specify allowed methods as needed
-  credentials: true, // If your frontend needs to send cookies or credentials with the request
-  allowedHeaders: 'Content-Type,Authorization', // Specify allowed headers
+  origin: 'https://www.boronatom.me', 
+  methods: 'GET,POST,PUT,DELETE', 
+  credentials: true, 
+  allowedHeaders: 'Content-Type,Authorization', 
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
 
 
@@ -52,14 +62,6 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-// const corsOptions = {
-//   origin: 'https://boronatom.me', 
-//   methods: 'GET,POST,PUT,DELETE', 
-//   credentials: true, 
-//   allowedHeaders: 'Content-Type,Authorization', 
-//   preflightContinue: false,
-//   optionsSuccessStatus: 204
-// };
 
 
 app.use('/run', (req,res)=> {
@@ -72,7 +74,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 
-mongoose.connect(process.env.REACT_APP_MONGODB);
+mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails');
 
 const db = mongoose.connection;
 // Handle MongoDB connection events
@@ -169,7 +171,9 @@ app.post('/compile-latex', (req, res) => {
   fs.writeFileSync(texFilePath, latexCode);
 
   // Compile LaTeX file to PDF using pdflatex
+
   exec(`pdflatex -interaction=nonstopmode ${texFilePath}`, { cwd: __dirname }, (error, stdout, stderr) => {
+
     if (error) {
       console.error(`LaTeX compilation error: ${error}`);
       console.error(`stderr: ${stderr}`);
