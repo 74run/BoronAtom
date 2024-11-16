@@ -16,9 +16,12 @@ import SectionWrapper from './components/SectionWrapper';
 import ResumeUpload from './components/ResumeUpload';
 import ProfileNew from './components/ProfilePhoto';
 import { AiOutlineFileAdd } from 'react-icons/ai';
+import { FaFilePdf } from 'react-icons/fa';
 import Modal from "./components/Model";
 import { ParsedDataProvider } from './components/ParsedDataContext';
 import ChatBox from './components/ChatBox';
+
+import PDFHTML from './components/PDFHTML'
 import LatexComponent from './latex/latex';
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -663,9 +666,14 @@ const Profile: React.FC = () => {
             onDelete={handleDeleteInv}
           />
         );
-      default:
-        return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
-    }
+        case 'PDFHTML':
+          return <PDFHTML theme={'light'}  />;
+        default:
+          return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
+      }
+
+
+  
   };
 
  
@@ -728,7 +736,7 @@ const Profile: React.FC = () => {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-     marginTop: "4.5rem",
+     marginTop: "2.5rem",
     marginBottom: "1.5rem",
     
   }}
@@ -841,6 +849,14 @@ style={{cursor: "pointer"}}>
     <i className="fas fa-lightbulb text-lg me-2"></i> 
     <span className="text-sm font-medium">Skills</span>
   </a>
+
+  <a
+                  className={`nav-link ${activeSection === 'PDFHTML' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+                  onClick={() => setActiveSection('PDFHTML')}
+                >
+                  <FaFilePdf className="me-2" />
+                  <span className="text-sm font-medium">PDF Resume</span>
+                </a>
 </div>
 
 </div>
@@ -855,13 +871,13 @@ style={{cursor: "pointer"}}>
               display: "flex",
               flexDirection: "column",
               
-             
+              height: "100vh",
                // Padding to improve spacing
               borderRadius: "0px", // Rounded edges for the section
               
               // Slight shadow for separation
               overflowY: "auto",
-              maxHeight: "calc(100vh - 160px)", // Ensures it doesn't overflow the viewport
+               // Ensures it doesn't overflow the viewport
             }}
           >
             {/* Section Rendering */}

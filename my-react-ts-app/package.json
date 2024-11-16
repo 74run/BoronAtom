@@ -13,6 +13,7 @@
     "@mui/icons-material": "^5.15.16",
     "@onedoc/client": "^0.1.32",
     "@onedoc/react-print": "^0.1.133",
+    "@react-pdf/renderer": "^4.0.0",
     "@shadcn/ui": "^0.0.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.3.1",
@@ -30,8 +31,10 @@
     "csv-parser": "^3.0.0",
     "expres": "^0.0.5",
     "framer-motion": "^11.5.4",
+    "html2pdf.js": "^0.10.2",
     "js-cookie": "^3.0.5",
-    "jspdf": "^2.5.1",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "katex": "^0.16.11",
     "lucide-react": "^0.439.0",
     "mongoose": "^8.0.3",
@@ -39,17 +42,9 @@
     "papaparse": "^5.4.1",
     "path-browserify": "^1.0.1",
     "react": "^18.0.0",
-
     "react-beautiful-dnd": "^13.1.1",
-
     "react-bootstrap": "^2.10.2",
     "react-bootstrap-icons": "^1.11.4",
-
-
-    
-    "react-image-crop": "^10.1.8",
-
-
     "react-dom": "^18.0.0",
     "react-icons": "^5.2.0",
     "react-image-crop": "^10.1.8",
@@ -60,6 +55,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
     "styled-components": "^6.1.2",
+    "tsparticles": "^3.5.0",
     "typescript": "^4.5.4",
     "web-vitals": "^2.1.4"
   },
