@@ -121,7 +121,16 @@ const Profile: React.FC<ProfileProps> = () => {
       .catch(error => {
         console.error('Error fetching user details:', error);
       });
-
+  
+    // Fetch education details
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
+      .then(eduResponse => {
+        setEduDetails(eduResponse.data.user); // Assuming eduDetails are inside `data.eduDetails`
+      })
+      .catch(error => {
+        console.error('Error fetching education details:', error);
+      });
+  
     // Fetch the profile image
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
       .then(response => {
@@ -137,8 +146,10 @@ const Profile: React.FC<ProfileProps> = () => {
       .catch(error => {
         console.error('Error fetching image:', error);
       });
-
+  
   }, [userID]);
+  
+  
 
 
   return (
@@ -168,16 +179,17 @@ const Profile: React.FC<ProfileProps> = () => {
 
         {/* User Details and Edit Contact Info */}
         <div style={{ flex: "1", textAlign: "center", marginTop: "10px" }}>
-          <h4
-            style={{
-              fontWeight: "bold",
-              fontSize: "1.7rem",
-              color: "#f5f5f5",
-              marginBottom: "0.5rem",
-            }}
-          >
-            {contactDetails?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
-          </h4>
+  <h4
+    style={{
+      fontWeight: "bold",
+      fontSize: "1.7rem",
+      color: "#f5f5f5",
+      marginBottom: "0.5rem",
+    }}
+  >
+    {/* Safely access eduDetails.contact[0]?.name or fallback to user's full name */}
+    {eduDetails?.contact?.[0]?.name?.trim() || `${userDetails?.firstName} ${userDetails?.lastName}`}
+  </h4>
           <p
             style={{
               fontSize: "1rem",
@@ -185,7 +197,7 @@ const Profile: React.FC<ProfileProps> = () => {
               marginBottom: "1.5rem",
             }}
           >
-            {contactDetails?.email || userDetails?.email}
+            {eduDetails?.contact?.[0]?.email?.trim() || userDetails?.email}
           </p>
 
           <button

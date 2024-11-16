@@ -65,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = () => {
   const userID = localStorage.getItem('UserID');
 
   return (
-    <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar shadow-sm">
+    <BootstrapNavbar bg="dark" variant="dark" expand="md" fixed="top" className="custom-navbar shadow-sm" style={{ maxHeight: '70px' }}>
       <div className="container-fluid">
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <Image

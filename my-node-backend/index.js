@@ -49,7 +49,7 @@ const port = 3001;
 
 
 const corsOptions = {
-  origin: 'https://www.boronatom.me', 
+  origin: '*', 
   methods: 'GET,POST,PUT,DELETE', 
   credentials: true, 
   allowedHeaders: 'Content-Type,Authorization', 

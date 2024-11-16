@@ -8,7 +8,9 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
 import CoverLetter from './components/Cover/AiCoverLetter';
 import { useParams } from 'react-router-dom';
+import HomePage from './HomePage';
 
+import PDFHTML from './components/PDFHTML'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -79,6 +81,8 @@ const App: React.FC = () => {
         
 
         {/* Public Routes */}
+        <Route path="/" element={<HomePage />} />
+        
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />

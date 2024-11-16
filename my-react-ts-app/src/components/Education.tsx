@@ -282,7 +282,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     <div
       style={{
         border: "none",
-        borderRadius: "12px",
+        borderRadius: "0px",
         padding: "24px",
         marginBottom: "30px",
         fontFamily: "'Roboto', sans-serif",
@@ -293,17 +293,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     >
       <h4
         style={{
-          color: "#4CAF50",
+          color: "#00d084",
           textAlign: "left",
           marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: "1.5rem",
+          fontSize: "1.6rem",
         }}
       >
         Education
       </h4>
-  
+
       {educations.map((education) => (
         <div
           key={education._id}
@@ -311,25 +311,31 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           style={{
             border: "1px solid #333",
             borderRadius: "12px",
-            padding: "14px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#2d2d30",
+            padding: "24px",
+            marginBottom: "20px",
+            backgroundColor: "#1b1b2f",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "transform 0.3s, box-shadow 0.3s",
             cursor: "pointer",
             position: "relative",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
           }}
         >
           {editData && editData.id === education._id ? (
             <div>
               {/* University Input with Datalist */}
-          
-
-                <CustomUniversityDropdown
-      universities={filteredUniversities}
-      value={editData.university}
-      onChange={(value) => setEditData({ ...editData, university: value })}
-    />
-  
+              <CustomUniversityDropdown
+                universities={[]} // Pass your university list here
+                value={editData.university}
+                onChange={(value) => setEditData({ ...editData, university: value })}
+              />
               <input
                 type="text"
                 placeholder="CGPA"
@@ -346,7 +352,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   color: "#f5f5f5",
                 }}
               />
-  
               <select
                 value={editData.degree}
                 onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
@@ -366,7 +371,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 <option value="Master's Degree">Master's Degree</option>
                 <option value="Doctoral Degree">Doctoral Degree</option>
               </select>
-  
               <input
                 type="text"
                 placeholder="Major"
@@ -383,7 +387,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   color: "#f5f5f5",
                 }}
               />
-  
               <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                 <select
                   value={editData.startDate.month}
@@ -405,16 +408,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
+                  <option value="" disabled>Select Month</option>
                   {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
+                    <option key={month} value={month}>{month}</option>
                   ))}
                 </select>
-  
                 <select
                   value={editData.startDate.year}
                   onChange={(e) =>
@@ -435,16 +433,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
+                  <option value="" disabled>Select Year</option>
                   {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
+                    <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
-  
                 <select
                   value={editData.endDate.month}
                   onChange={(e) =>
@@ -466,16 +459,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
+                  <option value="" disabled>Select Month</option>
                   {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
+                    <option key={month} value={month}>{month}</option>
                   ))}
                 </select>
-  
                 <select
                   value={editData.endDate.year}
                   onChange={(e) =>
@@ -497,21 +485,14 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
+                  <option value="" disabled>Select Year</option>
                   {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
+                    <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
               </div>
-  
               <button
-                className={`toggle-btn ${
-                  editData.isPresent ? "present" : "not-present"
-                }`}
+                className={`toggle-btn ${editData.isPresent ? "present" : "not-present"}`}
                 onClick={handleTogglePresent}
                 style={{
                   padding: "0.5rem 1rem",
@@ -523,12 +504,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   color: "#fff",
                 }}
               >
-                <FontAwesomeIcon
-                  icon={editData.isPresent ? faToggleOn : faToggleOff}
-                />
+                <FontAwesomeIcon icon={editData.isPresent ? faToggleOn : faToggleOff} />
                 {editData.isPresent ? "Present" : "Not Present"}
               </button>
-  
               <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
                 <button
                   onClick={handleUpdate}
@@ -541,10 +519,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faSave} />
-                  Update
+                  <FontAwesomeIcon icon={faSave} /> Update
                 </button>
-  
                 <button
                   onClick={handleCancelEdit}
                   style={{
@@ -561,56 +537,34 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               </div>
             </div>
           ) : (
-            <div
-              style={{
-                borderRadius: "8px",
-                padding: "12px",
-                backgroundColor: "#1c1c1e",
-                transition: "transform 0.3s, box-shadow 0.3s",
-                cursor: "pointer",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow = "0 10px 30px rgba(0, 0, 0, 0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
-              }}
-            >
+            <div>
               <h5
                 style={{
-                  color: "#f5f5f5",
+                  color: "#00d084",
                   fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
+                  fontSize: "1.4rem",
                   marginBottom: "0.5rem",
                   fontWeight: 700,
                 }}
               >
                 {education.university}
               </h5>
-  
-              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+              <p style={{ fontSize: "0.9rem", color: "#d1d1d1" }}>
                 <strong>GPA:</strong> {education.cgpa}
               </p>
-  
-              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+              <p style={{ fontSize: "0.9rem", color: "#d1d1d1" }}>
                 <strong>Degree:</strong> {education.degree}
               </p>
-  
-              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+              <p style={{ fontSize: "0.9rem", color: "#d1d1d1" }}>
                 <strong>Major:</strong> {education.major}
               </p>
-  
-              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+              <p style={{ fontSize: "0.9rem", color: "#d1d1d1" }}>
                 <strong>Start Date:</strong> {education.startDate.month} {education.startDate.year}
               </p>
-  
-              <p style={{ fontSize: "0.9rem", color: "#bbb" }}>
+              <p style={{ fontSize: "0.9rem", color: "#d1d1d1" }}>
                 <strong>End Date:</strong>{" "}
                 {education.isPresent ? "Present" : `${education.endDate.month} ${education.endDate.year}`}
               </p>
-  
               <div style={{ display: "flex", gap: "10px" }}>
                 <button
                   onClick={() =>
@@ -635,10 +589,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faEdit} />
-                  Edit
+                  <FontAwesomeIcon icon={faEdit} /> Edit
                 </button>
-  
                 <button
                   onClick={() => handleDelete(education._id)}
                   style={{
@@ -650,10 +602,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     flex: "1",
                   }}
                 >
-                  <FontAwesomeIcon icon={faTrash} />
-                  Delete
+                  <FontAwesomeIcon icon={faTrash} /> Delete
                 </button>
-  
                 <button
                   onClick={() => handleToggleInclude(education._id)}
                   style={{
@@ -667,33 +617,24 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     transition: "all 0.3s",
                   }}
                 >
-                  <FontAwesomeIcon
-                    icon={education.includeInResume ? faToggleOn : faToggleOff}
-                  />
-                  {education.includeInResume ? "Included" : "Excluded"}
+                  <FontAwesomeIcon icon={education.includeInResume ? faToggleOn : faToggleOff} /> {education.includeInResume ? "Included" : "Excluded"}
                 </button>
               </div>
             </div>
           )}
         </div>
       ))}
-  
-      {/* Add Education Form with Datalist */}
+
       {isAdding && (
         <div>
-         
-
           <CustomUniversityDropdown
-      universities={filteredUniversities}
-      value={newEducation.university}
-      onChange={(value) => setNewEducation({ ...newEducation, university: value })}
-    />
+            universities={[]} // Supply university list here
+            value={newEducation.university}
+            onChange={(value) => setNewEducation({ ...newEducation, university: value })}
+          />
           <select
-            className="form-control mb-3"
             value={newEducation.degree}
-            onChange={(e) =>
-              setNewEducation({ ...newEducation, degree: e.target.value })
-            }
+            onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
             style={{
               borderRadius: "8px",
               border: "1px solid #444",
@@ -705,11 +646,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               color: "#f5f5f5",
             }}
           >
-            {!newEducation.degree && (
-              <option value="" disabled>
-                Select Degree
-              </option>
-            )}
+            <option value="" disabled>Select Degree</option>
             <option value="Associate Degree">Associate Degree</option>
             <option value="Bachelor's Degree">Bachelor's Degree</option>
             <option value="Master's Degree">Master's Degree</option>
@@ -717,32 +654,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           </select>
           <input
             type="text"
-            
             placeholder="Major"
             value={newEducation.major}
-            onChange={(e) =>
-              setNewEducation({ ...newEducation, major: e.target.value })
-            }
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-      
-          />
-          <input
-            type="text"
-            
-            placeholder="CGPA"
-            value={newEducation.cgpa}
-            onChange={(e) =>
-              setNewEducation({ ...newEducation, cgpa: e.target.value })
-            }
+            onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
             style={{
               borderRadius: "8px",
               border: "1px solid #444",
@@ -754,169 +668,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               color: "#f5f5f5",
             }}
           />
-          <div className="date-dropdowns mb-3">
-            <label>Start Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newEducation.startDate.month}
-                onChange={(e) =>
-                  setNewEducation({
-                    ...newEducation,
-                    startDate: {
-                      ...newEducation.startDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newEducation.startDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newEducation.startDate.year}
-                onChange={(e) =>
-                  setNewEducation({
-                    ...newEducation,
-                    startDate: {
-                      ...newEducation.startDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newEducation.startDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="date-dropdowns mb-3">
-            <label>End Date:</label>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <select
-                className="form-control mb-2"
-                value={newEducation.endDate.month}
-                onChange={(e) =>
-                  setNewEducation({
-                    ...newEducation,
-                    endDate: {
-                      ...newEducation.endDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                disabled={newEducation.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.36",
-                }}
-              >
-                {!newEducation.endDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newEducation.endDate.year}
-                onChange={(e) =>
-                  setNewEducation({
-                    ...newEducation,
-                    endDate: {
-                      ...newEducation.endDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                disabled={newEducation.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newEducation.endDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="btn btn-outline-secondary ms-2"
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.3rem 0.7rem",
-                  borderRadius: "80px",
-                  fontSize: "1rem",
-                  maxWidth: '150px',
-                  maxHeight: '50px',
-                  marginTop: "0px",
-                  border: "none",
-                  backgroundColor: newEducation.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
-                  flex: "0.3",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={newEducation.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {newEducation.isPresent ? 'Present' : 'Not Present'}
-              </button>
-            </div>
-          </div>
-  
           <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
             <button
               onClick={handleSaveClick}
@@ -929,10 +680,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 flex: "1",
               }}
             >
-              <FontAwesomeIcon icon={faSave} />
-              Save
+              <FontAwesomeIcon icon={faSave} /> Save
             </button>
-  
             <button
               onClick={() => setIsAdding(false)}
               style={{
@@ -949,7 +698,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           </div>
         </div>
       )}
-  
+
       {!isAdding && (
         <button
           onClick={handleAddClick}
@@ -965,13 +714,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             transition: "all 0.3s",
           }}
         >
-          <FontAwesomeIcon icon={faPlus} />
-          Add Education
+          <FontAwesomeIcon icon={faPlus} /> Add Education
         </button>
       )}
     </div>
   );
-  
   
 };
 
