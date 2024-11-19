@@ -211,10 +211,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
   const handleSaveClick = () => {
     // Form validation check
-    if (!newEducation.university || !newEducation.cgpa || !newEducation.degree || !newEducation.major || !newEducation.startDate.month || !newEducation.startDate.year || (!newEducation.endDate.month && !newEducation.isPresent) || (!newEducation.endDate.year && !newEducation.isPresent)) {
-      console.error('Please fill in all required fields');
-      return;
-    }
+
 
     const formattedEducation = {
       ...newEducation,
@@ -640,6 +637,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               <option key={index} value={name} />
             ))}
           </datalist>
+
+          <input
+      type="number"
+      step="0.01"
+      min="0"
+      max="4"
+      className="form-control mb-2"
+      placeholder="CGPA"
+      value={newEducation.cgpa}
+      onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
+    />
           <select
               className="form-control mb-2"
               value={newEducation.degree}
@@ -706,6 +714,15 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 className="form-control mb-2"
                 value={newEducation.endDate.month}
                 onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
+                disabled={newEducation.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #444",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  flex: "0.3",
+                }}
               >
                 {!newEducation.endDate.month && (
                       <option value="" disabled>
@@ -734,14 +751,69 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   </option>
                 ))}
               </select>
+              <button
+                className="btn btn-outline-secondary ms-2"
+                onClick={handleTogglePresent}
+                style={{
+                  padding: "0.3rem 0.7rem",
+                  borderRadius: "80px",
+                  fontSize: "1rem",
+                  maxWidth: '150px',
+                  maxHeight: '50px',
+                  marginTop: "0px",
+                  border: "none",
+                  backgroundColor: newEducation.isPresent ? "#28a745" : "#dc3545",
+                  color: "#fff",
+                  flex: "0.3",
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={newEducation.isPresent ? faToggleOn : faToggleOff}
+                  className="me-2"
+                />
+                {newEducation.isPresent ? 'Present' : 'Not Present'}
+              </button>
             </div>
           </div>
-           <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
-            Save
-          </button>
-          <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)}>
-            Cancel
-          </button>
+          <button
+  type="submit"
+  className="btn btn-primary"
+  onClick={handleSaveClick}
+  style={{
+    backgroundColor: "#007bff",
+    color: "#fff",
+    padding: "10px 20px",
+    fontSize: "1rem",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
+  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
+>
+  Save
+</button>
+
+<button
+  className="btn btn-secondary ms-2"
+  onClick={() => setIsAdding(false)}
+  style={{
+    backgroundColor: "#6c757d",
+    color: "#fff",
+    padding: "10px 20px",
+    fontSize: "1rem",
+    border: "none",
+    borderRadius: "8px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5a6268")}
+  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#6c757d")}
+>
+  Cancel
+</button>
+
         </div>
       )}
 
