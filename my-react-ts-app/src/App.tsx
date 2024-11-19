@@ -80,8 +80,10 @@ const App: React.FC = () => {
 
         
 
-        {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
+        {/* Public Routes */} <Route
+    path="/"
+    element={isLoggedIn ? <Navigate to={`/profile/${localStorage.getItem('UserID')}`} /> : <HomePage />}
+  />
         
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />

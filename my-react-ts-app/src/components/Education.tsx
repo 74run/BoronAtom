@@ -625,77 +625,123 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         </div>
       ))}
 
-      {isAdding && (
-        <div>
-          <CustomUniversityDropdown
-            universities={[]} // Supply university list here
+{isAdding && (
+        <div className="adding-form">
+          <input
+            list="universities"
+            type="text"
+            className="form-control mb-2"
+            placeholder="Search University"
+            onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
             value={newEducation.university}
-            onChange={(value) => setNewEducation({ ...newEducation, university: value })}
           />
+          <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
+            {filteredUniversities.map((name, index) => (
+              <option key={index} value={name} />
+            ))}
+          </datalist>
           <select
-            value={newEducation.degree}
-            onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          >
-            <option value="" disabled>Select Degree</option>
-            <option value="Associate Degree">Associate Degree</option>
-            <option value="Bachelor's Degree">Bachelor's Degree</option>
-            <option value="Master's Degree">Master's Degree</option>
-            <option value="Doctoral Degree">Doctoral Degree</option>
-          </select>
+              className="form-control mb-2"
+              value={newEducation.degree}
+              onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+            >
+              {!newEducation.degree && (
+                      <option value="" disabled>
+                        Select Degree
+                      </option>
+                    )}
+              <option value="Associate Degree">Associate Degree</option>
+              <option value="Bachelor's Degree">Bachelor's Degree</option>
+              <option value="Master's Degree">Master's Degree</option>
+              <option value="Doctoral Degree">Doctoral Degree</option>
+            </select>
           <input
             type="text"
+            className="form-control mb-2"
             placeholder="Major"
             value={newEducation.major}
             onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
           />
-          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-            <button
-              onClick={handleSaveClick}
-              style={{
-                backgroundColor: "#4CAF50",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              <FontAwesomeIcon icon={faSave} /> Save
-            </button>
-            <button
-              onClick={() => setIsAdding(false)}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              Cancel
-            </button>
+          <div className="date-dropdowns">
+            <label>Start Date:</label>
+            <div className="flex-container">
+              <select
+                className="form-control mb-2"
+                value={newEducation.startDate.month}
+                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
+              >
+                {!newEducation.startDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="form-control mb-2"
+                value={newEducation.startDate.year}
+                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
+              >
+                {!newEducation.startDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
+          <div className="date-dropdowns">
+            <label>End Date:</label>
+            <div className="flex-container">
+              <select
+                className="form-control mb-2"
+                value={newEducation.endDate.month}
+                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
+              >
+                {!newEducation.endDate.month && (
+                      <option value="" disabled>
+                        Select Month
+                      </option>
+                    )}
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="form-control mb-2"
+                value={newEducation.endDate.year}
+                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
+              >
+                {!newEducation.endDate.year && (
+                      <option value="" disabled>
+                        Select Year
+                      </option>
+                    )}
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+           <button type="submit" className="btn btn-primary" onClick={handleSaveClick}>
+            Save
+          </button>
+          <button className="btn btn-secondary ms-2" onClick={() => setIsAdding(false)}>
+            Cancel
+          </button>
         </div>
       )}
 
