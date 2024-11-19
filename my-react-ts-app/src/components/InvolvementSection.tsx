@@ -259,25 +259,25 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
   return (
     <div
-      style={{
-        border: "none",
-        borderRadius: "12px",
-        padding: "24px",
-        marginBottom: "30px",
-        fontFamily: "'Roboto', sans-serif",
-        color: "#f5f5f5",
-        backgroundColor: "#1c1c1e",
-        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
-      }}
+    style={{
+      border: "none",
+      borderRadius: "0px",
+      padding: "24px",
+      marginBottom: "30px",
+      fontFamily: "'Roboto', sans-serif",
+      color: "#f5f5f5",
+      backgroundColor: "#1c1c1e",
+      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+    }}
     >
       <h4
         style={{
-          color: "#4CAF50",
+          color: "#00d084",
           textAlign: "left",
           marginBottom: "1.5rem",
           fontFamily: "'Roboto Slab', serif",
           fontWeight: 700,
-          fontSize: "1.5rem",
+          fontSize: "1.6rem",
         }}
       >
         Involvements
@@ -291,26 +291,26 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
           style={{
             border: "1px solid #333",
             borderRadius: "12px",
-            padding: "14px",
-            marginBottom: "1.5rem",
-            backgroundColor: "#2d2d30",
+            padding: "24px",
+            marginBottom: "20px",
+            backgroundColor: "#1b1b2f",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             transition: "transform 0.3s, box-shadow 0.3s",
             cursor: "pointer",
             position: "relative",
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = "translateY(-5px)";
+            e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.3)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translateY(0)";
+            e.currentTarget.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+          }}
         >
           {editData && editData.id === involvement._id ? (
             // Edit mode
-            <div style={{
-              border: "1px solid #333",
-              borderRadius: "12px",
-              padding: "14px",
-              marginBottom: "1.5rem",
-              backgroundColor: "#2d2d30",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-              position: "relative",
-            }}>
+            <div >
               <input
                 type="text"
                 placeholder="Organization"
@@ -572,32 +572,15 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
           ) : (
             // View mode
             <div
-            style={{
-              
-              borderRadius: "8px",
-              padding: "12px",
-              backgroundColor: "#1c1c1e",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px)";
-              e.currentTarget.style.boxShadow =
-                "0 10px 30px rgba(0, 0, 0, 0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow =
-                "0 4px 8px rgba(0, 0, 0, 0.1)";
-            }}>
+       >
               <h5
-                style={{
-                  color: "#f5f5f5",
-                  fontFamily: "'Roboto Slab', serif",
-                  fontSize: "1.2rem",
-                  marginBottom: "0.5rem",
-                  fontWeight: 700,
-                }}
+               style={{
+                color: "#00d084",
+                fontFamily: "'Roboto Slab', serif",
+                fontSize: "1.4rem",
+                marginBottom: "0.5rem",
+                fontWeight: 700,
+              }}
               >
                 {involvement.role}
               </h5>
@@ -632,15 +615,32 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
               >
                 <strong>Organization:</strong> {involvement.organization}
               </p>
-  
-              {involvement.description
-                .split("*")
-                .slice(1)
-                .map((part, index) => (
-                  <p key={index} style={{ color: "#aaa", fontSize: "0.9rem" }}>
-                    {part}
-                  </p>
-                ))}
+
+              <div
+  style={{
+    marginTop: "20px",
+    marginBottom: "20px",
+    color: "#f5f5f5", // A softer white for better readability
+    whiteSpace: "pre-wrap", // Maintain whitespace and newlines
+    lineHeight: "1.6", // Increase line spacing for better readability
+    fontSize: "1rem", // Adjust font size
+    fontFamily: "'Roboto', sans-serif", // Set a consistent font family
+    backgroundColor: "#2c2c2e", // Slightly different background for contrast
+    padding: "12px", // Add padding around the text
+    borderRadius: "8px", // Rounded corners for a modern look
+    border: "1px solid #444", // Subtle border for separation
+  }}
+>
+{involvement.description.split("**").map((part, index) =>
+  index % 2 === 1 ? (
+    <b key={index} style={{ color: "#00d084", fontWeight: 600 }}>{part}</b> // Bold content
+  ) : (
+    <span key={index}>{part}</span> // Regular content
+  )
+)}
+
+
+</div>
   
               {/* Action buttons */}
               <div
@@ -701,6 +701,9 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                     borderRadius: "8px",
                     padding: "10px 20px",
                     flex: "1",
+                   
+                    cursor: "pointer",
+                    transition: "all 0.3s",
                   }}
                 >
                   <FontAwesomeIcon
