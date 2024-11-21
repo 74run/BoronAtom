@@ -35,6 +35,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchSkills();
@@ -131,21 +132,33 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
     setIsAdding(true);
   };
 
-  const handleAISuggestions = () => {
-    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate/${userID}/skills`)
-      .then((response) => {
-        const { domain, name } = response.data;
-        setNewSkill({
-          _id: '',
-          domain,
-          name,
-          includeInResume: true,
-        });
-      })
-      .catch((error) => {
-        console.error('Error fetching AI suggestions:', error);
+  const handleAISuggestions = async () => {
+    setIsLoading(true); // Start loading
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/userprofile/generate/${userID}/skills`
+      );
+      const { domain, name } = response.data;
+  
+      // Update the new skill with the fetched data
+      setNewSkill({
+        _id: '', // Assuming it's new and will get an ID on save
+        domain,
+        name,
+        includeInResume: true,
       });
+  
+      
+    } catch (error) {
+      console.error('Error fetching AI suggestions:', error);
+  
+      // User-friendly error message
+      alert('Failed to fetch AI suggestions. Please try again later.');
+    } finally {
+      setIsLoading(false); // Stop loading
+    }
   };
+  
 
   const moveSkillUp = (index: number) => {
     if (index > 0) {
@@ -545,22 +558,80 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             }}
           />
           <div className="d-flex gap-2" style={{ display: "flex", gap: "10px" }}>
-            <button
-              className="btn btn-outline-secondary"
-              onClick={handleAISuggestions}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                border: "none",
-                padding: "10px 20px",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                flex: 1,
-              }}
-            >
-              <FontAwesomeIcon icon={faRobot} className="me-2" />
-              Add with AI
-            </button>
+          <button
+  
+  onClick={handleAISuggestions}
+  disabled={isLoading}
+  style={{
+    backgroundColor: isLoading ? '#d1d1d1' : '#6c757d',
+    color: '#fff',
+    border: 'none',
+    padding: '10px 20px',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    flex: 1,
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    transition: 'background-color 0.3s ease',
+  }}
+>
+  {isLoading ? (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.2s',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.4s',
+        }}
+      />
+    </div>
+  ) : (
+    <>
+      <FontAwesomeIcon icon={faRobot} />
+      Add with AI
+    </>
+  )}
+</button>
+
+<style>
+{`
+  @keyframes dot-flashing {
+    0% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0.2;
+    }
+  }
+`}
+</style>
+
   
             <button
               className="btn btn-success"
@@ -601,14 +672,22 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
           className="btn btn-outline-primary"
           onClick={handleAddClick}
           style={{
-            backgroundColor: "#007bff",
+            background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
             color: "#fff",
             border: "none",
-            padding: "10px 20px",
-            borderRadius: "8px",
-            fontSize: "1rem",
-            width: "100%", // Full width on smaller screens
-            marginTop: "20px",
+            borderRadius: "10px", // Slightly rounded corners
+            padding: "0.75rem 1.5rem", // Balanced padding
+            width: "100%", // Full-width button
+            marginTop: "20px", // Space above the button
+            fontSize: "1rem", // Adjusted font size for readability
+            fontWeight: "600", // Bold text for prominence
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center icon and text
+            gap: "10px", // Space between the icon and text
+            cursor: "pointer", // Pointer on hover
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+            transition: "all 0.3s ease", // Smooth hover effect
           }}
         >
           <FontAwesomeIcon icon={faPlus} className="me-2" />

@@ -241,198 +241,246 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
           }}
         >
           {editData && editData.id === certification._id ? (
-            <div >
-              <input
-                type="text"
-                placeholder="Certification Name"
-                value={editData.name}
-                onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
-  
-              <input
-                type="text"
-                placeholder="Issued By"
-                value={editData.issuedBy}
-                onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
-  
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap"  }}>
-                <select
-                  value={editData.issuedDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      issuedDate: { ...editData.issuedDate, month: e.target.value },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-  
-                <select
-                  value={editData.issuedDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      issuedDate: { ...editData.issuedDate, year: e.target.value },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-  
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "1rem" }}>
-                <select
-                  value={editData.expirationDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      expirationDate: { ...editData.expirationDate, month: e.target.value },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-  
-                <select
-                  value={editData.expirationDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      expirationDate: { ...editData.expirationDate, year: e.target.value },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-  
-              <textarea
-                placeholder="Certificate URL"
-                value={editData.url}
-                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginTop: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
-  
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                <button
-                  onClick={handleUpdate}
-                  style={{
-                    backgroundColor: "#4CAF50",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faSave} /> Update
-                </button>
-  
-                <button
-                  onClick={handleCancelEdit}
-                  style={{
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                > Cancel
-                </button>
-              </div>
-            </div>
+           <div
+           style={{
+             border: "1px solid #444",
+             borderRadius: "16px",
+             padding: "20px",
+             marginBottom: "2rem",
+             backgroundColor: "#2d2d30",
+             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+           }}
+         >
+    
+         
+           {/* Certification Name Input */}
+           <input
+             type="text"
+             placeholder="Certification Name"
+             value={editData.name}
+             onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+             style={{
+               borderRadius: "8px",
+               border: "1px solid #555",
+               padding: "14px",
+               fontSize: "1rem",
+               marginBottom: "1.5rem",
+               width: "100%",
+               backgroundColor: "#1c1c1e",
+               color: "#f5f5f5",
+             }}
+           />
+         
+           {/* Issued By Input */}
+           <input
+             type="text"
+             placeholder="Issued By"
+             value={editData.issuedBy}
+             onChange={(e) => setEditData({ ...editData, issuedBy: e.target.value })}
+             style={{
+               borderRadius: "8px",
+               border: "1px solid #555",
+               padding: "14px",
+               fontSize: "1rem",
+               marginBottom: "1.5rem",
+               width: "100%",
+               backgroundColor: "#1c1c1e",
+               color: "#f5f5f5",
+             }}
+           />
+         
+           {/* Issued Date Section */}
+           <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+             Issued Date
+           </h6>
+           <div
+             style={{
+               display: "grid",
+               gridTemplateColumns: "1fr 1fr",
+               gap: "15px",
+               marginBottom: "1.5rem",
+             }}
+           >
+             <select
+               value={editData.issuedDate.month}
+               onChange={(e) =>
+                 setEditData({
+                   ...editData,
+                   issuedDate: { ...editData.issuedDate, month: e.target.value },
+                 })
+               }
+               style={{
+                 borderRadius: "8px",
+                 border: "1px solid #555",
+                 padding: "10px",
+                 backgroundColor: "#1c1c1e",
+                 color: "#f5f5f5",
+                 fontSize: "1rem",
+               }}
+             >
+               <option value="" disabled>
+                 Select Month
+               </option>
+               {months.map((month) => (
+                 <option key={month} value={month}>
+                   {month}
+                 </option>
+               ))}
+             </select>
+         
+             <select
+               value={editData.issuedDate.year}
+               onChange={(e) =>
+                 setEditData({
+                   ...editData,
+                   issuedDate: { ...editData.issuedDate, year: e.target.value },
+                 })
+               }
+               style={{
+                 borderRadius: "8px",
+                 border: "1px solid #555",
+                 padding: "10px",
+                 backgroundColor: "#1c1c1e",
+                 color: "#f5f5f5",
+                 fontSize: "1rem",
+               }}
+             >
+               <option value="" disabled>
+                 Select Year
+               </option>
+               {graduationYears.map((year) => (
+                 <option key={year} value={year}>
+                   {year}
+                 </option>
+               ))}
+             </select>
+           </div>
+         
+           {/* Expiration Date Section */}
+           <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+             Expiration Date
+           </h6>
+           <div
+             style={{
+               display: "grid",
+               gridTemplateColumns: "1fr 1fr",
+               gap: "15px",
+               marginBottom: "1.5rem",
+             }}
+           >
+             <select
+               value={editData.expirationDate.month}
+               onChange={(e) =>
+                 setEditData({
+                   ...editData,
+                   expirationDate: { ...editData.expirationDate, month: e.target.value },
+                 })
+               }
+               style={{
+                 borderRadius: "8px",
+                 border: "1px solid #555",
+                 padding: "10px",
+                 backgroundColor: "#1c1c1e",
+                 color: "#f5f5f5",
+                 fontSize: "1rem",
+               }}
+             >
+               <option value="" disabled>
+                 Select Month
+               </option>
+               {months.map((month) => (
+                 <option key={month} value={month}>
+                   {month}
+                 </option>
+               ))}
+             </select>
+         
+             <select
+               value={editData.expirationDate.year}
+               onChange={(e) =>
+                 setEditData({
+                   ...editData,
+                   expirationDate: { ...editData.expirationDate, year: e.target.value },
+                 })
+               }
+               style={{
+                 borderRadius: "8px",
+                 border: "1px solid #555",
+                 padding: "10px",
+                 backgroundColor: "#1c1c1e",
+                 color: "#f5f5f5",
+                 fontSize: "1rem",
+               }}
+             >
+               <option value="" disabled>
+                 Select Year
+               </option>
+               {graduationYears.map((year) => (
+                 <option key={year} value={year}>
+                   {year}
+                 </option>
+               ))}
+             </select>
+           </div>
+         
+           {/* Certificate URL Input */}
+           <textarea
+             placeholder="Certificate URL"
+             value={editData.url}
+             onChange={(e) => setEditData({ ...editData, url: e.target.value })}
+             style={{
+               borderRadius: "8px",
+               border: "1px solid #555",
+               padding: "14px",
+               fontSize: "1rem",
+               marginBottom: "1.5rem",
+               width: "100%",
+               backgroundColor: "#1c1c1e",
+               color: "#f5f5f5",
+             }}
+           />
+         
+           {/* Action Buttons */}
+           <div
+             style={{
+               display: "flex",
+               justifyContent: "space-between",
+               gap: "10px",
+               marginTop: "20px",
+             }}
+           >
+             <button
+               onClick={handleUpdate}
+               style={{
+                 backgroundColor: "#4CAF50",
+                 color: "#fff",
+                 border: "none",
+                 borderRadius: "8px",
+                 padding: "10px 20px",
+                 flex: "1",
+                 fontSize: "1rem",
+               }}
+             >
+               <FontAwesomeIcon icon={faSave} /> Update
+             </button>
+         
+             <button
+               onClick={handleCancelEdit}
+               style={{
+                 backgroundColor: "#6c757d",
+                 color: "#fff",
+                 border: "none",
+                 borderRadius: "8px",
+                 padding: "10px 20px",
+                 flex: "1",
+                 fontSize: "1rem",
+               }}
+             >
+               Cancel
+             </button>
+           </div>
+         </div>
+         
           ) : (
             <div
             style={{
@@ -490,64 +538,91 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
                 <strong>Certificate URL:</strong> {certification.url}
               </p>
   
-              <div style={{ display: "flex", gap: "10px", marginTop: "1rem" }}>
-                <button
-                  onClick={() =>
-                    handleEditClick(
-                      certification._id,
-                      certification.name,
-                      certification.issuedBy,
-                      certification.issuedDate,
-                      certification.expirationDate,
-                      certification.url,
-                      certification.includeInResume
-                    )
-                  }
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} /> Edit
-                </button>
-  
-                <button
-                  onClick={() => handleDelete(certification._id)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} /> Delete
-                </button>
-  
-                <button
-                  onClick={() => handleToggleInclude(certification._id)}
-                  style={{
-                    backgroundColor: certification.includeInResume
-                      ? "#28a745"
-                      : "#dc3545",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={certification.includeInResume ? faToggleOn : faToggleOff}
-                  /> {certification.includeInResume ? "Included" : "Excluded"}
-                </button>
+              <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  padding: '10px'
+                }}>
+              <button
+  onClick={() =>
+    handleEditClick(
+      certification._id,
+      certification.name,
+      certification.issuedBy,
+      certification.issuedDate,
+      certification.expirationDate,
+      certification.url,
+      certification.includeInResume
+    )
+  }
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faEdit} style={{ marginRight: "8px" }} />
+  Edit
+</button>
+
+<button
+  onClick={() => handleDelete(certification._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #ff4d4d, #ff8080)", // Red gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faTrash} style={{ marginRight: "8px" }} />
+  Delete
+</button>
+
+<button
+  onClick={() => handleToggleInclude(certification._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: certification.includeInResume
+      ? "linear-gradient(to right, #28a745, #8be78b)" // Green gradient for Included
+      : "linear-gradient(to right, #dc3545, #ff7b7b)", // Red gradient for Excluded
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon
+    icon={certification.includeInResume ? faToggleOn : faToggleOff}
+    style={{ marginRight: "8px" }}
+  />
+  {certification.includeInResume ? "Included" : "Excluded"}
+</button>
+
               </div>
             </div>
           )}
@@ -555,216 +630,268 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       ))}
   
       {isAdding && (
-        <div>
-          <input
-            type="text"
-            placeholder="Certification Name"
-            value={newCertification.name}
-            onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-  
-          <input
-            type="text"
-            placeholder="Issued By"
-            value={newCertification.issuedBy}
-            onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-  
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-         
-            <select
-              value={newCertification.issuedDate.month}
-              onChange={(e) =>
-                setNewCertification({
-                  ...newCertification,
-                  issuedDate: { ...newCertification.issuedDate, month: e.target.value },
-                })
-              }
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #444",
-                padding: "10px",
-                backgroundColor: "#1c1c1e",
-                color: "#f5f5f5",
-                flex: "1",
-              }}
-            >
-              <option value="" disabled>
-                Select Month
-              </option>
-              {months.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-  
-            <select
-              value={newCertification.issuedDate.year}
-              onChange={(e) =>
-                setNewCertification({
-                  ...newCertification,
-                  issuedDate: { ...newCertification.issuedDate, year: e.target.value },
-                })
-              }
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #444",
-                padding: "10px",
-                backgroundColor: "#1c1c1e",
-                color: "#f5f5f5",
-                flex: "1",
-              }}
-            >
-              <option value="" disabled>
-                Select Year
-              </option>
-              {graduationYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-  
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "1rem" }}>
-            <select
-              value={newCertification.expirationDate.month}
-              onChange={(e) =>
-                setNewCertification({
-                  ...newCertification,
-                  expirationDate: { ...newCertification.expirationDate, month: e.target.value },
-                })
-              }
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #444",
-                padding: "10px",
-                backgroundColor: "#1c1c1e",
-                color: "#f5f5f5",
-                flex: "1",
-              }}
-            >
-              <option value="" disabled>
-                Select Month
-              </option>
-              {months.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-  
-            <select
-              value={newCertification.expirationDate.year}
-              onChange={(e) =>
-                setNewCertification({
-                  ...newCertification,
-                  expirationDate: { ...newCertification.expirationDate, year: e.target.value },
-                })
-              }
-              style={{
-                borderRadius: "8px",
-                border: "1px solid #444",
-                padding: "10px",
-                backgroundColor: "#1c1c1e",
-                color: "#f5f5f5",
-                flex: "1",
-              }}
-            >
-              <option value="" disabled>
-                Select Year
-              </option>
-              {graduationYears.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-          </div>
-  
-          <textarea
-            placeholder="Certificate URL"
-            value={newCertification.url}
-            onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginTop: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-  
-          <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-            <button
-              onClick={handleSaveClick}
-              style={{
-                backgroundColor: "#4CAF50",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              <FontAwesomeIcon icon={faSave} />
-              Save
-            </button>
-  
-            <button
-              onClick={() => setIsAdding(false)}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+       <div
+       style={{
+         border: "1px solid #444",
+         borderRadius: "16px",
+         padding: "20px",
+         marginBottom: "2rem",
+         backgroundColor: "#2d2d30",
+         boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+       }}
+     >
+    
+     
+       {/* Certification Name Input */}
+       <input
+         type="text"
+         placeholder="Certification Name"
+         value={newCertification.name}
+         onChange={(e) => setNewCertification({ ...newCertification, name: e.target.value })}
+         style={{
+           borderRadius: "8px",
+           border: "1px solid #555",
+           padding: "14px",
+           fontSize: "1rem",
+           marginBottom: "1.5rem",
+           width: "100%",
+           backgroundColor: "#1c1c1e",
+           color: "#f5f5f5",
+         }}
+       />
+     
+       {/* Issued By Input */}
+       <input
+         type="text"
+         placeholder="Issued By"
+         value={newCertification.issuedBy}
+         onChange={(e) => setNewCertification({ ...newCertification, issuedBy: e.target.value })}
+         style={{
+           borderRadius: "8px",
+           border: "1px solid #555",
+           padding: "14px",
+           fontSize: "1rem",
+           marginBottom: "1.5rem",
+           width: "100%",
+           backgroundColor: "#1c1c1e",
+           color: "#f5f5f5",
+         }}
+       />
+     
+       {/* Issued Date Section */}
+       <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+         Issued Date
+       </h6>
+       <div
+         style={{
+           display: "grid",
+           gridTemplateColumns: "1fr 1fr",
+           gap: "15px",
+           marginBottom: "1.5rem",
+         }}
+       >
+         <select
+           value={newCertification.issuedDate.month}
+           onChange={(e) =>
+             setNewCertification({
+               ...newCertification,
+               issuedDate: { ...newCertification.issuedDate, month: e.target.value },
+             })
+           }
+           style={{
+             borderRadius: "8px",
+             border: "1px solid #555",
+             padding: "10px",
+             backgroundColor: "#1c1c1e",
+             color: "#f5f5f5",
+             fontSize: "1rem",
+           }}
+         >
+           <option value="" disabled>
+             Select Month
+           </option>
+           {months.map((month) => (
+             <option key={month} value={month}>
+               {month}
+             </option>
+           ))}
+         </select>
+     
+         <select
+           value={newCertification.issuedDate.year}
+           onChange={(e) =>
+             setNewCertification({
+               ...newCertification,
+               issuedDate: { ...newCertification.issuedDate, year: e.target.value },
+             })
+           }
+           style={{
+             borderRadius: "8px",
+             border: "1px solid #555",
+             padding: "10px",
+             backgroundColor: "#1c1c1e",
+             color: "#f5f5f5",
+             fontSize: "1rem",
+           }}
+         >
+           <option value="" disabled>
+             Select Year
+           </option>
+           {graduationYears.map((year) => (
+             <option key={year} value={year}>
+               {year}
+             </option>
+           ))}
+         </select>
+       </div>
+     
+       {/* Expiration Date Section */}
+       <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+         Expiration Date
+       </h6>
+       <div
+         style={{
+           display: "grid",
+           gridTemplateColumns: "1fr 1fr",
+           gap: "15px",
+           marginBottom: "1.5rem",
+         }}
+       >
+         <select
+           value={newCertification.expirationDate.month}
+           onChange={(e) =>
+             setNewCertification({
+               ...newCertification,
+               expirationDate: { ...newCertification.expirationDate, month: e.target.value },
+             })
+           }
+           style={{
+             borderRadius: "8px",
+             border: "1px solid #555",
+             padding: "10px",
+             backgroundColor: "#1c1c1e",
+             color: "#f5f5f5",
+             fontSize: "1rem",
+           }}
+         >
+           <option value="" disabled>
+             Select Month
+           </option>
+           {months.map((month) => (
+             <option key={month} value={month}>
+               {month}
+             </option>
+           ))}
+         </select>
+     
+         <select
+           value={newCertification.expirationDate.year}
+           onChange={(e) =>
+             setNewCertification({
+               ...newCertification,
+               expirationDate: { ...newCertification.expirationDate, year: e.target.value },
+             })
+           }
+           style={{
+             borderRadius: "8px",
+             border: "1px solid #555",
+             padding: "10px",
+             backgroundColor: "#1c1c1e",
+             color: "#f5f5f5",
+             fontSize: "1rem",
+           }}
+         >
+           <option value="" disabled>
+             Select Year
+           </option>
+           {graduationYears.map((year) => (
+             <option key={year} value={year}>
+               {year}
+             </option>
+           ))}
+         </select>
+       </div>
+     
+       {/* Certificate URL Input */}
+       <textarea
+         placeholder="Certificate URL"
+         value={newCertification.url}
+         onChange={(e) => setNewCertification({ ...newCertification, url: e.target.value })}
+         style={{
+           borderRadius: "8px",
+           border: "1px solid #555",
+           padding: "14px",
+           fontSize: "1rem",
+           marginBottom: "1.5rem",
+           width: "100%",
+           backgroundColor: "#1c1c1e",
+           color: "#f5f5f5",
+         }}
+       />
+     
+       {/* Action Buttons */}
+       <div
+         style={{
+           display: "flex",
+           justifyContent: "space-between",
+           gap: "10px",
+           flexWrap: "wrap",
+         }}
+       >
+         <button
+           onClick={handleSaveClick}
+           style={{
+             backgroundColor: "#4CAF50",
+             color: "#fff",
+             border: "none",
+             borderRadius: "8px",
+             padding: "10px 20px",
+             flex: "1",
+             fontSize: "1rem",
+           }}
+         >
+           <FontAwesomeIcon icon={faSave} /> Save
+         </button>
+     
+         <button
+           onClick={() => setIsAdding(false)}
+           style={{
+             backgroundColor: "#6c757d",
+             color: "#fff",
+             border: "none",
+             borderRadius: "8px",
+             padding: "10px 20px",
+             flex: "1",
+             fontSize: "1rem",
+           }}
+         >
+           Cancel
+         </button>
+       </div>
+     </div>
+     
       )}
   
       {!isAdding && (
         <button
           onClick={handleAddClick}
           style={{
-            backgroundColor: "#007bff",
+            background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
             color: "#fff",
-            borderRadius: "8px",
-            padding: "10px 20px",
-            width: "100%",
-            marginTop: "20px",
             border: "none",
-            cursor: "pointer",
-            transition: "all 0.3s",
+            borderRadius: "10px", // Slightly rounded corners
+            padding: "0.75rem 1.5rem", // Balanced padding
+            width: "100%", // Full-width button
+            marginTop: "20px", // Space above the button
+            fontSize: "1rem", // Adjusted font size for readability
+            fontWeight: "600", // Bold text for prominence
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center icon and text
+            gap: "10px", // Space between the icon and text
+            cursor: "pointer", // Pointer on hover
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+            transition: "all 0.3s ease", // Smooth hover effect
           }}
         >
           <FontAwesomeIcon icon={faPlus} />
