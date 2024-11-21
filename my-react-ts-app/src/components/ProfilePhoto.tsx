@@ -198,43 +198,51 @@ const Profile: React.FC<ProfileProps> = () => {
       }}
     >
       {/* Profile Header Section */}
-      <div
-        className="profile-header"
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <div style={{ flex: "1", textAlign: "center" }}>
-          <h4 style={{ fontSize: "1.8rem", fontWeight: "600" }}>
-            {eduDetails?.contact?.[0]?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
-          </h4>
-          <p style={{ color: "#ccc", fontSize: "1rem", marginBottom: "1rem" }}>
-            {eduDetails?.contact?.[0]?.email || userDetails?.email}
-          </p>
-          <button
-            onClick={openModal}
-            style={{
-              padding: "0.7rem 1.5rem",
-              background: "linear-gradient(to right, #4caf50, #81c784)",
-              color: "#fff",
-              border: "none",
-              borderRadius: "25px",
-              cursor: "pointer",
-              fontWeight: "500",
-              fontSize: "1rem",
-              transition: "0.3s ease",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-            }}
-          >
-            <MdEdit size={20} style={{ marginRight: "8px" }} />
-            Edit Contact Info
-          </button>
-        </div>
-      </div>
+  <div
+  className="profile-header"
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "2rem",
+    gap: "1rem", // Add gap between items
+  }}
+>
+  <div style={{ flex: "1", textAlign: "center" }}>
+    <h4 style={{ fontSize: "1.8rem", fontWeight: "600" }}>
+      {eduDetails?.contact?.[0]?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
+    </h4>
+    <p style={{ color: "#ccc", fontSize: "1rem", marginBottom: "1rem" }}>
+      {eduDetails?.contact?.[0]?.email || userDetails?.email}
+    </p>
+    <button
+      onClick={openModal}
+      style={{
+        padding: "0.7rem 1.5rem",
+        background: "linear-gradient(to right, #4caf50, #81c784)",
+        color: "#fff",
+        border: "none",
+        borderRadius: "25px",
+        cursor: "pointer",
+        fontWeight: "500",
+        fontSize: "1rem",
+        transition: "0.3s ease",
+        boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+        marginBottom: "1rem", // Add margin below the button
+      }}
+    >
+      <MdEdit size={20} style={{ marginRight: "8px" }} />
+      Edit Contact Info
+    </button>
+  </div>
+
+  <div style={{ marginTop: "1rem", flex: "1" }}> {/* Optional margin-top for PDFResume */}
+    <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+  </div>
+</div>
+
+
 
       {/* Speedometers Section */}
       <div
