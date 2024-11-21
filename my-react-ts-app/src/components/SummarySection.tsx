@@ -36,7 +36,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({
   const [generatedText, setGeneratedText] = useState<string>('');
   const [isAdding, setIsAdding] = useState(false);
   const { userID } = useParams();
-
+  const [isLoading, setIsLoading] = useState(false);
   const API_BASE_URL = process.env.REACT_APP_API_URL;
 
   // Prepopulate newSummary with parsedSummary if it's available
@@ -67,50 +67,58 @@ const SummarySection: React.FC<SummarySectionProps> = ({
       });
   };
 
-  const fetchGeneratedText = () => {
-    axios
-      .get(`${API_BASE_URL}/api/userprofile/generate/${userID}`)
-      .then((response) => {
-        const generatedText = response.data.text;
-        setGeneratedText(generatedText);
-  
-        const words = generatedText.split(' ');
-  
-        const printWords = (index: number) => {
-          if (index < words.length) {
-            const nextWord = words[index];
-  
-            if (editData) {
-              // Replace content instead of appending
-              setEditData((prevData) => ({
-                ...prevData!,
-                content: words.slice(0, index + 1).join(' '), // Replace the content
-              }));
-            } else {
-              // For new summaries, replace content instead of appending
-              setNewSummary((prevSummary) => ({
-                ...prevSummary,
-                content: words.slice(0, index + 1).join(' '), // Replace the content
-              }));
-            }
-  
-            setTimeout(() => {
-              printWords(index + 1);
-            }, 200);
-          }
-        };
-  
-        printWords(0);
-      })
-      .catch((error) => {
-        console.error('Error fetching generated text:', error);
-      });
-  };
-  
 
-  const handleGenerateTextClick = () => {
-    fetchGeneratedText();
-  };
+
+const fetchGeneratedText = () => {
+  setIsLoading(true); // Start loading
+  axios
+    .get(`${API_BASE_URL}/api/userprofile/generate/${userID}`)
+    .then((response) => {
+      const generatedText = response.data.text;
+      setGeneratedText(generatedText);
+
+      const words = generatedText.split(' ');
+
+      const printWords = (index: number) => {
+        if (index < words.length) {
+          const currentContent = words.slice(0, index + 1).join(' ');
+
+          if (editData) {
+            // Update content for editing mode
+            setEditData((prevData) => ({
+              ...prevData!,
+              content: currentContent,
+            }));
+          } else {
+            // Update content for new summaries
+            setNewSummary((prevSummary) => ({
+              ...prevSummary,
+              content: currentContent,
+            }));
+          }
+
+          // Continue printing words with delay
+          setTimeout(() => {
+            printWords(index + 1);
+          }, 200); // Adjust speed here (200ms per word)
+        } else {
+          setIsLoading(false); // Stop loading when done
+        }
+      };
+
+      printWords(0);
+    })
+    .catch((error) => {
+      console.error('Error fetching generated text:', error);
+      alert('Failed to generate text. Please try again later.'); // User-friendly error message
+      setIsLoading(false); // Ensure loading is stopped on error
+    });
+};
+
+const handleGenerateTextClick = () => {
+  fetchGeneratedText();
+};
+
 
   const handleEditClick = (id: string, content: string) => {
     setEditData({ id, content });
@@ -259,27 +267,81 @@ const SummarySection: React.FC<SummarySectionProps> = ({
                 }}
               />
            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleGenerateTextClick}
-                  style={{
-                    backgroundColor: '#00cec9',
-                    color: '#fff',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '10px',
-                    fontSize: '0.9rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <FontAwesomeIcon icon={faMagic} />
-                  AI Summary
-                </motion.button>
+           <motion.button
+  whileHover={{ scale: isLoading ? 1 : 1.05 }}
+  whileTap={{ scale: isLoading ? 1 : 0.95 }}
+  onClick={handleGenerateTextClick}
+  disabled={isLoading}
+  style={{
+    backgroundColor: isLoading ? '#d1d1d1' : '#00cec9',
+    color: '#fff',
+    padding: '0.5rem 1rem',
+    borderRadius: '10px',
+    fontSize: '0.9rem',
+    border: 'none',
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+    transition: 'background-color 0.3s ease',
+  }}
+>
+  {isLoading ? (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.2s',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.4s',
+        }}
+      />
+    </div>
+  ) : (
+    <>
+      <FontAwesomeIcon icon={faMagic} />
+      AI Summary
+    </>
+  )}
+</motion.button>
+
+<style>
+{`
+  @keyframes dot-flashing {
+    0% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0.2;
+    }
+  }
+`}
+</style>
+
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -342,48 +404,52 @@ const SummarySection: React.FC<SummarySectionProps> = ({
           {!viewOnly && !editData && (
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
           
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleEditClick(summary._id, summary.content)}
-                style={{
-                  backgroundColor: '#6c5ce7',
-                  color: '#fff',
-                  borderRadius: '10px',
-                  padding: '0.5rem 1rem',
-                  fontSize: '0.9rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                }}
-              >
-                <FontAwesomeIcon icon={faEdit} />
-                Edit
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => handleDelete(summary._id)}
-                style={{
-                  backgroundColor: '#e74c3c',
-                  color: '#fff',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '10px',
-                  fontSize: '0.9rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-                Delete
-              </motion.button>
+          <motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => handleEditClick(summary._id, summary.content)}
+  style={{
+    background: 'linear-gradient(to right, #6c5ce7, #a29bfe)', // Purple gradient
+    color: '#fff',
+    borderRadius: '10px',
+    padding: '0.5rem 1rem',
+    fontSize: '0.9rem',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px', // Space between icon and text
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)', // Subtle shadow
+    transition: 'all 0.3s ease', // Smooth hover animation
+  }}
+>
+  <FontAwesomeIcon icon={faEdit} />
+  Edit
+</motion.button>
+
+<motion.button
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+  onClick={() => handleDelete(summary._id)}
+  style={{
+    background: 'linear-gradient(to right, #e74c3c, #ff6b6b)', // Red gradient
+    color: '#fff',
+    borderRadius: '10px',
+    padding: '0.5rem 1rem',
+    fontSize: '0.9rem',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px', // Space between icon and text
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.2)', // Subtle shadow
+    transition: 'all 0.3s ease', // Smooth hover animation
+  }}
+>
+  <FontAwesomeIcon icon={faTrash} />
+  Delete
+</motion.button>
+
             </div>
           )}
         </motion.div>
@@ -410,27 +476,80 @@ const SummarySection: React.FC<SummarySectionProps> = ({
             placeholder="Write your new summary here..."
           />
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={handleGenerateTextClick}
-              style={{
-                backgroundColor: '#00cec9',
-                color: '#fff',
-                borderRadius: '10px',
-                padding: '0.5rem 1rem',
-                fontSize: '1rem',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-              }}
-            >
-              <FontAwesomeIcon icon={faMagic} />
-              AI Summary
-            </motion.button>
+          <motion.button
+  whileHover={{ scale: isLoading ? 1 : 1.05 }}
+  whileTap={{ scale: isLoading ? 1 : 0.95 }}
+  onClick={handleGenerateTextClick}
+  disabled={isLoading}
+  style={{
+    backgroundColor: isLoading ? '#d1d1d1' : '#00cec9',
+    color: '#fff',
+    padding: '0.5rem 1rem',
+    borderRadius: '10px',
+    fontSize: '0.9rem',
+    border: 'none',
+    cursor: isLoading ? 'not-allowed' : 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+    transition: 'background-color 0.3s ease',
+  }}
+>
+  {isLoading ? (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.2s',
+        }}
+      />
+      <div
+        style={{
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: '#fff',
+          animation: 'dot-flashing 1.2s infinite ease-in-out',
+          animationDelay: '0.4s',
+        }}
+      />
+    </div>
+  ) : (
+    <>
+      <FontAwesomeIcon icon={faMagic} />
+      AI Summary
+    </>
+  )}
+</motion.button>
+
+<style>
+{`
+  @keyframes dot-flashing {
+    0% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0.2;
+    }
+  }
+`}
+</style>
             <div style={{ display: 'flex', gap: '12px' }}>
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -483,28 +602,32 @@ const SummarySection: React.FC<SummarySectionProps> = ({
       )}
 
 {!isAdding && summarys.length === 0 && (
-        <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={handleAddClick}
-        style={{
-          backgroundColor: '#6c5ce7',
-          color: '#fff',
-          borderRadius: '10px',
-          padding: '0.75rem 1.5rem',
-          fontSize: '1rem',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-          margin: '0 auto',
-        }}
-      >
-        <FontAwesomeIcon icon={faPlus} />
-        Add Summary
-      </motion.button>
+       <motion.button
+       whileHover={{ scale: 1.1 }}
+       whileTap={{ scale: 0.95 }}
+       onClick={handleAddClick}
+       style={{
+         background: 'linear-gradient(to right, #6c5ce7, #a29bfe)', // Gradient for a dynamic look
+         color: '#fff',
+         borderRadius: '12px', // Slightly more rounded corners for a modern feel
+         padding: '0.75rem 1.5rem', // Balanced padding for button size
+         fontSize: '1rem',
+         fontWeight: '600', // Slightly bolder text
+         border: 'none',
+         cursor: 'pointer',
+         display: 'flex',
+         alignItems: 'center',
+         justifyContent: 'center',
+         gap: '12px', // Consistent spacing between icon and text
+         boxShadow: '0 6px 12px rgba(0, 0, 0, 0.3)', // More prominent shadow for depth
+         transition: 'all 0.3s ease', // Smooth hover and tap animations
+         margin: '0 auto', // Centers the button
+       }}
+     >
+       <FontAwesomeIcon icon={faPlus} style={{ fontSize: '1.2rem' }} /> {/* Slightly larger icon */}
+       Add Summary
+     </motion.button>
+     
       )}
 
       

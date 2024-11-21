@@ -7,6 +7,8 @@ import { MdEdit } from 'react-icons/md';
 import ModalContact from "./ModalContact";
 import PDFResume from './MyPdfViewer';
 import UploadResume from './UploadResume';
+import ReactSpeedometer, { Transition } from "react-d3-speedometer"; // Import React Speedometer
+
 
 interface UserDetails {
   firstName: string;
@@ -28,18 +30,17 @@ interface EduDetails {
   }>;
   experience: Array<{
     jobTitle: string;
-  company: string;
-  location: string;
-  startDate: { month: string; year: string };
-  endDate: { month: string; year: string };
-  description: string;
-  includeInResume: boolean;
-  isPresent?: boolean;
-  }>
+    company: string;
+    location: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    description: string;
+    includeInResume: boolean;
+    isPresent?: boolean;
+  }>;
   summary: Array<{
-      content: string;
-    
-  }>
+    content: string;
+  }>;
   project: Array<{
     name: string;
     startDate: { month: string; year: string };
@@ -48,42 +49,41 @@ interface EduDetails {
     description: string;
     includeInResume: boolean;
     isPresent?: boolean;
-  }>
+  }>;
   involvement: Array<{
-  organization: string;
-  role: string;
-  startDate: { month: string; year: string };
-  endDate: { month: string; year: string };
-  description: string;
-  includeInResume: boolean;
-  isPresent?: boolean;
-  }>
+    organization: string;
+    role: string;
+    startDate: { month: string; year: string };
+    endDate: { month: string; year: string };
+    description: string;
+    includeInResume: boolean;
+    isPresent?: boolean;
+  }>;
   certification: Array<{
-  name: string;
-  issuedBy: string;
-  issuedDate: { month: string; year: string };
-  expirationDate: { month: string; year: string };
-  url: string;
-  includeInResume: boolean;
-  }>
+    name: string;
+    issuedBy: string;
+    issuedDate: { month: string; year: string };
+    expirationDate: { month: string; year: string };
+    url: string;
+    includeInResume: boolean;
+  }>;
   skills: Array<{
     domain: string;
     name: string;
     includeInResume: boolean;
-  }>
+  }>;
   contact: Array<{
     name: string;
     email: string;
     phoneNumber: string;
     linkedIn: string;
-  }>
+  }>;
 }
 
 interface ContactDetails {
   name: string;
   email: string;
   phoneNumber: string;
-
 }
 
 interface ProfileProps {
@@ -100,6 +100,9 @@ const Profile: React.FC<ProfileProps> = () => {
   const { userID } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [profileCompletion, setProfileCompletion] = useState(0); // Profile completion percentage
+  const [atsScore, setAtsScore] = useState(0); // ATS score
+
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -112,6 +115,34 @@ const Profile: React.FC<ProfileProps> = () => {
     avatarUrl.current = imgSrc;
   };
 
+  const calculateProfileCompletion = (eduDetails: EduDetails | null): number => {
+    if (!eduDetails) return 0;
+
+    const totalSections = 6; // Adjust based on the number of profile sections
+    let completedSections = 0;
+
+    if (eduDetails.education?.length > 0) completedSections++;
+    if (eduDetails.experience?.length > 0) completedSections++;
+    if (eduDetails.project?.length > 0) completedSections++;
+    if (eduDetails.skills?.length > 0) completedSections++;
+    if (eduDetails.certification?.length > 0) completedSections++;
+    if (eduDetails.summary?.length > 0) completedSections++;
+
+    return Math.round((completedSections / totalSections) * 100);
+  };
+
+  const fetchAtsScore = () => {
+    // Example API call to fetch ATS score
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/ats-score/${userID}`)
+      .then((response) => {
+        setAtsScore(response.data.atsScore || 0);
+      })
+      .catch((error) => {
+        console.error("Error fetching ATS score:", error);
+      });
+  };
+
   useEffect(() => {
     // Fetch user details
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
@@ -121,16 +152,19 @@ const Profile: React.FC<ProfileProps> = () => {
       .catch(error => {
         console.error('Error fetching user details:', error);
       });
-  
+
     // Fetch education details
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
       .then(eduResponse => {
-        setEduDetails(eduResponse.data.user); // Assuming eduDetails are inside `data.eduDetails`
+        const fetchedEduDetails = eduResponse.data.user;
+        setEduDetails(fetchedEduDetails);
+        const completion = calculateProfileCompletion(fetchedEduDetails);
+        setProfileCompletion(completion); // Update profile completion
       })
       .catch(error => {
         console.error('Error fetching education details:', error);
       });
-  
+
     // Fetch the profile image
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
       .then(response => {
@@ -146,11 +180,10 @@ const Profile: React.FC<ProfileProps> = () => {
       .catch(error => {
         console.error('Error fetching image:', error);
       });
-  
-  }, [userID]);
-  
-  
 
+    // Fetch ATS score
+    fetchAtsScore();
+  }, [userID]);
 
   return (
     <div
@@ -158,10 +191,10 @@ const Profile: React.FC<ProfileProps> = () => {
       style={{
         fontFamily: "'Roboto', sans-serif",
         color: "#f5f5f5",
-        backgroundColor: "#1c1c1e",
+        background: "linear-gradient(145deg, #1e1e2f, #222232)",
         padding: "24px",
-        borderRadius: "12px",
-        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
+        borderRadius: "16px",
+        boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
       }}
     >
       {/* Profile Header Section */}
@@ -173,61 +206,83 @@ const Profile: React.FC<ProfileProps> = () => {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "2rem",
-          textAlign: "center", // Center text by default on smaller screens
         }}
       >
-
-        {/* User Details and Edit Contact Info */}
-        <div style={{ flex: "1", textAlign: "center", marginTop: "10px" }}>
-  <h4
-    style={{
-      fontWeight: "bold",
-      fontSize: "1.7rem",
-      color: "#f5f5f5",
-      marginBottom: "0.5rem",
-    }}
-  >
-    {/* Safely access eduDetails.contact[0]?.name or fallback to user's full name */}
-    {eduDetails?.contact?.[0]?.name?.trim() || `${userDetails?.firstName} ${userDetails?.lastName}`}
-  </h4>
-          <p
-            style={{
-              fontSize: "1rem",
-              color: "#bbb",
-              marginBottom: "1.5rem",
-            }}
-          >
-            {eduDetails?.contact?.[0]?.email?.trim() || userDetails?.email}
+        <div style={{ flex: "1", textAlign: "center" }}>
+          <h4 style={{ fontSize: "1.8rem", fontWeight: "600" }}>
+            {eduDetails?.contact?.[0]?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
+          </h4>
+          <p style={{ color: "#ccc", fontSize: "1rem", marginBottom: "1rem" }}>
+            {eduDetails?.contact?.[0]?.email || userDetails?.email}
           </p>
-
           <button
             onClick={openModal}
             style={{
-              padding: "0.6rem 1.5rem",
-              backgroundColor: "#28a745",
+              padding: "0.7rem 1.5rem",
+              background: "linear-gradient(to right, #4caf50, #81c784)",
               color: "#fff",
               border: "none",
               borderRadius: "25px",
-              fontSize: "0.9rem",
               cursor: "pointer",
-              boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-              transition: "background-color 0.3s",
-              marginBottom: "20px",
+              fontWeight: "500",
+              fontSize: "1rem",
+              transition: "0.3s ease",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
             }}
           >
             <MdEdit size={20} style={{ marginRight: "8px" }} />
             Edit Contact Info
           </button>
+        </div>
+      </div>
 
-          <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+      {/* Speedometers Section */}
+      <div
+        className="speedometers"
+        style={{
+          display: "flex",
+          gap: "20px",
+          justifyContent: "space-around",
+          marginBottom: "2rem",
+        }}
+      >
+        <div>
+          <h5 style={{ textAlign: "center", marginBottom: "1rem", color: "#f5f5f5" }}>Profile Completion</h5>
+          <ReactSpeedometer
+            value={profileCompletion}
+            minValue={0}
+            maxValue={100}
+            needleColor="#f44336"
+            startColor="#f44336"
+            endColor="#4caf50"
+            segments={7}
+            needleTransition={Transition.easeElastic}
+            needleTransitionDuration={3000}
+            width={250}
+            height={160}
+          />
         </div>
 
-   
-    
-
-      {/* Upload Resume Section */}
-      <UploadResume userID={userID} />
+        <div>
+          <h5 style={{ textAlign: "center", marginBottom: "1rem", color: "#f5f5f5" }}>ATS Score</h5>
+          <ReactSpeedometer
+            value={atsScore}
+            minValue={0}
+            maxValue={100}
+            needleColor="#2196f3"
+            startColor="#f44336"
+            endColor="#4caf50"
+            segments={7}
+            needleTransition={Transition.easeElastic}
+            needleTransitionDuration={3000}
+            width={250}
+            height={160}
+          />
+        </div>
       </div>
+
+      {/* Upload Resume */}
+      {/* <UploadResume userID={userID} /> */}
 
       {/* Edit Avatar Modal */}
       {modalOpen && (

@@ -38,6 +38,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
     isPresent: false, // Initialize as false
   });
   const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { userID } = useParams();
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -225,30 +226,45 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
     }
   };
 
-  const handleGenerateDescription = (organization: string, role: string) => {
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-involvement-description/${userID}/${organization}/${role}`, {
-        params: { organization, role },
-      })
-      .then((response) => {
-        const generatedDescription = response.data.text;
-        if (editData) {
-          setEditData((prevData) => ({
-            ...prevData!,
-            description: generatedDescription,
-          }));
-        } else {
-          setNewInvolvement((prevData) => ({
-            ...prevData,
-            description: generatedDescription,
-          }));
+  const handleGenerateDescription = async (organization: string, role: string) => {
+    try {
+      // Set loading state for the description generation process
+      setIsLoading(true);
+  
+      // Make the API request
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/api/userprofile/generate-involvement-description/${userID}/${organization}/${role}`,
+        {
+          params: { organization, role },
         }
-      })
-      .catch((error) => {
-        console.error('Error generating description:', error);
-      });
+      );
+  
+      const generatedDescription = response.data.text;
+  
+      // Update the description in the appropriate form state (edit or new involvement)
+      if (editData) {
+        setEditData((prevData) => ({
+          ...prevData!,
+          description: generatedDescription,
+        }));
+      } else {
+        setNewInvolvement((prevData) => ({
+          ...prevData,
+          description: generatedDescription,
+        }));
+      }
+    } catch (error) {
+      // Log the error for debugging purposes
+      console.error("Error generating description:", error);
+  
+      // Optional: Show a user-friendly error message
+      alert("Failed to generate description. Please try again later.");
+    } finally {
+      // Reset loading state
+      setIsLoading(false);
+    }
   };
-
+  
   const handleTogglePresent = () => {
     if (editData) {
       setEditData({ ...editData, isPresent: !editData.isPresent });
@@ -310,265 +326,341 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
         >
           {editData && editData.id === involvement._id ? (
             // Edit mode
-            <div >
-              <input
-                type="text"
-                placeholder="Organization"
-                value={editData.organization}
+            <div
+            style={{
+              border: "1px solid #444",
+              borderRadius: "16px",
+              padding: "20px",
+              marginBottom: "2rem",
+              backgroundColor: "#2d2d30",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+        
+          
+            {/* Organization Input */}
+            <input
+              type="text"
+              placeholder="Organization"
+              value={editData.organization}
+              onChange={(e) => setEditData({ ...editData, organization: e.target.value })}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Role Input */}
+            <input
+              type="text"
+              placeholder="Role"
+              value={editData.role}
+              onChange={(e) => setEditData({ ...editData, role: e.target.value })}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Start and End Date Section */}
+            <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+              Start Date
+            </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <select
+                value={editData.startDate.month}
                 onChange={(e) =>
-                  setEditData({ ...editData, organization: e.target.value })
+                  setEditData({
+                    ...editData,
+                    startDate: { ...editData.startDate, month: e.target.value },
+                  })
                 }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
+                  fontSize: "1rem",
                 }}
-              />
-  
-              <input
-                type="text"
-                placeholder="Role"
-                value={editData.role}
+              >
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+          
+              <select
+                value={editData.startDate.year}
                 onChange={(e) =>
-                  setEditData({ ...editData, role: e.target.value })
+                  setEditData({
+                    ...editData,
+                    startDate: { ...editData.startDate, year: e.target.value },
+                  })
                 }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
-                }}
-              />
-  
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <select
-                  value={editData.startDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-  
-                <select
-                  value={editData.startDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-  
-                <select
-                  value={editData.endDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-  
-                <select
-                  value={editData.endDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-  
-              <button
-                className={`toggle-btn ${
-                  editData.isPresent ? "present" : "not-present"
-                }`}
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "8px",
                   fontSize: "1rem",
-                  marginTop: "10px",
-                  marginBottom: "20px",
-                  border: "none",
-                  backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
                 }}
               >
-                <FontAwesomeIcon
-                  icon={editData.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {editData.isPresent ? "Present" : "Not Present"}
-              </button>
-  
-              <textarea
-                placeholder="Description"
-                value={editData.description}
-                onChange={handleEditDescriptionChange}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  height: "200px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
-  
-              {/* Action buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "10px",
-                  flexWrap: "wrap",
-                }}
-              >
-                <button
-                  onClick={handleUpdate}
-                  style={{
-                    backgroundColor: "#4CAF50",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faSave} />
-                  Update
-                </button>
-  
-                <button
-                  onClick={handleCancelEdit}
-                  style={{
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  Cancel
-                </button>
-  
-                <button
-                  onClick={() => handleGenerateDescription(editData.organization, editData.role)}
-                  style={{
-                    backgroundColor: "#17a2b8",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faMagic} />
-                  AI Description
-                </button>
-              </div>
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
+          
+            <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+              End Date
+            </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <select
+                value={editData.endDate.month}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: { ...editData.endDate, month: e.target.value },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+          
+              <select
+                value={editData.endDate.year}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: { ...editData.endDate, year: e.target.value },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          
+            {/* Toggle Present Button */}
+            <button
+              onClick={handleTogglePresent}
+              style={{
+                backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                width: "100%",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={editData.isPresent ? faToggleOn : faToggleOff}
+                style={{ marginRight: "8px" }}
+              />
+              {editData.isPresent ? "Present" : "Not Present"}
+            </button>
+          
+            {/* Description Textarea */}
+            <textarea
+              placeholder="Description"
+              value={editData.description}
+              onChange={handleEditDescriptionChange}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                height: "200px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Action Buttons */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={handleUpdate}
+                style={{
+                  backgroundColor: "#4CAF50",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                <FontAwesomeIcon icon={faSave} /> Update
+              </button>
+          
+              <button
+                onClick={handleCancelEdit}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                Cancel
+              </button>
+          
+              <button
+  onClick={() => handleGenerateDescription(editData.organization, editData.role)}
+  disabled={isLoading}
+  style={{
+    backgroundColor: isLoading ? "#17a2b8" : "#17a2b8", // Keep button color visible
+    color: "#fff",
+    borderRadius: "8px",
+    padding: "10px 20px",
+    flex: "1",
+    border: "none",
+    cursor: isLoading ? "not-allowed" : "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1rem",
+    opacity: isLoading ? 0.8 : 1, // Slight dim effect during loading
+    transition: "opacity 0.3s ease",
+  }}
+>
+  {isLoading ? (
+    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+        }}
+      ></div>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+          animationDelay: "0.2s",
+        }}
+      ></div>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+          animationDelay: "0.4s",
+        }}
+      ></div>
+    </div>
+  ) : (
+    <>
+      <FontAwesomeIcon icon={faMagic} />
+      <span style={{ marginLeft: "8px" }}>AI Description</span>
+    </>
+  )}
+</button>
+
+<style>
+  {`
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+  `}
+</style>
+            </div>
+          </div>
+          
           ) : (
             // View mode
             <div
@@ -652,64 +744,84 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
                 }}
               >
                 <button
-                  onClick={() =>
-                    handleEditClick(
-                      involvement._id,
-                      involvement.organization,
-                      involvement.role,
-                      involvement.startDate,
-                      involvement.endDate,
-                      involvement.description,
-                      involvement.includeInResume,
-                      involvement.isPresent || false
-                    )
-                  }
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} /> Edit
-                </button>
-  
-                <button
-                  onClick={() => handleDelete(involvement._id)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} /> Delete
-                </button>
-  
-                <button
-                  onClick={() => handleToggleInclude(involvement._id)}
-                  style={{
-                    backgroundColor: involvement.includeInResume
-                      ? "#28a745"
-                      : "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                   
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={involvement.includeInResume ? faToggleOn : faToggleOff}
-                  /> {involvement.includeInResume ? "Included" : "Excluded"}
-                </button>
+  onClick={() =>
+    handleEditClick(
+      involvement._id,
+      involvement.organization,
+      involvement.role,
+      involvement.startDate,
+      involvement.endDate,
+      involvement.description,
+      involvement.includeInResume,
+      involvement.isPresent || false
+    )
+  }
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faEdit} style={{ marginRight: "8px" }} />
+  Edit
+</button>
+
+<button
+  onClick={() => handleDelete(involvement._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #ff4d4d, #ff8080)", // Red gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faTrash} style={{ marginRight: "8px" }} />
+  Delete
+</button>
+
+<button
+  onClick={() => handleToggleInclude(involvement._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: involvement.includeInResume
+      ? "linear-gradient(to right, #28a745, #8be78b)" // Green gradient for Included
+      : "linear-gradient(to right, #dc3545, #ff7b7b)", // Red gradient for Excluded
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon
+    icon={involvement.includeInResume ? faToggleOn : faToggleOff}
+    style={{ marginRight: "8px" }}
+  />
+  {involvement.includeInResume ? "Included" : "Excluded"}
+</button>
+
               </div>
             </div>
           )}
@@ -719,276 +831,316 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
       {/* Add Involvement Form */}
        {isAdding && (
         // Add involvement entry
-        <div>
-          <input
-            type="text"
-           
-            placeholder="Organization"
-            value={newInvolvement.organization}
+        <div
+        style={{
+          border: "1px solid #444",
+          borderRadius: "16px",
+          padding: "20px",
+          marginBottom: "2rem",
+          backgroundColor: "#2d2d30",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+    
+      
+        {/* Organization Input */}
+        <input
+          type="text"
+          placeholder="Organization"
+          value={newInvolvement.organization}
+          onChange={(e) =>
+            setNewInvolvement({ ...newInvolvement, organization: e.target.value })
+          }
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Role Input */}
+        <input
+          type="text"
+          placeholder="Role"
+          value={newInvolvement.role}
+          onChange={(e) =>
+            setNewInvolvement({ ...newInvolvement, role: e.target.value })
+          }
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Start Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+          Start Date
+        </h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <select
+            value={newInvolvement.startDate.month}
             onChange={(e) =>
               setNewInvolvement({
                 ...newInvolvement,
-                organization: e.target.value,
+                startDate: {
+                  ...newInvolvement.startDate,
+                  month: e.target.value,
+                },
               })
             }
             style={{
               borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
+              border: "1px solid #555",
+              padding: "10px",
               backgroundColor: "#1c1c1e",
               color: "#f5f5f5",
+              fontSize: "1rem",
             }}
-          />
-          <input
-            type="text"
-          
-            placeholder="Role"
-            value={newInvolvement.role}
+          >
+            {!newInvolvement.startDate.month && (
+              <option value="" disabled>
+                Select Month
+              </option>
+            )}
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newInvolvement.startDate.year}
             onChange={(e) =>
-              setNewInvolvement({ ...newInvolvement, role: e.target.value })
+              setNewInvolvement({
+                ...newInvolvement,
+                startDate: {
+                  ...newInvolvement.startDate,
+                  year: e.target.value,
+                },
+              })
             }
             style={{
               borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
               fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-          <div className="date-dropdowns mb-3">
-            <label>Start Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newInvolvement.startDate.month}
-                onChange={(e) =>
-                  setNewInvolvement({
-                    ...newInvolvement,
-                    startDate: {
-                      ...newInvolvement.startDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "1",
-                }}
-              >
-                {!newInvolvement.startDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newInvolvement.startDate.year}
-                onChange={(e) =>
-                  setNewInvolvement({
-                    ...newInvolvement,
-                    startDate: {
-                      ...newInvolvement.startDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "1",
-                }}
-              >
-                {!newInvolvement.startDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="date-dropdowns mb-3">
-            <label>End Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newInvolvement.endDate.month}
-                onChange={(e) =>
-                  setNewInvolvement({
-                    ...newInvolvement,
-                    endDate: {
-                      ...newInvolvement.endDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                disabled={newInvolvement.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "1",
-                }}
-              >
-                {!newInvolvement.endDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newInvolvement.endDate.year}
-                onChange={(e) =>
-                  setNewInvolvement({
-                    ...newInvolvement,
-                    endDate: {
-                      ...newInvolvement.endDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                disabled={newInvolvement.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "1",
-                }}
-              >
-                {!newInvolvement.endDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="btn btn-outline-secondary ms-2"
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  marginTop: "10px",
-                  border: "none",
-                  backgroundColor: newInvolvement.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={newInvolvement.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {newInvolvement.isPresent ? 'Present' : 'Not Present'}
-              </button>
-            </div>
-          </div>
-          <textarea
-            
-            placeholder="Description"
-            value={newInvolvement.description}
-            onChange={(e) => handleDescriptionChange(e)}
-            style={{
-              borderRadius: '8px',
-              border: '1px solid #444',
-              padding: '12px',
-              fontSize: '1rem',
-              width: "100%",
-              marginBottom: '1rem',
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-              height: '250px',
-            }}
-          />
-  
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              justifyContent: "center",
             }}
           >
-            <button
-              onClick={handleSaveClick}
-              style={{
-                backgroundColor: "#4CAF50",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              <FontAwesomeIcon icon={faSave} />
-              Save
-            </button>
-  
-            <button
-              onClick={() => setIsAdding(false)}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              Cancel
-            </button>
-          </div>
+            {!newInvolvement.startDate.year && (
+              <option value="" disabled>
+                Select Year
+              </option>
+            )}
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
+      
+        {/* End Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+          End Date
+        </h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <select
+            value={newInvolvement.endDate.month}
+            onChange={(e) =>
+              setNewInvolvement({
+                ...newInvolvement,
+                endDate: {
+                  ...newInvolvement.endDate,
+                  month: e.target.value,
+                },
+              })
+            }
+            disabled={newInvolvement.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newInvolvement.endDate.month && (
+              <option value="" disabled>
+                Select Month
+              </option>
+            )}
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newInvolvement.endDate.year}
+            onChange={(e) =>
+              setNewInvolvement({
+                ...newInvolvement,
+                endDate: {
+                  ...newInvolvement.endDate,
+                  year: e.target.value,
+                },
+              })
+            }
+            disabled={newInvolvement.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newInvolvement.endDate.year && (
+              <option value="" disabled>
+                Select Year
+              </option>
+            )}
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+      
+        {/* Toggle Present Button */}
+        <button
+          onClick={handleTogglePresent}
+          style={{
+            backgroundColor: newInvolvement.isPresent ? "#28a745" : "#dc3545",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "10px 20px",
+            fontSize: "1rem",
+            width: "100%",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <FontAwesomeIcon
+            icon={newInvolvement.isPresent ? faToggleOn : faToggleOff}
+            style={{ marginRight: "8px" }}
+          />
+          {newInvolvement.isPresent ? "Present" : "Not Present"}
+        </button>
+      
+        {/* Description Textarea */}
+        <textarea
+          placeholder="Description"
+          value={newInvolvement.description}
+          onChange={(e) => handleDescriptionChange(e)}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            height: "200px",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Action Buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={handleSaveClick}
+            style={{
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            <FontAwesomeIcon icon={faSave} /> Save
+          </button>
+      
+          <button
+            onClick={() => setIsAdding(false)}
+            style={{
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+      
       )}
   
       {!isAdding && (
         <button
           onClick={handleAddClick}
           style={{
-            backgroundColor: "#007bff",
+            background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
             color: "#fff",
             border: "none",
-            borderRadius: "8px",
-            padding: "10px 20px",
-            width: "100%",
-            marginTop: "20px",
+            borderRadius: "10px", // Slightly rounded corners
+            padding: "0.75rem 1.5rem", // Balanced padding
+            width: "100%", // Full-width button
+            marginTop: "20px", // Space above the button
+            fontSize: "1rem", // Adjusted font size for readability
+            fontWeight: "600", // Bold text for prominence
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center icon and text
+            gap: "10px", // Space between the icon and text
+            cursor: "pointer", // Pointer on hover
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+            transition: "all 0.3s ease", // Smooth hover effect
           }}
         >
           <FontAwesomeIcon icon={faPlus} />

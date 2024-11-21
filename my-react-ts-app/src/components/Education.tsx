@@ -326,215 +326,295 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           }}
         >
           {editData && editData.id === education._id ? (
-            <div>
-              {/* University Input with Datalist */}
-              <CustomUniversityDropdown
-                universities={[]} // Pass your university list here
-                value={editData.university}
-                onChange={(value) => setEditData({ ...editData, university: value })}
-              />
-              <input
-                type="text"
-                placeholder="CGPA"
-                value={editData.cgpa}
-                onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
+            <div
+            style={{
+              border: "1px solid #444",
+              borderRadius: "16px",
+              padding: "20px",
+              marginBottom: "2rem",
+              backgroundColor: "#2d2d30",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+          
+          
+            {/* University Input */}
+            <CustomUniversityDropdown
+              universities={[]} // Pass your university list here
+              value={editData.university}
+              onChange={(value) => setEditData({ ...editData, university: value })}
+            />
+          
+            {/* CGPA Input */}
+            <input
+              type="text"
+              placeholder="CGPA"
+              value={editData.cgpa}
+              onChange={(e) => setEditData({ ...editData, cgpa: e.target.value })}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Degree Dropdown */}
+            <select
+              value={editData.degree}
+              onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            >
+              <option value="Associate Degree">Associate Degree</option>
+              <option value="Bachelor's Degree">Bachelor's Degree</option>
+              <option value="Master's Degree">Master's Degree</option>
+              <option value="Doctoral Degree">Doctoral Degree</option>
+            </select>
+          
+            {/* Major Input */}
+            <input
+              type="text"
+              placeholder="Major"
+              value={editData.major}
+              onChange={(e) => setEditData({ ...editData, major: e.target.value })}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Start Date Section */}
+            <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+              Start Date
+            </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
               <select
-                value={editData.degree}
-                onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
+                value={editData.startDate.month}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    startDate: {
+                      ...editData.startDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
+                  fontSize: "1rem",
                 }}
               >
-                <option value="Associate Degree">Associate Degree</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Master's Degree">Master's Degree</option>
-                <option value="Doctoral Degree">Doctoral Degree</option>
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
               </select>
-              <input
-                type="text"
-                placeholder="Major"
-                value={editData.major}
-                onChange={(e) => setEditData({ ...editData, major: e.target.value })}
+          
+              <select
+                value={editData.startDate.year}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    startDate: {
+                      ...editData.startDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
-                }}
-              />
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <select
-                  value={editData.startDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>Select Month</option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-                <select
-                  value={editData.startDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>Select Year</option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-                <select
-                  value={editData.endDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>Select Month</option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-                <select
-                  value={editData.endDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>Select Year</option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-              </div>
-              <button
-                className={`toggle-btn ${editData.isPresent ? "present" : "not-present"}`}
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "8px",
                   fontSize: "1rem",
-                  marginTop: "10px",
-                  border: "none",
-                  backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
                 }}
               >
-                <FontAwesomeIcon icon={editData.isPresent ? faToggleOn : faToggleOff} />
-                {editData.isPresent ? "Present" : "Not Present"}
-              </button>
-              <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-                <button
-                  onClick={handleUpdate}
-                  style={{
-                    backgroundColor: "#4CAF50",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faSave} /> Update
-                </button>
-                <button
-                  onClick={handleCancelEdit}
-                  style={{
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
+          
+            {/* End Date Section */}
+            <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+              End Date
+            </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <select
+                value={editData.endDate.month}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: {
+                      ...editData.endDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+          
+              <select
+                value={editData.endDate.year}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: {
+                      ...editData.endDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          
+            {/* Toggle Present Button */}
+            <button
+              onClick={handleTogglePresent}
+              style={{
+                backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                width: "100%",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={editData.isPresent ? faToggleOn : faToggleOff}
+                style={{ marginRight: "8px" }}
+              />
+              {editData.isPresent ? "Present" : "Not Present"}
+            </button>
+          
+            {/* Action Buttons */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                marginTop: "20px",
+              }}
+            >
+              <button
+                onClick={handleUpdate}
+                style={{
+                  backgroundColor: "#4CAF50",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                <FontAwesomeIcon icon={faSave} /> Update
+              </button>
+          
+              <button
+                onClick={handleCancelEdit}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+          
           ) : (
             <div>
+              
               <h5
                 style={{
                   color: "#00d084",
@@ -562,60 +642,91 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 <strong>End Date:</strong>{" "}
                 {education.isPresent ? "Present" : `${education.endDate.month} ${education.endDate.year}`}
               </p>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <button
-                  onClick={() =>
-                    handleEditClick(
-                      education._id,
-                      education.university,
-                      education.cgpa,
-                      education.degree,
-                      education.major,
-                      education.startDate,
-                      education.endDate,
-                      education.includeInResume,
-                      education.isPresent || false
-                    )
-                  }
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} /> Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(education._id)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} /> Delete
-                </button>
-                <button
-                  onClick={() => handleToggleInclude(education._id)}
-                  style={{
-                    backgroundColor: education.includeInResume ? "#28a745" : "#dc3545",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                >
-                  <FontAwesomeIcon icon={education.includeInResume ? faToggleOn : faToggleOff} /> {education.includeInResume ? "Included" : "Excluded"}
-                </button>
+              <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  padding: '10px'
+                }}>
+              <button
+  onClick={() =>
+    handleEditClick(
+      education._id,
+      education.university,
+      education.cgpa,
+      education.degree,
+      education.major,
+      education.startDate,
+      education.endDate,
+      education.includeInResume,
+      education.isPresent || false
+    )
+  }
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faEdit} style={{ marginRight: "8px" }} />
+  Edit
+</button>
+<button
+  onClick={() => handleDelete(education._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #ff4d4d, #ff8080)", // Red gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faTrash} style={{ marginRight: "8px" }} />
+  Delete
+</button>
+<button
+  onClick={() => handleToggleInclude(education._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: education.includeInResume
+      ? "linear-gradient(to right, #28a745, #8be78b)" // Green gradient for Included
+      : "linear-gradient(to right, #dc3545, #ff7b7b)", // Red gradient for Excluded
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon
+    icon={education.includeInResume ? faToggleOn : faToggleOff}
+    style={{ marginRight: "8px" }}
+  />
+  {education.includeInResume ? "Included" : "Excluded"}
+</button>
+
               </div>
             </div>
           )}
@@ -623,213 +734,347 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       ))}
 
 {isAdding && (
-        <div className="adding-form">
-          <input
-            list="universities"
-            type="text"
-            className="form-control mb-2"
-            placeholder="Search University"
-            onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
-            value={newEducation.university}
-          />
-          <datalist id="universities" style={{ background: 'white', width: '100%', color:'black' }}>
-            {filteredUniversities.map((name, index) => (
-              <option key={index} value={name} />
-            ))}
-          </datalist>
-
-          <input
-      type="number"
-      step="0.01"
-      min="0"
-      max="4"
-      className="form-control mb-2"
-      placeholder="CGPA"
-      value={newEducation.cgpa}
-      onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
-    />
+        <div
+        style={{
+          border: "1px solid #444",
+          borderRadius: "16px",
+          padding: "20px",
+          marginBottom: "2rem",
+          backgroundColor: "#2d2d30",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+  
+      
+        {/* University Input with Datalist */}
+        <input
+          list="universities"
+          type="text"
+          placeholder="Search University"
+          value={newEducation.university}
+          onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+        <datalist id="universities" style={{ background: "#fff", color: "#000" }}>
+          {filteredUniversities.map((name, index) => (
+            <option key={index} value={name} />
+          ))}
+        </datalist>
+      
+        {/* CGPA Input */}
+        <input
+          type="number"
+          step="0.01"
+          min="0"
+          max="4"
+          placeholder="CGPA"
+          value={newEducation.cgpa}
+          onChange={(e) => setNewEducation({ ...newEducation, cgpa: e.target.value })}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Degree Dropdown */}
+        <select
+          value={newEducation.degree}
+          onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        >
+          {!newEducation.degree && (
+            <option value="" disabled>
+              Select Degree
+            </option>
+          )}
+          <option value="Associate Degree">Associate Degree</option>
+          <option value="Bachelor's Degree">Bachelor's Degree</option>
+          <option value="Master's Degree">Master's Degree</option>
+          <option value="Doctoral Degree">Doctoral Degree</option>
+        </select>
+      
+        {/* Major Input */}
+        <input
+          type="text"
+          placeholder="Major"
+          value={newEducation.major}
+          onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Start Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+          Start Date
+        </h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
           <select
-              className="form-control mb-2"
-              value={newEducation.degree}
-              onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
-            >
-              {!newEducation.degree && (
-                      <option value="" disabled>
-                        Select Degree
-                      </option>
-                    )}
-              <option value="Associate Degree">Associate Degree</option>
-              <option value="Bachelor's Degree">Bachelor's Degree</option>
-              <option value="Master's Degree">Master's Degree</option>
-              <option value="Doctoral Degree">Doctoral Degree</option>
-            </select>
-          <input
-            type="text"
-            className="form-control mb-2"
-            placeholder="Major"
-            value={newEducation.major}
-            onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
-          />
-          <div className="date-dropdowns">
-            <label>Start Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newEducation.startDate.month}
-                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, month: e.target.value } })}
-              >
-                {!newEducation.startDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newEducation.startDate.year}
-                onChange={(e) => setNewEducation({ ...newEducation, startDate: { ...newEducation.startDate, year: e.target.value } })}
-              >
-                {!newEducation.startDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="date-dropdowns">
-            <label>End Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newEducation.endDate.month}
-                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, month: e.target.value } })}
-                disabled={newEducation.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newEducation.endDate.month && (
-                      <option value="" disabled>
-                        Select Month
-                      </option>
-                    )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newEducation.endDate.year}
-                onChange={(e) => setNewEducation({ ...newEducation, endDate: { ...newEducation.endDate, year: e.target.value } })}
-              >
-                {!newEducation.endDate.year && (
-                      <option value="" disabled>
-                        Select Year
-                      </option>
-                    )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="btn btn-outline-secondary ms-2"
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.3rem 0.7rem",
-                  borderRadius: "80px",
-                  fontSize: "1rem",
-                  maxWidth: '150px',
-                  maxHeight: '50px',
-                  marginTop: "0px",
-                  border: "none",
-                  backgroundColor: newEducation.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
-                  flex: "0.3",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={newEducation.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {newEducation.isPresent ? 'Present' : 'Not Present'}
-              </button>
-            </div>
-          </div>
-          <button
-  type="submit"
-  className="btn btn-primary"
-  onClick={handleSaveClick}
-  style={{
-    backgroundColor: "#007bff",
-    color: "#fff",
-    padding: "10px 20px",
-    fontSize: "1rem",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#0056b3")}
-  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#007bff")}
->
-  Save
-</button>
-
-<button
-  className="btn btn-secondary ms-2"
-  onClick={() => setIsAdding(false)}
-  style={{
-    backgroundColor: "#6c757d",
-    color: "#fff",
-    padding: "10px 20px",
-    fontSize: "1rem",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#5a6268")}
-  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#6c757d")}
->
-  Cancel
-</button>
-
+            value={newEducation.startDate.month}
+            onChange={(e) =>
+              setNewEducation({
+                ...newEducation,
+                startDate: {
+                  ...newEducation.startDate,
+                  month: e.target.value,
+                },
+              })
+            }
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newEducation.startDate.month && (
+              <option value="" disabled>
+                Select Month
+              </option>
+            )}
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newEducation.startDate.year}
+            onChange={(e) =>
+              setNewEducation({
+                ...newEducation,
+                startDate: {
+                  ...newEducation.startDate,
+                  year: e.target.value,
+                },
+              })
+            }
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newEducation.startDate.year && (
+              <option value="" disabled>
+                Select Year
+              </option>
+            )}
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
+      
+        {/* End Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem", fontWeight: "bold" }}>
+          End Date
+        </h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <select
+            value={newEducation.endDate.month}
+            onChange={(e) =>
+              setNewEducation({
+                ...newEducation,
+                endDate: {
+                  ...newEducation.endDate,
+                  month: e.target.value,
+                },
+              })
+            }
+            disabled={newEducation.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newEducation.endDate.month && (
+              <option value="" disabled>
+                Select Month
+              </option>
+            )}
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newEducation.endDate.year}
+            onChange={(e) =>
+              setNewEducation({
+                ...newEducation,
+                endDate: {
+                  ...newEducation.endDate,
+                  year: e.target.value,
+                },
+              })
+            }
+            disabled={newEducation.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            {!newEducation.endDate.year && (
+              <option value="" disabled>
+                Select Year
+              </option>
+            )}
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+      
+        {/* Toggle Present Button */}
+        <button
+          onClick={handleTogglePresent}
+          style={{
+            backgroundColor: newEducation.isPresent ? "#28a745" : "#dc3545",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "10px 20px",
+            fontSize: "1rem",
+            width: "100%",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <FontAwesomeIcon
+            icon={newEducation.isPresent ? faToggleOn : faToggleOff}
+            style={{ marginRight: "8px" }}
+          />
+          {newEducation.isPresent ? "Present" : "Not Present"}
+        </button>
+      
+        {/* Action Buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={handleSaveClick}
+            style={{
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            Save
+          </button>
+      
+          <button
+            onClick={() => setIsAdding(false)}
+            style={{
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+      
       )}
 
       {!isAdding && (
         <button
           onClick={handleAddClick}
           style={{
-            backgroundColor: "#007bff",
+            background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
             color: "#fff",
-            borderRadius: "8px",
-            padding: "10px 20px",
-            width: "100%",
-            marginTop: "20px",
             border: "none",
-            cursor: "pointer",
-            transition: "all 0.3s",
+            borderRadius: "10px", // Slightly rounded corners
+            padding: "0.75rem 1.5rem", // Balanced padding
+            width: "100%", // Full-width button
+            marginTop: "20px", // Space above the button
+            fontSize: "1rem", // Adjusted font size for readability
+            fontWeight: "600", // Bold text for prominence
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center icon and text
+            gap: "10px", // Space between the icon and text
+            cursor: "pointer", // Pointer on hover
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+            transition: "all 0.3s ease", // Smooth hover effect
           }}
         >
           <FontAwesomeIcon icon={faPlus} /> Add Education

@@ -63,6 +63,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   const [showBoldButton, setShowBoldButton] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -120,12 +121,20 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   };
 
   const handleGenerateDescription = (jobTitle: string) => {
+    // Set loading state to true
+    setIsLoading(true);
+  
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/userprofile/generate-job-description/${userID}/${jobTitle}`, {
-        params: { jobTitle },
-      })
+      .get(
+        `${process.env.REACT_APP_API_URL}/api/userprofile/generate-job-description/${userID}/${jobTitle}`,
+        {
+          params: { jobTitle },
+        }
+      )
       .then((response) => {
         const generatedDescription = response.data.text;
+  
+        // Update the description based on the current context (edit or new experience)
         if (editData) {
           setEditData((prevData) => ({
             ...prevData!,
@@ -139,10 +148,14 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         }
       })
       .catch((error) => {
-        console.error('Error generating description:', error);
+        console.error("Error generating description:", error);
+      })
+      .finally(() => {
+        // Set loading state to false after the request finishes
+        setIsLoading(false);
       });
   };
-
+  
   const handleEditClick = (
     id: string,
     jobTitle: string,
@@ -413,317 +426,378 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
         >
           {editData && editData.id === experience._id ? (
             // Edit mode
-            <div style={{
-              border: "1px solid #333",
-              borderRadius: "12px",
-              padding: "14px",
-              marginBottom: "1.5rem",
+            <div
+            style={{
+              border: "1px solid #444",
+              borderRadius: "16px",
+              padding: "20px",
+              marginBottom: "2rem",
               backgroundColor: "#2d2d30",
-              transition: "transform 0.3s, box-shadow 0.3s",
-              cursor: "pointer",
-              position: "relative",
-            }}>
-              <input
-                type="text"
-                placeholder="Job Title"
-                value={editData.jobTitle}
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+            }}
+          >
+            <h2 style={{ color: "#f5f5f5", marginBottom: "1.5rem", textAlign: "center" }}>
+              Edit Job Details
+            </h2>
+          
+            {/* Job Title Input */}
+            <input
+              type="text"
+              placeholder="Job Title"
+              value={editData.jobTitle}
+              onChange={(e) =>
+                setEditData({ ...editData, jobTitle: e.target.value })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Company Input */}
+            <input
+              type="text"
+              placeholder="Company"
+              value={editData.company}
+              onChange={(e) =>
+                setEditData({ ...editData, company: e.target.value })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Location Input */}
+            <input
+              type="text"
+              placeholder="Location"
+              value={editData.location}
+              onChange={(e) =>
+                setEditData({ ...editData, location: e.target.value })
+              }
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Start Date Section */}
+            <h6>Start Date: </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <select
+                value={editData.startDate.month}
                 onChange={(e) =>
-                  setEditData({ ...editData, jobTitle: e.target.value })
+                  setEditData({
+                    ...editData,
+                    startDate: {
+                      ...editData.startDate,
+                      month: e.target.value,
+                    },
+                  })
                 }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5", // Light input text color
-                }}
-              />
-
-              <input
-                type="text"
-                placeholder="Company"
-                value={editData.company}
-                onChange={(e) =>
-                  setEditData({ ...editData, company: e.target.value })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
-                }}
-              />
-
-              <input
-                type="text"
-                placeholder="Location"
-                value={editData.location}
-                onChange={(e) =>
-                  setEditData({ ...editData, location: e.target.value })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
                   fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                }}
-              />
-
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-                <select
-                  value={editData.startDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={editData.startDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      startDate: {
-                        ...editData.startDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={editData.endDate.month}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        month: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                  {months.map((month) => (
-                    <option key={month} value={month}>
-                      {month}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  value={editData.endDate.year}
-                  onChange={(e) =>
-                    setEditData({
-                      ...editData,
-                      endDate: {
-                        ...editData.endDate,
-                        year: e.target.value,
-                      },
-                    })
-                  }
-                  disabled={editData.isPresent}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    padding: "10px",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    flex: "1",
-                  }}
-                >
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                  {graduationYears.map((year) => (
-                    <option key={year} value={year}>
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button
-                className={`toggle-btn ${
-                  editData.isPresent ? "present" : "not-present"
-                }`}
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.5rem 1rem",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  marginTop: "10px",
-                  border: "none",
-                  backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
                 }}
               >
-                <FontAwesomeIcon
-                  icon={editData.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {editData.isPresent ? "Present" : "Not Present"}
-              </button>
-
-               <textarea
-                ref={textareaRef}
-                placeholder="Edit Description"
-                value={editData.description}
-                onChange={handleEditDescriptionChange}
-                onMouseUp={handleSelection} // Detect selection
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+          
+              <select
+                value={editData.startDate.year}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    startDate: {
+                      ...editData.startDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
                 style={{
                   borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "12px",
-                  fontSize: "1rem",
-                  marginBottom: "1rem",
-                  width: "100%",
-                  height: "200px",
+                  border: "1px solid #555",
+                  padding: "10px",
                   backgroundColor: "#1c1c1e",
                   color: "#f5f5f5",
-                }}
-              />
-
-              {showBoldButton && (
-                <button
-                  onClick={applyBold}
-                  style={{
-                    position: "relative",
-                    top: buttonPosition.top,
-                    left: buttonPosition.left,
-                    backgroundColor: "#444",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "4px",
-                    padding: "4px 8px",
-                    cursor: "pointer",
-                    fontSize: "0.8rem",
-                    zIndex: 1000, // Ensure it appears above everything
-                  }}
-                >
-                  <FontAwesomeIcon icon={faBold} />
-                </button>
-
-                 )}
-
-
-              {/* Action buttons */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "10px",
-                  flexWrap: "wrap",
+                  fontSize: "1rem",
                 }}
               >
-                <button
-                  onClick={handleUpdate}
-                  style={{
-                    backgroundColor: "#4CAF50",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faSave} />
-                  Update
-                </button>
-
-                <button
-                  onClick={handleCancelEdit}
-                  style={{
-                    backgroundColor: "#6c757d",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  Cancel
-                </button>
-
-                <button
-                  onClick={() => handleGenerateDescription(editData.jobTitle)}
-                  style={{
-                    backgroundColor: "#17a2b8",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                    border: "none",
-                    cursor: "pointer",
-                    transition: "all 0.3s",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faMagic} />
-                  AI Description
-                </button>
-              </div>
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
+          
+            {/* End Date Section */}
+            <h6>End Date: </h6>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "15px",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <select
+                value={editData.endDate.month}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: {
+                      ...editData.endDate,
+                      month: e.target.value,
+                    },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Month
+                </option>
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+          
+              <select
+                value={editData.endDate.year}
+                onChange={(e) =>
+                  setEditData({
+                    ...editData,
+                    endDate: {
+                      ...editData.endDate,
+                      year: e.target.value,
+                    },
+                  })
+                }
+                disabled={editData.isPresent}
+                style={{
+                  borderRadius: "8px",
+                  border: "1px solid #555",
+                  padding: "10px",
+                  backgroundColor: "#1c1c1e",
+                  color: "#f5f5f5",
+                  fontSize: "1rem",
+                }}
+              >
+                <option value="" disabled>
+                  Select Year
+                </option>
+                {graduationYears.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          
+            {/* Toggle Present Button */}
+            <button
+              onClick={handleTogglePresent}
+              style={{
+                backgroundColor: editData.isPresent ? "#28a745" : "#dc3545",
+                color: "#fff",
+                border: "none",
+                borderRadius: "8px",
+                padding: "10px 20px",
+                fontSize: "1rem",
+                width: "100%",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <FontAwesomeIcon
+                icon={editData.isPresent ? faToggleOn : faToggleOff}
+                style={{ marginRight: "8px" }}
+              />
+              {editData.isPresent ? "Present" : "Not Present"}
+            </button>
+          
+            {/* Description Textarea */}
+            <textarea
+              ref={textareaRef}
+              placeholder="Edit Description"
+              value={editData.description}
+              onChange={handleEditDescriptionChange}
+              style={{
+                borderRadius: "8px",
+                border: "1px solid #555",
+                padding: "14px",
+                fontSize: "1rem",
+                marginBottom: "1.5rem",
+                width: "100%",
+                height: "200px",
+                backgroundColor: "#1c1c1e",
+                color: "#f5f5f5",
+              }}
+            />
+          
+            {/* Action Buttons */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "10px",
+                flexWrap: "wrap",
+              }}
+            >
+              <button
+                onClick={handleUpdate}
+                style={{
+                  backgroundColor: "#4CAF50",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                <FontAwesomeIcon icon={faSave} />
+                Update
+              </button>
+          
+              <button
+                onClick={handleCancelEdit}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "10px 20px",
+                  flex: "1",
+                  fontSize: "1rem",
+                }}
+              >
+                Cancel
+              </button>
+          
+              <button
+  onClick={() => handleGenerateDescription(editData.jobTitle)}
+  disabled={isLoading}
+  style={{
+    backgroundColor: isLoading ? "#17a2b8" : "#17a2b8", // Keep button color visible
+    color: "#fff",
+    borderRadius: "8px",
+    padding: "10px 20px",
+    flex: "1",
+    border: "none",
+    cursor: isLoading ? "not-allowed" : "pointer",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1rem",
+    opacity: isLoading ? 0.8 : 1, // Slight dim effect during loading
+    transition: "opacity 0.3s ease",
+  }}
+>
+  {isLoading ? (
+    <div style={{ display: "flex", gap: "5px", alignItems: "center" }}>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+        }}
+      ></div>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+          animationDelay: "0.2s",
+        }}
+      ></div>
+      <div
+        style={{
+          width: "6px",
+          height: "6px",
+          borderRadius: "50%",
+          backgroundColor: "#fff",
+          animation: "bounce 1s infinite ease-in-out",
+          animationDelay: "0.4s",
+        }}
+      ></div>
+    </div>
+  ) : (
+    <>
+      <FontAwesomeIcon icon={faMagic} />
+      <span style={{ marginLeft: "8px" }}>AI Description</span>
+    </>
+  )}
+</button>
+
+<style>
+  {`
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+      }
+      40% {
+        transform: scale(1);
+      }
+    }
+  `}
+</style>
+            </div>
+          </div>
+          
           ) : (
             // View mode
             <div
@@ -834,74 +908,141 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   justifyContent: "space-between",
                   gap: "10px",
                   flexWrap: "wrap",
+                  padding: '10px'
                 }}
               >
                 <button
-                  onClick={() =>
-                    handleEditClick(
-                      experience._id,
-                      experience.jobTitle,
-                      experience.company,
-                      experience.location,
-                      experience.startDate,
-                      experience.endDate,
-                      experience.description,
-                      experience.includeInResume,
-                      experience.isPresent || false
-                    )
-                  }
-                  style={{
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faEdit} /> Edit
-                </button>
+  onClick={() =>
+    handleEditClick(
+      experience._id,
+      experience.jobTitle,
+      experience.company,
+      experience.location,
+      experience.startDate,
+      experience.endDate,
+      experience.description,
+      experience.includeInResume,
+      experience.isPresent || false
+    )
+  }
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faEdit} style={{ marginRight: "8px" }} />
+  Edit
+</button>
 
-                <button
-                  onClick={() => handleDelete(experience._id)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faTrash} /> Delete
-                </button>
+<button
+  onClick={() => handleToggleInclude(experience._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: experience.includeInResume
+      ? "linear-gradient(to right, #28a745, #8be78b)" // Green gradient for Included
+      : "linear-gradient(to right, #dc3545, #ff7b7b)", // Red gradient for Excluded
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon
+    icon={experience.includeInResume ? faToggleOn : faToggleOff}
+    style={{ marginRight: "8px" }}
+  />
+  {experience.includeInResume ? "Included" : "Excluded"}
+</button>
 
-                <button
-                  onClick={() => handleToggleInclude(experience._id)}
-                  style={{
-                    backgroundColor: experience.includeInResume
-                      ? "#28a745"
-                      : "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    padding: "10px 20px",
-                    flex: "1",
-                  }}
-                >
-                  <FontAwesomeIcon
-                    icon={experience.includeInResume ? faToggleOn : faToggleOff}
-                  /> {experience.includeInResume ? "Included" : "Excluded"}
-                </button>
 
-                <div style={{ position: 'absolute', right: '10px', top: '10px' }}>
-            <button onClick={() => moveExperienceUp(index)} disabled={index === 0}>
-              <FontAwesomeIcon icon={faArrowUp} />
-            </button>
-            <button onClick={() => moveExperienceDown(index)} disabled={index === experiences.length - 1}>
-              <FontAwesomeIcon icon={faArrowDown} />
-            </button>
-          </div>
+
+<button
+  onClick={() => handleDelete(experience._id)}
+  style={{
+    padding: "0.7rem 1.5rem",
+    background: "linear-gradient(to right, #ff4d4d, #ff8080)", // Red gradient
+    color: "#fff",
+    border: "none",
+    borderRadius: "25px", // Rounded corners
+    cursor: "pointer",
+    fontWeight: "500",
+    fontSize: "1rem",
+    transition: "0.3s ease", // Smooth hover transition
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Subtle shadow
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+>
+  <FontAwesomeIcon icon={faTrash} style={{ marginRight: "8px" }} />
+  Delete
+</button>
+
+
+             
+<div style={{ position: 'absolute', right: '10px', top: '10px', display: 'flex', gap: '5px' }}>
+  <button
+    onClick={() => moveExperienceUp(index)}
+    disabled={index === 0}
+    style={{
+      padding: "0.5rem 1rem", // Adjusted padding for a rectangular shape
+      background: index === 0
+        ? "linear-gradient(to right, #d3d3d3, #e0e0e0)" // Disabled gradient
+        : "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient for active
+      color: "#fff",
+      border: "none",
+      borderRadius: "5px", // Slightly rounded corners
+      cursor: index === 0 ? "not-allowed" : "pointer", // Pointer changes on disabled
+      boxShadow: index === 0 ? "none" : "0 4px 10px rgba(0, 0, 0, 0.3)", // No shadow for disabled
+      transition: "0.3s ease", // Smooth hover transition
+    }}
+    onMouseEnter={(e) => {
+      if (index !== 0) e.currentTarget.style.transform = "scale(1.05)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <FontAwesomeIcon icon={faArrowUp} style={{ marginRight: "0px" }} /></button>
+  <button
+    onClick={() => moveExperienceDown(index)}
+    disabled={index === experiences.length - 1}
+    style={{
+      padding: "0.5rem 1rem", // Adjusted padding for a rectangular shape
+      background: index === experiences.length - 1
+        ? "linear-gradient(to right, #d3d3d3, #e0e0e0)" // Disabled gradient
+        : "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient for active
+      color: "#fff",
+      border: "none",
+      borderRadius: "5px", // Slightly rounded corners
+      cursor: index === experiences.length - 1 ? "not-allowed" : "pointer", // Pointer changes on disabled
+      boxShadow: index === experiences.length - 1 ? "none" : "0 4px 10px rgba(0, 0, 0, 0.3)", // No shadow for disabled
+      transition: "0.3s ease", // Smooth hover transition
+    }}
+    onMouseEnter={(e) => {
+      if (index !== experiences.length - 1) e.currentTarget.style.transform = "scale(1.05)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
+  >
+    <FontAwesomeIcon icon={faArrowDown} style={{ marginRight: "0px" }} /></button>
+</div>
 
                 
               </div>
@@ -913,297 +1054,324 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
       {/* Add Experience Form */}
       {isAdding && (
         // Add experience entry
-        <div>
-          <input
-            type="text"
-            className="form-control mb-3"
-            placeholder="Job Title"
-            value={newExperience.jobTitle}
+        <div
+        style={{
+          border: "1px solid #444",
+          borderRadius: "16px",
+          padding: "20px",
+          marginBottom: "2rem",
+          backgroundColor: "#2d2d30",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+        }}
+      >
+   
+      
+        {/* Job Title Input */}
+        <input
+          type="text"
+          placeholder="Job Title"
+          value={newExperience.jobTitle}
+          onChange={(e) =>
+            setNewExperience({ ...newExperience, jobTitle: e.target.value })
+          }
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Company Input */}
+        <input
+          type="text"
+          placeholder="Company"
+          value={newExperience.company}
+          onChange={(e) =>
+            setNewExperience({ ...newExperience, company: e.target.value })
+          }
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Location Input */}
+        <input
+          type="text"
+          placeholder="Location"
+          value={newExperience.location}
+          onChange={(e) =>
+            setNewExperience({ ...newExperience, location: e.target.value })
+          }
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Start Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem" }}>Start Date</h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <select
+            value={newExperience.startDate.month}
             onChange={(e) =>
-              setNewExperience({ ...newExperience, jobTitle: e.target.value })
+              setNewExperience({
+                ...newExperience,
+                startDate: {
+                  ...newExperience.startDate,
+                  month: e.target.value,
+                },
+              })
             }
             style={{
               borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
               fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-          
-          <input
-            type="text"
-            className="form-control mb-3"
-            placeholder="Company"
-            value={newExperience.company}
-            onChange={(e) =>
-              setNewExperience({ ...newExperience, company: e.target.value })
-            }
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-          <input
-            type="text"
-            className="form-control mb-3"
-            placeholder="Location"
-            value={newExperience.location}
-            onChange={(e) =>
-              setNewExperience({ ...newExperience, location: e.target.value })
-            }
-            style={{
-              borderRadius: "8px",
-              border: "1px solid #444",
-              padding: "12px",
-              fontSize: "1rem",
-              marginBottom: "1rem",
-              width: "100%",
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-            }}
-          />
-          <div className="date-dropdowns mb-3">
-            <label>Start Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newExperience.startDate.month}
-                onChange={(e) =>
-                  setNewExperience({
-                    ...newExperience,
-                    startDate: {
-                      ...newExperience.startDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.265",
-                }}
-              >
-                {!newExperience.startDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newExperience.startDate.year}
-                onChange={(e) =>
-                  setNewExperience({
-                    ...newExperience,
-                    startDate: {
-                      ...newExperience.startDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.27",
-                }}
-              >
-                {!newExperience.startDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-          <div className="date-dropdowns mb-3">
-            <label>End Date:</label>
-            <div className="flex-container">
-              <select
-                className="form-control mb-2"
-                value={newExperience.endDate.month}
-                onChange={(e) =>
-                  setNewExperience({
-                    ...newExperience,
-                    endDate: {
-                      ...newExperience.endDate,
-                      month: e.target.value,
-                    },
-                  })
-                }
-                disabled={newExperience.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newExperience.endDate.month && (
-                  <option value="" disabled>
-                    Select Month
-                  </option>
-                )}
-                {months.map((month) => (
-                  <option key={month} value={month}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="form-control mb-2"
-                value={newExperience.endDate.year}
-                onChange={(e) =>
-                  setNewExperience({
-                    ...newExperience,
-                    endDate: {
-                      ...newExperience.endDate,
-                      year: e.target.value,
-                    },
-                  })
-                }
-                disabled={newExperience.isPresent}
-                style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  padding: "10px",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  flex: "0.3",
-                }}
-              >
-                {!newExperience.endDate.year && (
-                  <option value="" disabled>
-                    Select Year
-                  </option>
-                )}
-                {graduationYears.map((year) => (
-                  <option key={year} value={year}>
-                    {year}
-                  </option>
-                ))}
-              </select>
-              <button
-                className="btn btn-outline-secondary ms-2"
-                onClick={handleTogglePresent}
-                style={{
-                  padding: "0.3rem 0.7rem",
-                  borderRadius: "80px",
-                  fontSize: "1rem",
-                  maxWidth: '150px',
-                  maxHeight: '50px',
-                  marginTop: "0px",
-                  border: "none",
-                  backgroundColor: newExperience.isPresent ? "#28a745" : "#dc3545",
-                  color: "#fff",
-                  flex: "0.3",
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={newExperience.isPresent ? faToggleOn : faToggleOff}
-                  className="me-2"
-                />
-                {newExperience.isPresent ? 'Present' : 'Not Present'}
-              </button>
-            </div>
-          </div>
-          <textarea
-            className="form-control mb-3"
-            placeholder="Description"
-            value={newExperience.description}
-            onChange={(e) => handleDescriptionChange(e)}
-            style={{
-              borderRadius: '8px',
-              border: '1px solid #444',
-              padding: '12px',
-              fontSize: '1rem',
-              width: "100%",
-              marginBottom: '1rem',
-              backgroundColor: "#1c1c1e",
-              color: "#f5f5f5",
-              height: '250px',
-            }}
-          />
-
-
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              flexWrap: "wrap",
-              justifyContent: "center",
             }}
           >
-            <button
-              onClick={handleSaveClick}
-              style={{
-                backgroundColor: "#4CAF50",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              <FontAwesomeIcon icon={faSave} />
-              Save
-            </button>
-
-            <button
-              onClick={() => setIsAdding(false)}
-              style={{
-                backgroundColor: "#6c757d",
-                color: "#fff",
-                border: "none",
-                borderRadius: "8px",
-                padding: "10px 20px",
-                flex: "1",
-              }}
-            >
-              Cancel
-            </button>
-          </div>
+            <option value="" disabled>
+              Select Month
+            </option>
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newExperience.startDate.year}
+            onChange={(e) =>
+              setNewExperience({
+                ...newExperience,
+                startDate: {
+                  ...newExperience.startDate,
+                  year: e.target.value,
+                },
+              })
+            }
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            <option value="" disabled>
+              Select Year
+            </option>
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
         </div>
+      
+        {/* End Date Section */}
+        <h6 style={{ color: "#f5f5f5", marginBottom: "1rem" }}>End Date</h6>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "15px",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <select
+            value={newExperience.endDate.month}
+            onChange={(e) =>
+              setNewExperience({
+                ...newExperience,
+                endDate: {
+                  ...newExperience.endDate,
+                  month: e.target.value,
+                },
+              })
+            }
+            disabled={newExperience.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            <option value="" disabled>
+              Select Month
+            </option>
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+      
+          <select
+            value={newExperience.endDate.year}
+            onChange={(e) =>
+              setNewExperience({
+                ...newExperience,
+                endDate: {
+                  ...newExperience.endDate,
+                  year: e.target.value,
+                },
+              })
+            }
+            disabled={newExperience.isPresent}
+            style={{
+              borderRadius: "8px",
+              border: "1px solid #555",
+              padding: "10px",
+              backgroundColor: "#1c1c1e",
+              color: "#f5f5f5",
+              fontSize: "1rem",
+            }}
+          >
+            <option value="" disabled>
+              Select Year
+            </option>
+            {graduationYears.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </div>
+      
+        <button
+          onClick={handleTogglePresent}
+          style={{
+            backgroundColor: newExperience.isPresent ? "#28a745" : "#dc3545",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            padding: "10px 20px",
+            fontSize: "1rem",
+            width: "100%",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <FontAwesomeIcon
+            icon={newExperience.isPresent ? faToggleOn : faToggleOff}
+            style={{ marginRight: "8px" }}
+          />
+          {newExperience.isPresent ? "Present" : "Not Present"}
+        </button>
+      
+        {/* Description Textarea */}
+        <textarea
+          placeholder="Description"
+          value={newExperience.description}
+          onChange={(e) => handleDescriptionChange(e)}
+          style={{
+            borderRadius: "8px",
+            border: "1px solid #555",
+            padding: "14px",
+            fontSize: "1rem",
+            marginBottom: "1.5rem",
+            width: "100%",
+            height: "200px",
+            backgroundColor: "#1c1c1e",
+            color: "#f5f5f5",
+          }}
+        />
+      
+        {/* Action Buttons */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          <button
+            onClick={handleSaveClick}
+            style={{
+              backgroundColor: "#4CAF50",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            <FontAwesomeIcon icon={faSave} />
+            Save
+          </button>
+      
+          <button
+            onClick={() => setIsAdding(false)}
+            style={{
+              backgroundColor: "#6c757d",
+              color: "#fff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "10px 20px",
+              flex: "1",
+              fontSize: "1rem",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+      
       )}
 
       {!isAdding && (
         <button
           onClick={handleAddClick}
           style={{
-            backgroundColor: "#007bff",
+            background: "linear-gradient(to right, #007bff, #4facfe)", // Blue gradient
             color: "#fff",
             border: "none",
-            borderRadius: "8px",
-            padding: "10px 20px",
-            width: "100%",
-            marginTop: "20px",
+            borderRadius: "10px", // Slightly rounded corners
+            padding: "0.75rem 1.5rem", // Balanced padding
+            width: "100%", // Full-width button
+            marginTop: "20px", // Space above the button
+            fontSize: "1rem", // Adjusted font size for readability
+            fontWeight: "600", // Bold text for prominence
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center", // Center icon and text
+            gap: "10px", // Space between the icon and text
+            cursor: "pointer", // Pointer on hover
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)", // Subtle shadow for depth
+            transition: "all 0.3s ease", // Smooth hover effect
           }}
         >
           <FontAwesomeIcon icon={faPlus} />
