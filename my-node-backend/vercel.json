@@ -11,7 +11,7 @@
       "src": "/(.*)",
       "dest": "/index.js",
       "headers": {
-        "Access-Control-Allow-Origin": "https://boron-atom-one.vercel.app",
+        "Access-Control-Allow-Origin": "https://boron-atom-api-sable.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization",
         "Access-Control-Allow-Credentials": "true"
