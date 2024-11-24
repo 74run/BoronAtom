@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
 import { FaFilePdf, FaPhone, FaEnvelope, FaLinkedin } from 'react-icons/fa';
 import jsPDF from 'jspdf';
+// Import the library
+import html2pdf from 'html2pdf.js';
+
 import 'jspdf-autotable';
 
 
@@ -88,100 +91,160 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
       .catch(error => console.error('Error fetching education details:', error));
   }, [userID]);
 
-  const generatePDF = () => {
-    const doc = new jsPDF('p', 'pt', 'a4');
-    const marginTop = 40;
 
-  
-    
-  
-    // Add Header
-    doc.setFontSize(16);
-    doc.text(`${userDetails?.firstName || ''} ${userDetails?.lastName || ''}`, 40, marginTop);
-    doc.setFontSize(10);
-    doc.text([
-      `Phone: ${eduDetails?.contact[0]?.phoneNumber || ''}`,
-      `Email: ${userDetails?.email || ''}`,
-      `LinkedIn: ${eduDetails?.contact[0]?.linkedIn || ''}`,
-    ].join(' | '), 40, marginTop + 20);
-  
-    // Summary Section
-    if (eduDetails?.summary && eduDetails.summary[0]?.content) {
-      doc.setFontSize(12);
-      doc.text("Summary", 40, marginTop + 40);
-      doc.setFontSize(10);
-      doc.text(doc.splitTextToSize(eduDetails.summary[0].content, 500), 40, marginTop + 60);
-    }
-  
-    // Education Section
-    if (eduDetails?.education && eduDetails.education.some(edu => edu.includeInResume)) {
-      doc.autoTable({
-        startY: marginTop + 80,
-        head: [["University", "Degree", "Major", "CGPA", "Date"]],
-        body: eduDetails.education.filter(edu => edu.includeInResume).map(edu => [
-          edu.university,
-          `${edu.degree}, ${edu.major}`,
-          edu.cgpa,
-          edu.isPresent ? 'Present' : `${edu.endDate.month}/${edu.endDate.year}`
-        ]),
-        margin: { top: 10 },
-        theme: 'striped',
-      });
-    }
-  
-    // Experience Section
-    if (eduDetails?.experience && eduDetails.experience.some(exp => exp.includeInResume)) {
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 10 || marginTop + 120,
-        head: [["Job Title", "Company", "Description", "Date"]],
-        body: eduDetails.experience.filter(exp => exp.includeInResume).map(exp => [
-          exp.jobTitle,
-          exp.company,
-          exp.description,
-          exp.isPresent ? 'Present' : `${exp.endDate.month}/${exp.endDate.year}`
-        ]),
-        margin: { top: 10 },
-        theme: 'striped',
-      });
-    }
-  
-    // Projects Section
-    if (eduDetails?.project && eduDetails.project.some(proj => proj.includeInResume)) {
-      doc.autoTable({
-        startY: doc.lastAutoTable.finalY + 10 || marginTop + 160,
-        head: [["Project Name", "Skills", "Description", "Date"]],
-        body: eduDetails.project.filter(proj => proj.includeInResume).map(proj => [
-          proj.name,
-          proj.skills,
-          proj.description,
-          proj.isPresent ? 'Present' : `${proj.endDate.month}/${proj.endDate.year}`
-        ]),
-        margin: { top: 10 },
-        theme: 'striped',
-      });
-    }
-  
-    // Skills Section
-    if (eduDetails?.skills && eduDetails.skills.some(skill => skill.includeInResume)) {
-      doc.setFontSize(12);
-      doc.text("Skills", 40, doc.lastAutoTable.finalY + 20 || marginTop + 200);
-      doc.setFontSize(10);
-      eduDetails.skills
-        .filter(skill => skill.includeInResume)
-        .forEach((skill, index) => {
-          doc.text(`• ${skill.domain}: ${skill.name}`, 40, doc.lastAutoTable.finalY + 40 + index * 10);
-        });
-    }
+  const generatePDF = (userDetails: UserDetails, eduDetails: EduDetails) => {
+    const doc = new jsPDF("p", "pt", "a4");
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const marginTop = 50; // Top margin
+    const marginBottom = 50; // Bottom margin
+    const sectionSpacing = 30; // Space between sections
+    let cursorY = marginTop;
 
-    (doc as any).autoTable({
-      head: [["Header 1", "Header 2"]],
-      body: [["Row 1 Col 1", "Row 1 Col 2"]],
-    });
-  
-    doc.save(`${userDetails?.username || 'Resume'}.pdf`);
+    // Set up reusable functions
+    const drawHeader = (text: string) => {
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text(text.toUpperCase(), 40, cursorY);
+        doc.setLineWidth(0.5);
+        doc.line(40, cursorY + 5, pageWidth - 40, cursorY + 5); // underline
+        cursorY += 20;
+    };
+
+    const drawSubHeader = (text: string | string[], details = "") => {
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "normal");
+        doc.text(text, 40, cursorY);
+        if (details) {
+            doc.setFontSize(10);
+            doc.text(details, pageWidth - 200, cursorY, { align: "right" });
+        }
+        cursorY += 15;
+    };
+    const drawBulletList = (items: any[]) => {
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      items.forEach((item) => {
+          const text = `• ${item}`;
+          const lines = doc.splitTextToSize(text, 170); // Split text into multiple lines based on available width (170)
+          lines.forEach((line: string | string[], index: number) => {
+              doc.text(line, 60, cursorY + (index * 12)); // Indentation for bullet points
+          });
+          cursorY += 12 * lines.length; // Adjust cursor position based on the number of lines
+      });
+      cursorY += 10; // Extra space after bullet list
   };
-  
-  
+                
+  const addPageIfNeeded = () => {
+        if (cursorY > 750) {
+            doc.addPage();
+            cursorY = marginTop;
+        }
+    };
+
+    // Title and Contact Information
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text(`${userDetails.firstName} ${userDetails.lastName}`, pageWidth / 2, cursorY, { align: "center" });
+    cursorY += 20;
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(
+        [
+            `Phone: ${eduDetails.contact[0]?.phoneNumber || "N/A"}`,
+            `Email: ${userDetails.email || "N/A"}`,
+            `LinkedIn: ${eduDetails.contact[0]?.linkedIn || "N/A"}`,
+        ].join(" | "),
+        pageWidth / 2,
+        cursorY,
+        { align: "center" }
+    );
+    cursorY += sectionSpacing;
+
+    // Education Section
+    drawHeader("Education");
+    eduDetails.education
+        .filter((edu) => edu.includeInResume)
+        .forEach((edu) => {
+            drawSubHeader(
+                `${edu.university}`,
+                `${edu.isPresent ? "Present" : `${edu.endDate.month}/${edu.endDate.year}`}`
+            );
+            drawBulletList([`${edu.degree}, ${edu.major} - GPA: ${edu.cgpa}`]);
+            addPageIfNeeded();
+        });
+
+    // Experience Section
+    drawHeader("Experience");
+    eduDetails.experience
+        .filter((exp) => exp.includeInResume)
+        .forEach((exp) => {
+            drawSubHeader(
+                `${exp.jobTitle} at ${exp.company}`,
+                `${exp.isPresent ? "Present" : `${exp.endDate.month}/${exp.endDate.year}`}`
+            );
+            drawBulletList(exp.description.split("\n"));
+            addPageIfNeeded();
+        });
+
+    // Skills Section
+    drawHeader("Skills");
+    const skills = [
+        { title: "Web Development", skills: ["React", "Node.js", "Express", "HTML", "CSS", "Flask", "MongoDB"] },
+        { title: "Programming Languages", skills: ["Python", "R Programming", "SQL", "JavaScript"] },
+        { title: "Data Analysis", skills: ["Pandas", "NumPy"] },
+        { title: "Data Science", skills: ["TensorFlow", "Keras", "OpenCV", "NLTK", "PyTorch"] },
+        { title: "Machine Learning", skills: ["Regression", "Classification", "Clustering", "Decision Trees", "Random Forest", "SVM"] },
+        { title: "Data Visualization", skills: ["Mat plotlib", "Seaborn", "Tableau", "Plotly", "Power BI"] },
+        { title: "Quantitative Analysis", skills: ["SPSS", "Factor Analysis", "Regression Modeling", "Predictive Analytics"] },
+        { title: "Microsoft Office Suite Skills", skills: ["Microsoft Excel", "Microsoft Word", "Microsoft PowerPoint", "Microsoft Outlook"] },
+    ];
+    skills.forEach((skillGroup) => {
+        const skillList = skillGroup.skills.join(", "); // Join skills with a comma
+        drawSubHeader(`${skillGroup.title}: ${skillList}`); // Display title followed by skills
+        cursorY += 15; // Add space after skills
+        addPageIfNeeded();
+    });
+
+    // Projects Section
+    drawHeader("Projects");
+    eduDetails.project
+        .filter((proj) => proj.includeInResume)
+        .forEach((proj) => {
+            drawSubHeader(
+                `${proj.name}`,
+                `${proj.isPresent ? "Present" : `${proj.endDate.month}/${proj.endDate.year}`}`
+            );
+            drawBulletList(proj.description.split("\n"));
+            addPageIfNeeded();
+        });
+
+    // Save the PDF
+    doc.save(`${userDetails.username || "Resume"}.pdf`);
+};
+
+
+
+const downloadPDF = () => {
+  if (resumeRef.current) {
+    const element = resumeRef.current;
+    const opt = {
+      margin: [0.5, 0.5], // Margins in inches
+      filename: `${userDetails?.username || 'Resume'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 }, // Higher scale for better quality
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    };
+
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .save();
+  } else {
+    console.error('Resume content is not available');
+  }
+};
+
 
   const formatDescription = (text: string) => {
     const formattedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -199,9 +262,27 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
 
   return (
     <div className="container mx-auto">
-      <button className="btn btn-secondary mb-4" onClick={generatePDF}>
-        <FaFilePdf /> Download PDF
-      </button>
+  <button 
+  className="btn btn-secondary mb-4" 
+  onClick={() => {
+    if (userDetails && eduDetails) {
+      generatePDF(userDetails, eduDetails);
+    } else {
+      console.error("User details or education details are missing.");
+    }
+  }}
+>
+  <FaFilePdf /> Download PDF
+</button>
+
+<button 
+      className="btn btn-secondary mb-4"
+      onClick={downloadPDF}
+    >
+      <FaFilePdf /> Download PDF 2
+    </button>
+
+
 
       <div id="resume" ref={resumeRef} style={styles.resumeContainer}>
         <div className="text-center mb-4" style={styles.header}>
