@@ -198,7 +198,9 @@ const Profile: React.FC<ProfileProps> = () => {
       }}
     >
       {/* Profile Header Section */}
-      <div
+
+  <div
+
   className="profile-header"
   style={{
     display: "flex",
