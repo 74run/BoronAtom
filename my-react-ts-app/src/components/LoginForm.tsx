@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
 import '../css/LoginForm.css'; // Import your custom CSS file
+
+import back from './unnamed-1.png'
 
 import logo from './logo-no-background.png';
 
@@ -53,6 +55,69 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   };
 
   return (
+    <>
+
+    <style>{`
+    body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: url(${back}) no-repeat center center fixed;
+            background-size: cover;
+        }
+    .navbar-1 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+        }
+        .navbar-1 .logo {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-1 .logo img {
+            width: 40px;
+            margin-right: 10px;
+        }
+        .navbar-1 .logo span {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .navbar-1 ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-1 ul li {
+            margin: 0 15px;
+        }
+        .navbar-1 ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+        .navbar-1 .login-btn {
+            background: white;
+            color: black;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .navbar-1 .login-btn:hover {
+            background: #00bcd4;
+            color: white;
+        }
+        `}</style>
+
+    <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
+
+    </head>
     <div className="login-page" style={{ minHeight: "100vh", color: "#f5f5f5", fontFamily: "'Roboto', sans-serif", position: "relative", overflow: "hidden" }}>
       {/* Background */}
       <div className="background-wrapper">
@@ -62,7 +127,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         <div className="particles-layer-3"></div>
       </div>
 
-      {/* Navbar */}
+      {/* Navbar
       <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow" style={{ borderBottom: "1px solid #333" }}>
         <BootstrapNavbar expand="md" bg="dark" variant="dark" fixed="top" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
           <Container fluid>
@@ -88,25 +153,46 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             </BootstrapNavbar.Collapse>
           </Container>
         </BootstrapNavbar>
-      </nav>
+      </nav> */}
+
+      <div className="navbar-1">
+   <div className="logo">
+   <Link to="/">
+   <img 
+                src={logo}
+                alt="Logo"
+                className="img-fluid"
+                style={{ height: "25px", width: "auto" }}
+              />  
+              </Link> </div>
+  
+   <a className="login-btn" onClick={handleRegisterClick}  style={{ cursor: 'pointer' }}>
+    Sign Up
+   </a>
+  </div>
 
       {/* Login Form */}
-      <div className="login-container d-flex justify-content-center align-items-center vh-100" style={{ paddingTop: "80px" }}>
+      <div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "80px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div
-          className="login-box shadow-lg p-5 rounded"
+          className="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md"
           style={{
-            backgroundColor: "#2d2d30",
-            borderRadius: "12px",
-            width: "100%",
-            maxWidth: "400px",
-            padding: "40px",
-            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.5)",
-            color: "#f5f5f5",
+            backgroundColor: 'rgba(31, 41, 55, 0.75)', // bg-gray-800 with bg-opacity-75
+            padding: '2rem', // p-8
+            borderRadius: '0.5rem', // rounded-lg
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)', // shadow-lg
+            width: '100%', // w-full
+            maxWidth: '28rem', // max-w-md
           }}
         >
-          <h2 className="text-center mb-4" style={{ fontFamily: "'Roboto Slab', serif", fontSize: "1.5rem", fontWeight: 700, color: "#4CAF50" }}>
-            Welcome Back
-          </h2>
+      <h2 className="text-3xl font-bold mb-6 text-center"
+      style={{
+        fontSize: '1.875rem', // text-3xl (which is 3rem, 48px in Tailwind, converted to rem)
+        fontWeight: '700', // font-bold
+        marginBottom: '1.5rem', // mb-6 (which is 6 * 0.25rem = 1.5rem)
+        textAlign: 'center', // text-center
+        color: 'white'
+      }}>Login</h2>
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
@@ -117,11 +203,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 style={{
-                  borderRadius: "8px",
-                  border: "1px solid #444",
-                  backgroundColor: "#1c1c1e",
-                  color: "#f5f5f5",
-                  padding: "12px",
+                  width: '100%', // w-full
+                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
+                  borderRadius: '0.5rem', // rounded-lg
+                  backgroundColor: '#2d3748', // bg-gray-700
+                  border: '1px solid #4a5568', // border-gray-600
+                  outline: 'none', // focus:outline-none
+                  transition: 'all 0.3s', // Smooth transition for focus effect
                 }}
               />
             </div>
@@ -135,11 +223,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    backgroundColor: "#1c1c1e",
-                    color: "#f5f5f5",
-                    padding: "12px",
+                    width: '100%', // w-full
+                    padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
+                    borderRadius: '0.5rem', // rounded-lg
+                    backgroundColor: '#2d3748', // bg-gray-700
+                    border: '1px solid #4a5568', // border-gray-600
+                    outline: 'none', // focus:outline-none
+                    transition: 'all 0.3s', // Smooth transition for focus effect
                   }}
                 />
                 <button
@@ -159,47 +249,43 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
               </div>
             </div>
             {error && <p className="text-danger">{error}</p>}
+
+            <div className="flex items-center justify-between mb-6"
+            style={{
+              display: 'flex', // flex
+              alignItems: 'center', // items-center (vertically centers the items)
+              justifyContent: 'space-between', // justify-between (places items at opposite ends)
+              marginBottom: '1.5rem',
+              padding:'0.25rem' // mb-6 (equivalent to 6 * 0.25rem = 1.5rem)
+            }}>
+                    <div className="flex items-center">
+                        <input type="checkbox" id="remember" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                        <label htmlFor="remember" className="ml-2 block text-sm"> 
+                          Remember me</label>
+                    </div>
+                    <a  className="text-sm text-blue-500 hover:underline" style={{ cursor: 'pointer' }} onClick={handleForgotPasswordClick}>Forgot password?</a>
+                </div>
             <div className="d-grid gap-2">
               <button
                 type="submit"
-                className="btn btn-primary btn-lg"
                 style={{
-                  backgroundColor: "#4CAF50",
-                  border: "none",
-                  padding: "10px 20px",
-                  borderRadius: "8px",
-                  transition: "all 0.3s",
+                  width: '100%', // w-full
+                  padding: '0.75rem', // p-3
+                  color: 'white',
+                  backgroundColor: '#2563eb', // bg-blue-600
+                  borderRadius: '0.5rem', // rounded-lg
+                  fontWeight: '600', // font-semibold
+                  transition: 'all 0.3s', // Smooth transition for hover and focus effects
                 }}
+                className="focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-700"
               >
                 Login
               </button>
-              <button
-                type="button"
-                className="btn btn-link"
-                onClick={handleForgotPasswordClick}
-                style={{
-                  color: "#007bff",
-                  textDecoration: "none",
-                }}
-              >
-                Forgot Password?
-              </button>
+              
             </div>
           </form>
-          <div className="text-center mt-4">
-            <p>Don't have an account?</p>
-            <button
-              type="button"
-              className="btn btn-outline-primary"
-              onClick={handleRegisterClick}
-              style={{
-                borderRadius: "8px",
-                padding: "10px 20px",
-              }}
-            >
-              Register
-            </button>
-          </div>
+          <p className="mt-6 text-center text-sm">Don't have an account? <a onClick={handleRegisterClick} style={{ cursor: 'pointer' }} className="text-blue-500 hover:underline">Sign up</a></p>
+          
         </div>
       </div>
       <style>{`
@@ -255,6 +341,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 

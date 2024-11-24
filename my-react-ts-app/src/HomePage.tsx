@@ -1,10 +1,15 @@
-import React from 'react';
+import React , {useState} from 'react';
 import { Camera, Cog, GraduationCap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import logo from './logo-no-background.png';
 
 const AIResumeRoller = () => {
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(prevState => !prevState);
+  };
 
   const handleLoginClick = () => {
     navigate('/login');
@@ -17,480 +22,505 @@ const AIResumeRoller = () => {
   return (
     <>
       <style>{`
-        body {
-          margin: 0;
-          padding: 0;
-          font-family: 'Roboto', sans-serif;
-          background: linear-gradient(
-            135deg,
-            rgba(29,39,54,1) 0%,
-            rgba(30,82,153,1) 35%,
-            rgba(158,92,236,1) 100%
-          );
-          color: white;
-          min-height: 100vh;
-          background-attachment: fixed;
-          overflow-x: hidden;
-        }
+   /* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-        .container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          min-height: 100vh;
-          padding: 0 20px;
-          position: relative;
-          z-index: 1;
-          padding-top: 6rem; /* Gap between navbar and content */
-        }
+body {
+  font-family: 'Arial', sans-serif;
+   background: linear-gradient(135deg, #a8c0ff, #3f5efb);
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
 
-        /* Navbar Enhancements */
-        nav {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 2rem;
-          position: fixed;
-          top: 0;
-          z-index: 10;
-          background: rgba(29, 39, 54, 0.6);
-          backdrop-filter: blur(10px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-          transition: background-color 0.3s ease;
-        }
+.container {
+ background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  border-radius: 10px; /* Optional rounded corners */
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-        nav .logo {
-          display: flex;
-          align-items: center;
-        }
 
-        nav .logo img {
-          width: 50px;
-          height: 50px;
-          margin-right: 0.5rem;
-        }
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #7FB5B5; /* Soft teal background */
+  padding: 1rem 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-        nav .brand {
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: white;
-          text-decoration: none;
-        }
+/* Links (Desktop) */
+.links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  display: none; /* Hide links by default on mobile */
+}
 
-        nav .links {
-          display: flex;
-          gap: 2rem;
-        }
+/* Show links when the mobile menu is open */
+.links.open {
+  display: flex;
+}
 
-        nav .links a {
-          color: white;
-          text-decoration: none;
-          font-size: 1rem;
-          transition: color 0.3s;
-        }
+.links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  margin: 0 15px;
+}
 
-        nav .links a:hover {
-          color: #22c55e;
-        }
+/* Hamburger Icon */
+.hamburger-menu {
+  display: none; /* Hidden by default on larger screens */
+  cursor: pointer;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 25px;
+}
 
-        nav .auth-buttons {
-          display: flex;
-          gap: 1rem;
-        }
+.hamburger-menu span {
+  display: block;
+  width: 100%;
+  height: 4px;
+  background-color: #fff;
+  border-radius: 4px;
+  transition: 0.3s ease;
+}
 
-        .login-nav-btn, .register-btn {
-          border: 1px solid white;
-          background: transparent;
-          color: white;
-          padding: 0.5rem 1.5rem;
-          font-size: 1rem;
-          border-radius: 4px;
-          transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+/* Mobile Menu (Initially Hidden) */
+.mobile-menu {
+  display: none; /* Hide menu by default */
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #7FB5B5;
+  width: 250px;
+  height: 100vh;
+  padding: 2rem;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
 
-        .login-nav-btn:hover, .register-btn:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-          transform: translateY(-2px);
-        }
+.mobile-menu.open {
+  display: block;
+  transform: translateX(0); /* Show menu when open */
+}
 
-        /* For Mobile Screens */
-        @media (max-width: 768px) {
-          nav .links {
-            display: none;
-          }
+.mobile-menu a {
+  color: #fff;
+  font-size: 1.2rem;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: block;
+}
 
-          nav .auth-buttons {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-        }
+/* Media Queries for Mobile View */
+@media (max-width: 768px) {
+  /* Hide links and show hamburger on mobile */
+  .links {
+    display: none;
+  }
 
-        .background-wrapper {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          z-index: 0;
-        }
+  .hamburger-menu {
+    display: flex;
+  }
 
-        .background-gradient {
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(
-            circle at center,
-            rgba(158,92,236,0.2) 0%,
-            rgba(30,82,153,0.2) 45%,
-            rgba(29,39,54,0.2) 100%
-          );
-          animation: rotateGradient 30s linear infinite;
-          transform-origin: center;
-        }
+  /* Mobile menu should be hidden by default, only shown when hamburger is clicked */
+  .mobile-menu {
+    display: none;
+  }
 
-        .particles-layer-1,
-        .particles-layer-2,
-        .particles-layer-3 {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-size: 60px 60px;
-          opacity: 0.3;
-        }
+  /* Mobile Menu open when clicked */
+  .mobile-menu.open {
+    display: block;
+  }
+}
 
-        .particles-layer-1 {
-          background: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-          animation: animateParticles 25s linear infinite;
-        }
 
-        .particles-layer-2 {
-          background: radial-gradient(circle, rgba(158,92,236,0.1) 1px, transparent 1px);
-          background-size: 40px 40px;
-          animation: animateParticles 20s linear infinite reverse;
-        }
+.mobile-menu a,
+.mobile-menu button {
+  color: #fff;
+  font-size: 1.2rem;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: block;
+}
 
-        .particles-layer-3 {
-          background: radial-gradient(circle, rgba(30,82,153,0.1) 1px, transparent 1px);
-          background-size: 80px 80px;
-          animation: animateParticles 30s linear infinite;
-        }
 
-        @keyframes rotateGradient {
-          0% { transform: rotate(0deg) scale(1.5); }
-          100% { transform: rotate(360deg) scale(1.5); }
-        }
+/* Navbar links visibility on mobile */
+.links {
+  display: flex;
+  align-items: center;
+}
 
-        @keyframes animateParticles {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(-100%, -100%); }
-        }
+.links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  margin: 0 15px;
+}
 
-        .wave-layer {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 200%;
-          height: 300px;
-          background: rgba(255, 255, 255, 0.1);
-          opacity: 0.2;
-          border-radius: 50%;
-          animation: moveWave 20s linear infinite;
-        }
+.auth-buttons {
+  display: flex;
+  align-items: center;
+}
 
-        .wave-layer:nth-child(2) {
-          animation-duration: 25s;
-          opacity: 0.1;
-        }
+.auth-buttons button {
+  margin-left: 10px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-        .wave-layer:nth-child(3) {
-          animation-duration: 30s;
-          opacity: 0.05;
-        }
+/* Media Queries for Mobile View */
+@media (max-width: 768px) {
+  .links {
+    display: none;
+  }
 
-        @keyframes moveWave {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
+  .hamburger-menu {
+    display: flex;
+  }
+}
 
-        .pulse-circle {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 200px;
-          height: 200px;
-          background: rgba(255, 255, 255, 0.2);
-          border-radius: 50%;
-          animation: pulseAnimation 10s infinite;
-        }
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+  padding: 1rem 2rem;
+    background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-radius: 8px;
+}
 
-        .pulse-circle:nth-child(2) {
-          width: 300px;
-          height: 300px;
-          animation-duration: 12s;
-        }
+nav .logo {
+  display: flex;
+  align-items: center;
+}
 
-        .pulse-circle:nth-child(3) {
-          width: 400px;
-          height: 400px;
-          animation-duration: 15s;
-        }
+nav .logo img {
+  display: block;
+  margin-right: 15px;
+}
 
-        @keyframes pulseAnimation {
-          0% { transform: scale(0.8); opacity: 0.3; }
-          50% { transform: scale(1); opacity: 0.6; }
-          100% { transform: scale(0.8); opacity: 0.3; }
-        }
+nav .links {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  justify-content: center;
+}
 
-        .floating-shapes {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-        }
+nav .links a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  position: relative;
+  transition: color 0.3s;
+}
 
-        .floating-shape {
-          position: absolute;
-          width: 20px;
-          height: 20px;
-          background: rgba(255, 255, 255, 0.15);
-          animation: floatShapes 15s linear infinite;
-        }
+nav .links a:hover {
+  color: #f0f8ff; /* Soft light blue on hover for calm contrast */
+}
+nav .links a.hover-underline-animation::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+   background: #f0f8ff;
+  transition: width 0.3s;
+  margin-top: 5px;
+}
 
-        .floating-shape:nth-child(odd) {
-          background: rgba(158, 92, 236, 0.15);
-        }
+nav .links a.hover-underline-animation:hover::after {
+  width: 100%;
+}
 
-        .floating-shape:nth-child(2n) {
-          animation-duration: 20s;
-        }
+nav .auth-buttons {
+  display: flex;
+  align-items: center;
+}
 
-        .floating-shape:nth-child(3n) {
-          animation-duration: 25s;
-        }
+nav .auth-buttons button {
+  margin-left: 10px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-        @keyframes floatShapes {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(-200vh); }
-        }
+nav .auth-buttons .login-nav-btn {
+  background-color: #f0f8ff; /* Light blue button for calming effect */
+  color: #007bff; /* Soft contrasting color for button text */
+}
 
-         .card {
-          position: relative;
-          overflow: hidden;
-        }
+nav .auth-buttons .register-btn {
+  background-color: #fff; /* Light white button for subtle contrast */
+  color: #007bff; /* Soft contrasting color for button text */
+}
 
-        .card::after {
-          content: '';
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(
-            to bottom right,
-            rgba(255,255,255,0) 0%,
-            rgba(255,255,255,0.05) 50%,
-            rgba(255,255,255,0) 100%
-          );
-          transform: rotate(45deg);
-          animation: shimmer 6s linear infinite;
-        }
+nav .auth-buttons button:hover {
+  background-color: #0056b3; /* Dark blue on hover for buttons */
+  color: #fff;
+}
 
-        @keyframes shimmer {
-          0% { transform: translateX(-100%) rotate(45deg); }
-          100% { transform: translateX(100%) rotate(45deg); }
-        }
+/* Profile Section */
+.profile-section {
+ background: rgba(255, 255, 255, 0.85);
+  text-align: center;
+  margin-top: 3rem;
+}
 
-        .profile-section {
-          text-align: center;
-          margin-top: 3rem;
-          margin-bottom: 2rem;
-        }
+.profile-img-container {
+  margin-bottom: 1rem;
+}
 
-        .profile-img-container {
-          width: 6rem;
-          height: 6rem;
-          background-color: #e5e7eb;
-          border-radius: 9999px;
-          margin: 0 auto 1rem auto;
-          overflow: hidden;
-        }
+.profile-img-container img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 3px solid #007bff;
+}
 
-        .profile-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          border-radius: 9999px;
-        }
+.profile-section h1 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
 
-        h1 {
-          font-size: 1.5rem;
-          margin: 0;
-        }
+.profile-section h2 {
+  font-size: 1.2rem;
+  color: #555;
+}
 
-        h2 {
-          font-size: 2.25rem;
-          font-weight: bold;
-          margin: 0.5rem 0;
-        }
+.profile-section .btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1.5rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
 
-        .login-btn {
-          background-color: #22c55e;
-          color: white;
-          padding: 0.5rem 2rem;
-          margin-top: 1.5rem;
-          font-size: 1.1rem;
-        }
+.profile-section .btn:hover {
+  background-color: #0056b3;
+}
 
-        .actions-container {
-          display: flex;
-          justify-content: center;
-          gap: 1.5rem;
-          margin: 3rem 0;
-          flex-wrap: wrap;
-        }
+/* Actions Section */
+.actions-container {
+  display: flex;
+  justify-content: space-evenly;
+  padding: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
 
-        .action-btn {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background-color: #1e3a8a;
-          color: white;
-          padding: 0.75rem 1.5rem;
-          transition: background-color 0.3s;
-        }
+.action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background-color: #fff;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+  width: 250px;
+}
 
-        .action-btn:hover {
-          background-color: #2d4ba0;
-        }
+.action-btn .icon {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
 
-        .icon {
-          width: 1.25rem;
-          height: 1.25rem;
-        }
+.action-btn span {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+}
 
-        .cards-container {
-          display: flex;
-          justify-content: center;
-          gap: 2rem;
-          margin: 2rem 0 4rem 0;
-          flex-wrap: wrap;
-        }
+.action-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
 
-        .card {
-          background-color: #1e3a8a;
-          padding: 2rem;
-          border-radius: 0.5rem;
-          text-align: center;
-          width: 250px;
-          transition: transform 0.3s;
-        }
+/* Cards Section */
+.cards-section {
+background: rgba(255, 255, 255, 0.8);
+  margin-top: 3rem;
+   padding: 3rem 0;
+  border-radius: 10px;
+}
 
-        .card:hover {
-          transform: translateY(-5px);
-        }
+.cards-grid {
+  display: grid;
+  gap: 1.5rem;
+}
 
-        .card img {
-          width: 100px;
-          height: 100px;
-          margin: 0 auto 1.5rem auto;
-          border-radius: 0.5rem;
-        }
+.cards-grid.grid {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
 
-        .card h3 {
-          font-size: 1.25rem;
-          font-weight: bold;
-          margin: 0;
-        }
+.card {
+   background-color: #f9f9f9;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
 
-        .card p {
-          margin-top: 0.75rem;
-          margin-bottom: 0;
-          color: #e5e7eb;
-        }
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 
-        @media (max-width: 768px) {
-          .cards-container {
-            flex-direction: column;
-            align-items: center;
-          }
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
 
-          .actions-container {
-            flex-direction: column;
-            align-items: center;
-          }
+.card .p-6 {
+  padding: 1.5rem;
+}
 
-          nav .links {
-            gap: 1rem;
-          }
-        }
+.card h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.card p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.card .btn-modern {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.card .btn-modern:hover {
+  background-color: #0056b3;
+}
+
       `}</style>
 
-      <div className="background-wrapper">
-        <div className="background-gradient"></div>
-        <div className="particles-layer-1"></div>
-        <div className="particles-layer-2"></div>
-        <div className="particles-layer-3"></div>
-        <div className="wave-layer"></div>
-        <div className="wave-layer"></div>
-        <div className="wave-layer"></div>
-        <div className="pulse-circle"></div>
-        <div className="pulse-circle"></div>
-        <div className="pulse-circle"></div>
-        <div className="floating-shapes">
-          <div className="floating-shape" style={{ left: '10%', top: '20%' }}></div>
-          <div className="floating-shape" style={{ left: '50%', top: '40%' }}></div>
-          <div className="floating-shape" style={{ left: '30%', top: '60%' }}></div>
-          <div className="floating-shape" style={{ left: '80%', top: '10%' }}></div>
+<div className="background-wrapper">
+  {/* Background Image Applied via CSS */}
+  <div className="particles-layer-1"></div>
+  <div className="particles-layer-2"></div>
+  <div className="particles-layer-3"></div>
+  <div className="wave-layer"></div>
+  <div className="wave-layer"></div>
+  <div className="wave-layer"></div>
+  <div className="pulse-circle"></div>
+  <div className="pulse-circle"></div>
+  <div className="pulse-circle"></div>
+  <div className="floating-shapes">
+    <div className="floating-shape" style={{ left: '10%', top: '20%' }}></div>
+    <div className="floating-shape" style={{ left: '50%', top: '40%' }}></div>
+    <div className="floating-shape" style={{ left: '30%', top: '60%' }}></div>
+    <div className="floating-shape" style={{ left: '80%', top: '10%' }}></div>
+  </div>
+</div>
+
+
+<nav className="navbar">
+        <div className="logo">
+          <img src={logo} alt="Logo" className="d-inline-block align-top img-fluid" />
         </div>
-      </div>
+
+        {/* Desktop Links */}
+        <div className="links">
+          <a href="#" className="hover-underline-animation">Contact</a>
+          <a href="#" className="hover-underline-animation">Profile</a>
+          <a href="#" className="hover-underline-animation">Promotions</a>
+          <a href="#" className="hover-underline-animation">LaTex PDF</a>
+        </div>
+
+        {/* Authentication Buttons */}
+        <div className="auth-buttons">
+          <button className="login-nav-btn" onClick={handleLoginClick}>Login</button>
+          <button className="register-btn" onClick={handleRegisterClick}>Register</button>
+        </div>
+
+        {/* Hamburger Icon for Mobile */}
+        <div className="hamburger-menu" onClick={toggleMobileMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        {/* Mobile Menu */}
+        <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+          <a href="#">Contact</a>
+          <a href="#">Profile</a>
+          <a href="#">Promotions</a>
+          <a href="#">LaTex PDF</a>
+          <button className="login-nav-btn" onClick={handleLoginClick}>Login</button>
+          <button className="register-btn" onClick={handleRegisterClick}>Register</button>
+        </div>
+      </nav>
+
 
       <div className="container">
-        <nav>
-          <div className="logo">
-          <img 
-  src={logo} 
-  alt="Logo" 
-  className="d-inline-block align-top img-fluid"
-  style={{ width: '170px', height: 'auto', marginRight: '15px' }} 
-/>
-{/* Your logo here */}
-            <a href="#" className="brand"></a>
-          </div>
-          <div className="links">
-            <a href="#">Contact</a>
-            <a href="#">Profile</a>
-            <a href="#">Promotions</a>
-            <a href="#">LaTex PDF</a>
-          </div>
-          <div className="auth-buttons">
-            <button className="login-nav-btn" onClick={handleLoginClick}>
-              Login
-            </button>
-            <button className="register-btn" onClick={handleRegisterClick}>
-              Register
-            </button>
-          </div>
-        </nav>
+  
 
-        <div className="profile-section">
-          <div className="profile-img-container">
-            <img
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Profile picture placeholder"
-              className="profile-img"
-            />
-          </div>
-          <h1>Rachel Green</h1>
-          <h2>Welcome to Boron Atom</h2>
-          <button className="login-btn">Login here</button>
-        </div>
+  <div className="profile-section">
+    <div className="profile-img-container">
+      <img
+        src="https://storage.googleapis.com/a1aa/image/E53p7OQhLfXPE6ldt8QT2DEeQcilw3aJaOYiWE9a4gZeimmnA.jpg"
+        alt="Profile picture placeholder"
+        className="profile-img"
+      />
+    </div>
+    <h1>Rachel Green</h1>
+    <h2>Welcome to Boron Atom</h2>
+    <div className="container">
+    <button className="btn" onClick={handleLoginClick}>Login here</button>
+    </div>
+  </div>
 
-        <div className="actions-container">
+  <div className="actions-container">
           <button className="action-btn">
             <Camera className="icon" />
             <span>How to Register?</span>
@@ -505,25 +535,64 @@ const AIResumeRoller = () => {
           </button>
         </div>
 
-        <div className="cards-container">
-          <div className="card">
-            <img
-              src="https://storage.googleapis.com/a1aa/image/NzqambeUsAzxXCltiAl9K5SLQLN4yjFIUdMawshOiH4hKw0JA.jpg"
-              alt="Repure logo placeholder"
-            />
-            <h3>Our Resume Template</h3>
-            <p>Overleaf Resume Template</p>
-          </div>
-          <div className="card">
-            <img
-              src="https://storage.googleapis.com/a1aa/image/Ex0ULcw82wKeHaw0yyshN3bUh6QKxhXIQIfawQjqhAIAVgpTA.jpg"
-              alt="AI Thounels logo placeholder"
-            />
-            <h3>Our Cover Letter</h3>
-            <p>Standard Cover Letter Format</p>
-          </div>
-        </div>
+        
+</div>
+
+   {/* Cards Section */}
+   <div className="cards-section mt-12 px-8">
+  <div className="cards-grid grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    {/* Card 1 */}
+    <div className="card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+      <img
+        src="https://storage.googleapis.com/a1aa/image/U7thyR4IkUZuOZGe8V7MVqP34pGr3nAxKb38SF6ic1ebRTzTA.jpg"
+        alt="Resume Template"
+        className="w-full h-56 object-cover"
+      />
+      <div className="p-6">
+        <h3 className="text-gray-900 text-xl font-semibold mb-2">Resume Template</h3>
+        <p className="text-gray-700 mb-4">A professional resume template to help you land your dream job.</p>
+        <button className="btn-modern">Download</button>
       </div>
+    </div>
+
+    {/* Card 2 */}
+    <div className="card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+      <img
+        src="https://storage.googleapis.com/a1aa/image/JxcAFQMgd0puFFsUp4yRDY3aFeyC3TvtFshecFq0CUe1immnA.jpg"
+        alt="Cover Letter Template"
+        className="w-full h-56 object-cover"
+      />
+      <div className="p-6">
+        <h3 className="text-gray-900 text-xl font-semibold mb-2">Cover Letter Template</h3>
+        <p className="text-gray-700 mb-4">A clean and professional cover letter template to complement your resume.</p>
+        <button className="btn-modern">Download</button>
+      </div>
+    </div>
+
+    {/* Card 3 */}
+    <div className="card bg-white rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+      <img
+        src="https://storage.googleapis.com/a1aa/image/yYy6QfPwIARUM6SGpGe5KYfDN8aAERebYAmpUFmUXUo3FNNPB.jpg"
+        alt="Work from Home"
+        className="w-full h-56 object-cover"
+      />
+      <div className="p-6">
+        <h3 className="text-gray-900 text-xl font-semibold mb-2">Work from Home</h3>
+        <p className="text-gray-700 mb-4">Tips and tricks to stay productive while working from home.</p>
+        <button className="btn-modern">Read More</button>
+      </div>
+    </div>
+  </div>
+
+
+
+    
+      </div>
+
+
+     
+
+ 
     </>
   );
 };
