@@ -5,7 +5,7 @@ import { Navbar as BootstrapNavbar, Nav as BootstrapNav, NavDropdown, Image, But
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import logo from './logo-no-background.png';
+import logo from './images/logo-no-background.png';
 
 interface UserDetails {
   firstName: string;

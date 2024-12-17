@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import Profile from './Profile';
-import LoginForm from './components/LoginForm';
-import RegisterForm from './components/RegisterForm';
-import VerifyOTP from './components/VerifyOTP';
-import ForgotPassword from './components/ForgotPassword';
-import ResetPassword from './components/ResetPassword';
+import Profile from './components/profile/Profile';
+import LoginForm from './components/auth/LoginForm';
+import RegisterForm from './components/auth/RegisterForm';
+import VerifyOTP from './components/auth/VerifyOTP';
+import ForgotPassword from './components/auth/ForgotPassword';
+import ResetPassword from './components/auth/ResetPassword';
 import CoverLetter from './components/Cover/AiCoverLetter';
 import { useParams } from 'react-router-dom';
-import HomePage from './HomePage';
+import HomePage from './components/HomePage';
 
-import PDFHTML from './components/PDFHTML'
+import { ThemeProvider } from "./components/ThemeProvider";
+
+import PDFHTML from './components/resume/PDFHTML'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
@@ -70,6 +72,7 @@ const App: React.FC = () => {
   };
 
   return (
+    <ThemeProvider>
     <Router>
       <Routes>
         {/* Protected Route */}
@@ -112,6 +115,7 @@ const App: React.FC = () => {
         />
       </Routes>
     </Router>
+    </ThemeProvider>
   );
 };
 
