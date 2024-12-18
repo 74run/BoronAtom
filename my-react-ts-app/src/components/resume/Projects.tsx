@@ -417,7 +417,7 @@ return (
     <style>
       {`
         .projects-container {
-          background-color: #2d3748;
+          background-color: rgba(0, 3, 8, 0.45);
           border-radius: 12px;
           padding: 1.5rem;
           color: white;
@@ -751,18 +751,7 @@ return (
       `}
     </style>
 
-    <div className="projects-header">
-      <span>Projects</span>
-      {!isAdding && projects.length === 0 && (
-        <button 
-          className="btn btn-primary"
-          onClick={handleAddClick}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          Add Project
-        </button>
-      )}
-    </div>
+    <h2 className="section-header">Projects</h2>
 
     {projects.map((project, index) => (
       <div key={project._id} className="project-card">
@@ -872,7 +861,7 @@ return (
               style={{ minHeight: "150px" }}
             />
 
-            <div className="button-group">
+            <div className="btn-group">
               <button 
                 className="btn btn-primary"
                 onClick={() => handleGenerateDescription(editData.name)}

@@ -1,7 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { Menu, X, User, FileText, Briefcase, GraduationCap, Award, Users, Code, FileUp } from 'lucide-react';
+
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import ProjectsSection from '../resume/Projects';
 import Skills from '../resume/Skills';
@@ -10,6 +14,8 @@ import ExperienceSection from '../resume/ExperienceSection';
 import CertificationSection from '../resume/CertificationSection';
 import InvolvementSection from '../resume/InvolvementSection';
 import SummarySection from '../resume/SummarySection';
+
+import NavigationBar from '../NavigationBar'
 
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
@@ -198,7 +204,8 @@ interface Project {
 
 
 const ResumeCraft: React.FC = () => {
-
+  const [loading, setLoading] = useState(true);
+  const location = useLocation();
 
   const [educations, setEducations] = useState<Education[]>([]);
   const [summarys, setSummarys] = useState<Summary[]>([]);
@@ -241,7 +248,19 @@ const ResumeCraft: React.FC = () => {
   }, []);
 
 
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2000); // Simulate 2-second load
+    return () => clearTimeout(timer);
+  }, []);
 
+  const renderSkeleton = () => (
+    <div>
+      <Skeleton height={30} width="80%" style={{ marginBottom: '1rem' }} />
+      <Skeleton height={20} count={5} />
+    </div>
+  );
+
+  
   const menuItems = [
     
     { name: 'Summary', icon: FileText },
@@ -635,7 +654,7 @@ const ResumeCraft: React.FC = () => {
           }
   
           .app-container {
-            background-color: #1a202c;
+            background-color:rgb(0, 0, 0);
             color: white;
             min-height: 100vh;
             display: flex;
@@ -665,14 +684,19 @@ const ResumeCraft: React.FC = () => {
           }
 
           .navbar {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
+            position: sticky; /* sticky positioning */
+  top: 0; /* attach to the top */
+  z-index: 50; /* layer priority */
+  width: 100%; /* full width */
+  border-bottom: 1px solid var(--border-color); /* bottom border */
+  background-color: rgba(var(--background-color), 0.6); /* semi-transparent background */
+  backdrop-filter: blur(10px); /* backdrop blur effect */
           }
+
+          @supports (backdrop-filter: blur(10px)) {
+  .navbar {
+    background-color: rgba(var(--background-color), 0.6); /* alternate background if supported */
+  }
 
           .logo-container {
             display: flex;
@@ -695,7 +719,7 @@ const ResumeCraft: React.FC = () => {
 
           .nav-button {
             background-color: transparent;
-            border: 2px solid #3182ce;
+            border: 2px solidrgb(6, 30, 53);
             color: white;
             font-weight: 600;
             padding: 0.5rem 1.25rem;
@@ -727,7 +751,8 @@ const ResumeCraft: React.FC = () => {
             flex-direction: column;
             gap: 1rem;
             max-width: 1500px;
-            margin: 0 auto;
+            margin-top: 4.5rem;
+          
             width: 100%;
           }
   
@@ -740,7 +765,7 @@ const ResumeCraft: React.FC = () => {
   
           .form-container {
             width: 100%;
-            background-color: #2d3748;
+            background-color: rgba(28, 82, 136, 0.1);
             padding: 1rem;
             border-radius: 12px;
             max-height: none;
@@ -764,58 +789,104 @@ const ResumeCraft: React.FC = () => {
             margin-bottom: 1.5rem;
           }
   
-          .tabs {
-            display: flex;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            padding: 0.5rem;
-            background-color: #1a202c;
-            border-radius: 8px;
-          }
+         .tabs {
+  display: flex;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0.5rem;
+  background-color: #1a202c;
+  border-radius: 8px;
+}
+
+/* Style adjustments for menu buttons */
+.menu-button {
+  flex: 1;
+  min-width: calc(33.33% - 0.5rem);
+  background-color: rgba(74, 85, 104, 0.8);
+  border: 1px solid rgba(99, 179, 237, 0.1);
+  color: #e2e8f0;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.01em;
+  backdrop-filter: blur(4px);
+}
+
+.menu-button:hover {
+  background-color: rgba(49, 130, 206, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: rgba(99, 179, 237, 0.3);
+}
+
+.menu-button.active {
+  background-color: #3182ce;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(99, 179, 237, 0.5);
+  font-weight: 600;
+}
+
+/* Adjustments for mobile */
+@media (max-width: 1024px) {
+  .form-container {
+    width: 100%;
+    max-height: none;
+  }
   
-          .menu-button {
-            flex: 1;
-            min-width: calc(50% - 0.25rem);
-            background-color: #4a5568;
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 0.5rem;
-            cursor: pointer;
-            font-size: clamp(0.75rem, 2vw, 0.875rem);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-          }
+  .sticky-header {
+    position: sticky;
+    top: 0;
+  }
+}
+
+.menu-button:hover {
+  background-color: rgba(49, 130, 206, 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: rgba(99, 179, 237, 0.3);
+}
+
+.menu-button.active {
+  background-color:rgb(35, 62, 75);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: rgba(99, 179, 237, 0.5);
+  font-weight: 600;
+}
+
+.menu-button svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: 0.375rem;
+  opacity: 0.9;
+}
+
+@media (min-width: 640px) {
+  .menu-button {
+    min-width: auto;
+    padding: 0.5rem 1rem;
+  }
   
-          @media (min-width: 640px) {
-            .menu-button {
-              min-width: auto;
-            }
-          }
-  
-          .menu-button:hover {
-            background-color: #2b6cb0;
-            transform: translateY(-1px);
-          }
-  
-          .menu-button.active {
-            background-color: #3182ce;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          }
-  
-          .menu-button svg {
-            width: clamp(0.75rem, 2vw, 1rem);
-            height: clamp(0.75rem, 2vw, 1rem);
-            margin-right: 0.5rem;
-          }
+  .tabs {
+    gap: 0.5rem;
+  }
+}
+
+@media (hover: hover) {
+  .menu-button:active {
+    transform: translateY(0);
+  }
+}
   
           .export-container {
             width: 100%;
-            background-color: #2d3748;
+            background-color: rgba(20, 101, 168, 0.1);
             padding: 1rem;
             border-radius: 12px;
             overflow: hidden;
@@ -853,26 +924,10 @@ const ResumeCraft: React.FC = () => {
           }
         `}
       </style>
+
+      <NavigationBar UserDetail={userDetails} />
   
-      <header>
-        <nav className="navbar">
-          <div className="logo-container">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#63b3ed" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
-            <h1>ResumeCraft</h1>
-          </div>
-          <div className="nav-buttons">
-            <button className="nav-button active">Resume Builder</button>
-            <button className="nav-button">Cover Letter</button>
-          </div>
-        </nav>
-      </header>
-  
+      
       <main>
         <div className="form-container">
           <h2>Create Your Resume</h2>
@@ -890,16 +945,22 @@ const ResumeCraft: React.FC = () => {
           </div>
   
           <div className="content">
-            {activeSection === 'Profile' && (
+            {loading
+              ? renderSkeleton() // Render skeleton while loading
+              : activeSection === 'Profile' && (
               <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
             )}
-            {activeSection === 'Summary' && <SummarySection
+                {loading
+              ? renderSkeleton() // Render skeleton while loading
+              : activeSection === 'Summary' && <SummarySection
               Summarys={summarys}
               onEdit={handleEditSum}
               onDelete={handleDeleteSum}
               parsedSummary={parsedData?.summary || ''}
             />}
-            {activeSection === 'Projects' && <ProjectsSection
+                 {loading
+              ? renderSkeleton() // Render skeleton while loading
+              : activeSection === 'Projects' && <ProjectsSection
               onEdit={handleEditPro}
               onDelete={handleDeletePro}
               Projects={projects}
@@ -932,14 +993,16 @@ const ResumeCraft: React.FC = () => {
           />}
           </div>
         </div>
-  
-        <div className="export-container">
+         <div className="export-container">
           <h2>Export PDF</h2>
-          <div className="export-box">
+          {loading ? <Skeleton height={200} /> : <div className="export-box">
             <PDFHTML theme={'light'} />
-          </div>
+          </div>}
         </div>
+  
+   
       </main>
+  
     </div>
   );
 };  

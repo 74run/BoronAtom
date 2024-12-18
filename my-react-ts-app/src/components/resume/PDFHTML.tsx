@@ -95,155 +95,195 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
   const generatePDF = (userDetails: UserDetails, eduDetails: EduDetails) => {
     const doc = new jsPDF("p", "pt", "a4");
     const pageWidth = doc.internal.pageSize.getWidth();
-    const marginTop = 50; // Top margin
-    const marginBottom = 50; // Bottom margin
-    const sectionSpacing = 30; // Space between sections
-    let cursorY = marginTop;
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 40;
+    let cursorY = margin;
 
-    // Set up reusable functions
-    const drawHeader = (text: string) => {
-        doc.setFontSize(14);
-        doc.setFont("helvetica", "bold");
-        doc.text(text.toUpperCase(), 40, cursorY);
-        doc.setLineWidth(0.5);
-        doc.line(40, cursorY + 5, pageWidth - 40, cursorY + 5); // underline
-        cursorY += 20;
+    // Theme colors
+    const colors = theme === 'dark' ? {
+      text: '#ffffff',
+      header: '#63b3ed',
+      subtext: '#a0aec0',
+      line: '#4a5568'
+    } : {
+      text: '#000000',
+      header: '#2d3748',
+      subtext: '#4a5568',
+      line: '#cbd5e0'
     };
 
-    const drawSubHeader = (text: string | string[], details = "") => {
-        doc.setFontSize(12);
-        doc.setFont("helvetica", "normal");
-        doc.text(text, 40, cursorY);
-        if (details) {
-            doc.setFontSize(10);
-            doc.text(details, pageWidth - 200, cursorY, { align: "right" });
-        }
-        cursorY += 15;
-    };
-    const drawBulletList = (items: any[]) => {
-      doc.setFontSize(10);
-      doc.setFont("helvetica", "normal");
-      items.forEach((item) => {
-          const text = `• ${item}`;
-          const lines = doc.splitTextToSize(text, 170); // Split text into multiple lines based on available width (170)
-          lines.forEach((line: string | string[], index: number) => {
-              doc.text(line, 60, cursorY + (index * 12)); // Indentation for bullet points
-          });
-          cursorY += 12 * lines.length; // Adjust cursor position based on the number of lines
-      });
-      cursorY += 10; // Extra space after bullet list
-  };
-                
-  const addPageIfNeeded = () => {
-        if (cursorY > 750) {
-            doc.addPage();
-            cursorY = marginTop;
-        }
+    // Helper functions
+    const addPageIfNeeded = (height: number = 20) => {
+      if (cursorY + height > pageHeight - margin) {
+        doc.addPage();
+        cursorY = margin;
+        return true;
+      }
+      return false;
     };
 
-    // Title and Contact Information
-    doc.setFontSize(16);
-    doc.setFont("helvetica", "bold");
-    doc.text(`${userDetails.firstName} ${userDetails.lastName}`, pageWidth / 2, cursorY, { align: "center" });
-    cursorY += 20;
+    // Style configurations
+    doc.setFont("helvetica");
+    
+    // Header Section
+    doc.setFontSize(24);
+    doc.setTextColor(colors.header);
+    const name = `${userDetails.firstName} ${userDetails.lastName}`;
+    doc.text(name, pageWidth / 2, cursorY, { align: 'center' });
+    cursorY += 25;
 
+    // Contact Information
     doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(
-        [
-            `Phone: ${eduDetails.contact[0]?.phoneNumber || "N/A"}`,
-            `Email: ${userDetails.email || "N/A"}`,
-            `LinkedIn: ${eduDetails.contact[0]?.linkedIn || "N/A"}`,
-        ].join(" | "),
-        pageWidth / 2,
-        cursorY,
-        { align: "center" }
-    );
-    cursorY += sectionSpacing;
+    doc.setTextColor(colors.subtext);
+    const contactInfo = [
+      eduDetails.contact[0]?.phoneNumber,
+      userDetails.email,
+      eduDetails.contact[0]?.linkedIn
+    ].filter(Boolean).join(" | ");
+    doc.text(contactInfo, pageWidth / 2, cursorY, { align: 'center' });
+    cursorY += 30;
 
-    // Education Section
-    drawHeader("Education");
-    eduDetails.education
-        .filter((edu) => edu.includeInResume)
-        .forEach((edu) => {
-            drawSubHeader(
-                `${edu.university}`,
-                `${edu.isPresent ? "Present" : `${edu.endDate.month}/${edu.endDate.year}`}`
-            );
-            drawBulletList([`${edu.degree}, ${edu.major} - GPA: ${edu.cgpa}`]);
-            addPageIfNeeded();
-        });
+    // Section Helper
+    const addSection = (title: string, content: () => void) => {
+      addPageIfNeeded(60);
+      doc.setFontSize(14);
+      doc.setTextColor(colors.header);
+      doc.setFont("helvetica", "bold");
+      doc.text(title.toUpperCase(), margin, cursorY);
+      
+      // Section line
+      cursorY += 5;
+      doc.setDrawColor(colors.line);
+      doc.setLineWidth(0.5);
+      doc.line(margin, cursorY, pageWidth - margin, cursorY);
+      cursorY += 20;
 
-    // Experience Section
-    drawHeader("Experience");
-    eduDetails.experience
-        .filter((exp) => exp.includeInResume)
-        .forEach((exp) => {
-            drawSubHeader(
-                `${exp.jobTitle} at ${exp.company}`,
-                `${exp.isPresent ? "Present" : `${exp.endDate.month}/${exp.endDate.year}`}`
-            );
-            drawBulletList(exp.description.split("\n"));
-            addPageIfNeeded();
-        });
-
-    // Skills Section
-    drawHeader("Skills");
-    const skills = [
-        { title: "Web Development", skills: ["React", "Node.js", "Express", "HTML", "CSS", "Flask", "MongoDB"] },
-        { title: "Programming Languages", skills: ["Python", "R Programming", "SQL", "JavaScript"] },
-        { title: "Data Analysis", skills: ["Pandas", "NumPy"] },
-        { title: "Data Science", skills: ["TensorFlow", "Keras", "OpenCV", "NLTK", "PyTorch"] },
-        { title: "Machine Learning", skills: ["Regression", "Classification", "Clustering", "Decision Trees", "Random Forest", "SVM"] },
-        { title: "Data Visualization", skills: ["Mat plotlib", "Seaborn", "Tableau", "Plotly", "Power BI"] },
-        { title: "Quantitative Analysis", skills: ["SPSS", "Factor Analysis", "Regression Modeling", "Predictive Analytics"] },
-        { title: "Microsoft Office Suite Skills", skills: ["Microsoft Excel", "Microsoft Word", "Microsoft PowerPoint", "Microsoft Outlook"] },
-    ];
-    skills.forEach((skillGroup) => {
-        const skillList = skillGroup.skills.join(", "); // Join skills with a comma
-        drawSubHeader(`${skillGroup.title}: ${skillList}`); // Display title followed by skills
-        cursorY += 15; // Add space after skills
-        addPageIfNeeded();
-    });
-
-    // Projects Section
-    drawHeader("Projects");
-    eduDetails.project
-        .filter((proj) => proj.includeInResume)
-        .forEach((proj) => {
-            drawSubHeader(
-                `${proj.name}`,
-                `${proj.isPresent ? "Present" : `${proj.endDate.month}/${proj.endDate.year}`}`
-            );
-            drawBulletList(proj.description.split("\n"));
-            addPageIfNeeded();
-        });
-
-    // Save the PDF
-    doc.save(`${userDetails.username || "Resume"}.pdf`);
-};
-
-
-
-const downloadPDF = () => {
-  if (resumeRef.current) {
-    const element = resumeRef.current;
-    const opt = {
-      margin: [0.5, 0.5], // Margins in inches
-      filename: `${userDetails?.username || 'Resume'}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 }, // Higher scale for better quality
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(colors.text);
+      doc.setFontSize(10);
+      
+      content();
+      cursorY += 20;
     };
 
-    html2pdf()
-      .set(opt)
-      .from(element)
-      .save();
-  } else {
-    console.error('Resume content is not available');
-  }
-};
+    // Add Summary Section
+    if (eduDetails.summary[0]?.content) {
+      addSection("Summary", () => {
+        const summaryLines = doc.splitTextToSize(
+          eduDetails.summary[0].content,
+          pageWidth - (margin * 2)
+        );
+        summaryLines.forEach((line: string | string[]) => {
+          if (addPageIfNeeded()) return;
+          doc.text(line, margin, cursorY);
+          cursorY += 15;
+        });
+      });
+    }
+
+    // Add Education Section
+    const includedEducation = eduDetails.education.filter(edu => edu.includeInResume);
+    if (includedEducation.length > 0) {
+      addSection("Education", () => {
+        includedEducation.forEach(edu => {
+          if (addPageIfNeeded(60)) return;
+          
+          doc.setFont("helvetica", "bold");
+          doc.text(edu.university, margin, cursorY);
+          
+          const dateText = edu.isPresent ? 'Present' : `${edu.endDate.month}/${edu.endDate.year}`;
+          doc.setFont("helvetica", "normal");
+          doc.text(dateText, pageWidth - margin, cursorY, { align: 'right' });
+          cursorY += 15;
+
+          doc.text(`${edu.degree} in ${edu.major} - GPA: ${edu.cgpa}`, margin + 10, cursorY);
+          cursorY += 25;
+        });
+      });
+    }
+
+    // Add Experience Section
+    const includedExperience = eduDetails.experience.filter(exp => exp.includeInResume);
+    if (includedExperience.length > 0) {
+      addSection("Experience", () => {
+        includedExperience.forEach(exp => {
+          if (addPageIfNeeded(60)) return;
+
+          doc.setFont("helvetica", "bold");
+          doc.text(`${exp.jobTitle} - ${exp.company}`, margin, cursorY);
+          
+          const dateText = exp.isPresent ? 'Present' : `${exp.endDate.month}/${exp.endDate.year}`;
+          doc.setFont("helvetica", "normal");
+          doc.text(dateText, pageWidth - margin, cursorY, { align: 'right' });
+          cursorY += 15;
+
+          const description = exp.description.split('\n').map(line => 
+            line.trim().startsWith('•') ? line : `• ${line}`
+          );
+
+          description.forEach(line => {
+            if (addPageIfNeeded()) return;
+            const wrappedLines = doc.splitTextToSize(line, pageWidth - (margin * 2) - 20);
+            wrappedLines.forEach((wrappedLine: string | string[]) => {
+              doc.text(wrappedLine, margin + 10, cursorY);
+              cursorY += 15;
+            });
+          });
+          cursorY += 10;
+        });
+      });
+    }
+
+    // Add Skills Section
+    const includedSkills = eduDetails.skills.filter(skill => skill.includeInResume);
+    if (includedSkills.length > 0) {
+      addSection("Skills", () => {
+        includedSkills.forEach(skill => {
+          if (addPageIfNeeded(20)) return;
+          doc.setFont("helvetica", "bold");
+          doc.text(`${skill.domain}:`, margin, cursorY);
+          doc.setFont("helvetica", "normal");
+          const skillText = doc.splitTextToSize(skill.name, pageWidth - (margin * 2) - 100);
+          doc.text(skillText, margin + 80, cursorY);
+          cursorY += skillText.length * 15 + 5;
+        });
+      });
+    }
+
+    // Add Projects Section
+    const includedProjects = eduDetails.project.filter(proj => proj.includeInResume);
+    if (includedProjects.length > 0) {
+      addSection("Projects", () => {
+        includedProjects.forEach(proj => {
+          if (addPageIfNeeded(60)) return;
+
+          doc.setFont("helvetica", "bold");
+          doc.text(proj.name, margin, cursorY);
+          
+          const dateText = proj.isPresent ? 'Present' : `${proj.endDate.month}/${proj.endDate.year}`;
+          doc.setFont("helvetica", "normal");
+          doc.text(dateText, pageWidth - margin, cursorY, { align: 'right' });
+          cursorY += 15;
+
+          const description = proj.description.split('\n').map(line => 
+            line.trim().startsWith('•') ? line : `• ${line}`
+          );
+
+          description.forEach(line => {
+            if (addPageIfNeeded()) return;
+            const wrappedLines = doc.splitTextToSize(line, pageWidth - (margin * 2) - 20);
+            wrappedLines.forEach((wrappedLine: string | string[]) => {
+              doc.text(wrappedLine, margin + 10, cursorY);
+              cursorY += 15;
+            });
+          });
+          cursorY += 10;
+        });
+      });
+    }
+
+    doc.save(`${userDetails.username || "resume"}.pdf`);
+  };
 
 
   const formatDescription = (text: string) => {
@@ -261,26 +301,22 @@ const downloadPDF = () => {
   };
 
   return (
-    <div className="container mx-auto">
-  <button 
-  className="btn btn-secondary mb-4" 
-  onClick={() => {
-    if (userDetails && eduDetails) {
-      generatePDF(userDetails, eduDetails);
-    } else {
-      console.error("User details or education details are missing.");
-    }
-  }}
->
-  <FaFilePdf /> Download PDF
-</button>
+    <div className="flex flex-col gap-6 p-4">
+    {/* Download buttons container outside the resume */}
+    <div className="flex gap-4 justify-end max-w-[8.5in] mx-auto w-full">
+      <button 
+        onClick={() => userDetails && eduDetails && generatePDF(userDetails, eduDetails)}
+        className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 
+          text-white rounded-full hover:transform hover:scale-105 transition-all duration-200 
+          shadow-lg hover:shadow-xl"
+      >
+        <FaFilePdf className="text-lg" />
+        Download Resume
+      </button>
+     
+    </div>
 
-<button 
-      className="btn btn-secondary mb-4"
-      onClick={downloadPDF}
-    >
-      <FaFilePdf /> Download PDF 2
-    </button>
+
 
 
 
@@ -357,6 +393,7 @@ const downloadPDF = () => {
         )}
       </div>
     </div>
+
   );
 };
 
@@ -377,13 +414,11 @@ const styles: {
 } = {
   resumeContainer: {
     fontFamily: "'Times New Roman', Times, serif",
-    backgroundColor: '#ffffff',
-    padding: '0.2in 0.5in 0.2in 0.5in',
+    padding: '0in', // Reduced padding
     color: '#333',
-    lineHeight: '1.3',
-    boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-    maxWidth: '9.5in',
-    margin: 'auto',
+    lineHeight: '1.2', // Slightly reduced line height
+    maxWidth: '8.5in',
+    width: '100%',
   },
   header: {
     textAlign: 'center',
@@ -401,7 +436,7 @@ const styles: {
     color: '#666',
   },
   section: {
-    marginBottom: '0.8rem',
+    marginBottom: '0.5rem',
   },
   sectionTitle: {
     fontWeight: 'bold',
@@ -409,7 +444,7 @@ const styles: {
     fontSize: '1rem',
     color: '#4B4B4B',
     letterSpacing: '0.05em',
-    marginBottom: '0.15rem',
+    marginBottom: '0.1rem',
     textAlign: 'left',
   },
   sectionDivider: {
@@ -417,10 +452,10 @@ const styles: {
     margin: '0.1rem 0 0.2rem 0',
   },
   contentIndent: {
-    marginLeft: '0.5rem',
+    marginLeft: '0.3rem',
     fontSize: '0.8rem',
-    lineHeight: '1.3',
-    marginBottom: '0.2rem',
+    lineHeight: '1.2',
+    marginBottom: '0.15rem',
     color: '#000', // Ensuring summary and education content is black
   },
   dateText: {

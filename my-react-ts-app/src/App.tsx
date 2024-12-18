@@ -83,7 +83,7 @@ const App: React.FC = () => {
 
     <Route path="/" element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />} />
 
-        
+        <Route path = "/" element={<HomePage />} />
 
         {/* Public Routes <Route
     path="/"

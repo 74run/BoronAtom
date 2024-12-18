@@ -196,7 +196,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
       <style>
         {`
           .certifications-container {
-            background-color: #2d3748;
+            background-color: rgba(0, 3, 8, 0.45);
             border-radius: 12px;
             padding: 1.5rem;
             color: white;

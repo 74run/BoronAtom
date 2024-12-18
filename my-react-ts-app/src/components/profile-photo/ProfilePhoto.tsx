@@ -3,7 +3,7 @@ import { Pencil } from "react-bootstrap-icons";
 import Modal from "../profile-photo/Model";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit } from 'react-icons/md';
+import { MdEdit, MdPreview } from 'react-icons/md';
 import ModalContact from "../profile-photo/ModalContact";
 import PDFResume from '../profile-photo/MyPdfViewer';
 
@@ -190,44 +190,42 @@ const Profile: React.FC<ProfileProps> = () => {
       <style>
         {`
           .profile-container {
-            background-color: #2d3748;
+            background-color:rgba(0, 3, 8, 0.45);
             border-radius: 12px;
             padding: 2rem;
             color: white;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
           }
-
+  
           .profile-header {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2.5rem;
             position: relative;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           }
-
+  
           .profile-name {
             color: #63b3ed;
-            font-size: 2.2rem;
+            font-size: 2rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             letter-spacing: -0.5px;
           }
-
+  
           .profile-email {
             color: #a0aec0;
             font-size: 1.1rem;
             margin-bottom: 1.5rem;
           }
-
+  
           .buttons-container {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
           }
-
+  
           .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -241,83 +239,123 @@ const Profile: React.FC<ProfileProps> = () => {
             transition: all 0.2s ease;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           }
-
+  
           .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
           }
-
+  
           .btn-primary {
             background: linear-gradient(135deg, #3182ce, #4facfe);
             color: white;
           }
-
+  
           .btn-secondary {
-            background: linear-gradient(135deg, #805ad5, #6b46c1);
+            background: linear-gradient(135deg, #38a169, #68d391);
             color: white;
           }
-
-          .metrics-container {
+  
+          .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-            margin-top: 2rem;
+            margin: 2.5rem 0;
           }
-
+  
           .metric-card {
             background-color: #1a202c;
             border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: transform 0.2s ease;
           }
-
+  
           .metric-card:hover {
             transform: translateY(-4px);
           }
-
+  
+          .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+          }
+  
           .metric-title {
             color: #63b3ed;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 500;
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.5px;
           }
-
+  
+          .metric-value {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+          }
+  
+          .progress-bar {
+            height: 8px;
+            background-color: #2d3748;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+          }
+  
+          .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1.5s ease-out;
+          }
+  
+          .progress-fill.completion {
+            background: linear-gradient(to right, #3182ce, #4facfe);
+          }
+  
+          .progress-fill.ats {
+            background: linear-gradient(to right, #38a169, #68d391);
+          }
+  
+          .metric-details {
+            margin-top: 1rem;
+            color: #a0aec0;
+            font-size: 0.9rem;
+            line-height: 1.5;
+          }
+  
           .pdf-preview {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 2rem auto;
             background: #1a202c;
             border-radius: 12px;
             padding: 1.5rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
           }
-
+  
           @media (max-width: 768px) {
             .profile-container {
               padding: 1.5rem;
             }
-
+  
             .buttons-container {
               flex-direction: column;
               width: 100%;
             }
-
+  
             .btn {
               width: 100%;
               justify-content: center;
             }
-
-            .metrics-container {
+  
+            .metrics-grid {
               grid-template-columns: 1fr;
             }
           }
         `}
       </style>
-
+  
       <div className="profile-header">
         <h1 className="profile-name">
           {eduDetails?.contact?.[0]?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
@@ -328,78 +366,54 @@ const Profile: React.FC<ProfileProps> = () => {
         
         <div className="buttons-container">
           <button className="btn btn-primary" onClick={openModal}>
-            <MdEdit size={20} />
-            Edit Contact Info
+            <MdEdit size={18} />
+            Edit Profile
           </button>
           <button className="btn btn-secondary">
-            <MdEdit size={20} />
+            <MdPreview size={18} />
             Preview Resume
           </button>
         </div>
       </div>
-
+  
+      <div className="metrics-grid">
+        <div className="metric-card">
+          <div className="metric-header">
+            <h2 className="metric-title">Profile Completion</h2>
+            <span className="metric-value">{profileCompletion}%</span>
+          </div>
+          <div className="progress-bar">
+            <div 
+              className="progress-fill completion" 
+              style={{ width: `${profileCompletion}%` }}
+            />
+          </div>
+          <div className="metric-details">
+            Complete your profile information to improve visibility and opportunities.
+          </div>
+        </div>
+  
+        <div className="metric-card">
+          <div className="metric-header">
+            <h2 className="metric-title">ATS Score</h2>
+            <span className="metric-value">{atsScore}%</span>
+          </div>
+          <div className="progress-bar">
+            <div 
+              className="progress-fill ats" 
+              style={{ width: `${atsScore}%` }}
+            />
+          </div>
+          <div className="metric-details">
+            Your resume's compatibility score with Applicant Tracking Systems.
+          </div>
+        </div>
+      </div>
+  
       <div className="pdf-preview">
         <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
       </div>
-
-      <div className="metrics-container">
-        <div className="metric-card">
-          <h2 className="metric-title">Profile Completion</h2>
-          <ReactSpeedometer
-            value={profileCompletion}
-            minValue={0}
-            maxValue={100}
-            needleColor="#63b3ed"
-            startColor="#e53e3e"
-            endColor="#38a169"
-            segments={7}
-            needleTransition={Transition.easeElastic}
-            needleTransitionDuration={3000}
-            textColor="#ffffff"
-            width={250}
-            height={160}
-            currentValueText={`${profileCompletion}%`}
-            segmentColors={[
-              "#e53e3e",
-              "#e06055",
-              "#dc846b",
-              "#d7a782",
-              "#c5bb89",
-              "#9eca90",
-              "#38a169"
-            ]}
-          />
-        </div>
-
-        <div className="metric-card">
-          <h2 className="metric-title">ATS Score</h2>
-          <ReactSpeedometer
-            value={atsScore}
-            minValue={0}
-            maxValue={100}
-            needleColor="#63b3ed"
-            startColor="#e53e3e"
-            endColor="#38a169"
-            segments={7}
-            needleTransition={Transition.easeElastic}
-            needleTransitionDuration={3000}
-            textColor="#ffffff"
-            width={250}
-            height={160}
-            currentValueText={`${atsScore}%`}
-            segmentColors={[
-              "#e53e3e",
-              "#e06055",
-              "#dc846b",
-              "#d7a782",
-              "#c5bb89",
-              "#9eca90",
-              "#38a169"
-            ]}
-          />
-        </div>
-      </div>
-
+  
       {modalOpen && (
         <Modal
           updateAvatar={updateAvatar}
@@ -407,10 +421,11 @@ const Profile: React.FC<ProfileProps> = () => {
           currentAvatar={avatarUrl.current}
         />
       )}
-
+  
       <ModalContact isOpen={isModalOpen} closeModal={closeModal} />
     </div>
   );
+
 };
 
 export default Profile;
