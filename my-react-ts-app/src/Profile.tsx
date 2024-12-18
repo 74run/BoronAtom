@@ -1,37 +1,40 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+
 import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CoverPage from './components/CoverPage';
-import ProjectsSection from './components/Projects';
-import Skills from './components/Skills';
-import EducationSection from './components/Education';
-import ExperienceSection from './components/ExperienceSection';
-import CertificationSection from './components/CertificationSection';
-import InvolvementSection from './components/InvolvementSection';
-import SummarySection from './components/SummarySection';
-import ProfilePhoto from './components/ProfilePhotoWithUpload';
-import NavigationBar from './components/NavigationBar';
-import Footer from './components/Footer';
-import SectionWrapper from './components/SectionWrapper';
-import ResumeUpload from './components/ResumeUpload';
-import ProfileNew from './components/ProfilePhoto';
-import { AiOutlineFileAdd } from 'react-icons/ai';
-import { FaFilePdf } from 'react-icons/fa';
-import Modal from "./components/Model";
-import { ParsedDataProvider } from './components/ParsedDataContext';
-import ChatBox from './components/ChatBox';
 
-import PDFHTML from './components/PDFHTML'
-import LatexComponent from './latex/latex';
+import ProjectsSection from './components/resume/Projects';
+import Skills from './components/resume/Skills';
+import EducationSection from './components/resume/Education';
+import ExperienceSection from './components/resume/ExperienceSection';
+import CertificationSection from './components/resume/CertificationSection';
+import InvolvementSection from './components/resume/InvolvementSection';
+import SummarySection from './components/resume/SummarySection';
+
+import Newprofile from './newprofile'
+
+
+
+import Footer from './components/Footer';
+
+import ProfileNew from './components/profile-photo/ProfilePhoto';
+
+import { FaFilePdf } from 'react-icons/fa';
+import Modal from "./components/profile-photo/Model";
+
+
+import PDFHTML from './components/resume/PDFHTML'
+
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
-import './index.css';
-import './css/profile.css';
-import './App.css';
 
-import PDFResume from './components/MyPdfViewer';
+
 import React, { useEffect, useRef, useState } from 'react';
-import { Cursor, Pencil } from 'react-bootstrap-icons';
+
+
+import { Menu, X, User, FileText, Briefcase, GraduationCap, Award, Users, Code, FileUp } from 'lucide-react';
+
+
+
 
 
 interface UserDetails {
@@ -211,6 +214,8 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
 
   const [profileImage, setProfileImage] = useState<string>('');
   
@@ -234,6 +239,17 @@ const Profile: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const avatarUrl = useRef<string>(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`);
+
+  const menuItems = [
+    { name: 'Profile', icon: User },
+    { name: 'Summary', icon: FileText },
+    { name: 'Projects', icon: Code },
+    { name: 'Experience', icon: Briefcase },
+    { name: 'Education', icon: GraduationCap },
+    { name: 'Certifications', icon: Award },
+    { name: 'Involvements', icon: Users },
+    { name: 'Resume', icon: FileUp }
+  ];
 
 
 
@@ -679,7 +695,6 @@ const Profile: React.FC = () => {
  
   return (
     <>
-
     
       {/* Full page layout */}
       <div
@@ -687,14 +702,28 @@ const Profile: React.FC = () => {
   style={{
     display: "flex",
     flexDirection: "column",
-    backgroundColor: "#2d3748",
+    
     paddingTop: "50px",
     paddingLeft: "25px",
     paddingRight: "15px",
     overflow: "hidden"
   }}
 >
-        <NavigationBar UserDetail={userDetails} />
+
+
+
+
+      
+
+        <div className="pt-16 flex">
+        {/* Sidebar */}
+  
+          
+      <Newprofile />
+
+    
+
+
         {/* Main Content Area */}
         <div
         className="flex-container"
@@ -887,7 +916,7 @@ style={{cursor: "pointer"}}>
           </div>
         </div>
       </div>
-
+</div>
       
   
         <Footer />
