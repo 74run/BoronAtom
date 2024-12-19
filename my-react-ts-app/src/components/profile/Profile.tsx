@@ -377,27 +377,27 @@ const ResumeCraft: React.FC = () => {
   //   }
   // };
 
-  const handleDeleteProfile = () => {
-    // Implement logic for image deletion on the client side
-    // This example simply sets the profile photo URL to an empty string
-    setImageUrl('');
+  // const handleDeleteProfile = () => {
+  //   // Implement logic for image deletion on the client side
+  //   // This example simply sets the profile photo URL to an empty string
+  //   setImageUrl('');
 
-    // Optional: You can also send a request to the server to delete the image from the server-side storage
-    fetch('/delete-profile-photo', {
-      method: 'DELETE',
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          console.log('Image deleted successfully on the server');
-        } else {
-          console.error('Error deleting image on the server:', data.message);
-        }
-      })
-      .catch((error) => {
-        console.error('Error deleting image on the server:', error);
-      });
-  };
+  //   // Optional: You can also send a request to the server to delete the image from the server-side storage
+  //   fetch('/delete-profile-photo', {
+  //     method: 'DELETE',
+  //   })
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data.success) {
+  //         console.log('Image deleted successfully on the server');
+  //       } else {
+  //         console.error('Error deleting image on the server:', data.message);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error deleting image on the server:', error);
+  //     });
+  // };
 
 
   useEffect(() => {
@@ -659,18 +659,11 @@ const ResumeCraft: React.FC = () => {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            
           }
 
-          /* Custom scrollbar styling */
-          * {
-            scrollbar-width: none; /* Firefox */
-            -ms-overflow-style: none; /* IE and Edge */
-          }
-
-          *::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-          }
+          
+      
   
           /* Enhanced Navbar Styling */
           header {
@@ -682,6 +675,19 @@ const ResumeCraft: React.FC = () => {
             z-index: 50;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
           }
+
+
+          .form-container,
+.export-box {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.form-container::-webkit-scrollbar,
+.export-box::-webkit-scrollbar {
+  display: none;
+}
+
 
           .navbar {
             position: sticky; /* sticky positioning */
@@ -945,22 +951,16 @@ const ResumeCraft: React.FC = () => {
           </div>
   
           <div className="content">
-            {loading
-              ? renderSkeleton() // Render skeleton while loading
-              : activeSection === 'Profile' && (
-              <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
-            )}
-                {loading
-              ? renderSkeleton() // Render skeleton while loading
-              : activeSection === 'Summary' && <SummarySection
+          { activeSection === 'Profile' && (
+    <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
+)}
+                {activeSection === 'Summary' && <SummarySection
               Summarys={summarys}
               onEdit={handleEditSum}
               onDelete={handleDeleteSum}
               parsedSummary={parsedData?.summary || ''}
             />}
-                 {loading
-              ? renderSkeleton() // Render skeleton while loading
-              : activeSection === 'Projects' && <ProjectsSection
+                 {activeSection === 'Projects' && <ProjectsSection
               onEdit={handleEditPro}
               onDelete={handleDeletePro}
               Projects={projects}

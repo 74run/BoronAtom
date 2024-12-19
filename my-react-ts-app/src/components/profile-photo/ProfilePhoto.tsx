@@ -6,9 +6,7 @@ import axios from 'axios';
 import { MdEdit, MdPreview } from 'react-icons/md';
 import ModalContact from "../profile-photo/ModalContact";
 import PDFResume from '../profile-photo/MyPdfViewer';
-
-import ReactSpeedometer, { Transition } from "react-d3-speedometer"; // Import React Speedometer
-
+import ProfilePictureModal from './ProfilePictureModal';
 
 interface UserDetails {
   firstName: string;
@@ -93,15 +91,19 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = () => {
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null);
+  const [profileImage, setProfileImage] = useState<string>('');
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
   const avatarUrl = useRef<string>(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const { userID } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [profileCompletion, setProfileCompletion] = useState(0); // Profile completion percentage
   const [atsScore, setAtsScore] = useState(0); // ATS score
+
+  const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -114,6 +116,29 @@ const Profile: React.FC<ProfileProps> = () => {
   const updateAvatar = (imgSrc: string) => {
     avatarUrl.current = imgSrc;
   };
+
+  useEffect(() => {
+    const userID = localStorage.getItem('UserID');
+    if (userID) {
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { 
+          responseType: 'arraybuffer' 
+        })
+        .then((response) => {
+          const base64Image = btoa(
+            new Uint8Array(response.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte), 
+              ''
+            )
+          );
+          const contentType = response.headers['content-type'];
+          setProfileImage(`data:${contentType};base64,${base64Image}`);
+        })
+        .catch((error) => {
+          console.error('Error fetching profile image:', error);
+        });
+    }
+  }, []);
 
   const calculateProfileCompletion = (eduDetails: EduDetails | null): number => {
     if (!eduDetails) return 0;
@@ -131,6 +156,49 @@ const Profile: React.FC<ProfileProps> = () => {
     return Math.round((completedSections / totalSections) * 100);
   };
 
+  const handleProfilePictureUpdate = (newImage: string) => {
+    setProfileImage(newImage);
+    const userID = localStorage.getItem('UserID');
+    if (userID) {
+      axios.post(
+        `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`,
+        { imageData: newImage },  // Send the base64 string directly
+        { headers: { 'Content-Type': 'application/json' } }
+      ).catch((error) => {
+        console.error('Error updating profile image:', error);
+      });
+    }
+  };
+
+
+
+  const handleProfilePictureDelete = () => {
+    const userID = localStorage.getItem('UserID');
+    if (userID) {
+      axios.delete(`https://localhost:3001/api/userprofile/${userID}/image`)
+        .then(() => {
+          // Reset the profile image in your state
+          setProfileImage(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`); // or set to a default image URL
+        })
+        .catch((error) => {
+          console.error('Error deleting profile image:', error);
+        });
+    }
+  };
+
+// Helper function to convert base64 to file
+const dataURLtoFile = (dataurl: string, filename: string) => {
+  const arr = dataurl.split(',');
+  const mime = arr[0].match(/:(.*?);/)?.[1];
+  const bstr = atob(arr[1]);
+  let n = bstr.length;
+  const u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+};
+
   const fetchAtsScore = () => {
     // Example API call to fetch ATS score
     axios
@@ -145,6 +213,7 @@ const Profile: React.FC<ProfileProps> = () => {
 
   useEffect(() => {
     // Fetch user details
+    setIsLoading(true);
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
       .then(response => {
         setUserDetails(response.data.user);
@@ -176,10 +245,13 @@ const Profile: React.FC<ProfileProps> = () => {
         );
         const contentType = response.headers['content-type'];
         avatarUrl.current = `data:${contentType};base64,${base64Image}`;
+        setIsLoading(false);
       })
+      
       .catch(error => {
         console.error('Error fetching image:', error);
       });
+
 
     // Fetch ATS score
     fetchAtsScore();
@@ -197,6 +269,24 @@ const Profile: React.FC<ProfileProps> = () => {
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
           }
   
+
+          .profile-pic-profile {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover; /* This ensures the image fills the circle properly */
+  margin-bottom: 1rem;
+  border: 5px solid skyblue;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.profile-pic-profile:hover {
+  border-color: #4facfe;
+  transform: scale(1.05);
+}
+
+
           .profile-header {
             display: flex;
             flex-direction: column;
@@ -357,12 +447,40 @@ const Profile: React.FC<ProfileProps> = () => {
       </style>
   
       <div className="profile-header">
-        <h1 className="profile-name">
-          {eduDetails?.contact?.[0]?.name || `${userDetails?.firstName} ${userDetails?.lastName}`}
-        </h1>
-        <p className="profile-email">
-          {eduDetails?.contact?.[0]?.email || userDetails?.email}
-        </p>
+      <img 
+  src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`}
+  alt="Profile"
+  className="profile-pic-profile"
+  onClick={() => setIsProfilePictureModalOpen(true)}
+/>
+
+<ProfilePictureModal
+  isOpen={isProfilePictureModalOpen}
+  onClose={() => setIsProfilePictureModalOpen(false)}
+  currentImage={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`}
+  onImageUpdate={handleProfilePictureUpdate}
+  handleDelete={handleProfilePictureDelete}
+/>
+{isLoading ? (
+  <div className="animate-pulse">
+    <div className="h-8 w-48 bg-gray-700 rounded mb-2"></div>
+    <div className="h-6 w-32 bg-gray-700 rounded"></div>
+  </div>
+) : (
+  <>
+    <h1 className="profile-name">
+      {(eduDetails?.contact?.[0]?.name || 
+       (userDetails?.firstName && userDetails?.lastName && 
+        `${userDetails.firstName} ${userDetails.lastName}`) || 
+       'Add Your Name')}
+    </h1>
+    <p className="profile-email">
+      {eduDetails?.contact?.[0]?.email || 
+       userDetails?.email || 
+       'Add Your Email'}
+    </p>
+  </>
+)}
         
         <div className="buttons-container">
           <button className="btn btn-primary" onClick={openModal}>

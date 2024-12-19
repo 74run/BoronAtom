@@ -1077,7 +1077,7 @@ return (
               style={{ minHeight: "150px" }}
             />
 
-            <div className="button-group">
+            <div className="btn-group">
               <button 
                 className="btn btn-primary"
                 onClick={() => handleGenerateDescription(newProject.name)}

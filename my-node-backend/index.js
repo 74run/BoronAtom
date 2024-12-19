@@ -286,6 +286,29 @@ app.get('/api/userprofile/:userID/image', async (req, res) => {
 });
 
 
+app.delete('/api/userprofile/:userID/image', async (req, res) => {
+  const { userID } = req.params;
+
+  try {
+    const userProfile = await UserProfile.findOne({ userID });
+
+    if (!userProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+
+    // Remove the image and contentType
+    userProfile.image = undefined;
+    userProfile.image = { contentType: undefined };
+
+    await userProfile.save();
+
+    res.status(200).json({ message: 'Profile image deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting profile image', error });
+  }
+});
+
+
 
 
 // app.get('/api/profile-photo', async (req, res) => {
