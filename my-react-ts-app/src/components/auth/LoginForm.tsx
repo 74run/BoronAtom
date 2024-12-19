@@ -172,7 +172,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   </div>
 
       {/* Login Form */}
-      <div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "80px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "0px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div
           className="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md"
           style={{

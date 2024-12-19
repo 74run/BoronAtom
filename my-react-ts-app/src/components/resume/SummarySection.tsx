@@ -224,12 +224,13 @@ const handleGenerateTextClick = () => {
             margin-bottom: 1rem;
           }
 
-          .button-group {
+          .btn-group {
             display: flex;
             gap: 0.75rem;
-            justify-content: flex-end;
             margin-top: 1rem;
+            flex-wrap: wrap;
           }
+
 
           .btn {
             display: flex;
@@ -332,7 +333,7 @@ const handleGenerateTextClick = () => {
                 onChange={(e) => setEditData({ ...editData, content: e.target.value })}
                 placeholder="Enter your professional summary..."
               />
-              <div className="button-group">
+              <div className="btn-group">
                 <button 
                   className="btn btn-primary"
                   onClick={handleGenerateTextClick}
@@ -401,7 +402,7 @@ const handleGenerateTextClick = () => {
             onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
             placeholder="Enter your professional summary..."
           />
-          <div className="button-group">
+          <div className="btn-group">
             <button 
               className="btn btn-primary"
               onClick={handleGenerateTextClick}
