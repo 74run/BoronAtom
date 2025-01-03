@@ -298,7 +298,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   
           .profile-name {
             color: #63b3ed;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             letter-spacing: -0.5px;
@@ -306,7 +306,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   
           .profile-email {
             color: #a0aec0;
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin-bottom: 1.5rem;
           }
   
@@ -319,7 +319,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
           .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 0.7rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -375,13 +375,13 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   
           .metric-title {
             color: #63b3ed;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 500;
           }
   
           .metric-value {
             color: white;
-            font-size: 1.5rem;
+            font-size: 1rem;
             font-weight: 600;
           }
   
@@ -410,7 +410,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
           .metric-details {
             margin-top: 1rem;
             color: #a0aec0;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             line-height: 1.5;
           }
   
@@ -447,12 +447,19 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
       </style>
   
       <div className="profile-header">
-      <img 
-  src={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`}
-  alt="Profile"
-  className="profile-pic-profile"
-  onClick={() => setIsProfilePictureModalOpen(true)}
-/>
+        {isLoading ? (
+          <div className="animate-pulse flex flex-col items-center w-full">
+            <div className="w-24 h-24 bg-gray-700 rounded-full mb-4"></div>
+           
+          </div>
+        ) : (
+          <img 
+            src={profileImage || avatarUrl.current}
+            alt="Profile"
+            className="profile-pic-profile"
+            onClick={() => setIsProfilePictureModalOpen(true)}
+          />
+        )}
 
 <ProfilePictureModal
   isOpen={isProfilePictureModalOpen}
@@ -463,8 +470,8 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
 />
 {isLoading ? (
   <div className="animate-pulse">
-    <div className="h-8 w-48 bg-gray-700 rounded mb-2"></div>
-    <div className="h-6 w-32 bg-gray-700 rounded"></div>
+ <div className="h-8 w-48 bg-gray-700 rounded mb-2"></div>
+ <div className="h-6 w-32 bg-gray-700 rounded mb-4"></div>
   </div>
 ) : (
   <>
@@ -483,54 +490,82 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
 )}
         
         <div className="buttons-container">
-          <button className="btn btn-primary" onClick={openModal}>
-            <MdEdit size={18} />
-            Edit Profile
-          </button>
-          <button className="btn btn-secondary">
-            <MdPreview size={18} />
-            Preview Resume
-          </button>
+          {isLoading ? (
+            <div className="animate-pulse flex gap-4">
+              <div className="h-10 w-32 bg-gray-700 rounded"></div>
+              <div className="h-10 w-32 bg-gray-700 rounded"></div>
+            </div>
+          ) : (
+            <>
+              <button className="btn btn-primary" onClick={openModal}>
+                <MdEdit size={18} />
+                Edit Profile
+              </button>
+              <button className="btn btn-secondary">
+                <MdPreview size={18} />
+                Preview Resume
+              </button>
+            </>
+          )}
         </div>
       </div>
-  
+
+
       <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-header">
-            <h2 className="metric-title">Profile Completion</h2>
-            <span className="metric-value">{profileCompletion}%</span>
-          </div>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill completion" 
-              style={{ width: `${profileCompletion}%` }}
-            />
-          </div>
-          <div className="metric-details">
+        {isLoading ? (
+          <>
+            <div className="metric-card animate-pulse">
+              <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
+              <div className="h-8 w-full bg-gray-700 rounded"></div>
+            </div>
+            <div className="metric-card animate-pulse">
+              <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
+              <div className="h-8 w-full bg-gray-700 rounded"></div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="metric-card">
+              <div className="metric-header">
+                <h2 className="metric-title">Profile Completion</h2>
+                <span className="metric-value">{profileCompletion}%</span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill completion" style={{ width: `${profileCompletion}%` }} />
+              </div>
+              <div className="metric-details">
             Complete your profile information to improve visibility and opportunities.
           </div>
-        </div>
-  
-        <div className="metric-card">
-          <div className="metric-header">
-            <h2 className="metric-title">ATS Score</h2>
-            <span className="metric-value">{atsScore}%</span>
-          </div>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill ats" 
-              style={{ width: `${atsScore}%` }}
-            />
-          </div>
-          <div className="metric-details">
+            </div>
+            <div className="metric-card">
+              <div className="metric-header">
+                <h2 className="metric-title">ATS Score</h2>
+                <span className="metric-value">{atsScore}%</span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill ats" style={{ width: `${atsScore}%` }} />
+              </div>
+              <div className="metric-details">
             Your resume's compatibility score with Applicant Tracking Systems.
           </div>
-        </div>
+            </div>
+          </>
+        )}
       </div>
+
+      {/* <div className="pdf-preview">
+        {isLoading ? (
+          <div className="animate-pulse">
+            <div className="h-96 bg-gray-700 rounded"></div>
+          </div>
+        ) : (
+          <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+        )}
+      </div> */}
+
+
   
-      <div className="pdf-preview">
-        <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
-      </div>
+     
   
       {modalOpen && (
         <Modal

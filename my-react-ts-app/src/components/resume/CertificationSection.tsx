@@ -226,14 +226,14 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
           .cert-title {
             color: #63b3ed;
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
           }
 
           .cert-info {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
@@ -242,7 +242,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
           .cert-url {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
             word-break: break-all;
           }
@@ -258,7 +258,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -276,7 +276,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
 
           .date-label {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
@@ -286,7 +286,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             width: 100%;
           }
 
@@ -303,7 +303,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             gap: 0.5rem;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -339,7 +339,7 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;

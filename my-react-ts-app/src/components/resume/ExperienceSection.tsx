@@ -64,6 +64,8 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
 
 
@@ -332,45 +334,79 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
     }
   };
 
-   // Detect text selection and show the Bold button
-  const handleSelection = () => {
-    const textarea = textareaRef.current;
+  const handleSelection = (isEditing: boolean) => {
+    const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
     if (!textarea) return;
-
+  
     const { selectionStart, selectionEnd } = textarea;
-
+  
     if (selectionStart !== selectionEnd) {
+      // Get selected text
       const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-      const rect = range?.getBoundingClientRect(); // Get selected text's position
-
+      if (!selection || selection.rangeCount === 0) return;
+  
+      // Get the range of selected text
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+  
       if (rect) {
-        const top = rect.top + window.scrollY - 30; // Position above the selected text
-        const left = rect.left + window.scrollX; // Align to the left of the selection
-
+        // Calculate position relative to viewport and add scroll offset
+        const top = rect.top + window.pageYOffset - 40; // 40px above selection
+        const left = rect.left + window.pageXOffset;
+  
         setButtonPosition({ top, left });
         setShowBoldButton(true);
       }
     } else {
-      setShowBoldButton(false); // Hide button if no text is selected
+      setShowBoldButton(false);
     }
   };
 
-  const applyBold = () => {
-    const textarea = textareaRef.current;
-    if (!textarea || !editData) return;
-
+  const applyBold = (isEditing: boolean) => {
+    const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
+    if (!textarea) return;
+  
     const { selectionStart, selectionEnd } = textarea;
-    const beforeText = editData.description.substring(0, selectionStart);
-    const selectedText = editData.description.substring(selectionStart, selectionEnd);
-    const afterText = editData.description.substring(selectionEnd);
-
-    const newDescription = `${beforeText}**${selectedText}**${afterText}`;
-
-    setEditData({ ...editData, description: newDescription });
-    setShowBoldButton(false); // Hide button after applying bold
+    const selectedText = textarea.value.substring(selectionStart, selectionEnd);
+    
+    if (!selectedText.trim()) {
+      setShowBoldButton(false);
+      return;
+    }
+  
+    if (isEditing && editData) {
+      const beforeText = editData.description.substring(0, selectionStart);
+      const afterText = editData.description.substring(selectionEnd);
+      
+      // Check if text is already bold
+      const isBold = selectedText.startsWith('**') && selectedText.endsWith('**');
+      const newDescription = isBold
+        ? `${beforeText}${selectedText.slice(2, -2)}${afterText}`
+        : `${beforeText}**${selectedText}**${afterText}`;
+  
+      setEditData({ ...editData, description: newDescription });
+    } else {
+      const beforeText = newExperience.description.substring(0, selectionStart);
+      const afterText = newExperience.description.substring(selectionEnd);
+      
+      // Check if text is already bold
+      const isBold = selectedText.startsWith('**') && selectedText.endsWith('**');
+      const newDescription = isBold
+        ? `${beforeText}${selectedText.slice(2, -2)}${afterText}`
+        : `${beforeText}**${selectedText}**${afterText}`;
+  
+      setNewExperience({ ...newExperience, description: newDescription });
+    }
+  
+    setShowBoldButton(false);
+    textarea.focus();
   };
 
+  const BoldButton = ({ onClick, style }: { onClick: () => void; style: React.CSSProperties }) => (
+    <button className="bold-button" onClick={onClick} style={style}>
+      <FontAwesomeIcon icon={faBold} /> Bold
+    </button>
+  );
 
   return (
     <div className="experience-container">
@@ -408,14 +444,14 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 
           .job-title {
             color: #63b3ed;
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
           }
 
           .company-info {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
@@ -427,7 +463,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             margin: 1rem 0;
             border: 1px solid #4a5568;
             color: #e2e8f0;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             line-height: 1.6;
             white-space: pre-wrap;
           }
@@ -442,7 +478,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -460,7 +496,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
 
           .date-label {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
@@ -470,7 +506,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             width: 100%;
           }
 
@@ -487,7 +523,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             gap: 0.5rem;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -528,7 +564,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             width: 100%;
             padding: 0.75rem;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -555,7 +591,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -609,7 +645,7 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
           width: 100%;
           padding: 0.75rem;
           border-radius: 6px;
-          font-size: 0.95rem;
+          font-size: 0.75rem;
           font-weight: 500;
           border: none;
           cursor: pointer;
@@ -699,6 +735,26 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
   color: white;
 }
 
+.bold-button {
+  position: absolute; /* Change from fixed to absolute */
+  background: linear-gradient(to right, #3182ce, #4facfe);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.bold-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
           
         `}
       </style>
@@ -814,12 +870,14 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
               </button>
 
               <textarea
-                className="input-field"
-                placeholder="Job Description"
-                value={editData.description}
-                onChange={(e) => setEditData({ ...editData, description: e.target.value })}
-                style={{ minHeight: "150px" }}
-              />
+  className="input-field"
+  placeholder="Job Description"
+  value={editData.description}
+  onChange={handleEditDescriptionChange}
+  onSelect={() => handleSelection(true)}
+  ref={editTextareaRef}
+  style={{ minHeight: "150px" }}
+/>
 
               <div className="btn-group">
                 <button 
@@ -856,6 +914,16 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                   <FontAwesomeIcon icon={faTimes} />
                   Cancel
                 </button>
+
+                {showBoldButton && (
+  <BoldButton
+    onClick={() => applyBold(editData !== null)}
+    style={{
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+    }}
+  />
+)}
               </div>
             </div>
           ) : (
@@ -1045,12 +1113,14 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
             </button>
 
             <textarea
-              className="input-field"
-              placeholder="Job Description"
-              value={newExperience.description}
-              onChange={(e) => handleDescriptionChange(e)}
-              style={{ minHeight: "150px" }}
-            />
+  className="input-field"
+  placeholder="Job Description"
+  value={newExperience.description}
+  onChange={handleDescriptionChange}
+  onSelect={() => handleSelection(false)}
+  ref={newTextareaRef}
+  style={{ minHeight: "150px" }}
+/>
 
             <div className="btn-group">
               <button 
@@ -1087,6 +1157,16 @@ const ExperienceSection: React.FC<ExperienceProps> = ({ Experiences, onEdit, onD
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
+
+              {showBoldButton && (
+  <BoldButton
+    onClick={() => applyBold(editData !== null)}
+    style={{
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+    }}
+  />
+)}
             </div>
           </div>
         </div>

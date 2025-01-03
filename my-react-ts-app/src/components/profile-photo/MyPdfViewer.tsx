@@ -5,6 +5,7 @@ import { FaFilePdf, FaEye, FaLeaf } from 'react-icons/fa';
 
 
 import React, { useRef, useState, useEffect } from "react";
+import { Leaf } from 'lucide-react';
 
 interface UserDetails {
     firstName: string;
@@ -387,43 +388,33 @@ const projectSection = projects.length > 0 ? `
 
 
 
-    return (
-      <div className="container mt-(-3)">
-      <div className="d-flex flex-column align-items-center pt-0">
-         
-          {/* PDF Download and Preview Buttons */}
-          <div className="d-flex justify-content-end">
-
-
-<button className="btn btn-secondary" onClick={previewPdf} style={{
-  padding: "10px 20px",
-  backgroundColor: "#007bff",
-  color: "#fff",
-  border: "none",
-  borderRadius: "25px",
-  fontSize: "1rem",
-  cursor: "pointer",
-  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-  marginLeft: "auto",// Adjusted font size
-}}>
-
-  <FaLeaf />  Preview Overleaf PDF
-
-</button>
-  </div>
-  
-          {/* PDF Preview */}
-          {previewPdfUrl && (
-            <iframe
-              title="PDF Overleaf Preview"
-              src={previewPdfUrl}
-              style={{ width: '100%', height: '500px', border: 'none' }}
-            />
-          )}
+return (
+  <div className="w-full">
+  <div className="flex justify-end">
+  <button
+      onClick={previewPdf}
+      className="flex items-center gap-1.5 px-3 py-1.5 text-gray-600 text-sm
+                border border-gray-300 rounded hover:bg-gray-50 
+                transition-colors shadow-sm hover:border-gray-400"
+    >
+      <Leaf className="w-4 h-4" />
+      <span>Preview Overleaf PDF</span>
+    </button>
+      
+      {/* PDF Preview Frame */}
+      {previewPdfUrl && (
+        <div className="w-full rounded-lg shadow-md overflow-hidden">
+          <iframe
+            title="PDF Overleaf Preview"
+            src={previewPdfUrl}
+            className="w-full h-[500px] border-0"
+          />
         </div>
-      </div>
-    );
-  };
+      )}
+    </div>
+  </div>
+);
+};
   
   export default PDFResume;
   

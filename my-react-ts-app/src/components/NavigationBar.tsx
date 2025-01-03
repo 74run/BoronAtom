@@ -306,10 +306,11 @@ const Navbar: React.FC<NavbarProps> = () => {
           .logo-container {
             display: flex;
             align-items: center;
+            size: 0.32rem;
           }
   
           .logo-image {
-            height: 32px;
+            height: 1.5rem;
             width: auto;
             transition: transform 0.2s ease;
           }
@@ -329,7 +330,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             text-decoration: none;
             padding: 0.75rem 1.25rem;
             border-radius: 8px;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             font-weight: 500;
             transition: all 0.2s ease;
             position: relative;
@@ -355,7 +356,7 @@ const Navbar: React.FC<NavbarProps> = () => {
           }
 
           .nav-link .icon {
-            font-size: 1rem;
+            font-size: 0.8rem;
             transition: transform 0.2s ease;
           }
 
@@ -472,7 +473,7 @@ const Navbar: React.FC<NavbarProps> = () => {
 }
 
 .dropdown-item span {
-  font-size: 0.95rem; /* Optional: adjust text size if needed */
+  font-size: 0.85rem; /* Optional: adjust text size if needed */
 }
 
 @media (max-width: 768px) {
