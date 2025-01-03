@@ -103,148 +103,256 @@ const ModalContact: React.FC<ModalProps> = ({ isOpen, closeModal }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal fade show" style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.8)' }}>
-      <div className="modal-dialog modal-dialog-centered">
-        <div className="modal-content" style={{ backgroundColor: '#2d2d30', color: '#f5f5f5', borderRadius: '12px' }}>
-          <div className="modal-header" style={{ borderBottom: '1px solid #444' }}>
-            <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
-            <button
-              type="button"
-              className="btn-close"
-              aria-label="Close"
-              onClick={closeModal}
-              style={{ backgroundColor: '#444', color: '#f5f5f5' }}
-            ></button>
-          </div>
-          <div className="modal-body">
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="mb-3">
-                <label htmlFor="name" className="form-label">
-                  Name
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="name"
-                    name="name"
-                    value={editedContactDetails.name}
-                    onChange={handleInputChange}
-                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
-                  />
-                ) : (
-                  <div>{contactDetails?.name}</div>
-                )}
-              </div>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">
-                  Email
-                </label>
-                {isEditing ? (
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    name="email"
-                    value={editedContactDetails.email}
-                    onChange={handleInputChange}
-                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
-                  />
-                ) : (
-                  <div>{contactDetails?.email}</div>
-                )}
-              </div>
-              <div className="mb-3">
-                <label htmlFor="phoneNumber" className="form-label">
-                  Phone Number
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={editedContactDetails.phoneNumber}
-                    onChange={handleInputChange}
-                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
-                  />
-                ) : (
-                  <div>{contactDetails?.phoneNumber}</div>
-                )}
-              </div>
-              <div className="mb-3">
-                <label htmlFor="linkedIn" className="form-label">
-                  LinkedIn Profile
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="linkedIn"
-                    name="linkedIn"
-                    value={editedContactDetails.linkedIn}
-                    onChange={handleInputChange}
-                    style={{ backgroundColor: '#1c1c1e', color: '#f5f5f5', border: '1px solid #444' }}
-                  />
-                ) : (
-                  <div>{contactDetails?.linkedIn}</div>
-                )}
-              </div>
+    <div className="modal-overlay">
+      <style>
+        {`
+          .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1050;
+            backdrop-filter: blur(4px);
+          }
+  
+          .modal-container {
+            background-color: #1b1b2f;
+            border: 1px solid #333;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+          }
+  
+          .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+          }
+  
+          .modal-title {
+            color: #63b3ed;
+            font-size: 1.4rem;
+            font-weight: 600;
+            font-family: 'Roboto Slab', serif;
+            margin: 0;
+          }
+  
+          .close-button {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.2s ease;
+          }
+  
+          .close-button:hover {
+            color: #63b3ed;
+          }
+  
+          .modal-body {
+            padding: 1.5rem;
+          }
+  
+          .form-group {
+            margin-bottom: 1.5rem;
+          }
+  
+          .form-label {
+            display: block;
+            color: #63b3ed;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+          }
+  
+          .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 8px;
+            color: #f5f5f5;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+          }
+  
+          .form-input:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 2px rgba(99, 179, 237, 0.1);
+          }
+  
+          .display-value {
+            padding: 0.75rem;
+            background-color: #2d3748;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+          }
+  
+          .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+          }
+  
+          .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+          }
+  
+          .btn-primary {
+            background-color: #3182ce;
+            color: white;
+          }
+  
+          .btn-success {
+            background-color: #38a169;
+            color: white;
+          }
+  
+          .btn-secondary {
+            background-color: #4a5568;
+            color: white;
+          }
+  
+          .btn:hover {
+            transform: translateY(-2px);
+          }
+  
+          .btn-primary:hover {
+            background-color: #4299e1;
+          }
+  
+          .btn-success:hover {
+            background-color: #48bb78;
+          }
+  
+          .btn-secondary:hover {
+            background-color: #718096;
+          }
+        `}
+      </style>
+  
+      <div className="modal-container">
+        <div className="modal-header">
+          <h5 className="modal-title">{isEditing ? 'Edit Contact Details' : 'View Contact Details'}</h5>
+          <button className="close-button" onClick={closeModal}>×</button>
+        </div>
+  
+        <div className="modal-body">
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="form-group">
+              <label className="form-label">Name</label>
               {isEditing ? (
-                <div className="d-flex">
-                  <button
-                    type="button"
-                    className="btn btn-success me-2"
+                <input
+                  type="text"
+                  className="form-input"
+                  value={editedContactDetails.name}
+                  onChange={handleInputChange}
+                  name="name"
+                />
+              ) : (
+                <div className="display-value">{contactDetails?.name}</div>
+              )}
+            </div>
+  
+            <div className="form-group">
+              <label className="form-label">Email</label>
+              {isEditing ? (
+                <input
+                  type="email"
+                  className="form-input"
+                  value={editedContactDetails.email}
+                  onChange={handleInputChange}
+                  name="email"
+                />
+              ) : (
+                <div className="display-value">{contactDetails?.email}</div>
+              )}
+            </div>
+  
+            <div className="form-group">
+              <label className="form-label">Phone Number</label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  className="form-input"
+                  value={editedContactDetails.phoneNumber}
+                  onChange={handleInputChange}
+                  name="phoneNumber"
+                />
+              ) : (
+                <div className="display-value">{contactDetails?.phoneNumber}</div>
+              )}
+            </div>
+  
+            <div className="form-group">
+              <label className="form-label">LinkedIn Profile</label>
+              {isEditing ? (
+                <input
+                  type="text"
+                  className="form-input"
+                  value={editedContactDetails.linkedIn}
+                  onChange={handleInputChange}
+                  name="linkedIn"
+                />
+              ) : (
+                <div className="display-value">{contactDetails?.linkedIn}</div>
+              )}
+            </div>
+  
+            <div className="button-group">
+              {isEditing ? (
+                <>
+                  <button 
+                    type="button" 
+                    className="btn btn-success"
                     onClick={handleSaveClick}
-                    style={{
-                      backgroundColor: '#4CAF50',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px 20px',
-                      transition: 'background-color 0.3s',
-                    }}
                   >
-                    <FontAwesomeIcon icon={faSave} className="me-2" />
+                    <FontAwesomeIcon icon={faSave} />
                     Save
                   </button>
-                  <button
-                    type="button"
+                  <button 
+                    type="button" 
                     className="btn btn-secondary"
                     onClick={handleCancelClick}
-                    style={{
-                      backgroundColor: '#6c757d',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px 20px',
-                      transition: 'background-color 0.3s',
-                    }}
                   >
-                    <FontAwesomeIcon icon={faTimes} className="me-2" />
+                    <FontAwesomeIcon icon={faTimes} />
                     Cancel
                   </button>
-                </div>
+                </>
               ) : (
-                <button
-                  type="button"
+                <button 
+                  type="button" 
                   className="btn btn-primary"
                   onClick={handleEditClick}
-                  style={{
-                    backgroundColor: '#007bff',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    padding: '10px 20px',
-                    transition: 'background-color 0.3s',
-                  }}
                 >
-                  <FontAwesomeIcon icon={faEdit} className="me-2" />
+                  <FontAwesomeIcon icon={faEdit} />
                   Edit
                 </button>
               )}
-            </form>
-          </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>

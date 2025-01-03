@@ -212,7 +212,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
           .section-header {
             color: #63b3ed;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
           }
@@ -246,14 +246,14 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
           .domain-name {
             color: #63b3ed;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
           }
 
           .skill-name {
             color: #a0aec0;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -264,7 +264,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -285,7 +285,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             gap: 0.5rem;
             padding: 0.5rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -321,7 +321,7 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;

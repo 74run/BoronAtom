@@ -177,7 +177,10 @@ const CoverLetterGenerator = () => {
 
     // Add personal details to the top of the PDF
     doc.text(`${personalDetails.name}`, marginLeft, marginTop);
-    doc.text(`${personalDetails.address}`, marginLeft, marginTop + 6);
+    doc.text(`${personalDetails.email}`, marginLeft, marginTop+6);
+    doc.text(`${personalDetails.address}`, marginLeft, marginTop+12);
+    doc.text(`${personalDetails.phone}`, marginLeft, marginTop+18);
+    doc.text(`${personalDetails.date}`, marginLeft, marginTop + 24);
  
 
     const lines = doc.splitTextToSize(coverLetter, maxLineWidth);
@@ -238,7 +241,7 @@ const CoverLetterGenerator = () => {
 
         .cover-letter-container {
           max-width: 1800px;
-          margin: 2rem auto;
+          margin: 0rem auto;
           padding: 2rem;
           background-color: rgba(28, 82, 136, 0.1);
           min-height: calc(100vh - 8rem);
@@ -360,7 +363,7 @@ label {
         .editor-container, .result-container {
           background-color:rgb(0, 0, 0);
           border: 1px solid #333;
-          border-radius: 5px;
+          border-radius: 15px;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
           display: flex;
           flex-direction: column;
@@ -791,7 +794,9 @@ label {
        </div>
     
        </div>
+       <Footer />
        </div>
+     
 );
   
 };

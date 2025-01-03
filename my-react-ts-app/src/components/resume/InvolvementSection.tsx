@@ -287,7 +287,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
           .section-header {
             color: #63b3ed;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
           }
@@ -308,20 +308,20 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
           .role-title {
             color: #63b3ed;
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
           }
 
           .organization-info {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
           .date-info {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
@@ -332,7 +332,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             margin: 1rem 0;
             border: 1px solid #4a5568;
             color: #e2e8f0;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             line-height: 1.6;
             white-space: pre-wrap;
           }
@@ -344,7 +344,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -362,7 +362,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
 
           .date-label {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
           }
 
@@ -372,7 +372,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             width: 100%;
           }
 
@@ -389,7 +389,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             gap: 0.5rem;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -429,7 +429,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             width: 100%;
             padding: 0.75rem;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -456,7 +456,7 @@ const InvolvementSection: React.FC<InvolvementProps> = ({ Involvements, onEdit, 
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;

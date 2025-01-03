@@ -289,7 +289,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
           .section-header {
             color: #63b3ed;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 1.5rem;
           }
@@ -310,14 +310,14 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
           .school-name {
             color: #63b3ed;
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.75rem;
           }
 
           .education-info {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
@@ -331,7 +331,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -346,7 +346,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             width: 100%;
           }
 
@@ -359,7 +359,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
           .date-label {
             color: #a0aec0;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             margin-bottom: 0.5rem;
             font-weight: 500;
           }
@@ -377,7 +377,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             gap: 0.5rem;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -412,7 +412,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             width: 100%;
             padding: 0.75rem;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -439,7 +439,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;

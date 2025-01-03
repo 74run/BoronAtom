@@ -181,6 +181,26 @@ const handleGenerateTextClick = () => {
     setIsAdding(true);
   };
 
+  // if (isLoading) {
+  //   return (
+  //     <div className="summary-container">
+  //     <h2 className="section-header">Summary</h2>
+  //       <div className="animate-pulse">
+  //         <div className="summary-card">
+  //           <div className="h-4 bg-gray-700 rounded w-3/4 mb-4"></div>
+  //           <div className="h-4 bg-gray-700 rounded w-1/2 mb-4"></div>
+  //           <div className="h-4 bg-gray-700 rounded w-2/3"></div>
+  //           <div className="btn-group mt-4">
+  //             <div className="h-8 w-24 bg-gray-700 rounded"></div>
+  //             <div className="h-8 w-24 bg-gray-700 rounded"></div>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
+
+
   return (
     <div className="summary-container">
       <style>
@@ -219,7 +239,7 @@ const handleGenerateTextClick = () => {
 
           .summary-content {
             color: #e2e8f0;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             line-height: 1.6;
             margin-bottom: 1rem;
           }
@@ -238,7 +258,7 @@ const handleGenerateTextClick = () => {
             gap: 0.5rem;
             padding: 0.5rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -277,7 +297,7 @@ const handleGenerateTextClick = () => {
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             resize: vertical;
             margin-bottom: 1rem;
           }
@@ -291,6 +311,14 @@ const handleGenerateTextClick = () => {
             display: flex;
             gap: 4px;
           }
+
+          .section-header {
+            color: #63b3ed;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+          }
+
 
           .dot {
             width: 6px;
@@ -310,8 +338,8 @@ const handleGenerateTextClick = () => {
         `}
       </style>
 
-      <div className="summary-header">
-        <span>Professional Summary</span>
+      <div className="section-header">
+        <span>Summary</span>
         {!isAdding && summarys.length === 0 && (
           <button 
             className="btn btn-primary"
@@ -372,7 +400,7 @@ const handleGenerateTextClick = () => {
             <>
               <div className="summary-content">{summary.content}</div>
               {!viewOnly && (
-                <div className="button-group">
+                <div className="btn-group">
                   <button 
                     className="btn btn-primary"
                     onClick={() => handleEditClick(summary._id, summary.content)}

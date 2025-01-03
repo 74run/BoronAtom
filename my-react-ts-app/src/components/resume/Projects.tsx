@@ -16,7 +16,7 @@ interface Project {
   description: string;
   includeInResume: boolean;
   isEditing?: boolean;
-  isPresent?: boolean; // Add this field to track if the end date is 'Present'
+  isPresent?: boolean; 
 }
 
 interface ProjectsSectionProps {
@@ -247,29 +247,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
 
-  const handleGenerateDescription = (projectName: string) => {
-    // Set loading state to true
+  const handleGenerateDescription = (itemName: string) => {
+    console.log("Attempting to generate description for:", itemName);
     setIsLoading(true);
   
+    // Check if it's a new project or editing
+    const name = editData ? editData.name : newProject.name;
+    console.log("Using name for API call:", name);
+  
     let jobdescription = localStorage.getItem('jobDescription');
-    
-    // If jobdescription is null or undefined, set it to an empty string
     if (!jobdescription) {
       jobdescription = '';
     }
   
-    // Check if userID is defined
-    if (!userID) {
-      console.error('Error: userID is undefined.');
-      setIsLoading(false); // Stop loading
-      return;
-    }
-  
-    // Send a POST request with the job description in the request body
     axios
       .post(
-        `${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${projectName}`,
-        { jobdescription } // Send jobdescription (even if it's an empty string)
+        `${process.env.REACT_APP_API_URL}/api/userprofile/generate-project-description/${userID}/${encodeURIComponent(name)}`,
+        { jobdescription }
       )
       .then((response) => {
         const generatedDescription = response.data.text;
@@ -287,21 +281,10 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
         }
       })
       .catch((error) => {
-        if (error.response) {
-          // Server responded with a status other than 2xx
-          console.error('Error response:', error.response.data);
-          console.error('Error status:', error.response.status);
-          console.error('Error headers:', error.response.headers);
-        } else if (error.request) {
-          // Request was made but no response received
-          console.error('Error request:', error.request);
-        } else {
-          // Something else happened while setting up the request
-          console.error('Error message:', error.message);
-        }
+        console.error("Error generating description:", error);
+        console.error("Error details:", error.response?.data);
       })
       .finally(() => {
-        // Stop loading when request completes (success or error)
         setIsLoading(false);
       });
   };
@@ -359,6 +342,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     }
   };
 
+  const BoldButton = ({ onClick, style }: { onClick: () => void; style: React.CSSProperties }) => (
+  <button className="bold-button" onClick={onClick} style={style}>
+    <FontAwesomeIcon icon={faBold} /> Bold
+  </button>
+);
+
   // Detect text selection and show the Bold button
   const handleSelection = (isEditing: boolean) => {
     const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
@@ -367,50 +356,97 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
     const { selectionStart, selectionEnd } = textarea;
   
     if (selectionStart !== selectionEnd) {
+      // Get selected text
       const selection = window.getSelection();
-      const range = selection?.getRangeAt(0);
-      const rect = range?.getBoundingClientRect(); // Get selected text's position
+      if (!selection || selection.rangeCount === 0) return;
+  
+      // Get the range of selected text
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
   
       if (rect) {
-        const top = rect.top + window.scrollY - 30; // Position above the selected text
-        const left = rect.left + window.scrollX; // Align to the left of the selection
+        // Calculate position relative to viewport and add scroll offset
+        const top = rect.top + window.pageYOffset - 40; // 40px above selection
+        const left = rect.left + window.pageXOffset;
   
         setButtonPosition({ top, left });
         setShowBoldButton(true);
       }
     } else {
-      setShowBoldButton(false); // Hide button if no text is selected
+      setShowBoldButton(false);
     }
   };
-  
+
 
   const applyBold = (isEditing: boolean) => {
-  // Choose the correct textarea ref based on the mode
-  const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
-  if (!textarea) return;
+    const textarea = isEditing ? editTextareaRef.current : newTextareaRef.current;
+    if (!textarea) return;
+  
+    const { selectionStart, selectionEnd } = textarea;
+    const selectedText = textarea.value.substring(selectionStart, selectionEnd);
+    
+    // Don't apply bold if no text is selected
+    if (!selectedText.trim()) {
+      setShowBoldButton(false);
+      return;
+    }
+  
+    if (isEditing && editData) {
+      const beforeText = editData.description.substring(0, selectionStart);
+      const afterText = editData.description.substring(selectionEnd);
+      
+      // Check if text is already bold
+      const isBold = selectedText.startsWith('**') && selectedText.endsWith('**');
+      const newDescription = isBold
+        ? `${beforeText}${selectedText.slice(2, -2)}${afterText}`
+        : `${beforeText}**${selectedText}**${afterText}`;
+  
+      setEditData({ ...editData, description: newDescription });
+    } else {
+      const beforeText = newProject.description.substring(0, selectionStart);
+      const afterText = newProject.description.substring(selectionEnd);
+      
+      // Check if text is already bold
+      const isBold = selectedText.startsWith('**') && selectedText.endsWith('**');
+      const newDescription = isBold
+        ? `${beforeText}${selectedText.slice(2, -2)}${afterText}`
+        : `${beforeText}**${selectedText}**${afterText}`;
+  
+      setNewProject({ ...newProject, description: newDescription });
+    }
+  
+    setShowBoldButton(false);
+    textarea.focus();
+  };
 
-  const { selectionStart, selectionEnd } = textarea;
-  const selectedText = textarea.value.substring(selectionStart, selectionEnd);
 
-  if (isEditing && editData) {
-    const beforeText = editData.description.substring(0, selectionStart);
-    const afterText = editData.description.substring(selectionEnd);
+  const LoadingProjectCard = () => (
+    <div className="project-card animate-pulse">
+      <div className="h-6 w-48 bg-gray-700 rounded mb-4"></div>
+      <div className="h-4 w-32 bg-gray-700 rounded mb-2"></div>
+      <div className="h-4 w-40 bg-gray-700 rounded mb-4"></div>
+      <div className="description-box">
+        <div className="h-4 w-3/4 bg-gray-700 rounded mb-2"></div>
+        <div className="h-4 w-2/3 bg-gray-700 rounded mb-2"></div>
+        <div className="h-4 w-1/2 bg-gray-700 rounded"></div>
+      </div>
+      <div className="btn-group">
+        <div className="h-10 w-24 bg-gray-700 rounded"></div>
+        <div className="h-10 w-24 bg-gray-700 rounded"></div>
+        <div className="h-10 w-24 bg-gray-700 rounded"></div>
+      </div>
+    </div>
+  );
 
-    const newDescription = `${beforeText}**${selectedText}**${afterText}`;
-
-    setEditData({ ...editData, description: newDescription });
-  } else {
-    const beforeText = newProject.description.substring(0, selectionStart);
-    const afterText = newProject.description.substring(selectionEnd);
-
-    const newDescription = `${beforeText}**${selectedText}**${afterText}`;
-
-    setNewProject({ ...newProject, description: newDescription });
+  if (isLoading) {
+    return (
+      <div className="projects-container">
+        <h2 className="section-header-1">Projects</h2>
+        <LoadingProjectCard />
+        <LoadingProjectCard />
+      </div>
+    );
   }
-
-  setShowBoldButton(false); // Hide the bold button after applying bold
-};
-
 
 return (
   <div className="projects-container">
@@ -422,11 +458,12 @@ return (
           padding: 1.5rem;
           color: white;
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          
         }
 
-        .projects-header {
+        .section-header-1 {
           color: #63b3ed;
-          font-size: 1.5rem;
+          font-size: 0.5rem;
           font-weight: 600;
           margin-bottom: 1.5rem;
           
@@ -449,14 +486,14 @@ return (
 
         .project-title {
           color: #63b3ed;
-          font-size: 1.25rem;
+          font-size: 1rem;
           font-weight: 600;
           margin-bottom: 0.75rem;
         }
 
         .project-meta {
           color: #a0aec0;
-          font-size: 0.875rem;
+          font-size: 0.75rem;
           margin-bottom: 0.5rem;
         }
 
@@ -469,7 +506,7 @@ return (
   margin: 1rem 0;
   border: 1px solid #4a5568;
   color: #e2e8f0;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   line-height: 1.6;
   white-space: pre-wrap;
 }
@@ -485,7 +522,7 @@ return (
             background-color: #2d3748;
             border: 1px solid #4a5568;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             margin-bottom: 1rem;
           }
 
@@ -501,13 +538,19 @@ return (
           margin-bottom: 1rem;
         }
 
+         .date-label {
+            color: #a0aec0;
+            font-size: 0.75rem;
+            margin-bottom: 0.5rem;
+          }
+
         .select-field {
           padding: 0.75rem;
           border-radius: 6px;
           background-color: #2d3748;
           border: 1px solid #4a5568;
           color: white;
-          font-size: 0.95rem;
+          font-size: 0.75rem;
           width: 100%;
         }
 
@@ -525,7 +568,7 @@ return (
   gap: 0.5rem;
   padding: 0.75rem 1rem;
   border-radius: 6px;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
   border: none;
   cursor: pointer;
@@ -572,7 +615,7 @@ return (
             width: 100%;
             padding: 0.75rem;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -600,7 +643,7 @@ return (
             border: none;
             padding: 0.75rem 1rem;
             border-radius: 6px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -628,7 +671,7 @@ return (
           width: 100%;
           padding: 0.75rem;
           border-radius: 6px;
-          font-size: 0.95rem;
+          font-size: 0.75rem;
           font-weight: 500;
           border: none;
           cursor: pointer;
@@ -748,10 +791,31 @@ return (
 .move-btn:not(:disabled):hover {
   transform: scale(1.05);
 }
+
+.bold-button {
+  position: absolute; /* Change from fixed to absolute */
+  background: linear-gradient(to right, #3182ce, #4facfe);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.bold-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
       `}
     </style>
 
-    <h2 className="section-header">Projects</h2>
+   
 
     {projects.map((project, index) => (
       <div key={project._id} className="project-card">
@@ -775,7 +839,7 @@ return (
 
             <div className="date-grid">
               <div>
-                <h6>Start Date:</h6>
+              <div className="date-label">Start Date</div>
                 <select
                   className="select-field"
                   value={editData.startDate.month}
@@ -811,7 +875,7 @@ return (
             {!editData.isPresent && (
               <div className="date-grid">
                 <div>
-                  <h6>End Date:</h6>
+                <div className="date-label">End Date</div>
                   <select
                     className="select-field"
                     value={editData.endDate.month}
@@ -854,11 +918,13 @@ return (
             </button>
 
             <textarea
+              ref={editTextareaRef}
               className="input-field"
               placeholder="Project Description"
               value={editData.description}
-              onChange={(e) => setEditData({ ...editData, description: e.target.value })}
+              onChange={handleEditDescriptionChange}
               style={{ minHeight: "150px" }}
+              onSelect={() => handleSelection(true)}
             />
 
             <div className="btn-group">
@@ -894,7 +960,17 @@ return (
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
+              {showBoldButton && (
+  <BoldButton
+    onClick={() => applyBold(editData !== null)}
+    style={{
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+    }}
+  />
+)}
             </div>
+          
           </div>
         ) : (
           <>
@@ -991,7 +1067,7 @@ return (
 
             <div className="date-grid">
               <div>
-                <h6>Start Date:</h6>
+              <div className="date-label">Start Date</div>
                 <select
                   className="select-field"
                   value={newProject.startDate.month}
@@ -1027,7 +1103,7 @@ return (
             {!newProject.isPresent && (
               <div className="date-grid">
                 <div>
-                  <h6>End Date:</h6>
+                <div className="date-label">End Date</div>
                   <select
                     className="select-field"
                     value={newProject.endDate.month}
@@ -1070,12 +1146,15 @@ return (
             </button>
 
             <textarea
+              ref={newTextareaRef}
               className="input-field"
               placeholder="Project Description"
               value={newProject.description}
-              onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+              onChange={handleDescriptionChange}
+              onSelect={() => handleSelection(false)}
               style={{ minHeight: "150px" }}
             />
+            
 
             <div className="btn-group">
               <button 
@@ -1110,6 +1189,17 @@ return (
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
+
+              {showBoldButton && (
+  <BoldButton
+    onClick={() => applyBold(editData !== null)}
+    style={{
+      top: buttonPosition.top,
+      left: buttonPosition.left,
+    }}
+  />
+)}
+
             </div>
           </div>
         </div>

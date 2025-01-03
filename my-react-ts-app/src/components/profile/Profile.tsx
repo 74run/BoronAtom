@@ -7,6 +7,7 @@ import { Menu, X, User, FileText, Briefcase, GraduationCap, Award, Users, Code, 
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
+
 import ProjectsSection from '../resume/Projects';
 import Skills from '../resume/Skills';
 import EducationSection from '../resume/Education';
@@ -20,7 +21,7 @@ import NavigationBar from '../NavigationBar'
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
 
-
+import AIChatbot from '../AIChatBot';
 
 
 import Footer from '../Footer';
@@ -33,6 +34,7 @@ import Modal from "../profile-photo/Model";
 
 import PDFHTML from '../resume/PDFHTML'
 import Profile from '../profile-photo/ProfilePhoto';
+import PDFResume from '../profile-photo/MyPdfViewer';
 
 
 interface UserDetails {
@@ -205,6 +207,7 @@ interface Project {
 
 const ResumeCraft: React.FC = () => {
   const [loading, setLoading] = useState(true);
+
   const location = useLocation();
 
   const [educations, setEducations] = useState<Education[]>([]);
@@ -659,6 +662,7 @@ const ResumeCraft: React.FC = () => {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            margin-top: 2.2rem;
             
           }
 
@@ -711,7 +715,7 @@ const ResumeCraft: React.FC = () => {
           }
 
           .logo-container h1 {
-            font-size: clamp(1.25rem, 4vw, 1.5rem);
+            font-size: clamp(1rem, 2vw, 1rem);
             font-weight: bold;
             color: #63b3ed;
             margin: 0;
@@ -750,16 +754,16 @@ const ResumeCraft: React.FC = () => {
             transform: translateY(0);
           }
   
-          main {
+    main {
             display: flex;
-            padding: 1rem;
+            padding: 0.5rem;
             flex: 1;
             flex-direction: column;
-            gap: 1rem;
-            max-width: 1500px;
-            margin-top: 4.5rem;
-          
+            gap: 0.5rem;
             width: 100%;
+            max-width: 100%;
+            margin: 2rem auto 0;
+            box-sizing: border-box;
           }
   
           @media (min-width: 1024px) {
@@ -789,10 +793,10 @@ const ResumeCraft: React.FC = () => {
           }
   
           .form-container h2 {
-            font-size: clamp(1.5rem, 4vw, 1.75rem);
+            font-size: clamp(1rem, 2vw, 1.2rem);
             font-weight: bold;
             color: #63b3ed;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
           }
   
          .tabs {
@@ -800,7 +804,7 @@ const ResumeCraft: React.FC = () => {
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
   gap: 0.375rem;
-  padding: 0.5rem;
+  padding: 0.2rem;
   background-color: #1a202c;
   border-radius: 8px;
 }
@@ -815,7 +819,7 @@ const ResumeCraft: React.FC = () => {
   font-weight: 500;
   padding: 0.5rem 0.75rem;
   cursor: pointer;
-  font-size: 0.8125rem;
+  font-size: 0.7125rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -907,10 +911,10 @@ const ResumeCraft: React.FC = () => {
           }
   
           .export-container h2 {
-            font-size: clamp(1.25rem, 3vw, 1.5rem);
+               font-size: clamp(1rem, 2vw, 1.2rem);
             font-weight: bold;
             color: #63b3ed;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
           }
   
           .export-box {
@@ -936,7 +940,7 @@ const ResumeCraft: React.FC = () => {
       
       <main>
         <div className="form-container">
-          <h2>Create Your Resume</h2>
+          <h2 >Create Your Resume</h2>
           <div className="tabs">
             {menuItems.map((item) => (
               <button
@@ -993,15 +997,35 @@ const ResumeCraft: React.FC = () => {
           />}
           </div>
         </div>
-         <div className="export-container">
-          <h2>Export PDF</h2>
-          {loading ? <Skeleton height={200} /> : <div className="export-box">
-            <PDFHTML theme={'light'} />
-          </div>}
+
+        <div className="space-y-4 mt-6">
+      {/* Header and PDF Resume Section */}
+ 
+        <div className="flex items-center gap-2">
+          <FileText className="w-6 h-6 text-blue-600" />
+          <h2 className="text-xl font-semibold text-gray-400">Export PDF</h2>
+ 
+        <div className="flex-1 ml-4">
+          <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
         </div>
-  
-   
+      </div>
+
+      {/* Scrollable PDF Section */}
+      <div className="w-full">
+        {loading ? (
+          <Skeleton height={200} />
+        ) : (
+          <div className="w-full bg-white rounded-lg shadow h-[calc(100vh-12rem)] overflow-y-auto">
+          <PDFHTML theme="light" />
+        </div>
+        )}
+      </div>
+    </div>
+
+    <AIChatbot />
       </main>
+
+      <Footer />
   
     </div>
   );
