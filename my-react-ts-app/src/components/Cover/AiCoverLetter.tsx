@@ -271,7 +271,7 @@ const CoverLetterGenerator = () => {
           }
 
           .logo-container h1 {
-            font-size: clamp(1.25rem, 4vw, 1.5rem);
+            font-size: clamp(0.875rem, 2vw, 1rem);
             font-weight: bold;
             color: #63b3ed;
             margin: 0;
@@ -291,7 +291,7 @@ const CoverLetterGenerator = () => {
             padding: 0.5rem 1.25rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: clamp(0.875rem, 2vw, 1rem);
+            font-size: clamp(0.75rem, 2vw, 1rem);
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
@@ -312,27 +312,27 @@ const CoverLetterGenerator = () => {
 
         .page-header {
           text-align: center;
-          margin-bottom: 3rem;
+          margin-bottom: 1rem;
         }
 
         .page-title {
   color: #63b3ed; // Resume theme green
   font-family: 'Roboto Slab', serif;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
 }
 
 .page-subtitle {
   color: #bbb; // Matching resume subtle text
-  font-size: 1.1rem;
+  font-size: 0.75rem;
   font-family: 'Roboto', sans-serif;
 }
 
 .section-title {
   color: #63b3ed;
   font-family: 'Roboto Slab', serif;
-  font-size: 1.1rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -423,7 +423,7 @@ label {
           border: none;
           border-radius: 5px;
           color: white;
-          font-size: 0.95rem;
+          font-size: 0.75rem;
           font-weight: 500;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -439,17 +439,17 @@ label {
 
        .generate-btn {
   width: 100%;
-  padding: 0.7rem 1.5rem;
+  padding: 0.7rem 1rem;
   background-color: #3182ce; // Updated from #00d084 to blue
   border: none;
   border-radius: 5px;
   color: white; // Updated to white for better contrast
-  font-size: 0.8rem;
-  font-weight: 500;
+  font-size: 0.4rem;
+  font-weight: 400;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -481,7 +481,7 @@ label {
           display: flex;
           align-items: center;
           gap: 8px;
-          font-size: 0.9rem;
+          font-size: 0.7rem;
           box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 

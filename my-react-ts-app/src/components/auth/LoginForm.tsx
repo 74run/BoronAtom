@@ -18,8 +18,14 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
   const [expanded, setExpanded] = useState(false); // Navbar expansion state
   const navigate = useNavigate();
+
+
+  const handleRegisterClick = () => {
+    navigate('/register');
+  };
 
   const handleLogin = async () => {
     try {
@@ -46,9 +52,6 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     setShowPassword(!showPassword);
   };
 
-  const handleRegisterClick = () => {
-    navigate('/register');
-  };
 
   const handleForgotPasswordClick = () => {
     navigate('/forgotpassword');
@@ -64,20 +67,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             background: url(${back}) no-repeat center center fixed;
             background-size: cover;
         }
-    .navbar-1 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-        }
+
         .navbar-1 .logo {
             display: flex;
             align-items: center;
         }
-        .navbar-1 .logo img {
-            width: 40px;
-            margin-right: 10px;
-        }
+  
         .navbar-1 .logo span {
             color: white;
             font-size: 24px;
@@ -109,6 +104,133 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         .navbar-1 .login-btn:hover {
             background: #00bcd4;
             color: white;
+        }
+
+        
+
+         .navbar-1 {
+          position: sticky;
+           top: 0;
+           left: 0;
+           right: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo {
+          display: flex;
+          align-items: center;
+        }
+        
+        .logo img {
+          height: 25px;
+          width: auto;
+          transition: height 0.3s ease;
+        }
+        
+        .login-btn {
+          background: white;
+          color: black;
+          padding: 0.5rem 1rem;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          font-size: 1rem;
+        }
+        
+        .login-btn:hover {
+          background: #00bcd4;
+          color: white;
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 640px) {
+          .navbar-1 {
+            padding: 0.75rem;
+          }
+          
+          .logo img {
+            height: 20px;
+          }
+          
+          .login-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+          }
+        }
+        
+        /* Tablet styles */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .navbar-1 {
+            padding: 0.875rem 1.5rem;
+          }
+          
+          .logo img {
+            height: 22px;
+          }
+        }
+        
+        /* Desktop styles */
+        @media (min-width: 1025px) {
+          .navbar-1 {
+            padding: 1.25rem 2rem;
+          }
+          
+          .login-btn {
+            padding: 0.625rem 1.25rem;
+          }
+        }
+        
+        /* Hover effects */
+        .logo:hover img {
+          transform: scale(1.05);
+        }
+
+         .footer {
+          position: sticky;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1rem;
+          background-color: rgba(0, 0, 0, 0.75);
+          backdrop-filter: blur(8px);
+          color: white;
+          text-align: center;
+          font-size: 0.875rem;
+          z-index: 1000;
+        }
+        
+        .footer-content {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 2rem;
+        }
+        
+        .footer a {
+          color: #00bcd4;
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+          color: white;
+        }
+        
+        @media (max-width: 640px) {
+          .footer {
+            padding: 0.75rem;
+            font-size: 0.75rem;
+          }
+          
+          .footer-content {
+            gap: 1rem;
+            flex-wrap: wrap;
+          }
         }
         `}</style>
 
@@ -155,21 +277,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
         </BootstrapNavbar>
       </nav> */}
 
-      <div className="navbar-1">
-   <div className="logo">
-   <Link to="/">
-   <img 
-                src={logo}
-                alt="Logo"
-                className="img-fluid"
-                style={{ height: "25px", width: "auto" }}
-              />  
-              </Link> </div>
-  
-   <a className="login-btn" onClick={handleRegisterClick}  style={{ cursor: 'pointer' }}>
-    Sign Up
-   </a>
-  </div>
+<div className="navbar-1">
+        <div className="logo">
+          <Link to="/">
+            <img 
+              src={logo}
+              alt="Logo"
+              className="img-fluid"
+            />
+          </Link>
+        </div>
+        <a 
+          className="login-btn" 
+          onClick={handleRegisterClick}
+          style={{ cursor: 'pointer' }}
+        >
+          Sign Up
+        </a>
+      </div>
 
       {/* Login Form */}
       <div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "0px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -287,7 +412,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
           <p className="mt-6 text-center text-sm">Don't have an account? <a onClick={handleRegisterClick} style={{ cursor: 'pointer' }} className="text-blue-500 hover:underline">Sign up</a></p>
           
         </div>
+
+ 
       </div>
+      <footer className="footer">
+        <div className="footer-content">
+          <span>© 2025 Boron Atom</span>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/contact">Contact Us</a>
+        </div>
+      </footer>
       <style>{`
         .background-wrapper {
           position: fixed;

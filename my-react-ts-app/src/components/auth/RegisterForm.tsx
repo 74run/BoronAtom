@@ -121,20 +121,12 @@ const RegisterForm: React.FC = () => {
             background: url(${back}) no-repeat center center fixed;
             background-size: cover;
         }
-    .navbar-1 {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-        }
+   
         .navbar-1 .logo {
             display: flex;
             align-items: center;
         }
-        .navbar-1 .logo img {
-            width: 40px;
-            margin-right: 10px;
-        }
+  
         .navbar-1 .logo span {
             color: white;
             font-size: 24px;
@@ -167,6 +159,182 @@ const RegisterForm: React.FC = () => {
             background: #00bcd4;
             color: white;
         }
+
+        
+         .navbar-1 {
+           position: sticky;
+           top: 0;
+           left: 0;
+           right: 0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo {
+          display: flex;
+          align-items: center;
+        }
+        
+        .logo img {
+          height: 25px;
+          width: auto;
+          transition: height 0.3s ease;
+        }
+        
+        .login-btn {
+          background: white;
+          color: black;
+          padding: 0.5rem 1rem;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          font-size: 1rem;
+        }
+        
+        .login-btn:hover {
+          background: #00bcd4;
+          color: white;
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 640px) {
+          .navbar-1 {
+            padding: 0.75rem;
+          }
+          
+          .logo img {
+            height: 20px;
+          }
+          
+          .login-btn {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.875rem;
+          }
+        }
+        
+        /* Tablet styles */
+        @media (min-width: 641px) and (max-width: 1024px) {
+          .navbar-1 {
+            padding: 0.875rem 1.5rem;
+          }
+          
+          .logo img {
+            height: 22px;
+          }
+        }
+        
+        /* Desktop styles */
+        @media (min-width: 1025px) {
+          .navbar-1 {
+            padding: 1.25rem 2rem;
+          }
+          
+          .login-btn {
+            padding: 0.625rem 1.25rem;
+          }
+        }
+        
+        /* Hover effects */
+        .logo:hover img {
+          transform: scale(1.05);
+        }
+
+         .page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Main content styles */
+      .main-content {
+        flex: 1 0 auto;
+        padding-bottom: 5rem; /* Ensure space for footer */
+      }
+
+          .footer {
+          position: ;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1rem;
+          background-color: rgba(0, 0, 0, 0.75);
+          backdrop-filter: blur(8px);
+          color: white;
+          text-align: center;
+          font-size: 0.875rem;
+          z-index: 1000;
+        }
+        
+        .footer-content {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 2rem;
+        }
+        
+        .footer a {
+          color: #00bcd4;
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+          color: white;
+        }
+        
+        @media (max-width: 640px) {
+          .footer {
+            padding: 0.75rem;
+            font-size: 0.75rem;
+          }
+          
+          .footer-content {
+            gap: 1rem;
+            flex-wrap: wrap;
+          }
+        }
+      /* Footer styles */
+      .footer {
+        flex-shrink: 0;
+        background-color: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px);
+        color: white;
+        padding: 1rem;
+        width: 100%;
+      }
+      
+      .footer-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+      }
+      
+      .footer a {
+        color: #00bcd4;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      
+      .footer a:hover {
+        color: white;
+      }
+      
+      @media (max-width: 640px) {
+        .footer {
+          padding: 0.75rem;
+          font-size: 0.75rem;
+        }
+        
+        .footer-content {
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+      }
         `}</style>
 
     <head>
@@ -175,6 +343,8 @@ const RegisterForm: React.FC = () => {
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
 
     </head>
+
+    <div className="page-wrapper">
     
       {/* Background */}
       <div className="background-wrapper">
@@ -212,21 +382,24 @@ const RegisterForm: React.FC = () => {
         </BootstrapNavbar>
       </nav> */}
 
-      <div className="navbar-1">
-   <div className="logo">
-   <Link to="/">
-   <img 
-                src={logo}
-                alt="Logo"
-                className="img-fluid"
-                style={{ height: "25px", width: "auto" }}
-              />  
-              </Link> </div>
-  
-   <a className="login-btn" onClick={handleLoginClick}  style={{ cursor: 'pointer' }}>
-    Sign in
-   </a>
-  </div>
+<div className="navbar-1">
+        <div className="logo">
+          <Link to="/">
+            <img 
+              src={logo}
+              alt="Logo"
+              className="img-fluid"
+            />
+          </Link>
+        </div>
+        <a 
+          className="login-btn" 
+          onClick={handleLoginClick}
+          style={{ cursor: 'pointer' }}
+        >
+          Sign In
+        </a>
+      </div>
     
     
     
@@ -241,7 +414,9 @@ const RegisterForm: React.FC = () => {
         </div>
       </BootstrapNavbar> */}
 
-<div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "0px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
+<main className="main-content">
+
+<div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "20px", paddingBottom: "20px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div
           className="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md"
           style={{
@@ -417,12 +592,25 @@ const RegisterForm: React.FC = () => {
                 Register
               </button>
             </div>
+
           </form>
 
           <p className="mt-6 text-center text-sm">Already have an account? <a onClick={handleLoginClick} style={{ cursor: 'pointer' }} className="text-blue-500 hover:underline">Sign in</a></p>
 
-    
+   
         </div>
+        </div>
+        </main>
+
+        <footer className="footer">
+        <div className="footer-content">
+          <span>© 2025 Boron Atom</span>
+          <a href="/privacy">Privacy Policy</a>
+          <a href="/terms">Terms of Service</a>
+          <a href="/contact">Contact Us</a>
+        </div>
+      </footer>
+      </div>
       
       <style>{`
         .background-wrapper {
@@ -476,7 +664,7 @@ const RegisterForm: React.FC = () => {
           100% { transform: translate(-100%, -100%); }
         }
       `}</style>
-    </div>
+   
     </>
   );
 };
