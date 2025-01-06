@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { FaFilePdf, FaPhone, FaEnvelope, FaLinkedin } from 'react-icons/fa';
+import { FaFilePdf, FaPhone, FaEnvelope, FaLinkedin, FaSync } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 // Import the library
 import html2pdf from 'html2pdf.js';
@@ -81,55 +81,43 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { userID } = useParams<{ userID: string }>();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const resumeRef = useRef<HTMLDivElement>(null);
   const previousDataRef = useRef({ userDetails: null, eduDetails: null });
 
-  // Function to deeply compare objects
-  const hasDataChanged = useCallback((
-    newUserDetails: UserDetails | null, 
-    newEduDetails: EduDetails | null
-  ) => {
-    const prevData = previousDataRef.current;
-    const userChanged = JSON.stringify(prevData.userDetails) !== JSON.stringify(newUserDetails);
-    const eduChanged = JSON.stringify(prevData.eduDetails) !== JSON.stringify(newEduDetails);
-    return userChanged || eduChanged;
-  }, []);
-
-  // Function to fetch data
-  const fetchData = useCallback(async () => {
-    try {
-      const [userResponse, eduResponse] = await Promise.all([
-        axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`),
-        axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
-      ]);
-
-      const newUserDetails = userResponse.data.user;
-      const newEduDetails = eduResponse.data.success ? eduResponse.data.user : null;
-
-      // Only update state if data has actually changed
-      if (hasDataChanged(newUserDetails, newEduDetails)) {
-        previousDataRef.current = { userDetails: newUserDetails, eduDetails: newEduDetails };
-        
-        if (newUserDetails) setUserDetails(newUserDetails);
-        if (newEduDetails) setEduDetails(newEduDetails);
+    // Function to fetch data
+    const fetchData = useCallback(async (isManualRefresh = false) => {
+      if (isManualRefresh) {
+        setIsRefreshing(true);
       }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [userID, hasDataChanged]);
-
-  // Initial data fetch
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  // Set up polling with a longer interval
-  useEffect(() => {
-    const pollInterval = setInterval(fetchData, 1000); // Poll every 10 seconds
-    return () => clearInterval(pollInterval);
-  }, [fetchData]);
+      
+      try {
+        const [userResponse, eduResponse] = await Promise.all([
+          axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`),
+          axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
+        ]);
+  
+        if (userResponse.data.user) {
+          setUserDetails(userResponse.data.user);
+        }
+  
+        if (eduResponse.data.success && eduResponse.data.user) {
+          setEduDetails(eduResponse.data.user);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+        if (isManualRefresh) {
+          setIsRefreshing(false);
+        }
+      }
+    }, [userID]);
+  
+    // Initial data fetch
+    useEffect(() => {
+      fetchData();
+    }, [fetchData]);
 
   // const generatePDF = (userDetails: UserDetails, eduDetails: EduDetails) => {
   //   const doc = new jsPDF("p", "pt", "a4");
@@ -367,7 +355,16 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
     <div className="flex flex-col gap-6 p-4">
     {/* Download buttons container outside the resume */}
     
-
+    <button 
+          onClick={() => fetchData(true)}
+          disabled={isRefreshing}
+          className="flex items-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 
+            text-gray-700 rounded-full transition-all duration-200 shadow-lg 
+            hover:shadow-xl disabled:opacity-50"
+        >
+          <FaSync className={`text-lg ${isRefreshing ? 'animate-spin' : ''}`} />
+          {isRefreshing ? 'Refreshing...' : 'Refresh'}
+        </button>
 
 
 
