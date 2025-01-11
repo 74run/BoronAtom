@@ -837,77 +837,77 @@ return (
               onChange={(e) => setEditData({ ...editData, skills: e.target.value })}
             />
 
-            <div className="date-grid">
-              <div>
-              <div className="date-label">Start Date</div>
-                <select
-                  className="select-field"
-                  value={editData.startDate.month}
-                  onChange={(e) => setEditData({
-                    ...editData,
-                    startDate: { ...editData.startDate, month: e.target.value }
-                  })}
-                >
-                  <option value="" disabled>Select Start Month</option>
-                  {months.map(month => (
-                    <option key={month} value={month}>{month}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <h6>&nbsp;</h6>
-                <select
-                  className="select-field"
-                  value={editData.startDate.year}
-                  onChange={(e) => setEditData({
-                    ...editData,
-                    startDate: { ...editData.startDate, year: e.target.value }
-                  })}
-                >
-                  <option value="" disabled>Select Start Year</option>
-                  {graduationYears.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {!editData.isPresent && (
-              <div className="date-grid">
+<div className="date-grid">
                 <div>
-                <div className="date-label">End Date</div>
+                  <div className="date-label">Start Date</div>
                   <select
                     className="select-field"
-                    value={editData.endDate.month}
+                    value={editData.startDate.month}
                     onChange={(e) => setEditData({
                       ...editData,
-                      endDate: { ...editData.endDate, month: e.target.value }
+                      startDate: { ...editData.startDate, month: e.target.value }
                     })}
                   >
-                    <option value="" disabled>Select End Month</option>
+                    <option value="" disabled>Select Month</option>
                     {months.map(month => (
                       <option key={month} value={month}>{month}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <h6>&nbsp;</h6>
+                  <div className="date-label">&nbsp;</div>
                   <select
                     className="select-field"
-                    value={editData.endDate.year}
+                    value={editData.startDate.year}
                     onChange={(e) => setEditData({
                       ...editData,
-                      endDate: { ...editData.endDate, year: e.target.value }
+                      startDate: { ...editData.startDate, year: e.target.value }
                     })}
                   >
-                    <option value="" disabled>Select End Year</option>
+                    <option value="" disabled>Select Year</option>
                     {graduationYears.map(year => (
                       <option key={year} value={year}>{year}</option>
                     ))}
                   </select>
                 </div>
               </div>
-            )}
+
+              {!editData.isPresent && (
+                <div className="date-grid">
+                  <div>
+                    <div className="date-label">End Date</div>
+                    <select
+                      className="select-field"
+                      value={editData.endDate.month}
+                      onChange={(e) => setEditData({
+                        ...editData,
+                        endDate: { ...editData.endDate, month: e.target.value }
+                      })}
+                    >
+                      <option value="" disabled>Select Month</option>
+                      {months.map(month => (
+                        <option key={month} value={month}>{month}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <div className="date-label">&nbsp;</div>
+                    <select
+                      className="select-field"
+                      value={editData.endDate.year}
+                      onChange={(e) => setEditData({
+                        ...editData,
+                        endDate: { ...editData.endDate, year: e.target.value }
+                      })}
+                    >
+                      <option value="" disabled>Select Year</option>
+                      {graduationYears.map(year => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              )}
 
             <button 
               className={`toggle-btn ${editData.isPresent ? 'active' : 'inactive'}`}

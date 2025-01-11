@@ -351,20 +351,22 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
   }
 
   
-  return (
-    <div className="flex flex-col gap-6 p-4">
+  return ( <div className="flex flex-col gap-6 p-4">
+ <button 
+    onClick={() => fetchData(true)}
+    disabled={isRefreshing}
+    className="flex items-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 
+      text-gray-700 rounded-full transition-all duration-200 shadow-lg 
+      hover:shadow-xl disabled:opacity-50"
+  >
+    <FaSync className={`text-lg ${isRefreshing ? 'animate-spin' : ''}`} />
+    {isRefreshing ? 'Refreshing...' : 'Refresh'}
+  </button>
+
+   
     {/* Download buttons container outside the resume */}
     
-    <button 
-          onClick={() => fetchData(true)}
-          disabled={isRefreshing}
-          className="flex items-center gap-2 px-6 py-2 bg-gray-100 hover:bg-gray-200 
-            text-gray-700 rounded-full transition-all duration-200 shadow-lg 
-            hover:shadow-xl disabled:opacity-50"
-        >
-          <FaSync className={`text-lg ${isRefreshing ? 'animate-spin' : ''}`} />
-          {isRefreshing ? 'Refreshing...' : 'Refresh'}
-        </button>
+   
 
 
 
@@ -417,7 +419,7 @@ const PDFResume: React.FC<PDFResumeProps> = ({ theme }) => {
             <div style={styles.sectionDivider}></div>
             {eduDetails.education.filter(edu => edu.includeInResume).map((edu, index) => (
               <p key={index} style={styles.contentIndent}>
-                <strong>{edu.university}</strong> • {edu.degree}, {edu.major}
+                <strong>{edu.university}</strong> • {edu.degree} • {edu.major}
                 <span style={styles.dateText}>{edu.isPresent ? 'Present' : `${edu.endDate.month}/${edu.endDate.year}`}</span><br />
                 GPA: {edu.cgpa}
               </p>

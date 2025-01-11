@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
 const { exec } = require('child_process');
 
 const { GridFSBucket, ObjectId } = require('mongodb');
@@ -558,12 +559,31 @@ app.delete('/api/userprofile/:userID/image', async (req, res) => {
 // });
 
 
+app.post("/chat", async (req, res) => {
+  try {
+      // Log the incoming user message
+      console.log("Received message from frontend:", req.body.user_input);
 
+      // Send the user input to the Python FastAPI chatbot
+      const response = await axios.post("http://127.0.0.1:8000/chat", {
+          user_input: req.body.user_input
+      });
 
+      // Log the chatbot's response from FastAPI
+      console.log("Chatbot response:", response.data.response);
 
-
-
-
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+      // Send chatbot's response back to frontend
+      res.json(response.data);
+  } catch (error) {
+      console.error("Error calling Python chatbot API:", error.message);
+      res.status(500).json({ error: "Failed to communicate with chatbot" });
+  }
 });
+
+
+
+
+
+
+
+app.listen(3001, () => console.log("Node.js API running on port 3001"));
