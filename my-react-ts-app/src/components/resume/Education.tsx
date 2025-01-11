@@ -48,6 +48,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
+  const [universities, setUniversities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
@@ -176,15 +179,21 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUniversities = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/universities`);
-        setFilteredUniversities(response.data.universities);
-      } catch (error) {
-        console.error('Error fetching universities:', error);
+        setUniversities(response.data.universities);
+        setError(null);
+      } catch (err) {
+       
+        console.error('Error fetching universities:', err);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchData();
+
+    fetchUniversities();
   }, []);
 
   const handleToggleInclude = (id: string) => {
@@ -324,6 +333,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             gap: 0.5rem;
           }
 
+        
+
           .input-field {
             width: 100%;
             padding: 0.75rem;
@@ -332,7 +343,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             border: 1px solid #4a5568;
             color: white;
             font-size: 0.75rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1rem; /* Keep consistent margin bottom */
           }
 
           .input-field:focus {
@@ -348,8 +359,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             color: white;
             font-size: 0.75rem;
             width: 100%;
+            margin-bottom: 1rem; /* Add margin bottom to create space */
           }
-
           .date-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -458,11 +469,28 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             color: white;
           }
 
-          .university-search {
+        .university-search {
             position: relative;
+            margin-bottom: 1rem;
           }
 
-          .university-list {
+          .university-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 6px;
+            background-color: #2d3748;
+            border: 1px solid #4a5568;
+            color: white;
+            font-size: 0.875rem;
+            margin-bottom: 0;
+          }
+
+          .university-input:focus {
+            outline: none;
+            border-color: #63b3ed;
+          }
+
+          .university-dropdown {
             position: absolute;
             top: 100%;
             left: 0;
@@ -470,13 +498,16 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             background-color: #2d3748;
             border: 1px solid #4a5568;
             border-radius: 6px;
+            margin-top: 0.25rem;
             max-height: 200px;
             overflow-y: auto;
-            z-index: 10;
+            z-index: 50;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           }
 
           .university-option {
             padding: 0.75rem;
+            color: white;
             cursor: pointer;
             transition: background-color 0.2s ease;
           }
@@ -484,8 +515,29 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           .university-option:hover {
             background-color: #4a5568;
           }
+
+          .no-results {
+            padding: 0.75rem;
+            color: #a0aec0;
+            text-align: center;
+          }
+
+          /* Style scrollbar for the dropdown */
+          .university-dropdown::-webkit-scrollbar {
+            width: 8px;
+          }
+
+          .university-dropdown::-webkit-scrollbar-track {
+            background: #2d3748;
+          }
+
+          .university-dropdown::-webkit-scrollbar-thumb {
+            background-color: #4a5568;
+            border-radius: 4px;
+          }
         `}
       </style>
+      
 
       <h2 className="section-header">Education</h2>
 
@@ -493,7 +545,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         <div key={education._id} className="education-card">
           {editData && editData.id === education._id ? (
             <div className="form-group">
-              <div className="university-search">
+              {/* <div className="university-search">
                 <input
                   type="text"
                   className="input-field"
@@ -506,7 +558,27 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     <option key={index} value={name} />
                   ))}
                 </datalist>
-              </div>
+              </div> */}
+
+              <div className="relative w-full">
+      <input
+        type="text"
+        list="universities"
+        className="input-field"
+        placeholder={isLoading ? "Loading universities..." : "Search University"}
+        value={editData.university}
+        onChange={(e) => setEditData({ ...editData, university: e.target.value })}
+        disabled={isLoading}
+      />
+      <datalist id="universities">
+        {universities.map((university, index) => (
+          <option key={index} value={university} />
+        ))}
+      </datalist>
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+    </div>
 
               <input
                 type="number"

@@ -51,7 +51,9 @@ const CoverLetterGenerator = () => {
   const { userID } = useParams();
 
   const [showModal, setShowModal] = useState<boolean>(false);
+  
  
+  
 
     // Fetch user details
     useEffect(() => {
@@ -633,6 +635,7 @@ label {
 
     <div className="cover-letter-container">
 
+     
       
       
       <div className="page-header">

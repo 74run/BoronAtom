@@ -10,7 +10,6 @@
 
   "scripts": {
 
-
     "test": "echo \"Error: no test specified\" && exit 1",
 
     "build": "mkdir -p dist && cp -r * dist/"
@@ -26,6 +25,8 @@
   "dependencies": {
 
     "@google/generative-ai": "^0.9.0",
+
+    "axios": "^1.7.9",
 
     "bcryptjs": "^2.4.3",
 

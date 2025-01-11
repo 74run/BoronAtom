@@ -63,7 +63,7 @@ const AIChatbot: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
-
+  
     const userMessage = inputMessage.trim();
     setInputMessage('');
     setMessages(prev => [...prev, { 
@@ -73,21 +73,31 @@ const AIChatbot: React.FC = () => {
     }]);
     setIsLoading(true);
     setIsTyping(true);
-
+  
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Send user input to Node.js backend
+      const res = await fetch("http://localhost:3001/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_input: userMessage }),
+      });
+  
+      const data = await res.json();
+      console.log("Chatbot response:", data.response);
+  
       setIsTyping(false);
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `I understand you're asking about "${userMessage}". How can I help you with that?`,
+        content: data.response,  // Display chatbot response
         timestamp: new Date()
       }]);
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const toggleChat = (): void => {
     setIsOpen(!isOpen);
@@ -238,7 +248,7 @@ const AIChatbot: React.FC = () => {
                     type="submit"
                     disabled={isLoading || !inputMessage.trim()}
                     size="icon"
-                    className="rounded-full bg-blue-600 hover:bg-blue-700 text-white h-8 w-8"
+                    className="rounded-full bg-black-600 hover:bg-blue-700 text-white h-8 w-8"
                   >
                     {isLoading ? (
                       <Loader2 size={14} className="animate-spin" />

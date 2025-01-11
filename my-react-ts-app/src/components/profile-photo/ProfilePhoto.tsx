@@ -447,19 +447,14 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
       </style>
   
       <div className="profile-header">
-        {isLoading ? (
-          <div className="animate-pulse flex flex-col items-center w-full">
-            <div className="w-24 h-24 bg-gray-700 rounded-full mb-4"></div>
-           
-          </div>
-        ) : (
+       
           <img 
             src={profileImage || avatarUrl.current}
             alt="Profile"
             className="profile-pic-profile"
             onClick={() => setIsProfilePictureModalOpen(true)}
           />
-        )}
+   
 
 <ProfilePictureModal
   isOpen={isProfilePictureModalOpen}
