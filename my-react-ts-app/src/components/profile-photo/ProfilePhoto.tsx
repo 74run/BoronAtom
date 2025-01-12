@@ -212,27 +212,39 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   };
 
   useEffect(() => {
-    // Fetch user details
     setIsLoading(true);
-    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
-      .then(response => {
-        setUserDetails(response.data.user);
-      })
+
+    const userDetailsPromise = axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+      .then(response => setUserDetails(response.data.user))
       .catch(error => {
         console.error('Error fetching user details:', error);
       });
 
-    // Fetch education details
-    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
+    const eduDetailsPromise = axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
       .then(eduResponse => {
         const fetchedEduDetails = eduResponse.data.user;
         setEduDetails(fetchedEduDetails);
-        const completion = calculateProfileCompletion(fetchedEduDetails);
-        setProfileCompletion(completion); // Update profile completion
+        setProfileCompletion(calculateProfileCompletion(fetchedEduDetails));
       })
       .catch(error => {
         console.error('Error fetching education details:', error);
       });
+
+    const imagePromise = axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
+      .then(response => {
+        const base64Image = btoa(
+          new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        );
+        const contentType = response.headers['content-type'];
+        avatarUrl.current = `data:${contentType};base64,${base64Image}`;
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+      });
+
+ 
+
+
 
     // Fetch the profile image
     axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
@@ -245,12 +257,17 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
         );
         const contentType = response.headers['content-type'];
         avatarUrl.current = `data:${contentType};base64,${base64Image}`;
-        setIsLoading(false);
+       
       })
       
       .catch(error => {
         console.error('Error fetching image:', error);
       });
+
+         // Ensure loading state is only set to false when all requests are completed
+    Promise.allSettled([userDetailsPromise, eduDetailsPromise, imagePromise]).then(() => {
+      setIsLoading(false);
+    });
 
 
     // Fetch ATS score
@@ -371,19 +388,27 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
+            gap: 10px;
+
+            flex-wrap: wrap;
           }
-  
-          .metric-title {
-            color: #63b3ed;
-            font-size: 1rem;
-            font-weight: 500;
-          }
-  
-          .metric-value {
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-          }
+ .metric-title {
+    color: #63b3ed;
+    font-size: 1.1rem; /* Slightly larger for better readability */
+    font-weight: 600;
+    margin: 0; /* Removes extra margins */
+    word-break: break-word; /* Ensures long words wrap */
+    flex: 1; /* Allows title to take available space */
+    min-width: 0; /* Prevents title from overflowing */
+      flex-wrap: wrap;
+
+}
+
+.metric-value {
+    color: white;
+    font-size: 1.1rem; /* Match size with title for consistency */
+    font-weight: 700; /* Slightly bolder for emphasis */
+}
   
           .progress-bar {
             height: 8px;
@@ -447,14 +472,19 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
       </style>
   
       <div className="profile-header">
-       
+        {isLoading ? (
+          <div className="animate-pulse flex flex-col items-center w-full">
+            <div className="w-24 h-24 bg-gray-700 rounded-full mb-4"></div>
+           
+          </div>
+        ) : (
           <img 
             src={profileImage || avatarUrl.current}
             alt="Profile"
             className="profile-pic-profile"
             onClick={() => setIsProfilePictureModalOpen(true)}
           />
-   
+        )}
 
 <ProfilePictureModal
   isOpen={isProfilePictureModalOpen}

@@ -570,6 +570,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         onChange={(e) => setEditData({ ...editData, university: e.target.value })}
         disabled={isLoading}
       />
+   
+        
       <datalist id="universities">
         {universities.map((university, index) => (
           <option key={index} value={university} />
