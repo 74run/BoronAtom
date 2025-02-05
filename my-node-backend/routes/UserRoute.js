@@ -332,11 +332,11 @@ router.post('/login', async (req, res) => {
 
     // Find the user by either username or email
     const user = await User.findOne({
-      $or: [{ username: username }, { email: username }] // Accept username or email
+      $or: [{ username: username }, { email: username }]
     });
 
     if (!user) {
-      return res.status(401).json({ success: false, message: 'User does not exist!' });
+      return res.status(401).json({ message: 'User does not exist!' });
     }
 
     // Compare the password using bcryptjs
@@ -346,20 +346,19 @@ router.post('/login', async (req, res) => {
       // Passwords match, generate the token
       const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' });
 
-      res.cookie("authToken", token, {
-        httpOnly: true,  // Make it inaccessible to JavaScript
-        secure: process.env.NODE_ENV === 'production',  // Send only over HTTPS in production
-        sameSite: "Strict",  // Prevent CSRF attacks
-        maxAge: 3600 * 1000  // 1 hour expiration
+      // Send back both token and userID to match frontend expectations
+      res.status(200).json({
+        success: true,
+        message: 'User logged in successfully',
+        token: token,
+        userID: user._id.toString()
       });
-
-      res.status(200).json({ success: true, message: 'User logged in successfully.' });
     } else {
       // Passwords do not match
-      return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+      return res.status(401).json({ message: 'Invalid credentials.' });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -438,5 +437,5 @@ router.get('/user', async (req, res) => {
 
 
 module.exports = (app) => {
-  app.use('/api', router);
+  app.use('/', router);
 };

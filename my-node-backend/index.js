@@ -18,7 +18,7 @@ const allowCors = require('./cors');
 
 require("dotenv").config();
 
-
+const UserRoute = require('./routes/UserRoute');
 // const EduRoutes = require('./routes/EduRoute');
 const UniRoutes = require('./routes/UniRoute');
 // const ExpRoutes = require('./routes/ExpRoute');
@@ -96,7 +96,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
 
-
+UserRoute(app);
 
 
 // require('./routes/UserRoute')(app);
@@ -243,7 +243,7 @@ const imageSchema = new mongoose.Schema({
 const Image = mongoose.model("Image", imageSchema);
 
 
-app.post('/api/userprofile/image', async (req, res) => {
+app.post('/api/userprofile/:userID/image', async (req, res) => {
   const { userID } = req.params;
   const { imageData } = req.body;
 
@@ -274,7 +274,7 @@ app.post('/api/userprofile/image', async (req, res) => {
 
 
 
-app.get('/api/userprofile/image', async (req, res) => {
+app.get('/api/userprofile/:userID/image', async (req, res) => {
   const { userID } = req.params;
 
   try {
@@ -292,7 +292,7 @@ app.get('/api/userprofile/image', async (req, res) => {
 });
 
 
-app.delete('/api/userprofile/image', async (req, res) => {
+app.delete('/api/userprofile/:userID/image', async (req, res) => {
   const { userID } = req.params;
 
   try {

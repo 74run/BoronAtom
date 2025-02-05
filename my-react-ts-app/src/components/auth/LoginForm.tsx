@@ -29,17 +29,24 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { username, password });
-      const { userID, token } = response.data;
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { 
+        username, 
+        password 
+      });
+      
+      const { success, message, userID, token } = response.data;
 
-      onLogin();
-      localStorage.setItem('Token', token);
-      localStorage.setItem('UserID', userID);
-
-      navigate(`/profile/${userID}`);
+      if (success) {
+        onLogin();
+        localStorage.setItem('Token', token);
+        localStorage.setItem('UserID', userID);
+        navigate(`/profile/${userID}`);
+      } else {
+        setError(message || 'Login failed');
+      }
     } catch (error: any) {
       console.error('Login error:', error.response?.data?.message || 'Unknown error');
-      setError(error.response?.data?.message || 'Unknown error');
+      setError(error.response?.data?.message || 'Invalid credentials');
     }
   };
 
