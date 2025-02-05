@@ -437,6 +437,7 @@ interface DateRange {
 interface Education {
   _id: string;
   university: string;
+  universityUrl: string;
   cgpa: string;
   degree: string;
   major: string;
@@ -993,7 +994,7 @@ const formatExperienceItems = (experiences: Experience[]) => {
         title: edu.university,
         subtitle: `${edu.degree} in ${edu.major}`,
         description: `CGPA: ${edu.cgpa}`,
-        logo: `https://logo.clearbit.com/slu.edu`,
+        logo: `https://logo.clearbit.com/${edu.universityUrl}`,
         logoAlt: `${edu.university} Logo`
       }));
   };
