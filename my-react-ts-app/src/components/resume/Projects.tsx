@@ -420,33 +420,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
   };
 
 
-  const LoadingProjectCard = () => (
-    <div className="project-card animate-pulse">
-      <div className="h-6 w-48 bg-gray-700 rounded mb-4"></div>
-      <div className="h-4 w-32 bg-gray-700 rounded mb-2"></div>
-      <div className="h-4 w-40 bg-gray-700 rounded mb-4"></div>
-      <div className="description-box">
-        <div className="h-4 w-3/4 bg-gray-700 rounded mb-2"></div>
-        <div className="h-4 w-2/3 bg-gray-700 rounded mb-2"></div>
-        <div className="h-4 w-1/2 bg-gray-700 rounded"></div>
-      </div>
-      <div className="btn-group">
-        <div className="h-10 w-24 bg-gray-700 rounded"></div>
-        <div className="h-10 w-24 bg-gray-700 rounded"></div>
-        <div className="h-10 w-24 bg-gray-700 rounded"></div>
-      </div>
-    </div>
-  );
 
-  if (isLoading) {
-    return (
-      <div className="projects-container">
-        <h2 className="section-header-1">Projects</h2>
-        <LoadingProjectCard />
-        <LoadingProjectCard />
-      </div>
-    );
-  }
+
+
 
 return (
   <div className="projects-container">
@@ -1066,10 +1042,10 @@ return (
             />
 
             <div className="date-grid">
-              <div>
+            <div>
               <div className="date-label">Start Date</div>
-                <select
-                  className="select-field"
+              <select
+                className="select-field"
                   value={newProject.startDate.month}
                   onChange={(e) => setNewProject({
                     ...newProject,
@@ -1083,7 +1059,7 @@ return (
                 </select>
               </div>
               <div>
-                <h6>&nbsp;</h6>
+              <div className="date-label">&nbsp;</div>                
                 <select
                   className="select-field"
                   value={newProject.startDate.year}
@@ -1119,7 +1095,7 @@ return (
                   </select>
                 </div>
                 <div>
-                  <h6>&nbsp;</h6>
+                <div className="date-label">&nbsp;</div>
                   <select
                     className="select-field"
                     value={newProject.endDate.year}

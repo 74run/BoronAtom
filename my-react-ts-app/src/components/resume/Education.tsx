@@ -13,6 +13,11 @@ interface UserDetails {
   // Add other fields as needed
 }
 
+interface University {
+  name: string;
+  url: string[]; // Assuming `url` is an array of strings
+}
+
 interface Education {
   _id: string;
   university: string;
@@ -21,6 +26,7 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+  universityUrl: string;
   includeInResume: boolean;
   isEditing?: boolean;
   isPresent?: boolean; // Add this field to track if the end date is 'Present'
@@ -29,9 +35,12 @@ interface Education {
 interface EducationProps {
   Educations: Education[];
   UserDetail: UserDetails | null;
-  onEdit: (id: string, data: { university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; includeInResume: boolean, isPresent: boolean }) => void;
+ 
+  onEdit: (id: string, data: { university: string; cgpa: string; degree: string; major: string; startDate: { month: string; year: string }; endDate: { month: string; year: string }; universityUrl: string; includeInResume: boolean, isPresent: boolean }) => void;
   onDelete: (id: string) => void;
 }
+
+
 
 const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, onEdit, onDelete }) => {
   const [editData, setEditData] = useState<{
@@ -42,15 +51,16 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
+    universityUrl: string;
     includeInResume: boolean;
     isPresent: boolean;
   } | null>(null);
   const [educations, setEducations] = useState<Education[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [filteredUniversities, setFilteredUniversities] = useState<string[]>([]);
-  const [universities, setUniversities] = useState([]);
+  const [universities, setUniversities] = useState<University[]>([]);
+  const [universitiesUrl, setUniversitiesUrl] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [newEducation, setNewEducation] = useState<Education>({
     _id: '',
     university: '',
@@ -59,6 +69,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     major: '',
     startDate: { month: '', year: '' },
     endDate: { month: '', year: '' },
+    universityUrl: '',
     includeInResume: true,
     isPresent: false, // Initialize as false
   });
@@ -111,10 +122,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
     major: string,
     startDate: { month: string; year: string },
     endDate: { month: string; year: string },
+    universityUrl: string,
     includeInResume: boolean,
     isPresent: boolean
   ) => {
-    setEditData({ id, university, cgpa, degree, major, startDate, endDate, includeInResume, isPresent });
+    setEditData({ id, university, cgpa, degree, major, startDate, endDate, universityUrl, includeInResume, isPresent });
   };
 
   const handleCancelEdit = () => {
@@ -130,6 +142,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         major: editData.major,
         startDate: { ...editData.startDate },
         endDate: { ...editData.endDate },
+        universityUrl: editData.universityUrl,
         includeInResume: editData.includeInResume,
         isPresent: editData.isPresent,
       });
@@ -144,6 +157,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             major: editData.major,
             startDate: { ...editData.startDate },
             endDate: { ...editData.endDate },
+            universityUrl: editData.universityUrl,
             includeInResume: editData.includeInResume,
             isPresent: editData.isPresent,
           }
@@ -183,11 +197,13 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       try {
         setIsLoading(true);
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/universities`);
+        
+        // Since the server sends an array of objects with name and url properties
         setUniversities(response.data.universities);
+        console.log(response.data.universities);
         setError(null);
       } catch (err) {
-       
-        console.error('Error fetching universities:', err);
+        setError('An unknown error occurred')
       } finally {
         setIsLoading(false);
       }
@@ -211,6 +227,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
         major: educationToUpdate.major,
         startDate: educationToUpdate.startDate,
         endDate: educationToUpdate.endDate,
+        universityUrl: educationToUpdate.universityUrl,
         includeInResume: educationToUpdate.includeInResume,
         isPresent: educationToUpdate.isPresent ?? false, // Use nullish coalescing operator to provide a default value
       });
@@ -250,6 +267,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           major: '',
           startDate: { month: '', year: '' },
           endDate: { month: '', year: '' },
+          universityUrl: '',
           includeInResume: true,
           isPresent: false, // Reset to false
         });
@@ -270,6 +288,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       major: '',
       startDate: { month: '', year: '' },
       endDate: { month: '', year: '' },
+      universityUrl: '',
       includeInResume: true,
       isPresent: false, // Initialize as false
     });
@@ -294,13 +313,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             padding: 1.5rem;
             color: white;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .section-header {
-            color: #63b3ed;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
           }
 
           .education-card {
@@ -333,8 +345,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             gap: 0.5rem;
           }
 
-        
-
           .input-field {
             width: 100%;
             padding: 0.75rem;
@@ -343,7 +353,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             border: 1px solid #4a5568;
             color: white;
             font-size: 0.75rem;
-            margin-bottom: 1rem; /* Keep consistent margin bottom */
+            margin-bottom: 1rem;
           }
 
           .input-field:focus {
@@ -359,8 +369,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             color: white;
             font-size: 0.75rem;
             width: 100%;
-            margin-bottom: 1rem; /* Add margin bottom to create space */
+            margin-bottom: 1rem;
           }
+
           .date-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -469,7 +480,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             color: white;
           }
 
-        .university-search {
+          .university-search {
             position: relative;
             margin-bottom: 1rem;
           }
@@ -522,7 +533,6 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             text-align: center;
           }
 
-          /* Style scrollbar for the dropdown */
           .university-dropdown::-webkit-scrollbar {
             width: 8px;
           }
@@ -537,50 +547,56 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
           }
         `}
       </style>
-      
 
       <h2 className="section-header">Education</h2>
 
       {educations.map((education) => (
-        <div key={education._id} className="education-card">
-          {editData && editData.id === education._id ? (
-            <div className="form-group">
-              {/* <div className="university-search">
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder="Search University"
-                  value={editData.university}
-                  onChange={(e) => setEditData({ ...editData, university: e.target.value })}
-                />
-                <datalist id="universities">
-                  {filteredUniversities.map((name, index) => (
-                    <option key={index} value={name} />
-                  ))}
-                </datalist>
-              </div> */}
+  <div key={education._id} className="education-card">
+    {editData && editData.id === education._id ? (
+      <div className="form-group">
+        <div className="relative w-full">
+          <input
+            type="text"
+            list="universities"
+            className="input-field"
+            placeholder={isLoading ? "Loading universities..." : "Search University"}
+            value={editData.university}
+            onChange={(e) => {
+              const selectedUniversity = universities.find(
+                (uni: University) => uni.name === e.target.value
+              );
 
-              <div className="relative w-full">
-      <input
-        type="text"
-        list="universities"
-        className="input-field"
-        placeholder={isLoading ? "Loading universities..." : "Search University"}
-        value={editData.university}
-        onChange={(e) => setEditData({ ...editData, university: e.target.value })}
-        disabled={isLoading}
-      />
-   
-        
-      <datalist id="universities">
-        {universities.map((university, index) => (
-          <option key={index} value={university} />
-        ))}
-      </datalist>
-      {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
-      )}
-    </div>
+              setEditData({
+                ...editData,
+                university: e.target.value,
+                universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : ''
+              });
+            }}
+            disabled={isLoading}
+          />
+          
+          <input
+            type="text"
+            className="input-field"
+            placeholder="University URL"
+            value={editData.universityUrl}
+            onChange={(e) => setEditData({ ...editData, universityUrl: e.target.value })}
+          />
+ 
+          <datalist id="universities">
+            {universities.map((university: { name: string, url: string[] }) => (
+              <option 
+                key={university.name} 
+                value={university.name}
+                data-url={university.url[0]} 
+              />
+            ))}
+          </datalist>
+          {error && (
+            <p className="mt-1 text-sm text-red-600">{error}</p>
+          )}
+        </div>
+    
 
               <input
                 type="number"
@@ -723,6 +739,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 <strong>Duration:</strong> {education.startDate.month} {education.startDate.year} - 
                 {education.isPresent ? " Present" : ` ${education.endDate.month} ${education.endDate.year}`}
               </div>
+              {education.universityUrl && (
+                <div className="education-info">
+                  <strong>University URL:</strong> <a href={education.universityUrl} target="_blank" rel="noopener noreferrer">{education.universityUrl}</a>
+                </div>
+              )}
 
               <div className="btn-group">
                 <button 
@@ -736,6 +757,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                       education.major,
                       education.startDate,
                       education.endDate,
+                      education.universityUrl,
                       education.includeInResume,
                       education.isPresent || false
                     )}
@@ -769,20 +791,52 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
       {isAdding && (
         <div className="education-card">
           <div className="form-group">
-            <div className="university-search">
-              <input
-                type="text"
-                className="input-field"
-                placeholder="Search University"
-                value={newEducation.university}
-                onChange={(e) => setNewEducation({ ...newEducation, university: e.target.value })}
-              />
-              <datalist id="universities">
-                {filteredUniversities.map((name, index) => (
-                  <option key={index} value={name} />
-                ))}
-              </datalist>
-            </div>
+          <div className="university-search">
+          <input
+  type="text"
+  list="universities"
+  className="input-field"
+  placeholder={isLoading ? "Loading universities..." : "Search University"}
+  value={newEducation.university}
+  onChange={(e) => {
+    const selectedUniversity = universities.find(
+      (uni: University) => uni.name === e.target.value
+    );
+
+    setNewEducation({
+      ...newEducation,
+      university: e.target.value,
+      universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : '', // Use first URL or empty string
+    });
+  }}
+  disabled={isLoading}
+/>
+  
+  <input
+    type="text"
+    className="input-field"
+    placeholder="University URL"
+    value={newEducation.universityUrl}
+    onChange={(e) => setNewEducation({ 
+      ...newEducation, 
+      universityUrl: e.target.value 
+    })}
+  />
+  
+  <datalist id="universities">
+    {universities.map((university: { name: string, url: string[] }) => (
+      <option 
+        key={university.name} 
+        value={university.name}
+        data-url={university.url[0]}
+      />
+    ))}
+  </datalist>
+
+  {error && (
+    <p className="mt-1 text-sm text-red-600">{error}</p>
+  )}
+</div>
 
             <input
               type="number"
@@ -816,7 +870,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             />
 
             <div className="date-grid">
-            <div>
+              <div>
                 <div className="date-label">Start Date</div>
                 <select
                   className="select-field"

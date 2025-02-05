@@ -489,7 +489,11 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
             </div>
           ) : (
             <>
-              <h3 className="cert-title">{certification.name}</h3>
+              <h3 className="cert-title">
+                <a href={certification.url} target="_blank" rel="noopener noreferrer">
+                  {certification.name}
+                </a>
+              </h3>
               <div className="cert-info">
                 <strong>Issued By:</strong> {certification.issuedBy}
               </div>
@@ -498,9 +502,6 @@ const CertificationSection: React.FC<CertificationProps> = ({ Certifications, on
               </div>
               <div className="cert-info">
                 <strong>Expiration:</strong> {certification.expirationDate.month} {certification.expirationDate.year}
-              </div>
-              <div className="cert-url">
-                <strong>URL:</strong> {certification.url}
               </div>
 
               <div className="btn-group">

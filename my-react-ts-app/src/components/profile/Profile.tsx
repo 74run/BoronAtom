@@ -148,6 +148,7 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+  universityUrl: string;
   includeInResume: boolean;
   isPresent?: boolean;
 }

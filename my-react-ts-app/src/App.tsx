@@ -7,8 +7,11 @@ import VerifyOTP from './components/auth/VerifyOTP';
 import ForgotPassword from './components/auth/ForgotPassword';
 import ResetPassword from './components/auth/ResetPassword';
 import CoverLetter from './components/Cover/AiCoverLetter';
+import Portfolio from './components/Portfolio/portfolio';
 import { useParams } from 'react-router-dom';
 import HomePage from './components/HomePage';
+
+import ResumeBuilder from './components/profile-photo/AIResumeGenerate';
 
 import { ThemeProvider } from "./components/ThemeProvider";
 
@@ -29,6 +32,22 @@ const App: React.FC = () => {
     const decodedPayload = atob(payload);
     return JSON.parse(decodedPayload);
   };
+
+  const refreshToken = async () => {
+    try {
+      const response = await fetch('/refresh-token', { method: 'POST', credentials: 'include' });
+      const data = await response.json();
+      
+      if (data.accessToken) {
+        localStorage.setItem('Token', data.accessToken); // Or store it securely as per your choice
+        return true;
+      }
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      return false;
+    }
+  };
+  
   
 
   useEffect(() => {
@@ -65,12 +84,13 @@ const App: React.FC = () => {
   };
 
   const handleLogout = () => {
+    // Clear all items from localStorage
+    localStorage.clear();
+  
+    // Optionally, set 'isLoggedIn' to false explicitly, in case you want to keep control over it in your state
     setIsLoggedIn(false);
-    localStorage.removeItem('Token');
-    localStorage.removeItem('UserID');
-    localStorage.setItem('isLoggedIn', 'false');
   };
-
+  
   return (
     <ThemeProvider>
     <Router>
@@ -81,14 +101,17 @@ const App: React.FC = () => {
           element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
         />
 
-    <Route path="/" element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />} />
+    {/* <Route path="/" element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />} /> */}
 
-        <Route path = "/" element={<HomePage />} />
+        {/* <Route path = "/" element={<HomePage />} /> */}
 
-        {/* Public Routes <Route
+        <Route path="/ai-portfolio/:userID" element={isLoggedIn ? <Portfolio /> : <Navigate to="/login" />} />
+
+     <Route
     path="/"
-    element={isLoggedIn ? <Navigate to={`/profile/${localStorage.getItem('UserID')}`} /> : <HomePage />}
-  /> */}
+    element={isLoggedIn ? <Navigate to={`/profile/${localStorage.getItem('UserID')}`} /> : <Navigate to="/login" replace />}
+  />
+  <Route path ="/:userID/resumebuild" element ={<ResumeBuilder />}/>
         
         <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
         <Route path="/register" element={<RegisterForm />} />
@@ -98,7 +121,7 @@ const App: React.FC = () => {
         <Route path="/ai-cover-letter/:userID" element={isLoggedIn ?<CoverLetter /> : <Navigate to="/login" />} />
 
         {/* Default Redirect */}
-        <Route
+        {/* <Route
           path="/"
           element={
             isLoading ? (
@@ -112,7 +135,7 @@ const App: React.FC = () => {
               <Navigate to="/login" replace={true} />
             )
           }
-        />
+        /> */}
       </Routes>
     </Router>
     </ThemeProvider>
