@@ -78,8 +78,7 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
-
-mongoose.connect('mongodb+srv://tarunjanapati7:%4074run54I@educationdetaails.x0zu5mp.mongodb.net/?retryWrites=true&w=majority&appName=EducationDetaails');
+mongoose.connect(process.env.MONGODB_URI);
 
 const db = mongoose.connection;
 // Handle MongoDB connection events
