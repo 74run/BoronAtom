@@ -340,27 +340,51 @@ router.post('/login', async (req, res) => {
     }
 
     // Compare the password using bcryptjs
-    bcryptjs.compare(password, user.password, (err, result) => {
-      if (err) {
-        // Handle error
-        console.error(err);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
-      }
+    const result = await bcryptjs.compare(password, user.password);
 
-      if (result) {
-        // Passwords match, generate the token
-        const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' });
-        res.status(200).json({ success: true, message: 'User logged in successfully.', userID: user._id.toString(), token: token });
-      } else {
-        // Passwords do not match
-        return res.status(401).json({ success: false, message: 'Invalid credentials.' });
-      }
-    });
+    if (result) {
+      // Passwords match, generate the token
+      const token = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' });
+
+      res.cookie("authToken", token, {
+        httpOnly: true,  // Make it inaccessible to JavaScript
+        secure: process.env.NODE_ENV === 'production',  // Send only over HTTPS in production
+        sameSite: "Strict",  // Prevent CSRF attacks
+        maxAge: 3600 * 1000  // 1 hour expiration
+      });
+
+      res.status(200).json({ success: true, message: 'User logged in successfully.' });
+    } else {
+      // Passwords do not match
+      return res.status(401).json({ success: false, message: 'Invalid credentials.' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+// Refresh token route
+router.post('/refresh-token', async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) return res.status(401).json({ message: 'No refresh token provided' });
+
+    const decoded = jwt.verify(refreshToken, refreshSecretKey); // Decode and validate the refresh token
+    const user = await User.findById(decoded.userId);
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const newAccessToken = jwt.sign({ userId: user._id.toString() }, secretKey, { expiresIn: '1h' });
+
+    res.json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error(error);
+    res.status(403).json({ message: 'Invalid refresh token' });
+  }
+});
+
 
 
 router.get('/user', async (req, res) => {

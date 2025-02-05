@@ -10,7 +10,8 @@ import {
   faShield, 
   faSignOutAlt, 
   faTimes,
-  faUser 
+  faUser,
+  faBriefcase
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import logo from './images/logo-no-background.png';
@@ -130,6 +131,14 @@ const Navbar: React.FC<NavbarProps> = () => {
         AI Cover Letter
       </Link>
 
+      <Link 
+        to={`/ai-portfolio/${userID}`} 
+        className={`nav-link ${location.pathname === `/ai-portfolio/${userID}` ? 'active' : ''}`}
+      >
+        <FontAwesomeIcon icon={faBriefcase} className="icon" />
+        AI Portfolio
+      </Link>
+
       <div className="profile-section">
         <div className="profile-dropdown" ref={dropdownRef}>
           <button 
@@ -226,6 +235,15 @@ const Navbar: React.FC<NavbarProps> = () => {
       >
         <FontAwesomeIcon icon={faEnvelopeOpen} />
         <span>AI Cover Letter</span>
+      </Link>
+
+      <Link 
+        to={`/ai-portfolio/${userID}`} 
+        className="mobile-nav-item"
+        onClick={() => setMobileMenuOpen(false)}
+      >
+        <FontAwesomeIcon icon={faBriefcase} />
+        <span>AI Portfolio</span>
       </Link>
 
       <Link 

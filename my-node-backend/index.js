@@ -28,6 +28,7 @@ const UniRoutes = require('./routes/UniRoute');
 // const profileRoutes = require('./routes/ProfilePhotoRoute');
 const UserProfileRoutes = require('./routes/EduProfileRoute');
 
+
 const ExpUserRoutes = require('./routes/ExpUserRoute');
 const CertUserRoutes = require('./routes/CertUserRoute');
 const ProUserRoutes = require('./routes/ProUserRoute');
@@ -36,6 +37,9 @@ const InvUserRoutes = require('./routes/InvUserRoute');
 const SkillUserRoutes = require('./routes/SkillUserRoute');
 const ContactUserRoutes = require('./routes/ContactUserRoute');
 const Google = require('./google');
+
+
+const ResumeAI = require('./resumeai');
 
 
 const app = express();
@@ -50,7 +54,7 @@ const port = 3001;
 
 
 const corsOptions = {
-  origin: '*', 
+  origin: '*',
   methods: 'GET,POST,PUT,DELETE', 
   credentials: true, 
   allowedHeaders: 'Content-Type,Authorization', 
@@ -95,7 +99,7 @@ app.get('/', (req, res) => {
 
 
 
-require('./routes/UserRoute')(app);
+// require('./routes/UserRoute')(app);
 
 
 
@@ -121,6 +125,7 @@ app.use('/api/userprofile', InvUserRoutes);
 app.use('/api/userprofile', SkillUserRoutes);
 app.use('/api/userprofile', ContactUserRoutes)
 app.use('/api/userprofile', Google);
+app.use('/api/userprofile', ResumeAI);
 
 
 app.use('/run', (req,res)=> {
@@ -238,7 +243,7 @@ const imageSchema = new mongoose.Schema({
 const Image = mongoose.model("Image", imageSchema);
 
 
-app.post('/api/userprofile/:userID/image', async (req, res) => {
+app.post('/api/userprofile/image', async (req, res) => {
   const { userID } = req.params;
   const { imageData } = req.body;
 
@@ -269,7 +274,7 @@ app.post('/api/userprofile/:userID/image', async (req, res) => {
 
 
 
-app.get('/api/userprofile/:userID/image', async (req, res) => {
+app.get('/api/userprofile/image', async (req, res) => {
   const { userID } = req.params;
 
   try {
@@ -287,7 +292,7 @@ app.get('/api/userprofile/:userID/image', async (req, res) => {
 });
 
 
-app.delete('/api/userprofile/:userID/image', async (req, res) => {
+app.delete('/api/userprofile/image', async (req, res) => {
   const { userID } = req.params;
 
   try {

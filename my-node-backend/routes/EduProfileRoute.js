@@ -13,7 +13,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/education', async (req, res) => {
   try {
-    const { university, cgpa, degree, major, startDate, endDate, includeInResume, isPresent } = req.body;
+    const { university, universityUrl, cgpa, degree, major, startDate, endDate, includeInResume, isPresent } = req.body;
     const userId = req.params.userID;
 
     if (!university || !cgpa || !degree || !major || !startDate || !endDate) {
@@ -27,12 +27,13 @@ router.post('/:userID/education', async (req, res) => {
     }
 
     userProfile.education.push({
-      university: university,
-      cgpa: cgpa,
-      degree: degree,
-      major: major,
-      startDate: startDate,
-      endDate: endDate,
+      university,
+      universityUrl,  // Add this directly, no need for array handling
+      cgpa,
+      degree,
+      major,
+      startDate,
+      endDate,
       includeInResume,
       isPresent
     });
@@ -45,6 +46,7 @@ router.post('/:userID/education', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 router.get('/:userId/education', async (req, res) => {
   try {

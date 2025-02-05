@@ -20,6 +20,80 @@ const API  = process.env.REACT_APP_GOOGLE_API;
 const genAI = new GoogleGenerativeAI(API);
 
 
+// Optimize resume endpoint
+router.post('/generate-resume/:userID/optimize', async (req, res) => {
+  try {
+    console.log("Received request params:", req.params); 
+    console.log("Received request body:", req.body); 
+    
+    const { jobDescription } = req.body;
+
+    const userId = req.params.userID.trim();
+
+    const sanitizedJobDescription = jobDescription.trim();
+
+    const user = await UserProfile.findOne({ userID: userId });
+    
+    console.log("Found user:", user ? "yes" : "no"); 
+
+
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+
+    // Create prompt for GPT
+    const prompt = `
+      Analyze the following job description and optimize the resume to match it:
+
+      Job Description:
+      ${sanitizedJobDescription}
+
+      Current Resume summary:
+      ${user.summary}
+
+      Please provide an optimized version of the resume summary
+    
+
+      Return the response in valid JSON format with the following structure:
+      {
+        "summary": generated summary,
+        
+      }
+    `;
+
+
+    const result = await model.generateContent(prompt);
+const generatedText = result.response ? result.response.text() : result.text;
+
+
+if (!generatedText) {
+  res.status(500).json({ 
+    success: false,
+    message: 'Failed to optimize resume',
+    error: error.message 
+  });
+  }
+  try {
+    const generatedText = result.response ? result.response.text() : result.text;
+    const parsedResponse = JSON.parse(generatedText);
+    res.json({ success: true, summary: parsedResponse.summary });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Invalid response format' });
+  }
+  } catch (error) {
+    console.error('Optimization error:', error);
+    res.status(500).json({ error: 'Failed to optimize resume' });
+  }
+});
+
+
+
+
 router.post('/generate-project-description/:userID/:projectName', async (req, res) => {
   try {
     console.log("Received request params:", req.params); // Add this

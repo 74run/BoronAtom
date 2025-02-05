@@ -121,7 +121,7 @@ const Profile: React.FC<ProfileProps> = () => {
     const userID = localStorage.getItem('UserID');
     if (userID) {
       axios
-        .get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { 
+        .get(`${process.env.REACT_APP_API_URL}/api/userprofile/image`, { 
           responseType: 'arraybuffer' 
         })
         .then((response) => {
@@ -161,7 +161,7 @@ const Profile: React.FC<ProfileProps> = () => {
     const userID = localStorage.getItem('UserID');
     if (userID) {
       axios.post(
-        `${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`,
+        `${process.env.REACT_APP_API_URL}/api/userprofile/image`,
         { imageData: newImage },  // Send the base64 string directly
         { headers: { 'Content-Type': 'application/json' } }
       ).catch((error) => {
@@ -175,7 +175,7 @@ const Profile: React.FC<ProfileProps> = () => {
   const handleProfilePictureDelete = () => {
     const userID = localStorage.getItem('UserID');
     if (userID) {
-      axios.delete(`https://localhost:3001/api/userprofile/${userID}/image`)
+      axios.delete(`https://localhost:3001/api/userprofile/image`)
         .then(() => {
           // Reset the profile image in your state
           setProfileImage(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`); // or set to a default image URL

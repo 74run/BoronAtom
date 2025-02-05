@@ -1,16 +1,28 @@
 const express = require('express');
-const universities = require('./UniName.json');
+const universities = require('./UniNameURL_New.json');
 
 const router = express.Router();
 
 router.get('/api/universities', (req, res) => {
   try {
-    const universityNames = universities.map(entry => entry.name);
-    // const universityUrl = universities.map(entry => entry.domains[0]);
-    res.json({ universities: universityNames, });
+    // Validate that universities is an array
+    if (!Array.isArray(universities)) {
+      throw new Error('Invalid data format');
+    }
+
+    // Map the data into a more useful structure
+    const universityData = universities.map(entry => ({
+      name: entry.name,
+      url:  entry.web_pages // Handle cases where web_pages might be empty
+    }));
+
+    res.json({ universities: universityData });
   } catch (error) {
-    console.error('Error reading JSON file:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error processing university data:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message 
+    });
   }
 });
 
