@@ -36,7 +36,7 @@ const VerifyOTP: React.FC = () => {
   
     setLoading(true); // Start loading animation
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/verifyOTP`, {
+      const response = await axios.post(`${API_BASE_URL}/verifyOTP`, {
         otp,
         userId, // Pass userId from local storage
       });
@@ -66,7 +66,7 @@ const VerifyOTP: React.FC = () => {
     setIsResending(true); // Indicate that the OTP is being resent
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/resendOTP`, { userId });
+      const response = await axios.post(`${API_BASE_URL}/resendOTP`, { userId });
       const { message } = response.data;
 
       if (response.data.success) {

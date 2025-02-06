@@ -18,6 +18,8 @@ import {
   faDocker
 } from '@fortawesome/free-brands-svg-icons';
 
+import NavigationBar from '../NavigationBar';
+
 // Interfaces (Keep your existing interfaces)
 
 // Components
@@ -1080,8 +1082,19 @@ const Portfolio: React.FC = () => {
   
     return (
       <div className="min-h-screen bg-white">
-        <Navigation firstName={userData.firstName} lastName={userData.lastName} />
-        <Hero firstName={userData.firstName} lastName={userData.lastName} />
+     
+        <div className="flex flex-col">
+          <div className="fixed top-0 z-50">
+          <NavigationBar UserDetail={userData} />
+          </div>
+          <div className="fixed top-16 w-full z-40 bg-white">
+          
+            <Navigation firstName={userData.firstName} lastName={userData.lastName} />
+          </div>
+        </div>
+        <div className="mt-32">
+          <Hero firstName={userData.firstName} lastName={userData.lastName} />
+        </div>
         <About />
         <section className="py-16 bg-gray-300 px-4 lg:px-16" id="experience">
           <div className="container mx-auto px-4">
@@ -1123,7 +1136,6 @@ const Portfolio: React.FC = () => {
       </div>
     );
   };
-  
   export default Portfolio;
 
   

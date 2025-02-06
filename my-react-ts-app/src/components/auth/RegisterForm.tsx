@@ -61,7 +61,7 @@ const RegisterForm: React.FC = () => {
     try {
       setError(null);
 
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, {
         firstName,
         lastName,
         email,
