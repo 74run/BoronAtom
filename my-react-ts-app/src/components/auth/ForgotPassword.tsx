@@ -29,7 +29,7 @@ const ForgotPassword: React.FC = () => {
   const handleSendClick = async () => {
     setLoading(true); // Start loading animation
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/forgotpassword`, { email });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/forgotpassword`, { email });
       const msg = response.data.message;
       localStorage.setItem('Email', email);
   

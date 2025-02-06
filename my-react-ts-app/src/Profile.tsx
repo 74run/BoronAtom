@@ -9,6 +9,7 @@ import ExperienceSection from './components/resume/ExperienceSection';
 import CertificationSection from './components/resume/CertificationSection';
 import InvolvementSection from './components/resume/InvolvementSection';
 import SummarySection from './components/resume/SummarySection';
+import Portfolio from './components/Portfolio/portfolio';
 
 import Newprofile from './newprofile'
 

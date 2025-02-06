@@ -50,7 +50,7 @@ const ResetPassword: React.FC = () => {
     setLoading(true); // Start loading animation
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/resetpassword`, { token, password });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/resetpassword`, { token, password });
       const msg = response.data.message;
   
       if (msg === 'Password reset successfully') {

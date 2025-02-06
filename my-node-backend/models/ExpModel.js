@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const expSchema = new mongoose.Schema({
   jobTitle: String,
   company: String,
+  companyUrl: String,
   location: String,
   description: String,
   startDate: { month: String, year: String },

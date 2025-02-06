@@ -357,6 +357,7 @@ const Navbar: React.FC<NavbarProps> = () => {
             gap: 0.5rem;
             background-color: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            line-height: 1;
           }
   
             .nav-link:hover {
@@ -376,6 +377,8 @@ const Navbar: React.FC<NavbarProps> = () => {
           .nav-link .icon {
             font-size: 0.8rem;
             transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
           }
 
           .nav-link:hover .icon {
@@ -476,13 +479,16 @@ const Navbar: React.FC<NavbarProps> = () => {
   text-decoration: none;
   border-radius: 6px;
   transition: all 0.2s ease;
-  gap: 1rem; /* Increased spacing between icon and text */
+  gap: 1rem;
+  line-height: 1;
 }
 
 .dropdown-item .icon {
   width: 1rem;
   height: 1rem;
-  flex-shrink: 0; /* Prevents icon from shrinking */
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .dropdown-item:hover {
@@ -625,6 +631,14 @@ const Navbar: React.FC<NavbarProps> = () => {
               transition: all 0.2s ease;
               background-color: rgba(255, 255, 255, 0.05);
               border: 1px solid rgba(255, 255, 255, 0.1);
+              line-height: 1;
+            }
+
+            .mobile-nav-item svg {
+              display: flex;
+              align-items: center;
+              width: 1rem;
+              height: 1rem;
             }
 
             .mobile-nav-item:hover {
