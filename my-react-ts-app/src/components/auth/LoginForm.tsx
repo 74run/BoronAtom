@@ -1,16 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
-import '../../css/LoginForm.css'; // Import your custom CSS file
-
-import back from '../images/unnamed-1.png'
-
-import logo from '../images/logo-no-background.png';
+import { Navbar } from '../ui/navbar';
+import { Button } from '../ui/button';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import { FaLinkedin } from 'react-icons/fa';
+import { auth, googleProvider } from '../../config/firebase';
+import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
+import { useParams } from 'wouter';
+import { useContext } from 'react';
+import { UserContext } from '../../contexts/UserContext';
 
 interface LoginFormProps {
-  onLogin: () => void; // Callback function to be called after successful login
+  onLogin: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
@@ -18,472 +21,244 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [userID, setUserID] = useState('');
   
-  const [expanded, setExpanded] = useState(false); // Navbar expansion state
   const navigate = useNavigate();
+  const { isLoggedIn, userData, isLoading: userContextLoading } = useContext(UserContext);
 
+  useEffect(() => {
+    if (!userContextLoading && isLoggedIn && userData?.userID) {
+      navigate(`/profile/${userData.userID}`);
+    }
+  }, [userContextLoading, isLoggedIn, userData, navigate]);
 
-  const handleRegisterClick = () => {
-    navigate('/register');
-  };
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
-  const handleLogin = async () => {
+  // Update handleGoogleSignIn to use navigate instead of window.location
+  const handleGoogleSignIn = async () => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { 
-        username, 
-        password 
+      setIsLoading(true);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const email = user.email;
+
+      if (!email) {
+        throw new Error('No email provided from Google');
+      }
+
+      // Call your backend to verify/create user
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/auth/google/verify`, {
+        email: email
       });
-      
-      const { success, message, userID, token } = response.data;
+
+      const { success, userID } = response.data;
 
       if (success) {
         onLogin();
-        localStorage.setItem('Token', token);
-        localStorage.setItem('UserID', userID);
+        navigate(`/profile/${userID}`);
+      } else {
+        setError('Failed to authenticate with Google');
+      }
+    } catch (error) {
+      console.error('Error signing in with Google:', error);
+      setError('Google sign-in failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      const idToken = await userCredential.user.getIdToken();
+      
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/login`, { 
+        idToken 
+      });
+      
+      const { success, message, userID } = response.data;
+
+      if (success) {
+        onLogin();
         navigate(`/profile/${userID}`);
       } else {
         setError(message || 'Login failed');
       }
     } catch (error: any) {
-      console.error('Login error:', error.response?.data?.message || 'Unknown error');
-      setError(error.response?.data?.message || 'Invalid credentials');
+      setError('Invalid credentials');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    handleLogin();
-  };
+  // const handleGoogleLogin = async () => {
+  //   try {
+  //     window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+  //   } catch (error) {
+  //     setError('Google login failed. Please try again.');
+  //   }
+  // };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-
-  const handleForgotPasswordClick = () => {
-    navigate('/forgotpassword');
+  const handleLinkedInLogin = async () => {
+    try {
+      window.location.href = `${process.env.REACT_APP_API_URL}/auth/linkedin`;
+    } catch (error) {
+      setError('LinkedIn login failed. Please try again.');
+    }
   };
 
   return (
-    <>
-
-    <style>{`
-    body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background: url(${back}) no-repeat center center fixed;
-            background-size: cover;
-        }
-
-        .navbar-1 .logo {
-            display: flex;
-            align-items: center;
-        }
-  
-        .navbar-1 .logo span {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-        }
-        .navbar-1 ul {
-            list-style: none;
-            display: flex;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar-1 ul li {
-            margin: 0 15px;
-        }
-        .navbar-1 ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        .navbar-1 .login-btn {
-            background: white;
-            color: black;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .navbar-1 .login-btn:hover {
-            background: #00bcd4;
-            color: white;
-        }
-
-        
-
-         .navbar-1 {
-          position: sticky;
-           top: 0;
-           left: 0;
-           right: 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem;
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo {
-          display: flex;
-          align-items: center;
-        }
-        
-        .logo img {
-          height: 25px;
-          width: auto;
-          transition: height 0.3s ease;
-        }
-        
-        .login-btn {
-          background: white;
-          color: black;
-          padding: 0.5rem 1rem;
-          text-decoration: none;
-          border-radius: 5px;
-          font-weight: 500;
-          transition: all 0.3s ease;
-          font-size: 1rem;
-        }
-        
-        .login-btn:hover {
-          background: #00bcd4;
-          color: white;
-        }
-        
-        /* Mobile styles */
-        @media (max-width: 640px) {
-          .navbar-1 {
-            padding: 0.75rem;
-          }
-          
-          .logo img {
-            height: 20px;
-          }
-          
-          .login-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.875rem;
-          }
-        }
-        
-        /* Tablet styles */
-        @media (min-width: 641px) and (max-width: 1024px) {
-          .navbar-1 {
-            padding: 0.875rem 1.5rem;
-          }
-          
-          .logo img {
-            height: 22px;
-          }
-        }
-        
-        /* Desktop styles */
-        @media (min-width: 1025px) {
-          .navbar-1 {
-            padding: 1.25rem 2rem;
-          }
-          
-          .login-btn {
-            padding: 0.625rem 1.25rem;
-          }
-        }
-        
-        /* Hover effects */
-        .logo:hover img {
-          transform: scale(1.05);
-        }
-
-         .footer {
-          position: sticky;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1rem;
-          background-color: rgba(0, 0, 0, 0.75);
-          backdrop-filter: blur(8px);
-          color: white;
-          text-align: center;
-          font-size: 0.875rem;
-          z-index: 1000;
-        }
-        
-        .footer-content {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 2rem;
-        }
-        
-        .footer a {
-          color: #00bcd4;
-          text-decoration: none;
-          transition: color 0.3s ease;
-        }
-        
-        .footer a:hover {
-          color: white;
-        }
-        
-        @media (max-width: 640px) {
-          .footer {
-            padding: 0.75rem;
-            font-size: 0.75rem;
-          }
-          
-          .footer-content {
-            gap: 1rem;
-            flex-wrap: wrap;
-          }
-        }
-        `}</style>
-
-    <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
-
-    </head>
-    <div className="login-page" style={{ minHeight: "100vh", color: "#f5f5f5", fontFamily: "'Roboto', sans-serif", position: "relative", overflow: "hidden" }}>
-      {/* Background */}
-      <div className="background-wrapper">
-        <div className="background-gradient"></div>
-        <div className="particles-layer-1"></div>
-        <div className="particles-layer-2"></div>
-        <div className="particles-layer-3"></div>
-      </div>
-
-      {/* Navbar
-      <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow" style={{ borderBottom: "1px solid #333" }}>
-        <BootstrapNavbar expand="md" bg="dark" variant="dark" fixed="top" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
-          <Container fluid>
-            <BootstrapNavbar.Brand href="/" className="d-flex align-items-center">
-              <img
-                src={logo}
-                alt="Logo"
-                className="img-fluid"
-                style={{ height: "25px", width: "auto" }}
-              />
-            </BootstrapNavbar.Brand>
-            <BootstrapNavbar.Toggle
-              aria-controls="basic-navbar-nav"
-              onClick={() => setExpanded(!expanded)}
-              className="ms-auto"
-              style={{ position: 'relative', top: 0, marginLeft: 'auto' }}
-            />
-            <BootstrapNavbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
-                <Nav.Link href="/register">Register</Nav.Link>
-                <Nav.Link href="/forgotpassword">Forgot Password</Nav.Link>
-              </Nav>
-            </BootstrapNavbar.Collapse>
-          </Container>
-        </BootstrapNavbar>
-      </nav> */}
-
-<div className="navbar-1">
-        <div className="logo">
-          <Link to="/">
-            <img 
-              src={logo}
-              alt="Logo"
-              className="img-fluid"
-            />
-          </Link>
-        </div>
-        <a 
-          className="login-btn" 
-          onClick={handleRegisterClick}
-          style={{ cursor: 'pointer' }}
-        >
-          Sign Up
-        </a>
-      </div>
-
-      {/* Login Form */}
-      <div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "0px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div
-          className="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md"
-          style={{
-            backgroundColor: 'rgba(31, 41, 55, 0.75)', // bg-gray-800 with bg-opacity-75
-            padding: '2rem', // p-8
-            borderRadius: '0.5rem', // rounded-lg
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)', // shadow-lg
-            width: '100%', // w-full
-            maxWidth: '28rem', // max-w-md
-          }}
-        >
-      <h2 className="text-3xl font-bold mb-6 text-center"
-      style={{
-        fontSize: '1.875rem', // text-3xl (which is 3rem, 48px in Tailwind, converted to rem)
-        fontWeight: '700', // font-bold
-        marginBottom: '1.5rem', // mb-6 (which is 6 * 0.25rem = 1.5rem)
-        textAlign: 'center', // text-center
-        color: 'white'
-      }}>Login</h2>
-
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Username or Email*"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                  borderRadius: '0.5rem', // rounded-lg
-                  backgroundColor: '#2d3748', // bg-gray-700
-                  border: '1px solid #4a5568', // border-gray-600
-                  outline: 'none', // focus:outline-none
-                  transition: 'all 0.3s', // Smooth transition for focus effect
-                }}
-              />
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+      <Navbar />
+      
+      <div className="container mx-auto px-4 pt-20 pb-12">
+        <div className="max-w-md mx-auto">
+          <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-xl p-8 border border-gray-700">
+            <div className="mb-8 text-center">
+              <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+              <p className="text-gray-400">Sign in to continue to Boron Atom</p>
             </div>
-            <div className="mb-4">
-              <div className="password-input-group input-group">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="form-control"
-                  value={password}
-                  placeholder="Password*"
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  style={{
-                    width: '100%', // w-full
-                    padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                    borderRadius: '0.5rem', // rounded-lg
-                    backgroundColor: '#2d3748', // bg-gray-700
-                    border: '1px solid #4a5568', // border-gray-600
-                    outline: 'none', // focus:outline-none
-                    transition: 'all 0.3s', // Smooth transition for focus effect
-                  }}
-                />
-                <button
-                  type="button"
-                  className="btn btn-outline-neutral"
-                  onClick={togglePasswordVisibility}
-                  style={{
-                    borderRadius: "8px",
-                    border: "1px solid #444",
-                    backgroundColor: "#444",
-                    color: "#f5f5f5",
-                    padding: "0.5rem 1rem",
-                  }}
-                >
-                  <i className={`fas ${showPassword ? "fa-eye" : "fa-eye-slash"}`}></i>
-                </button>
-              </div>
-            </div>
-            {error && <p className="text-danger">{error}</p>}
 
-            <div className="flex items-center justify-between mb-6"
-            style={{
-              display: 'flex', // flex
-              alignItems: 'center', // items-center (vertically centers the items)
-              justifyContent: 'space-between', // justify-between (places items at opposite ends)
-              marginBottom: '1.5rem',
-              padding:'0.25rem' // mb-6 (equivalent to 6 * 0.25rem = 1.5rem)
-            }}>
-                    <div className="flex items-center">
-                        <input type="checkbox" id="remember" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                        <label htmlFor="remember" className="ml-2 block text-sm"> 
-                          Remember me</label>
-                    </div>
-                    <a  className="text-sm text-blue-500 hover:underline" style={{ cursor: 'pointer' }} onClick={handleForgotPasswordClick}>Forgot password?</a>
-                </div>
-            <div className="d-grid gap-2">
+            {/* Social Login Buttons */}
+            <div className="space-y-3 mb-8">
               <button
-                type="submit"
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3
-                  color: 'white',
-                  backgroundColor: '#2563eb', // bg-blue-600
-                  borderRadius: '0.5rem', // rounded-lg
-                  fontWeight: '600', // font-semibold
-                  transition: 'all 0.3s', // Smooth transition for hover and focus effects
-                }}
-                className="focus:outline-none focus:ring-2 focus:ring-blue-500 hover:bg-blue-700"
+                 onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors duration-200 group"
               >
-                Login
+                <FcGoogle className="w-5 h-5" />
+                <span className="text-gray-300 group-hover:text-white">Continue with Google</span>
               </button>
               
+              <button
+                onClick={handleLinkedInLogin}
+                className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors duration-200 group"
+              >
+                <FaLinkedin className="w-5 h-5 text-[#0A66C2]" />
+                <span className="text-gray-300 group-hover:text-white">Continue with LinkedIn</span>
+              </button>
             </div>
-          </form>
-          <p className="mt-6 text-center text-sm">Don't have an account? <a onClick={handleRegisterClick} style={{ cursor: 'pointer' }} className="text-blue-500 hover:underline">Sign up</a></p>
-          
-        </div>
 
- 
+            {/* <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-800/50 text-gray-400">Or continue with email</span>
+              </div>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
+                <p className="text-red-500 text-sm">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Email or Username
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter your email or username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                  />
+                  <span className="ml-2 text-sm text-gray-300">Remember me</span>
+                </label>
+                <Link
+                  to="/forgotpassword"
+                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              <Button
+                type="submit"
+                className={`w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg transition-colors duration-200 flex items-center justify-center border border-blue-500 shadow-lg ${
+                  isLoading ? 'opacity-70' : ''
+                }`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign in'
+                )}
+              </Button>
+            </form>
+
+            <p className="mt-8 text-center text-sm text-gray-400">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="text-blue-400 hover:text-blue-300 font-medium hover:underline"
+              >
+                Sign up for free
+              </Link>
+            </p>
+            */}
+          </div>
+        </div> 
       </div>
-      <footer className="footer">
-        <div className="footer-content">
-          <span>© 2025 Boron Atom</span>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/contact">Contact Us</a>
-        </div>
-      </footer>
-      <style>{`
-        .background-wrapper {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          z-index: -1;
-        }
-        .background-gradient {
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle at center, rgba(158,92,236,0.2) 0%, rgba(30,82,153,0.2) 45%, rgba(29,39,54,0.2) 100%);
-          animation: rotateGradient 30s linear infinite;
-          transform-origin: center;
-        }
-        .particles-layer-1,
-        .particles-layer-2,
-        .particles-layer-3 {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-size: 60px 60px;
-          opacity: 0.3;
-        }
-        .particles-layer-1 {
-          background: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-          animation: animateParticles 25s linear infinite;
-        }
-        .particles-layer-2 {
-          background: radial-gradient(circle, rgba(158,92,236,0.1) 1px, transparent 1px);
-          background-size: 40px 40px;
-          animation: animateParticles 20s linear infinite reverse;
-        }
-        .particles-layer-3 {
-          background: radial-gradient(circle, rgba(30,82,153,0.1) 1px, transparent 1px);
-          background-size: 80px 80px;
-          animation: animateParticles 30s linear infinite;
-        }
-        @keyframes rotateGradient {
-          0% { transform: rotate(0deg) scale(1.5); }
-          100% { transform: rotate(360deg) scale(1.5); }
-        }
-        @keyframes animateParticles {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(-100%, -100%); }
-        }
-      `}</style>
     </div>
-    </>
   );
 };
 

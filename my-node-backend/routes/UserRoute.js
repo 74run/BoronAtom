@@ -5,6 +5,7 @@ const UserProfile = require('../models/UserprofileModel')
 const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
+const admin = require('../config/firebase-config');
 
 const PendingUser = require('../models/PendingUsers')
 const crypto = require('crypto');
@@ -66,6 +67,8 @@ const sendOTPVerificationEmail = async (email, _id) => {
     throw new Error("Failed to send OTP verification email");
   }
 };
+
+
 
 
 
@@ -423,18 +426,162 @@ router.get('/user', async (req, res) => {
 
 
 
+// Route to get userId based on email
+router.get("/user/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email });
 
-// router.get('/user', async (req, res) => {
-//     try {
-//         const userId = req.userId;
-//         const userLog = await User.find({ userId });
-//         res.status(200).json(userLog);
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).json({ success: false, message: 'Internal server error.' });
-//     }
-//     });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+   
 
+    res.json({ userId: user._id.toString() });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+
+
+router.post('/auth/google/verify', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email is required'
+      });
+    }
+
+    // Search for user in database
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      // User exists - generate JWT token
+      const token = jwt.sign(
+        { userId: existingUser._id },
+        secretKey,
+        { expiresIn: '24h' }
+      );
+
+      return res.status(200).json({
+        success: true,
+        message: 'User found',
+        userID: existingUser._id,
+        token: token
+      });
+    }
+
+    // User doesn't exist - create new user
+    const newUser = new User({
+      email: email,
+      // You can add more fields here as needed
+      username: email.split('@')[0], // Create a username from email
+      firstName: '', // These can be updated later
+      lastName: '',
+      password: await bcryptjs.hash(generateRandomString(12), 10), // Generate random secure password
+      isGoogleAuth: true // Flag to indicate this is a Google authenticated user
+    });
+
+    await newUser.save();
+
+    // Generate token for new user
+    const token = jwt.sign(
+      { userId: newUser._id },
+      secretKey,
+      { expiresIn: '24h' }
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: 'New user created',
+      userID: newUser._id,
+      token: token
+    });
+
+  } catch (error) {
+    console.error('Google auth verification error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+router.get('/getUserByEmail/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+    
+    if (!email) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Email is required' 
+      });
+    }
+
+    // Verify Firebase token from Authorization header
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'No token provided' 
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    try {
+      // Verify the Firebase token
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      
+      // Check if the email in token matches the requested email
+      if (decodedToken.email !== email) {
+        return res.status(403).json({ 
+          success: false, 
+          message: 'Email mismatch between token and request' 
+        });
+      }
+
+      // Find user by email
+      const user = await User.findOne({ email: email });
+      
+      if (!user) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'User not found' 
+        });
+      }
+
+      // Return user ID and other necessary info
+      return res.status(200).json({
+        success: true,
+        userID: user._id.toString(), // Convert ObjectId to string
+        email: user.email,
+        username: user.username
+      });
+
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      return res.status(401).json({ 
+        success: false, 
+        message: 'Invalid token',
+        error: error.message 
+      });
+    }
+
+  } catch (error) {
+    console.error('Error in getUserByEmail:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Internal server error',
+      error: error.message 
+    });
+  }
+});
 
 module.exports = (app) => {
   app.use('/', router);

@@ -9,135 +9,107 @@ import ResetPassword from './components/auth/ResetPassword';
 import CoverLetter from './components/Cover/AiCoverLetter';
 import Portfolio from './components/Portfolio/portfolio';
 import { useParams } from 'react-router-dom';
-import HomePage from './components/HomePage';
-
+import Subscription from './components/auth/Subscription';
+import TemplatesPage from './components/Temp/TemplatesPage';
 import ResumeBuilder from './components/profile-photo/AIResumeGenerate';
-
 import { ThemeProvider } from "./components/ThemeProvider";
-
-import PDFHTML from './components/resume/PDFHTML'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import LandingPage from './components/LandingPage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useUserId } from './components/useUserId';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 const App: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    // Initialize isLoggedIn state based on localStorage
-    return localStorage.getItem('isLoggedIn') === 'true';
-  });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const { userId } = useParams();
-
-  const decode = (token: string) => {
-    const payload = token.split('.')[1]; // Assuming token structure: header.payload.signature
-    const decodedPayload = atob(payload);
-    return JSON.parse(decodedPayload);
-  };
-
-  const refreshToken = async () => {
-    try {
-      const response = await fetch('/refresh-token', { method: 'POST', credentials: 'include' });
-      const data = await response.json();
-      
-      if (data.accessToken) {
-        localStorage.setItem('Token', data.accessToken); // Or store it securely as per your choice
-        return true;
-      }
-    } catch (error) {
-      console.error('Failed to refresh token:', error);
-      return false;
-    }
-  };
+  const [user, setUser] = useState<any>(null);
   
-  
+  const userId = useUserId();
 
   useEffect(() => {
-    const checkTokenExpiration = () => {
-      const token = localStorage.getItem('Token');
-      const storedUserID = localStorage.getItem('UserID');
-    
-      if (!token || !storedUserID) {
-        handleLogout();
-        return;
-      }
-  
-      // Decode the token (if it's a JWT) to get expiration time
-      const decodedToken = decode(token);
-      if (decodedToken && decodedToken.exp * 1000 < Date.now()) {
-        // Token is expired
-        handleLogout();
-        return;
-      }
-  
-      // Token is still valid, consider refreshing it if needed
-      // For example, you might implement token refresh logic here
-    };
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setIsLoggedIn(!!user);
+      setIsLoading(false);
+    });
 
-    const storedIsLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(storedIsLoggedIn);
-    setIsLoading(false); // Loading is complete
-    checkTokenExpiration();
+    return () => unsubscribe();
   }, []);
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    localStorage.setItem('isLoggedIn', 'true');
-  };
-
-  const handleLogout = () => {
-    // Clear all items from localStorage
-    localStorage.clear();
-  
-    // Optionally, set 'isLoggedIn' to false explicitly, in case you want to keep control over it in your state
-    setIsLoggedIn(false);
-  };
-  
   return (
     <ThemeProvider>
-    <Router>
-      <Routes>
-        {/* Protected Route */}
-        <Route
-          path="/profile/:userID"
-          element={isLoggedIn ? <Profile /> : <Navigate to="/login" />}
-        />
+      <Router>
+        <Routes>
+          {/* Public Routes with Auth Check */}
+          <Route 
+            path="/login" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <LoginForm onLogin={() => {}} />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/register" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <RegisterForm />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Public Routes */}
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/resetpassword" element={<ResetPassword />} />
+          <Route path="/verifyOTP" element={<VerifyOTP />} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/templates" element={<TemplatesPage />} />
 
-    {/* <Route path="/" element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />} /> */}
-
-        {/* <Route path = "/" element={<HomePage />} /> */}
-
-        <Route path="/ai-portfolio/:userID" element={isLoggedIn ? <Portfolio /> : <Navigate to="/login" />} />
-
-     <Route
-    path="/"
-    element={isLoggedIn ? <Navigate to={`/profile/${localStorage.getItem('UserID')}`} /> : <Navigate to="/login" replace />}
-  />
-  <Route path ="/:userID/resumebuild" element ={<ResumeBuilder />}/>
-        
-        <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
-        <Route path="/register" element={<RegisterForm />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/resetpassword" element={<ResetPassword />} />
-        <Route path= {`/verifyOTP`} element={<VerifyOTP />} />
-        <Route path="/ai-cover-letter/:userID" element={isLoggedIn ?<CoverLetter /> : <Navigate to="/login" />} />
-
-        {/* Default Redirect */}
-        {/* <Route
-          path="/"
-          element={
-            isLoading ? (
-              <div>Loading...</div>
-            ) : isLoggedIn ? (
-              <Navigate
-                to={`/profile/${localStorage.getItem('UserID') || '/login'}`}
-                replace={true}
-              />
-            ) : (
-              <Navigate to="/login" replace={true} />
-            )
-          }
-        /> */}
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          <Route 
+            path="/profile/:userID" 
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/ai-portfolio/:userID" 
+            element={
+              <ProtectedRoute>
+                <Portfolio />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/:uid/resumebuild" 
+            element={
+              <ProtectedRoute>
+                <ResumeBuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/subscription" 
+            element={
+              <ProtectedRoute>
+                <Subscription />
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="/ai-cover-letter/:userID" 
+            element={
+              <ProtectedRoute>
+                <CoverLetter />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 };

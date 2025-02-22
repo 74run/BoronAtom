@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faBars, 
@@ -15,6 +15,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import logo from './images/logo-no-background.png';
+import { useUserId } from './useUserId';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
 interface UserDetails {
   firstName: string;
@@ -33,12 +36,15 @@ const Navbar: React.FC<NavbarProps> = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const userID = useUserId();
   
   const navigate = useNavigate();
   const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const userID = localStorage.getItem('UserID');
+
+  console.log(" Navbar USER ID: ", userID);
+ 
 
   // Handle click outside dropdown
   useEffect(() => {
@@ -56,6 +62,8 @@ const Navbar: React.FC<NavbarProps> = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  
 
   // Handle mobile menu body scroll
   useEffect(() => {
@@ -106,10 +114,14 @@ const Navbar: React.FC<NavbarProps> = () => {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('Token');
-    localStorage.removeItem('UserID');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+   
+      navigate('/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
 

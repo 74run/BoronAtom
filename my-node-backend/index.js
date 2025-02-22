@@ -2,6 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const bodyParser = require('body-parser');
@@ -15,6 +17,11 @@ const { GridFSBucket, ObjectId } = require('mongodb');
 
 const UserProfile = require('./models/UserprofileModel');
 const allowCors = require('./cors');
+
+const Stripe = require('stripe');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 require("dotenv").config();
 
@@ -88,6 +95,10 @@ db.once('open', () => {
 });
 
 
+// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+//   apiVersion: '2023-10-16'
+// });
+
 app.use(express.json());
 
 
@@ -135,6 +146,117 @@ app.use('/run', (req,res)=> {
 app.get('/', (req, res) => {
   res.json({ message: 'Hello from the backend!' });
 });
+
+
+app.get('/google/callback',
+  passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+  (req, res) => {
+    try {
+      const user = req.user;
+      
+      // Generate JWT token
+      const token = jwt.sign(
+        { uid: user._id }, // Changed from userId to uid
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+
+      // Redirect to frontend with uid instead of userId
+      res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}&uid=${user._id}`);
+    } catch (error) {
+      res.redirect(`${process.env.FRONTEND_URL}/login?error=Authentication failed`);
+    }
+  }
+);
+
+
+
+
+
+
+// // Create a subscription
+// app.post('/api/create-subscription', async (req, res) => {
+//   try {
+//     const { paymentMethodId, priceId, customerId } = req.body;
+
+//     // Attach payment method to customer
+//     await stripe.paymentMethods.attach(paymentMethodId, {
+//       customer: customerId,
+//     });
+
+//     // Set as default payment method
+//     await stripe.customers.update(customerId, {
+//       invoice_settings: {
+//         default_payment_method: paymentMethodId,
+//       },
+//     });
+
+//     // Create subscription
+//     const subscription = await stripe.subscriptions.create({
+//       customer: customerId,
+//       items: [{ price: priceId }],
+//       expand: ['latest_invoice.payment_intent'],
+//     });
+
+//     res.json({ subscriptionId: subscription.id });
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(400).json({ error: { message: error.message } });
+//   }
+// });
+
+// // Webhook to handle subscription events
+// app.post('/api/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+//   const sig = req.headers['stripe-signature'];
+//   let event;
+
+//   try {
+//     event = stripe.webhooks.constructEvent(
+//       req.body,
+//       sig,
+//       process.env.STRIPE_WEBHOOK_SECRET
+//     );
+//   } catch (err) {
+//     res.status(400).send(`Webhook Error: ${err.message}`);
+//     return;
+//   }
+
+//   switch (event.type) {
+//     case 'invoice.payment_succeeded':
+//       const invoice = event.data.object;
+//       // Handle successful payment
+//       break;
+//     case 'invoice.payment_failed':
+//       // Handle failed payment
+//       break;
+//   }
+
+//   res.json({ received: true });
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // In-memory storage for LaTeX code
 let storedLatexCode = '';

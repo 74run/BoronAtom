@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import { Navbar as BootstrapNavbar } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../../css/RegisterForm.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
-import logo from '../images/logo-no-background.png';
-import PasswordCriteria from './PasswordCriteria';
-
-import back from '../images/unnamed-1.png'
+import { Navbar } from '../ui/navbar';
+import { Button } from '../ui/button';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
+import { FaLinkedin } from 'react-icons/fa';
+import logo from '../images/small-logo.png';
+import Footer from '../Footer';
 
 const RegisterForm: React.FC = () => {
   const [firstName, setFirstName] = useState('');
@@ -19,48 +18,31 @@ const RegisterForm: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [showCriteria, setShowCriteria] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const navigate = useNavigate();
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-  const validateEmail = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
-    } else {
-      setError(null);
-    }
-  };
-
-  const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/[^A-Za-z ]/gi, '');
-    setFirstName(inputValue);
-  };
-
-  const handleLastNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value.replace(/[^A-Za-z ]/gi, '');
-    setLastName(inputValue);
-  };
-
-  const handleRegister = async () => {
+    // Password validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$/;
     if (!passwordRegex.test(password)) {
-      setError('Invalid password. Please follow the password criteria.');
+      setError('Password must contain at least 8 characters, one uppercase letter, one lowercase letter, and one number');
+      setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match!');
+      setError('Passwords do not match');
+      setIsLoading(false);
       return;
     }
 
     try {
-      setError(null);
-
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/register`, {
         firstName,
         lastName,
@@ -70,602 +52,234 @@ const RegisterForm: React.FC = () => {
         confirmPassword,
       });
 
-      const { data } = response;
+      const { success, message, userId } = response.data;
 
-      if (data.success) {
-        localStorage.setItem('userId', data.userId);
+      if (success) {
+        localStorage.setItem('userId', userId);
         navigate('/verifyOTP');
       } else {
-        setError(data.message || 'Registration failed. Please try again.');
+        setError(message || 'Registration failed');
       }
     } catch (error: any) {
-      if (error.response && error.response.data && error.response.data.message) {
-        setError(error.response.data.message);
-      } else if (error.message) {
-        setError(error.message);
-      } else {
-        setError('Unknown error occurred. Please try again.');
-      }
-      console.error('Registration error:', error.response?.data?.message || error.message || 'Unknown error');
+      setError(error.response?.data?.message || 'Registration failed');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    validateEmail();
-    handleRegister();
+  const handleGoogleRegister = async () => {
+    try {
+      window.location.href = `${process.env.REACT_APP_API_URL}/auth/google`;
+    } catch (error) {
+      setError('Google registration failed. Please try again.');
+    }
   };
 
-  const handleLoginClick = () => {
-    navigate('/login');
+  const handleLinkedInRegister = async () => {
+    try {
+      window.location.href = `${process.env.REACT_APP_API_URL}/auth/linkedin`;
+    } catch (error) {
+      setError('LinkedIn registration failed. Please try again.');
+    }
   };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const isPasswordMatch = () => password === confirmPassword && confirmPassword !== '';
 
   return (
-
-   <>
-
-<style>{`
-    body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background: url(${back}) no-repeat center center fixed;
-            background-size: cover;
-        }
-   
-        .navbar-1 .logo {
-            display: flex;
-            align-items: center;
-        }
-  
-        .navbar-1 .logo span {
-            color: white;
-            font-size: 24px;
-            font-weight: 700;
-        }
-        .navbar-1 ul {
-            list-style: none;
-            display: flex;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar-1 ul li {
-            margin: 0 15px;
-        }
-        .navbar-1 ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 18px;
-        }
-        .navbar-1 .login-btn {
-            background: white;
-            color: black;
-            padding: 10px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .navbar-1 .login-btn:hover {
-            background: #00bcd4;
-            color: white;
-        }
-
-        
-         .navbar-1 {
-           position: sticky;
-           top: 0;
-           left: 0;
-           right: 0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem;
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-        
-        .logo {
-          display: flex;
-          align-items: center;
-        }
-        
-        .logo img {
-          height: 25px;
-          width: auto;
-          transition: height 0.3s ease;
-        }
-        
-        .login-btn {
-          background: white;
-          color: black;
-          padding: 0.5rem 1rem;
-          text-decoration: none;
-          border-radius: 5px;
-          font-weight: 500;
-          transition: all 0.3s ease;
-          font-size: 1rem;
-        }
-        
-        .login-btn:hover {
-          background: #00bcd4;
-          color: white;
-        }
-        
-        /* Mobile styles */
-        @media (max-width: 640px) {
-          .navbar-1 {
-            padding: 0.75rem;
-          }
-          
-          .logo img {
-            height: 20px;
-          }
-          
-          .login-btn {
-            padding: 0.4rem 0.8rem;
-            font-size: 0.875rem;
-          }
-        }
-        
-        /* Tablet styles */
-        @media (min-width: 641px) and (max-width: 1024px) {
-          .navbar-1 {
-            padding: 0.875rem 1.5rem;
-          }
-          
-          .logo img {
-            height: 22px;
-          }
-        }
-        
-        /* Desktop styles */
-        @media (min-width: 1025px) {
-          .navbar-1 {
-            padding: 1.25rem 2rem;
-          }
-          
-          .login-btn {
-            padding: 0.625rem 1.25rem;
-          }
-        }
-        
-        /* Hover effects */
-        .logo:hover img {
-          transform: scale(1.05);
-        }
-
-         .page-wrapper {
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      /* Main content styles */
-      .main-content {
-        flex: 1 0 auto;
-        padding-bottom: 5rem; /* Ensure space for footer */
-      }
-
-          .footer {
-          position: ;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 1rem;
-          background-color: rgba(0, 0, 0, 0.75);
-          backdrop-filter: blur(8px);
-          color: white;
-          text-align: center;
-          font-size: 0.875rem;
-          z-index: 1000;
-        }
-        
-        .footer-content {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 2rem;
-        }
-        
-        .footer a {
-          color: #00bcd4;
-          text-decoration: none;
-          transition: color 0.3s ease;
-        }
-        
-        .footer a:hover {
-          color: white;
-        }
-        
-        @media (max-width: 640px) {
-          .footer {
-            padding: 0.75rem;
-            font-size: 0.75rem;
-          }
-          
-          .footer-content {
-            gap: 1rem;
-            flex-wrap: wrap;
-          }
-        }
-      /* Footer styles */
-      .footer {
-        flex-shrink: 0;
-        background-color: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(8px);
-        color: white;
-        padding: 1rem;
-        width: 100%;
-      }
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
+      <Navbar />
       
-      .footer-content {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
-      }
-      
-      .footer a {
-        color: #00bcd4;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-      
-      .footer a:hover {
-        color: white;
-      }
-      
-      @media (max-width: 640px) {
-        .footer {
-          padding: 0.75rem;
-          font-size: 0.75rem;
-        }
-        
-        .footer-content {
-          gap: 1rem;
-          flex-wrap: wrap;
-        }
-      }
-        `}</style>
-
-    <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"></link>
-
-    </head>
-
-    <div className="page-wrapper">
-    
-      {/* Background */}
-      <div className="background-wrapper">
-        <div className="background-gradient"></div>
-        <div className="particles-layer-1"></div>
-        <div className="particles-layer-2"></div>
-        <div className="particles-layer-3"></div>
-      </div>
-
-      {/* Navbar
-      <nav className="navbar navbar-expand-md navbar-dark bg-dark shadow" style={{ borderBottom: "1px solid #333" }}>
-        <BootstrapNavbar expand="md" bg="dark" variant="dark" fixed="top" expanded={expanded} onToggle={() => setExpanded(!expanded)}>
-          <Container fluid>
-            <BootstrapNavbar.Brand href="/" className="d-flex align-items-center">
-              <img
-                src={logo}
-                alt="Logo"
-                className="img-fluid"
-                style={{ height: "25px", width: "auto" }}
-              />
-            </BootstrapNavbar.Brand>
-            <BootstrapNavbar.Toggle
-              aria-controls="basic-navbar-nav"
-              onClick={() => setExpanded(!expanded)}
-              className="ms-auto"
-              style={{ position: 'relative', top: 0, marginLeft: 'auto' }}
-            />
-            <BootstrapNavbar.Collapse id="basic-navbar-nav">
-              <Nav className="ms-auto">
-                <Nav.Link href="/register">Register</Nav.Link>
-                <Nav.Link href="/forgotpassword">Forgot Password</Nav.Link>
-              </Nav>
-            </BootstrapNavbar.Collapse>
-          </Container>
-        </BootstrapNavbar>
-      </nav> */}
-
-<div className="navbar-1">
-        <div className="logo">
-          <Link to="/">
-            <img 
-              src={logo}
-              alt="Logo"
-              className="img-fluid"
-            />
-          </Link>
-        </div>
-        <a 
-          className="login-btn" 
-          onClick={handleLoginClick}
-          style={{ cursor: 'pointer' }}
-        >
-          Sign In
-        </a>
-      </div>
-    
-    
-    
-      {/* <BootstrapNavbar bg="dark" variant="dark" fixed="top" className="custom-navbar">
-        <div className="container">
-          <a className="navbar-brand" href="/">
-            <img src={logo} alt="Logo" style={{
-                  height: "25px",
-                  width: "auto",
-                }} />
-          </a>
-        </div>
-      </BootstrapNavbar> */}
-
-<main className="main-content">
-
-<div className="flex items-center justify-center min-h-screen" style={{ paddingTop: "20px", paddingBottom: "20px", backgroundPosition: "center", display:'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div
-          className="bg-gray-800 bg-opacity-75 p-8 rounded-lg shadow-lg w-full max-w-md"
-          style={{
-            backgroundColor: 'rgba(31, 41, 55, 0.75)', // bg-gray-800 with bg-opacity-75
-            padding: '2rem', // p-8
-            borderRadius: '0.5rem', // rounded-lg
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)', // shadow-lg
-            width: '100%', // w-full
-            maxWidth: '28rem', // max-w-md
-          }}
-        >
-      <h2 className="text-3xl font-bold mb-6 text-center"
-      style={{
-        fontSize: '1.875rem', // text-3xl (which is 3rem, 48px in Tailwind, converted to rem)
-        fontWeight: '700', // font-bold
-        marginBottom: '1.5rem', // mb-6 (which is 6 * 0.25rem = 1.5rem)
-        textAlign: 'center', // text-center
-        color: 'white'
-      }}>Create an account</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="First Name*"
-                value={firstName}
-                onChange={handleFirstNameChange}
-                required
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                  borderRadius: '0.5rem', // rounded-lg
-                  backgroundColor: '#2d3748', // bg-gray-700
-                  border: '1px solid #4a5568',
-                  color: '#ffffff', // border-gray-600
-                  outline: 'none', // focus:outline-none
-                  transition: 'all 0.3s', // Smooth transition for focus effect
-                }}
-              />
-            </div>
-            <div className="mb-4">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Last Name*"
-                value={lastName}
-                onChange={handleLastNameChange}
-                required
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                  borderRadius: '0.5rem', // rounded-lg
-                  backgroundColor: '#2d3748', // bg-gray-700
-                  border: '1px solid #4a5568',
-                  color: '#ffffff', // border-gray-600
-                  outline: 'none', // focus:outline-none
-                  transition: 'all 0.3s', // Smooth transition for focus effect
-                }}
-              />
-            </div>
-            <div className="mb-4">
-              <input
-                type="email"
-                className="form-control"
-                placeholder="Email*"
-                value={email}
-                onChange={handleEmailChange}
-                onBlur={validateEmail}
-                required
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                  borderRadius: '0.5rem', // rounded-lg
-                  backgroundColor: '#2d3748', // bg-gray-700
-                  border: '1px solid #4a5568',
-                  color: '#ffffff', // border-gray-600
-                  outline: 'none', // focus:outline-none
-                  transition: 'all 0.3s', // Smooth transition for focus effect
-                }}
-              />
-            </div>
-            <div className="mb-4">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Username*"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                style={{
-                  width: '100%', // w-full
-                  padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                  borderRadius: '0.5rem', // rounded-lg
-                  backgroundColor: '#2d3748', // bg-gray-700
-                  border: '1px solid #4a5568',
-                  color: '#ffffff', // border-gray-600
-                  outline: 'none', // focus:outline-none
-                  transition: 'all 0.3s', // Smooth transition for focus effect
-                }}
-              />
-            </div>
-            <div className="mb-4">
-              <div className="password-input-group input-group">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  className="form-control"
-                  value={password}
-                  placeholder="Password*"
-                  onFocus={() => setShowCriteria(true)}
-                  onBlur={() => setShowCriteria(false)}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  style={{
-                    width: '100%', // w-full
-                    padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                    borderRadius: '0.5rem', // rounded-lg
-                    backgroundColor: '#2d3748', // bg-gray-700
-                    border: '1px solid #4a5568',
-                    color: '#ffffff', // border-gray-600
-                    outline: 'none', // focus:outline-none
-                    transition: 'all 0.3s', // Smooth transition for focus effect
-                  }}
+      <div className="container mx-auto px-4 pt-20 pb-12">
+        <div className="max-w-md mx-auto">
+          <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-xl p-8 border border-gray-700">
+            <div className="mb-8 text-center">
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={logo} 
+                  alt="Boron Atom Logo" 
+                  className="h-12 w-auto"
                 />
-                <button
-                  type="button"
-                  className="btn btn-outline-visibility-toggle"
-                  onClick={togglePasswordVisibility}
-                >
-                  <i className={`fas ${showPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-                </button>
               </div>
-              {showCriteria && <PasswordCriteria password={password} />}
+              <h2 className="text-3xl font-bold text-white mb-2">Create Account</h2>
+              <p className="text-gray-400">Join Boron Atom today</p>
             </div>
-            <div className="mb-4">
-              <div className="password-input-group input-group">
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  className="form-control"
-                  value={confirmPassword}
-                  placeholder="Confirm Password*"
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  style={{
-                    width: '100%', // w-full
-                    padding: '0.75rem', // p-3 (equivalent to 3 * 0.25rem = 0.75rem)
-                    borderRadius: '0.5rem', // rounded-lg
-                    backgroundColor: '#2d3748', // bg-gray-700
-                    border: '1px solid #4a5568', 
-                    color: '#ffffff',// border-gray-600
-                    outline: 'none', // focus:outline-none
-                    transition: 'all 0.3s', // Smooth transition for focus effect
-                  }}
-                />
-                <button
-                  type="button"
-                  className="btn btn-outline-visibility-toggle"
-                  onClick={toggleConfirmPasswordVisibility}
-                >
-                  <i className={`fas ${showConfirmPassword ? 'fa-eye' : 'fa-eye-slash'}`}></i>
-                </button>
+
+            {/* Social Registration Buttons */}
+            <div className="space-y-3 mb-8">
+              <Button
+                onClick={handleGoogleRegister}
+                variant="social"
+                className="hover:bg-gray-700/50 transition-colors duration-200"
+              >
+                <FcGoogle className="w-5 h-5" />
+                Continue with Google
+              </Button>
+              
+              <Button
+                onClick={handleLinkedInRegister}
+                variant="social"
+                className="hover:bg-gray-700/50 transition-colors duration-200"
+              >
+                <FaLinkedin className="w-5 h-5 text-[#0A66C2]" />
+                Continue with LinkedIn
+              </Button>
+            </div>
+
+            <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-600"></div>
               </div>
-              {confirmPassword && (
-                <p className={isPasswordMatch() ? 'text-success' : 'text-danger'}>
-                  {isPasswordMatch() ? 'Passwords match' : 'Passwords do not match'}
-                </p>
-              )}
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-800/50 text-gray-400">Or continue with email</span>
+              </div>
             </div>
 
-            {error && <p className="text-danger">{error}</p>}
+            {error && (
+              <div className="mb-6 p-3 bg-red-500/10 border border-red-500/50 rounded-lg">
+                <p className="text-red-500 text-sm">{error}</p>
+              </div>
+            )}
 
-            <div className="d-grid gap-2">
-              <button type="submit" className="btn btn-primary btn-lg">
-                Register
-              </button>
-            </div>
+            <form onSubmit={handleRegister} className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">First Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value.replace(/[^A-Za-z ]/gi, ''))}
+                      className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="First name"
+                      required
+                    />
+                  </div>
+                </div>
 
-          </form>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-300">Last Name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value.replace(/[^A-Za-z ]/gi, ''))}
+                      className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Last name"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
 
-          <p className="mt-6 text-center text-sm">Already have an account? <a onClick={handleLoginClick} style={{ cursor: 'pointer' }} className="text-blue-500 hover:underline">Sign in</a></p>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">Email</label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </div>
 
-   
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">Username</label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Choose a username"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Create password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-300">Confirm Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full bg-gray-700/50 border border-gray-600 rounded-lg py-2.5 pl-10 pr-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Confirm password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  >
+                    {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                variant="default"
+                size="full"
+                disabled={isLoading}
+                className="font-semibold"
+              >
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Creating account...
+                  </>
+                ) : (
+                  'Create account'
+                )}
+              </Button>
+            </form>
+
+            <p className="mt-8 text-center text-sm text-gray-400">
+              Already have an account?{' '}
+              <Link
+                to="/login"
+                className="text-blue-400 hover:text-blue-300 font-medium hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
         </div>
-        </div>
-        </main>
-
-        <footer className="footer">
-        <div className="footer-content">
-          <span>© 2025 Boron Atom</span>
-          <a href="/privacy">Privacy Policy</a>
-          <a href="/terms">Terms of Service</a>
-          <a href="/contact">Contact Us</a>
-        </div>
-      </footer>
       </div>
-      
-      <style>{`
-        .background-wrapper {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-          z-index: -1;
-        }
-        .background-gradient {
-          position: absolute;
-          width: 200%;
-          height: 200%;
-          background: radial-gradient(circle at center, rgba(158,92,236,0.2) 0%, rgba(30,82,153,0.2) 45%, rgba(29,39,54,0.2) 100%);
-          animation: rotateGradient 30s linear infinite;
-          transform-origin: center;
-        }
-        .particles-layer-1,
-        .particles-layer-2,
-        .particles-layer-3 {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-size: 60px 60px;
-          opacity: 0.3;
-        }
-        .particles-layer-1 {
-          background: radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px);
-          animation: animateParticles 25s linear infinite;
-        }
-        .particles-layer-2 {
-          background: radial-gradient(circle, rgba(158,92,236,0.1) 1px, transparent 1px);
-          background-size: 40px 40px;
-          animation: animateParticles 20s linear infinite reverse;
-        }
-        .particles-layer-3 {
-          background: radial-gradient(circle, rgba(30,82,153,0.1) 1px, transparent 1px);
-          background-size: 80px 80px;
-          animation: animateParticles 30s linear infinite;
-        }
-        @keyframes rotateGradient {
-          0% { transform: rotate(0deg) scale(1.5); }
-          100% { transform: rotate(360deg) scale(1.5); }
-        }
-        @keyframes animateParticles {
-          0% { transform: translate(0, 0); }
-          100% { transform: translate(-100%, -100%); }
-        }
-      `}</style>
-   
-    </>
+      <Footer />
+    </div>
   );
 };
 
