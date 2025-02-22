@@ -11,6 +11,9 @@
 # production
 /build
 
+my-node-backend/config/*.json
+
+
 # misc
 .DS_Store
 .env.local
