@@ -5,7 +5,7 @@ const UserProfile = require('../models/UserprofileModel')
 const UserOTPVerification = require('../models/UserOTPVerification');
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
-const admin = require('../config/firebase-config');
+
 
 const PendingUser = require('../models/PendingUsers')
 const crypto = require('crypto');
@@ -536,15 +536,7 @@ router.get('/getUserByEmail/:email', async (req, res) => {
     
     try {
       // Verify the Firebase token
-      const decodedToken = await admin.auth().verifyIdToken(token);
       
-      // Check if the email in token matches the requested email
-      if (decodedToken.email !== email) {
-        return res.status(403).json({ 
-          success: false, 
-          message: 'Email mismatch between token and request' 
-        });
-      }
 
       // Find user by email
       const user = await User.findOne({ email: email });
