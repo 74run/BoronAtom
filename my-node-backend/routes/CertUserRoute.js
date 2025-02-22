@@ -12,7 +12,7 @@ router.post('/:userID/certification', async (req, res) => {
             issuedBy,
             issuedDate,
             expirationDate,
-            url } = req.body;
+            url, includeInResume } = req.body;
         const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -31,6 +31,7 @@ router.post('/:userID/certification', async (req, res) => {
         issuedDate: issuedDate,
         expirationDate: expirationDate,
         url: url,
+        includeInResume
         
       });
   
@@ -101,7 +102,7 @@ router.post('/:userID/certification', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting certification with id:', id);
+          // console.log('Deleting certification with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'certification._id': id },

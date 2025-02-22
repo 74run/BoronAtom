@@ -1,32 +1,41 @@
 
-import { BrowserRouter as Router } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CoverPage from './components/CoverPage';
-import ProjectsSection from './components/Projects';
-import Skills from './components/Skills';
-import EducationSection from './components/Education';
-import ExperienceSection from './components/ExperienceSection';
-import CertificationSection from './components/CertificationSection';
-import InvolvementSection from './components/InvolvementSection';
-import SummarySection from './components/SummarySection';
-import ProfilePhoto from './components/ProfilePhotoWithUpload';
-import NavigationBar from './components/NavigationBar';
-import Footer from './components/Footer';
-import SectionWrapper from './components/SectionWrapper';
-import ProfileNew from './components/ProfilePhoto';
-import ChatBox from './components/ChatBox';
 
-// import LatexTemplate from './components/MyPdfViewer';
+import ProjectsSection from './components/resume/Projects';
+import Skills from './components/resume/Skills';
+import EducationSection from './components/resume/Education';
+import ExperienceSection from './components/resume/ExperienceSection';
+import CertificationSection from './components/resume/CertificationSection';
+import InvolvementSection from './components/resume/InvolvementSection';
+import SummarySection from './components/resume/SummarySection';
+import Portfolio from './components/Portfolio/portfolio';
+
+import Newprofile from './newprofile'
+
+
+
+import Footer from './components/Footer';
+
+import ProfileNew from './components/profile-photo/ProfilePhoto';
+
+import { FaFilePdf } from 'react-icons/fa';
+import Modal from "./components/profile-photo/Model";
+
+
+import PDFHTML from './components/resume/PDFHTML'
+
 import "react-image-crop/dist/ReactCrop.css";
 import axios from 'axios';
-import './index.css';
-import './css/profile.css';
-import './App.css';
 
-import PDFResume from './components/MyPdfViewer';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+
+
+import { Menu, X, User, FileText, Briefcase, GraduationCap, Award, Users, Code, FileUp } from 'lucide-react';
+
+
+
 
 
 interface UserDetails {
@@ -35,6 +44,22 @@ interface UserDetails {
   email: string;
   username: string;
   // Add other fields as needed
+}
+
+interface ParsedData {
+  name?: string;
+  contact?: {
+    email?: string;
+    phone?: string;
+    linkedin?: string;
+  };
+  summary?: string;
+  skills?: string[];
+  education?: string[];
+  experience?: string[];
+  projects?: string[];
+  certifications?: string[];
+  involvements?: string[];
 }
 
 
@@ -53,6 +78,9 @@ interface EduDetails {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
+    universityUrl: string;
+    includeInResume: boolean;
+    isPresent?: boolean;
   }>;
   experience: Array<{
     jobTitle: string;
@@ -61,6 +89,8 @@ interface EduDetails {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
   }>
   summary: Array<{
       content: string;
@@ -72,6 +102,8 @@ interface EduDetails {
     endDate: { month: string; year: string };
     skills: string;
     description: string;
+    includeInResume: boolean;
+    isPresent?: boolean;
   }>
   involvement: Array<{
   organization: string;
@@ -79,6 +111,8 @@ interface EduDetails {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
   }>
   certification: Array<{
   name: string;
@@ -86,10 +120,12 @@ interface EduDetails {
   issuedDate: { month: string; year: string };
   expirationDate: { month: string; year: string };
   url: string;
+  includeInResume: boolean;
   }>
   skills: Array<{
     domain: string;
     name: string;
+    includeInResume: boolean;
   }>
   contact: Array<{
     name: string;
@@ -103,6 +139,7 @@ interface Skill {
   _id: string;
   domain: string;
   name: string;
+  includeInResume: boolean;
 }
 
 interface Education {
@@ -113,6 +150,9 @@ interface Education {
   major: string;
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
+  universityUrl: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 interface Summary {
@@ -128,6 +168,8 @@ interface Experience {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 interface Involvement {
@@ -137,6 +179,8 @@ interface Involvement {
   startDate: { month: string; year: string };
   endDate: { month: string; year: string };
   description: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
  
 }
 
@@ -147,6 +191,7 @@ interface Certification {
   issuedDate: { month: string; year: string };
   expirationDate: { month: string; year: string };
   url: string;
+  includeInResume: boolean;
   
 }
 
@@ -157,6 +202,8 @@ interface Project {
   endDate: { month: string; year: string };
   skills: string;
   description: string;
+  includeInResume: boolean;
+  isPresent?: boolean;
 }
 
 
@@ -170,11 +217,87 @@ const Profile: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [imageUrl, setImageUrl] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+
+  const [profileImage, setProfileImage] = useState<string>('');
   
   const { userID } = useParams();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null); 
   const [contactDetails, setContactDetails] = useState<ContactDetails | null>(null); // Updated initial state
   const [eduDetails, setEduDetails] = useState<EduDetails | null>(null);
+  
+
+  const [parsedData, setParsedData] = useState<ParsedData | null>(null);
+  
+
+
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activeSection, setActiveSection] = useState('Profile'); // Manage active content
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isMobileView, setIsMobileView] = useState<boolean>(window.innerWidth < 768); // Track if screen is small
+
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+
+  const avatarUrl = useRef<string>(`https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`);
+
+  const menuItems = [
+    { name: 'Profile', icon: User },
+    { name: 'Summary', icon: FileText },
+    { name: 'Projects', icon: Code },
+    { name: 'Experience', icon: Briefcase },
+    { name: 'Education', icon: GraduationCap },
+    { name: 'Certifications', icon: Award },
+    { name: 'Involvements', icon: Users },
+    { name: 'Resume', icon: FileUp }
+  ];
+
+
+
+  useEffect(() => {
+    const handleResize = () => setIsMobileView(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+
+
+
+  useEffect(() => {
+    // Fetch user details
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`)
+      .then(response => {
+        setUserDetails(response.data.user);
+      })
+      .catch(error => {
+        console.error('Error fetching user details:', error);
+      });
+
+    // Fetch the profile image
+    axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/image`, { responseType: 'arraybuffer' })
+      .then(response => {
+        const base64Image = btoa(
+          new Uint8Array(response.data).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ''
+          )
+        );
+        const contentType = response.headers['content-type'];
+        avatarUrl.current = `data:${contentType};base64,${base64Image}`;
+      })
+      .catch(error => {
+        console.error('Error fetching image:', error);
+      });
+
+  }, [userID]);
+
+
+  const updateAvatar = (imgSrc: string) => {
+    avatarUrl.current = imgSrc;
+  };
+
   // Fetch user details and educations data
   useEffect(() => {
     const fetchData = async () => {
@@ -205,34 +328,34 @@ const Profile: React.FC = () => {
 
 
   
-  useEffect(() => {
-    // Fetch the current profile photo URL from the server on component mount
-    axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
-      .then((response) => {
-        setImageUrl(response.data.imageUrl);
-      })
-      .catch((error) => {
-        console.error('Error fetching profile photo:', error);
-      });
-  }, []); // Empty dependency array means this effect runs once on mount
+  // useEffect(() => {
+  //   // Fetch the current profile photo URL from the server on component mount
+  //   axios.get(`${process.env.REACT_APP_API_URL}/api/profile-photo`)
+  //     .then((response) => {
+  //       setImageUrl(response.data.imageUrl);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching profile photo:', error);
+  //     });
+  // }, []); // Empty dependency array means this effect runs once on mount
 
-  const handleFileChange = (newFile: File | null) => {
-    setFile(newFile);
+  // const handleFileChange = (newFile: File | null) => {
+  //   setFile(newFile);
 
-    if (newFile) {
-      const formData = new FormData();
-      formData.append('photo', newFile);
+  //   if (newFile) {
+  //     const formData = new FormData();
+  //     formData.append('photo', newFile);
 
-      // Upload the new photo and update the profile photo URL
-      axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
-        .then((response) => {
-          setImageUrl(response.data.imageUrl);
-        })
-        .catch((error) => {
-          console.error('Error uploading photo:', error);
-        });
-    }
-  };
+  //     // Upload the new photo and update the profile photo URL
+  //     axios.post('${process.env.REACT_APP_API_URL}/upload', formData)
+  //       .then((response) => {
+  //         setImageUrl(response.data.imageUrl);
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error uploading photo:', error);
+  //       });
+  //   }
+  // };
 
   const handleDeleteProfile = () => {
     // Implement logic for image deletion on the client side
@@ -270,6 +393,8 @@ const Profile: React.FC = () => {
     major: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
+    includeInResume: boolean;
+    isPresent?: boolean;
   }) => {
     // console.log('Sending data to server:', data);
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/education/${id}`, {
@@ -292,7 +417,7 @@ const Profile: React.FC = () => {
   };
 
   const handleEditSkill = (id: string, data: {   
-       domain: string; name: string;
+       domain: string; name: string; includeInResume: boolean;
   }) => {
     // console.log('Sending data to server:', data);
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/skill/${id}`, {
@@ -337,7 +462,7 @@ const Profile: React.FC = () => {
     location: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/experience/${id}`, {
       method: 'PUT',
       headers: {
@@ -358,7 +483,7 @@ const Profile: React.FC = () => {
     issuedBy: string;
     issuedDate: { month: string; year: string };
     expirationDate: { month: string; year: string };
-    url: string; }) => {
+    url: string; includeInResume: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/certification/${id}`, {
       method: 'PUT',
       headers: {
@@ -379,7 +504,7 @@ const Profile: React.FC = () => {
     role: string;
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
-    description: string; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/involvement/${id}`, {
       method: 'PUT',
       headers: {
@@ -400,7 +525,7 @@ const Profile: React.FC = () => {
     startDate: { month: string; year: string };
     endDate: { month: string; year: string };
     skills: string;
-    description: string; }) => {
+    description: string; includeInResume: boolean; isPresent?: boolean; }) => {
     fetch(`${process.env.REACT_APP_API_URL}/api/userprofile/${userID}/project/${id}`, {
       method: 'PUT',
       headers: {
@@ -498,73 +623,315 @@ const Profile: React.FC = () => {
   
   
   
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'Profile':
+        return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
+      case 'Summary':
+        return (
+          <SummarySection
+            Summarys={summarys}
+            onEdit={handleEditSum}
+            onDelete={handleDeleteSum}
+            parsedSummary={parsedData?.summary || ''}
+          />
+        );
+      case 'Projects':
+        return (
+          <ProjectsSection
+            onEdit={handleEditPro}
+            onDelete={handleDeletePro}
+            Projects={projects}
+          />
+        );
+      case 'Experience':
+        return (
+          <ExperienceSection
+            Experiences={experiences}
+            onEdit={handleEditExp}
+            onDelete={handleDeleteExp}
+          />
+        );
+      case 'Education':
+        return (
+          <EducationSection
+            Educations={educations}
+            onEdit={handleEditEdu}
+            onDelete={handleDeleteEdu}
+            UserDetail={userDetails}
+          />
+        );
+      case 'Skills':
+        return (
+          <Skills
+            Skills={skills}
+            onEdit={handleEditSkill}
+            onDelete={handleDeleteSkill}
+          />
+        );
+      case 'Certifications':
+        return (
+          <CertificationSection
+            Certifications={certifications}
+            onEdit={handleEditCert}
+            onDelete={handleDeleteCert}
+          />
+        );
+      case 'Involvements':
+        return (
+          <InvolvementSection
+            Involvements={involvements}
+            onEdit={handleEditInv}
+            onDelete={handleDeleteInv}
+          />
+        );
+        case 'PDFHTML':
+          return <PDFHTML theme={'light'}  />;
+        default:
+          return <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />;
+      }
 
+
+  
+  };
+
+ 
   return (
     <>
-      {/* NavigationBar is used outside the Switch to ensure it's always rendered */}
-      <NavigationBar />
-  
-      {/* Three Sections Layout */}
+    
+      {/* Full page layout */}
+      <div
+  className="Full-Profile"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    
+    paddingTop: "50px",
+    paddingLeft: "25px",
+    paddingRight: "15px",
+    overflow: "hidden"
+  }}
+>
 
-      <div className='Full-Profile' style={{ display: 'flex', position: 'relative', backgroundColor:'black', paddingTop: '80px', paddingBottom:'50px' }}>
 
 
-      <div className='empty' style={{ flex: '0 0 5%' }}>
 
-          {/* Add content for the right section */}
       
-          {/* For example: */}
-        </div>
+
+        <div className="pt-16 flex">
+        {/* Sidebar */}
+  
+          
+      <Newprofile />
+
+    
 
 
+        {/* Main Content Area */}
+        <div
+        className="flex-container"
+          style={{
+            display: "flex",
+            justifyContent: "space-between", // Change to "space-between" for better separation
+            gap: "20px",
+            borderRadius: "10px",
+            flexDirection: isMobileView ? "column" : "row",
+           
+           
+            paddingTop: "20px", // Added padding to give spacing from the top
+            height: "100%", // Ensures it takes up the available space
+            marginTop: "20px"
+          }}
+        >
+          {/* Left Sidebar (Profile Info and Navigation Menu) */}
+          <div
+          
+          className="sidebar"
+            style={{
+              flex: "0.3",
+              display: "flex",
+              flexDirection: "column",
+              borderRadius: "0px",
+              
+              gap: "30px",
+             
+              height: "auto",
+            }}
+          >
+        <div className="bg-gray-800 text-white p-6 rounded-lg w-60">
 
+       
+        <div
+  className="profile-photo"
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+     marginTop: "2.5rem",
+    marginBottom: "1.5rem",
+    
+  }}
+>
+  <img
+    onClick={() => setModalOpen(true)}
+    src={avatarUrl.current}
+    alt="Avatar"
+    className="rounded-circle"
+    style={{
+      width: "100px",
+      height: "100px",
+      borderRadius: "50%",
+      border: "4px solid #2d2d30",
+      boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.5)",
+      objectFit: "cover",
+      cursor: "pointer",
+      marginBottom: "1rem",
+      borderColor: 'black', // Add space between image and text
+    }}
+    loading="lazy"
+  />
 
+{modalOpen && (
+        <Modal
+          updateAvatar={updateAvatar}
+          closeModal={() => setModalOpen(false)}
+          currentAvatar={avatarUrl.current}
+        />
+      )}
 
-
-        {/* Middle Section (60%) */}
-        
-        <div className= 'Full-Resume' style={{ flex: '0 0 45%', position: 'relative', borderRadius: '20px' }}>
-          {/* Content for the middle section goes here */}
-          <div style={{ marginBottom: '0px' }}>
-            <CoverPage onUpload={(file: File): void => { } } />
-            <div style={{ marginTop: '-80px'}}>
-  <ProfileNew UserDetail={userDetails} ContactDetail={contactDetails} />
-
-  <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
+  <div style={{ textAlign: "center" }}>
+    <h2 className="text-lg font-semibold">
+      {userDetails?.firstName} {userDetails?.lastName}
+    </h2>
+    <p className="text-gray-400 text-sm">{userDetails?.email}</p>
+  </div>
 </div>
 
-            <div></div>
+
+<div className="d-flex flex-column"
+style={{cursor: "pointer"}}>
+  <a
+    
+    className={`nav-link ${activeSection === 'Profile' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Profile')}
+  >
+    <i className="fas fa-user-circle text-lg me-2"></i> 
+    <span className="text-sm font-medium">Profile</span>
+  </a>
+  <a
+    
+    className={`nav-link ${activeSection === 'Summary' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Summary')}
+  >
+<i className="fas fa-file-alt text-lg me-2"></i> 
+<span className="text-sm font-medium">Summary</span>
+
+  </a>
+  <a
+ 
+    className={`nav-link ${activeSection === 'Projects' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Projects')}
+  >
+    <i className="fas fa-tasks text-lg me-2"></i> 
+    <span className="text-sm font-medium">Projects</span>
+  </a>
+
+  <a
+    
+    className={`nav-link ${activeSection === 'Experience' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Experience')}
+  >
+    <i className="fas fa-briefcase text-lg me-2"></i> 
+    <span className="text-sm font-medium">Experience</span>
+  </a>
+
+  <a
+  
+    className={`nav-link ${activeSection === 'Education' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Education')}
+  >
+    <i className="fas fa-graduation-cap text-lg me-2"></i> 
+    <span className="text-sm font-medium">Education</span>
+  </a>
+
+  <a
+   
+    className={`nav-link ${activeSection === 'Certifications' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Certifications')}
+  >
+    <i className="fas fa-certificate text-lg me-2"></i> 
+    <span className="text-sm font-medium">Certifications</span>
+  </a>
+
+  <a
+    
+    className={`nav-link ${activeSection === 'Involvements' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Involvements')}
+  >
+    <i className="fas fa-users text-lg me-2"></i> 
+    <span className="text-sm font-medium">Involvements</span>
+  </a>
+
+  <a
+   
+    className={`nav-link ${activeSection === 'Skills' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+    onClick={() => setActiveSection('Skills')}
+  >
+    <i className="fas fa-lightbulb text-lg me-2"></i> 
+    <span className="text-sm font-medium">Skills</span>
+  </a>
+
+  <a
+                  className={`nav-link ${activeSection === 'PDFHTML' ? 'active' : ''} custom-nav-link mx-2 px-4 py-2`}
+                  onClick={() => setActiveSection('PDFHTML')}
+                >
+                  <FaFilePdf className="me-2" />
+                  <span className="text-sm font-medium">PDF Resume</span>
+                </a>
+</div>
+
+</div>
+
           </div>
-          <SectionWrapper>
-            <div style={{  padding: '10px' }} />
-
-            <SummarySection Summarys={summarys} onEdit={handleEditSum} onDelete={handleDeleteSum} />
-            <ProjectsSection onEdit={handleEditPro} onDelete={handleDeletePro} Projects={projects} />
-            <Skills Skills={skills} onEdit={handleEditSkill} onDelete={handleDeleteSkill} />
-            <EducationSection Educations={educations} onEdit={handleEditEdu} onDelete={handleDeleteEdu} UserDetail={userDetails} />
-            <ExperienceSection Experiences={experiences} onEdit={handleEditExp} onDelete={handleDeleteExp}/>
-            <CertificationSection Certifications={certifications} onEdit={handleEditCert} onDelete={handleDeleteCert}/>
-            <InvolvementSection Involvements={involvements} onEdit={handleEditInv} onDelete={handleDeleteInv} />
-          </SectionWrapper>
-        </div>
   
-        {/* Right Section (20%) */}
-        <div className='chatbox' style={{ flex: '0 0 30%' }}>
-          {/* Add content for the right section */}
-          <ChatBox />
-          {/* For example: */}
+          {/* Right Column (Main Content Area) */}
+          <div
+          className="main-content"
+            style={{
+              flex: "1",
+              display: "flex",
+              flexDirection: "column",
+              
+              height: "100vh",
+               // Padding to improve spacing
+              borderRadius: "0px", // Rounded edges for the section
+              
+              // Slight shadow for separation
+              overflowY: "auto",
+               // Ensures it doesn't overflow the viewport
+            }}
+          >
+            {/* Section Rendering */}
+            <section className="bg-gray-100 p-6" >
+              {renderSection()}
+            </section>
+          </div>
         </div>
-
-
-        
-
       </div>
+</div>
+      
   
-      <div>
         <Footer />
-      </div>
     </>
+  
   );
-};  
+
+  
+};
+
+
+
+
 
 export default Profile;

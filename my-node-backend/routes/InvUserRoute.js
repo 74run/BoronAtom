@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/involvement', async (req, res) => {
     try {
-        const { organization, role, startDate, endDate, description  } = req.body;
+        const { organization, role, startDate, endDate, description, includeInResume, isPresent   } = req.body;
       const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -25,6 +25,8 @@ router.post('/:userID/involvement', async (req, res) => {
         startDate: startDate,
         endDate: endDate,
         description: description,
+        includeInResume, 
+        isPresent 
       });
   
       const savedUserProfile = await userProfile.save();
@@ -94,7 +96,7 @@ router.post('/:userID/involvement', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting involvement with id:', id);
+          // console.log('Deleting involvement with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'involvement._id': id },

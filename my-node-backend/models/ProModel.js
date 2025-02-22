@@ -6,6 +6,8 @@ const proSchema = new mongoose.Schema({
     endDate: { month: String, year: String },
     skills: String,
     description: String,
+    includeInResume: { type: Boolean, default: true },
+    isPresent: { type: Boolean, default: false },
 });
 
 // const Pro = mongoose.model('Pro', proSchema);

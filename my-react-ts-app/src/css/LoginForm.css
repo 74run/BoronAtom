@@ -1,89 +1,100 @@
-/* frontend/src/components/LoginForm.css */
+/* LoginForm.css */
+
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-brand img {
+  max-height: 40px;
+}
+
 .login-container {
-  display: flow-root;
-  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
 
-  background: linear-gradient(to right, #6c7070, #000b01);
-  }
+.login-box {
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+}
 
+.password-input-group {
+  position: relative;
+}
+
+.password-input-group input {
+  width: 100%;
+  padding-right: 60px; /* Space for the eye icon */
+}
+
+.password-input-group .btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.password-input-group .btn i {
+  font-size: 1.2rem;
+}
+
+.btn-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+.text-center {
+  margin-top: 20px;
+}
+
+
+@media (max-width: 576px) {
   .login-box {
-    max-width: 400px;
-    margin: auto;
     padding: 20px;
-    border: 1px solid #0c0101;
-    border-radius: 12px;
-    margin-top: 180px;
-  
-    background-color: rgba(255,255,255,0.5);
-    box-shadow: 0 15px 25px rgba(0,0,0,.5);
-}
-
-.form-control{
-    border: 1px solid #0c0101;
-    border-radius: 10px;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-   
-
+    max-width: 90%;
+    margin-top: 50px;
   }
-  
-  .form-label {
-    font-weight: bold;
+
+  .login-container {
+    padding: 10px;
   }
-  
+
+  .navbar-brand img {
+    height: 30px;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+  }
+
   h2 {
-    margin-bottom: 20px; 
-    
- }
-
-  
-
-  
-  /* Register button styling */
-  .register-link {
-    margin-top: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-size: 1.2rem;
   }
-  
-  .register-link p {
-    margin: 0;
-  }
-  
-  .btn-link {
-    cursor: pointer;
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-  
-  .btn-link:hover {
-    color: #0056b3;
-  }
-
-
-  .password-input-group {
-    position: relative;
-  }
-
-  .button-gap {
-    margin: 0 10px; /* Adjust the margin as needed */
-  }
-  
-  .password-input-group button {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 70px; /* Set a fixed width for both buttons */
-  }
-
-.password-input-group button.btn-light,
-.password-input-group button.btn-primary {
-  width: 70px;
 }
 
-  /* Add more styles as needed */
-  
+@media (max-width: 768px) {
+  .login-box {
+    padding: 30px;
+    max-width: 100%;
+  }
+}
+
+.navbar-brand img {
+  max-height: 40px;
+}
+

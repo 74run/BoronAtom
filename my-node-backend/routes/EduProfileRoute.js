@@ -13,7 +13,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/education', async (req, res) => {
   try {
-    const { university, cgpa, degree, major, startDate, endDate } = req.body;
+    const { university, universityUrl, cgpa, degree, major, startDate, endDate, includeInResume, isPresent } = req.body;
     const userId = req.params.userID;
 
     if (!university || !cgpa || !degree || !major || !startDate || !endDate) {
@@ -27,12 +27,15 @@ router.post('/:userID/education', async (req, res) => {
     }
 
     userProfile.education.push({
-      university: university,
-      cgpa: cgpa,
-      degree: degree,
-      major: major,
-      startDate: startDate,
-      endDate: endDate,
+      university,
+      universityUrl,  // Add this directly, no need for array handling
+      cgpa,
+      degree,
+      major,
+      startDate,
+      endDate,
+      includeInResume,
+      isPresent
     });
 
     const savedUserProfile = await userProfile.save();
@@ -43,6 +46,7 @@ router.post('/:userID/education', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 router.get('/:userId/education', async (req, res) => {
   try {
@@ -167,7 +171,7 @@ router.put('/:userId/education/:id', async (req, res) => {
 
         const { id } = req.params;
 
-        console.log('Deleting education with id:', id);
+        // console.log('Deleting education with id:', id);
 
         const result = await UserProfile.findOneAndUpdate(
             { 'userID': user._id, 'education._id': id },

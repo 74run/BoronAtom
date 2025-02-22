@@ -9,7 +9,7 @@ const User = require('../models/UserModel');
 
   router.post('/:userID/skill', async (req, res) => {
     try {
-        const { domain, name } = req.body;
+        const { domain, name, includeInResume } = req.body;
       const userId = req.params.userID;
   
     //   if (!university || !degree || !major || !startDate || !endDate) {
@@ -24,7 +24,8 @@ const User = require('../models/UserModel');
   
       userProfile.skills.push({
         domain: domain,
-        name: name
+        name: name, 
+        includeInResume
       });
   
       const savedUserProfile = await userProfile.save();
@@ -48,7 +49,7 @@ const User = require('../models/UserModel');
 
         const { id } = req.params;
 
-        console.log('Deleting skill with id:', id);
+        // console.log('Deleting skill with id:', id);
 
         const result = await UserProfile.findOneAndUpdate(
             { 'userID': user._id, 'skills._id': id },
@@ -115,6 +116,32 @@ router.get('/:userID/skill', async (req, res) => {
     }
   });
 
+  router.put('/:userId/skills/reorder', async (req, res) => {
+    try {
+      const user = await User.findById(req.params.userId);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      const { skills } = req.body; // Reordered list of skills from the frontend
+  
+      // Update the user's profile with the reordered skills
+      const updatedUserProfile = await UserProfile.findOneAndUpdate(
+        { userID: user._id },
+        { $set: { skills: skills } }, // Replace old skills array with the reordered one
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedUserProfile) {
+        return res.status(404).json({ message: 'User profile not found' });
+      }
+  
+      res.json(updatedUserProfile); // Return the updated profile
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
 
 
   module.exports = router;

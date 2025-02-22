@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 
 router.post('/:userID/experience', async (req, res) => {
   try {
-      const { jobTitle, company, location, startDate, endDate, description } = req.body;
+      const { jobTitle, company, location, startDate, endDate, description, includeInResume, isPresent } = req.body;
       const userId = req.params.userID;
 
       let userProfile = await UserProfile.findOne({ userID: userId });
@@ -22,6 +22,8 @@ router.post('/:userID/experience', async (req, res) => {
           startDate: startDate,
           endDate: endDate,
           description: description,
+          includeInResume,
+          isPresent
       });
 
       const savedUserProfile = await userProfile.save();
@@ -78,6 +80,36 @@ router.post('/:userID/experience', async (req, res) => {
         res.status(500).json({ message: error.message });
       }
     });
+
+
+    // PUT request to reorder experiences for a user
+router.put('/:userId/experiences/reorder', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const { experiences } = req.body;  // Reordered list of experiences from the frontend
+
+    // Update the user's profile with the reordered experiences
+    const updatedUserProfile = await UserProfile.findOneAndUpdate(
+      { userID: user._id },
+      { $set: { experience: experiences } },  // Replace old array with the reordered one
+      { new: true }  // Return the updated document
+    );
+
+    if (!updatedUserProfile) {
+      return res.status(404).json({ message: 'User profile not found' });
+    }
+
+    res.json(updatedUserProfile);  // Return the updated profile
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
     
     
   
@@ -92,7 +124,7 @@ router.post('/:userID/experience', async (req, res) => {
   
           const { id } = req.params;
   
-          console.log('Deleting experience with id:', id);
+          // console.log('Deleting experience with id:', id);
   
           const result = await UserProfile.findOneAndUpdate(
               { 'userID': user._id, 'experience._id': id },
