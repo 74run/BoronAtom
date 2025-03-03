@@ -71,14 +71,14 @@ export function Navbar() {
               </button>
             ))}
             <div className="flex items-center gap-4">
-              <Link to="/login">
+              {/* <Link to="/login">
                 <Button variant="ghost" className="text-gray-300 hover:text-white">
                   Log in
                 </Button>
-              </Link>
-              <Link to="/register">
+              </Link> */}
+              <Link to="/login">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors duration-200">
-                  Sign up
+                  Login
                 </Button>
               </Link>
             </div>
@@ -115,20 +115,20 @@ export function Navbar() {
                 </button>
               ))}
               <div className="flex flex-col gap-2 px-3 pt-4 pb-2">
-                <Link 
+                {/* <Link 
                   to="/login"
                   onClick={() => setIsOpen(false)}
                 >
                   <Button variant="ghost" className="w-full text-gray-300 hover:text-white">
-                    Log in
+                    Login
                   </Button>
-                </Link>
+                </Link> */}
                 <Link 
-                  to="/register"
+                  to="/login"
                   onClick={() => setIsOpen(false)}
                 >
                   <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200">
-                    Sign up
+                    Login
                   </Button>
                 </Link>
               </div>

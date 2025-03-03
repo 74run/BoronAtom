@@ -425,381 +425,14 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ Projects, onEdit, onD
 
 
 return (
-  <div className="projects-container">
-    <style>
-      {`
-        .projects-container {
-          background-color: rgba(0, 3, 8, 0.45);
-          border-radius: 12px;
-          padding: 1.5rem;
-          color: white;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          
-        }
-
-        .section-header-1 {
-          color: #63b3ed;
-          font-size: 0.5rem;
-          font-weight: 600;
-          margin-bottom: 1.5rem;
-          
-        }
-
-        .project-card {
-          background-color: #1a202c;
-          border-radius: 8px;
-          padding: 1.5rem;
-          margin-bottom: 1rem;
-          border: 1px solid #4a5568;
-          transition: all 0.2s ease;
-     
-        }
-
-        .project-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .project-title {
-          color: #63b3ed;
-          font-size: 1rem;
-          font-weight: 600;
-          margin-bottom: 0.75rem;
-        }
-
-        .project-meta {
-          color: #a0aec0;
-          font-size: 0.75rem;
-          margin-bottom: 0.5rem;
-        }
-
-       
-
-        .description-box {
-  background-color: #2d3748;
-  border-radius: 6px;
-  padding: 1rem;
-  margin: 1rem 0;
-  border: 1px solid #4a5568;
-  color: #e2e8f0;
-  font-size: 0.75rem;
-  line-height: 1.6;
-  white-space: pre-wrap;
-}
-
-        .form-group {
-          margin-bottom: 1rem;
-        }
-
-       .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-          }
-
-          .input-field:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-        .date-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-         .date-label {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-          }
-
-        .select-field {
-          padding: 0.75rem;
-          border-radius: 6px;
-          background-color: #2d3748;
-          border: 1px solid #4a5568;
-          color: white;
-          font-size: 0.75rem;
-          width: 100%;
-        }
-
-    .btn-group {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-          }
-
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-}
-
-.btn:hover {
- transform: translateY(-1px);
-}
-
-.btn:active {
-  transform: scale(1);
-}
-
-   .btn-primary {
-            background: linear-gradient(to right, #3182ce, #4facfe);
-            color: white;
-          }
-
-      .btn-danger {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-
-.btn-success {
-  background: linear-gradient(to right, #38a169, #68d391);
-  color: white;
-}
-
-        .btn-secondary {
-            background-color: #4a5568;
-            color: white;
-          }
-
-          
-          .btn-ai {
-            background: linear-gradient(to right, #17a2b8, #4fc3f7);
-            color: white;
-          }
-
-           .present-toggle {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition:  background-color 0.2s ease;
-          }
-
-           .present-toggle.active {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .present-toggle.inactive {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-
-.include-toggle {
-            background: none;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-
-  .include-toggle.included {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .include-toggle.excluded {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }de-toggle:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
-
-
-        .toggle-btn {
-          width: 100%;
-          padding: 0.75rem;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          border: none;
-          cursor: pointer;
-          margin-bottom: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .toggle-btn.active {
-          background-color: #38a169;
-          color: white;
-        }
-
-        .toggle-btn.inactive {
-          background-color: #4a5568;
-          color: white;
-        }
-
-        
-
-       .loading-dots {
-            display: flex;
-            gap: 4px;
-          }
-
-          .dot {
-            width: 6px;
-            height: 6px;
-            background-color: white;
-            border-radius: 50%;
-            animation: dot-flashing 1s infinite linear alternate;
-          }
-
-          .dot:nth-child(2) { animation-delay: 0.2s; }
-          .dot:nth-child(3) { animation-delay: 0.4s; }
-
-          @keyframes dot-flashing {
-            0% { opacity: 0.2; }
-            100% { opacity: 1; }
-          }
-
-          @media (max-width: 640px) {
-            .btn-group {
-              flex-direction: column;
-            }
-            
-            .btn {
-              width: 100%;
-            }
-          }
-
-          .bold-text {
-            color: #63b3ed;
-            font-weight: 600;
-          }
-
-          
-
-      
-         
-
-
-
-  ./* Button container for view mode */
-.actions-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  justify-content: flex-start;
-}
-
-@media (max-width: 640px) {
-  .actions-group {
-    flex-direction: column;
-  }
-  
-  .actions-group button {
-    width: 100%;
-  }
-}
-
-/* AI loading button style */
-.btn-ai {
-  background: linear-gradient(to right, #17a2b8, #4fc3f7);
-  color: white;
-}
-
-/* Move buttons style */
-.move-buttons {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  display: flex;
-  gap: 0.5rem;
-}
-
-.move-btn {
-  padding: 0.5rem;
-  border-radius: 5px;
-  background: linear-gradient(to right, #007bff, #4facfe);
-  color: white;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: 0.3s ease;
-}
-
-.move-btn:disabled {
-  background: linear-gradient(to right, #d3d3d3, #e0e0e0);
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.move-btn:not(:disabled):hover {
-  transform: scale(1.05);
-}
-
-.bold-button {
-  position: absolute; /* Change from fixed to absolute */
-  background: linear-gradient(to right, #3182ce, #4facfe);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.bold-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-      `}
-    </style>
-
-   
-
+  <div className="bg-[#000308] bg-opacity-45 rounded-xl p-6 text-white shadow-md">
     {projects.map((project, index) => (
-      <div key={project._id} className="project-card">
+      <div key={project._id} className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
         {editData && editData.id === project._id ? (
-          <div className="form-group">
+          <div className="space-y-4">
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Project Name"
               value={editData.name}
               onChange={(e) => setEditData({ ...editData, name: e.target.value })}
@@ -807,21 +440,57 @@ return (
 
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Organization"
               value={editData.skills}
               onChange={(e) => setEditData({ ...editData, skills: e.target.value })}
             />
 
-<div className="date-grid">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
+                <select
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                  value={editData.startDate.month}
+                  onChange={(e) => setEditData({
+                    ...editData,
+                    startDate: { ...editData.startDate, month: e.target.value }
+                  })}
+                >
+                  <option value="" disabled>Select Month</option>
+                  {months.map(month => (
+                    <option key={month} value={month}>{month}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
+                <select
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                  value={editData.startDate.year}
+                  onChange={(e) => setEditData({
+                    ...editData,
+                    startDate: { ...editData.startDate, year: e.target.value }
+                  })}
+                >
+                  <option value="" disabled>Select Year</option>
+                  {graduationYears.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {!editData.isPresent && (
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="date-label">Start Date</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
                   <select
-                    className="select-field"
-                    value={editData.startDate.month}
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                    value={editData.endDate.month}
                     onChange={(e) => setEditData({
                       ...editData,
-                      startDate: { ...editData.startDate, month: e.target.value }
+                      endDate: { ...editData.endDate, month: e.target.value }
                     })}
                   >
                     <option value="" disabled>Select Month</option>
@@ -831,13 +500,13 @@ return (
                   </select>
                 </div>
                 <div>
-                  <div className="date-label">&nbsp;</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                   <select
-                    className="select-field"
-                    value={editData.startDate.year}
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                    value={editData.endDate.year}
                     onChange={(e) => setEditData({
                       ...editData,
-                      startDate: { ...editData.startDate, year: e.target.value }
+                      endDate: { ...editData.endDate, year: e.target.value }
                     })}
                   >
                     <option value="" disabled>Select Year</option>
@@ -847,46 +516,11 @@ return (
                   </select>
                 </div>
               </div>
-
-              {!editData.isPresent && (
-                <div className="date-grid">
-                  <div>
-                    <div className="date-label">End Date</div>
-                    <select
-                      className="select-field"
-                      value={editData.endDate.month}
-                      onChange={(e) => setEditData({
-                        ...editData,
-                        endDate: { ...editData.endDate, month: e.target.value }
-                      })}
-                    >
-                      <option value="" disabled>Select Month</option>
-                      {months.map(month => (
-                        <option key={month} value={month}>{month}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <div className="date-label">&nbsp;</div>
-                    <select
-                      className="select-field"
-                      value={editData.endDate.year}
-                      onChange={(e) => setEditData({
-                        ...editData,
-                        endDate: { ...editData.endDate, year: e.target.value }
-                      })}
-                    >
-                      <option value="" disabled>Select Year</option>
-                      {graduationYears.map(year => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
+            )}
 
             <button 
-              className={`toggle-btn ${editData.isPresent ? 'active' : 'inactive'}`}
+              className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+                ${editData.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
               onClick={handleTogglePresent}
             >
               <FontAwesomeIcon icon={editData.isPresent ? faToggleOn : faToggleOff} />
@@ -895,25 +529,24 @@ return (
 
             <textarea
               ref={editTextareaRef}
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[150px] focus:outline-none focus:border-[#63b3ed]"
               placeholder="Project Description"
               value={editData.description}
               onChange={handleEditDescriptionChange}
-              style={{ minHeight: "150px" }}
               onSelect={() => handleSelection(true)}
             />
 
-            <div className="btn-group">
+            <div className="flex flex-wrap gap-3 mt-4">
               <button 
-                className="btn btn-primary"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
                 onClick={() => handleGenerateDescription(editData.name)}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="loading-dots">
-                    <div className="dot" />
-                    <div className="dot" />
-                    <div className="dot" />
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
                   </div>
                 ) : (
                   <>
@@ -923,77 +556,68 @@ return (
                 )}
               </button>
               <button 
-                className="btn btn-success"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={handleUpdate}
               >
                 <FontAwesomeIcon icon={faSave} />
                 Update
               </button>
               <button 
-                className="btn btn-secondary"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={handleCancelEdit}
               >
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
-              {showBoldButton && (
-  <BoldButton
-    onClick={() => applyBold(editData !== null)}
-    style={{
-      top: buttonPosition.top,
-      left: buttonPosition.left,
-    }}
-  />
-)}
             </div>
-          
           </div>
         ) : (
           <>
-            <h3 className="project-title">{project.name}</h3>
-            <div className="project-meta">
+            <h3 className="text-[#63b3ed] text-base font-semibold mb-3">{project.name}</h3>
+            <div className="text-[#a0aec0] text-sm mb-2">
               <strong>Organization:</strong> {project.skills}
             </div>
-            <div className="project-meta">
+            <div className="text-[#a0aec0] text-sm mb-2">
               <strong>Duration:</strong> {project.startDate.month} {project.startDate.year} - 
               {project.isPresent ? " Present" : ` ${project.endDate.month} ${project.endDate.year}`}
             </div>
-            <div className="description-box"> {project.description.split("**").map((part, index) =>
-    index % 2 === 1 ? (
-      <b key={index} style={{ color: "#00d084", fontWeight: 600 }}>{part}</b> // Bold content
-    ) : (
-      <span key={index}>{part}</span> // Regular content
-    )
-  )}</div>
-            
-            <div className="btn-group">
+            <div className="bg-[#2d3748] rounded-lg p-4 my-4 border border-[#4a5568] text-[#e2e8f0] text-sm leading-relaxed whitespace-pre-wrap">
+              {project.description.split("**").map((part, index) =>
+                index % 2 === 1 ? (
+                  <b key={index} className="text-[#00d084] font-semibold">{part}</b>
+                ) : (
+                  <span key={index}>{part}</span>
+                )
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-3 mt-4">
               <button 
-                className="btn btn-primary"
-                onClick={() =>
-                  handleEditClick(
-                    project._id,
-                    project.name,
-                    project.startDate,
-                    project.endDate,
-                    project.skills,
-                    project.description,
-                    project.includeInResume,
-                    project.isPresent || false
-                  )}
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+                onClick={() => handleEditClick(
+                  project._id,
+                  project.name,
+                  project.startDate,
+                  project.endDate,
+                  project.skills,
+                  project.description,
+                  project.includeInResume,
+                  project.isPresent || false
+                )}
               >
                 <FontAwesomeIcon icon={faEdit} />
                 Edit
               </button>
               <button 
-        className={`include-toggle ${project.includeInResume ? 'included' : 'excluded'}`}
-        onClick={() => handleToggleInclude(project._id)}
-      >
-        <FontAwesomeIcon icon={project.includeInResume ? faToggleOn : faToggleOff} />
-        {project.includeInResume ? "Included" : "Excluded"}
-      </button>
-
+                className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium hover:-translate-y-0.5 transition-transform
+                  ${project.includeInResume ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
+                onClick={() => handleToggleInclude(project._id)}
+              >
+                <FontAwesomeIcon icon={project.includeInResume ? faToggleOn : faToggleOff} />
+                {project.includeInResume ? "Included" : "Excluded"}
+              </button>
               <button 
-                className="btn btn-danger"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={() => handleDelete(project._id)}
               >
                 <FontAwesomeIcon icon={faTrash} />
@@ -1001,16 +625,16 @@ return (
               </button>
             </div>
 
-            <div className="move-buttons">
+            <div className="absolute top-4 right-4 flex gap-1">
               <button 
-                className="move-btn"
+                className="p-2 rounded bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white shadow-md transition-transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => moveProjectUp(index)}
                 disabled={index === 0}
               >
                 <FontAwesomeIcon icon={faArrowUp} />
               </button>
               <button 
-                className="move-btn"
+                className="p-2 rounded bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white shadow-md transition-transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => moveProjectDown(index)}
                 disabled={index === projects.length - 1}
               >
@@ -1022,181 +646,179 @@ return (
       </div>
     ))}
 
-{isAdding && (
-        <div className="project-card">
-          <div className="form-group">
-            <input
-              type="text"
-              className="input-field"
-              placeholder="Project Name"
-              value={newProject.name}
-              onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
-            />
+    {/* Add Project Form */}
+    {isAdding && (
+      <div className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568]">
+        <div className="space-y-4">
+          <input
+            type="text"
+            className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+            placeholder="Project Name"
+            value={newProject.name}
+            onChange={(e) => setNewProject({ ...newProject, name: e.target.value })}
+          />
 
-            <input
-              type="text"
-              className="input-field"
-              placeholder="Organization"
-              value={newProject.skills}
-              onChange={(e) => setNewProject({ ...newProject, skills: e.target.value })}
-            />
+          <input
+            type="text"
+            className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+            placeholder="Organization"
+            value={newProject.skills}
+            onChange={(e) => setNewProject({ ...newProject, skills: e.target.value })}
+          />
 
-            <div className="date-grid">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <div className="date-label">Start Date</div>
+              <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
               <select
-                className="select-field"
-                  value={newProject.startDate.month}
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                value={newProject.startDate.month}
+                onChange={(e) => setNewProject({
+                  ...newProject,
+                  startDate: { ...newProject.startDate, month: e.target.value }
+                })}
+              >
+                <option value="" disabled>Select Start Month</option>
+                {months.map(month => (
+                  <option key={month} value={month}>{month}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
+              <select
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                value={newProject.startDate.year}
+                onChange={(e) => setNewProject({
+                  ...newProject,
+                  startDate: { ...newProject.startDate, year: e.target.value }
+                })}
+              >
+                <option value="" disabled>Select Start Year</option>
+                {graduationYears.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {!newProject.isPresent && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
+                <select
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                  value={newProject.endDate.month}
                   onChange={(e) => setNewProject({
                     ...newProject,
-                    startDate: { ...newProject.startDate, month: e.target.value }
+                    endDate: { ...newProject.endDate, month: e.target.value }
                   })}
                 >
-                  <option value="" disabled>Select Start Month</option>
+                  <option value="" disabled>Select End Month</option>
                   {months.map(month => (
                     <option key={month} value={month}>{month}</option>
                   ))}
                 </select>
               </div>
               <div>
-              <div className="date-label">&nbsp;</div>                
+                <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                 <select
-                  className="select-field"
-                  value={newProject.startDate.year}
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
+                  value={newProject.endDate.year}
                   onChange={(e) => setNewProject({
                     ...newProject,
-                    startDate: { ...newProject.startDate, year: e.target.value }
+                    endDate: { ...newProject.endDate, year: e.target.value }
                   })}
                 >
-                  <option value="" disabled>Select Start Year</option>
+                  <option value="" disabled>Select End Year</option>
                   {graduationYears.map(year => (
                     <option key={year} value={year}>{year}</option>
                   ))}
                 </select>
               </div>
             </div>
+          )}
 
-            {!newProject.isPresent && (
-              <div className="date-grid">
-                <div>
-                <div className="date-label">End Date</div>
-                  <select
-                    className="select-field"
-                    value={newProject.endDate.month}
-                    onChange={(e) => setNewProject({
-                      ...newProject,
-                      endDate: { ...newProject.endDate, month: e.target.value }
-                    })}
-                  >
-                    <option value="" disabled>Select End Month</option>
-                    {months.map(month => (
-                      <option key={month} value={month}>{month}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                <div className="date-label">&nbsp;</div>
-                  <select
-                    className="select-field"
-                    value={newProject.endDate.year}
-                    onChange={(e) => setNewProject({
-                      ...newProject,
-                      endDate: { ...newProject.endDate, year: e.target.value }
-                    })}
-                  >
-                    <option value="" disabled>Select End Year</option>
-                    {graduationYears.map(year => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            )}
+          <button 
+            className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+              ${newProject.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
+            onClick={() => setNewProject({ ...newProject, isPresent: !newProject.isPresent })}
+          >
+            <FontAwesomeIcon icon={newProject.isPresent ? faToggleOn : faToggleOff} />
+            {newProject.isPresent ? "Currently Working" : "Project Completed"}
+          </button>
 
+          <textarea
+            ref={newTextareaRef}
+            className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[150px] focus:outline-none focus:border-[#63b3ed]"
+            placeholder="Project Description"
+            value={newProject.description}
+            onChange={handleDescriptionChange}
+            onSelect={() => handleSelection(false)}
+          />
+          
+
+          <div className="flex flex-wrap gap-3 mt-4">
             <button 
-              className={`toggle-btn ${newProject.isPresent ? 'active' : 'inactive'}`}
-              onClick={() => setNewProject({ ...newProject, isPresent: !newProject.isPresent })}
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
+              onClick={() => handleGenerateDescription(newProject.name)}
+              disabled={isLoading}
             >
-              <FontAwesomeIcon icon={newProject.isPresent ? faToggleOn : faToggleOff} />
-              {newProject.isPresent ? "Currently Working" : "Project Completed"}
+              {isLoading ? (
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
+                </div>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faMagic} />
+                  AI Description
+                </>
+              )}
             </button>
-
-            <textarea
-              ref={newTextareaRef}
-              className="input-field"
-              placeholder="Project Description"
-              value={newProject.description}
-              onChange={handleDescriptionChange}
-              onSelect={() => handleSelection(false)}
-              style={{ minHeight: "150px" }}
-            />
-            
-
-            <div className="btn-group">
-              <button 
-                className="btn btn-primary"
-                onClick={() => handleGenerateDescription(newProject.name)}
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="loading-dots">
-                    <div className="dot" />
-                    <div className="dot" />
-                    <div className="dot" />
-                  </div>
-                ) : (
-                  <>
-                    <FontAwesomeIcon icon={faMagic} />
-                    AI Description
-                  </>
-                )}
-              </button>
-              <button 
-                className="btn btn-success"
-                onClick={handleSaveClick}
-              >
-                <FontAwesomeIcon icon={faSave} />
-                Save
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={() => setIsAdding(false)}
-              >
-                <FontAwesomeIcon icon={faTimes} />
-                Cancel
-              </button>
-
-              {showBoldButton && (
-  <BoldButton
-    onClick={() => applyBold(editData !== null)}
-    style={{
-      top: buttonPosition.top,
-      left: buttonPosition.left,
-    }}
-  />
-)}
-
-            </div>
+            <button 
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+              onClick={handleSaveClick}
+            >
+              <FontAwesomeIcon icon={faSave} />
+              Save
+            </button>
+            <button 
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+              onClick={() => setIsAdding(false)}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+              Cancel
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )}
 
-      {/* Add button at the bottom if not currently adding */}
-      {!isAdding && (
-        <button 
-          className="btn btn-primary"
-          onClick={handleAddClick}
-          style={{ 
-            width: '100%',
-            marginTop: projects.length > 0 ? '1rem' : '0'
-          }}
-        >
-          <FontAwesomeIcon icon={faPlus} />
-          Add Project
-        </button>
-      )}
-    </div>
-  );
+    {!isAdding && (
+      <button 
+        className="flex items-center justify-center gap-2 w-full px-4 py-2 mt-4 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+        onClick={handleAddClick}
+      >
+        <FontAwesomeIcon icon={faPlus} />
+        Add Project
+      </button>
+    )}
+
+    {showBoldButton && (
+      <button
+        className="absolute bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white border-none rounded px-2 py-1 cursor-pointer z-50 flex items-center gap-2 shadow-md hover:-translate-y-0.5 transition-transform"
+        onClick={() => applyBold(editData !== null)}
+        style={{
+          top: buttonPosition.top,
+          left: buttonPosition.left,
+        }}
+      >
+        <FontAwesomeIcon icon={faBold} /> Bold
+      </button>
+    )}
+  </div>
+);
 
 };
 

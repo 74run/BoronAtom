@@ -113,7 +113,39 @@ UserRoute(app);
 
 
 
+const GROQ_API_KEY = process.env.REACT_APP_GROQ_API_KEY;
 
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { messages } = req.body;
+    
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama3-70b-8192',
+        messages,
+        temperature: 0.5,
+        max_tokens: 500
+      })
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Groq API error:', response.status, errorText);
+      return res.status(response.status).send(errorText);
+    }
+    
+    const data = await response.json();
+    return res.json(data);
+  } catch (error) {
+    console.error('Server error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 

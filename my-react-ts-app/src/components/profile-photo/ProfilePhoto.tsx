@@ -275,246 +275,37 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
   }, [userID]);
 
   return (
-    <div className="profile-container">
-      <style>
-        {`
-          .profile-container {
-            background-color:rgba(0, 3, 8, 0.45);
-            border-radius: 12px;
-            padding: 2rem;
-            color: white;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-          }
-  
-
-          .profile-pic-profile {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover; /* This ensures the image fills the circle properly */
-  margin-bottom: 1rem;
-  border: 5px solid skyblue;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.profile-pic-profile:hover {
-  border-color: #4facfe;
-  transform: scale(1.05);
-}
-
-
-          .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            margin-bottom: 2.5rem;
-            position: relative;
-          }
-  
-          .profile-name {
-            color: #63b3ed;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.5px;
-          }
-  
-          .profile-email {
-            color: #a0aec0;
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-          }
-  
-          .buttons-container {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-          }
-  
-          .btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-  
-          .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-          }
-  
-          .btn-primary {
-            background: linear-gradient(135deg, #3182ce, #4facfe);
-            color: white;
-          }
-  
-          .btn-secondary {
-            background: linear-gradient(135deg, #38a169, #68d391);
-            color: white;
-          }
-  
-          .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2rem;
-            margin: 2.5rem 0;
-          }
-  
-          .metric-card {
-            background-color: #1a202c;
-            border-radius: 12px;
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s ease;
-          }
-  
-          .metric-card:hover {
-            transform: translateY(-4px);
-          }
-  
-          .metric-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            gap: 10px;
-
-            flex-wrap: wrap;
-          }
- .metric-title {
-    color: #63b3ed;
-    font-size: 1.1rem; /* Slightly larger for better readability */
-    font-weight: 600;
-    margin: 0; /* Removes extra margins */
-    word-break: break-word; /* Ensures long words wrap */
-    flex: 1; /* Allows title to take available space */
-    min-width: 0; /* Prevents title from overflowing */
-      flex-wrap: wrap;
-
-}
-
-.metric-value {
-    color: white;
-    font-size: 1.1rem; /* Match size with title for consistency */
-    font-weight: 700; /* Slightly bolder for emphasis */
-}
-  
-          .progress-bar {
-            height: 8px;
-            background-color: #2d3748;
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-          }
-  
-          .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 1.5s ease-out;
-          }
-  
-          .progress-fill.completion {
-            background: linear-gradient(to right, #3182ce, #4facfe);
-          }
-  
-          .progress-fill.ats {
-            background: linear-gradient(to right, #38a169, #68d391);
-          }
-  
-          .metric-details {
-            margin-top: 1rem;
-            color: #a0aec0;
-            font-size: 0.7rem;
-            line-height: 1.5;
-          }
-  
-          .pdf-preview {
-            width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
-            background: #1a202c;
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-          }
-  
-          @media (max-width: 768px) {
-            .profile-container {
-              padding: 1.5rem;
-            }
-  
-            .buttons-container {
-              flex-direction: column;
-              width: 100%;
-            }
-  
-            .btn {
-              width: 100%;
-              justify-content: center;
-            }
-  
-            .metrics-grid {
-              grid-template-columns: 1fr;
-            }
-          }
-        `}
-      </style>
-  
-      <div className="profile-header">
+    <div className="bg-[#000308] bg-opacity-45 rounded-xl p-8 text-white shadow-lg">
+      <div className="flex flex-col items-center text-center mb-10 relative">
         {isLoading ? (
           <div className="animate-pulse flex flex-col items-center w-full">
             <div className="w-24 h-24 bg-gray-700 rounded-full mb-4"></div>
-           
+            <div className="h-8 w-48 bg-gray-700 rounded mb-2"></div>
+            <div className="h-6 w-32 bg-gray-700 rounded mb-4"></div>
           </div>
         ) : (
-          <img 
-            src={profileImage || avatarUrl.current}
-            alt="Profile"
-            className="profile-pic-profile"
-            onClick={() => setIsProfilePictureModalOpen(true)}
-          />
+          <>
+            <img 
+              src={profileImage || avatarUrl.current}
+              alt="Profile"
+              className="w-24 h-24 rounded-full object-cover mb-4 border-4 border-sky-400 transition-all duration-200 cursor-pointer hover:border-[#4facfe] hover:scale-105"
+              onClick={() => setIsProfilePictureModalOpen(true)}
+            />
+            <h1 className="text-[#63b3ed] text-2xl font-semibold mb-2 tracking-tight">
+              {(eduDetails?.contact?.[0]?.name || 
+               (userDetails?.firstName && userDetails?.lastName && 
+                `${userDetails.firstName} ${userDetails.lastName}`) || 
+               'Add Your Name')}
+            </h1>
+            <p className="text-[#a0aec0] text-base mb-6">
+              {eduDetails?.contact?.[0]?.email || 
+               userDetails?.email || 
+               'Add Your Email'}
+            </p>
+          </>
         )}
 
-<ProfilePictureModal
-  isOpen={isProfilePictureModalOpen}
-  onClose={() => setIsProfilePictureModalOpen(false)}
-  currentImage={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`}
-  onImageUpdate={handleProfilePictureUpdate}
-  handleDelete={handleProfilePictureDelete}
-/>
-{isLoading ? (
-  <div className="animate-pulse">
- <div className="h-8 w-48 bg-gray-700 rounded mb-2"></div>
- <div className="h-6 w-32 bg-gray-700 rounded mb-4"></div>
-  </div>
-) : (
-  <>
-    <h1 className="profile-name">
-      {(eduDetails?.contact?.[0]?.name || 
-       (userDetails?.firstName && userDetails?.lastName && 
-        `${userDetails.firstName} ${userDetails.lastName}`) || 
-       'Add Your Name')}
-    </h1>
-    <p className="profile-email">
-      {eduDetails?.contact?.[0]?.email || 
-       userDetails?.email || 
-       'Add Your Email'}
-    </p>
-  </>
-)}
-        
-        <div className="buttons-container">
+        <div className="flex gap-4 mb-8">
           {isLoading ? (
             <div className="animate-pulse flex gap-4">
               <div className="h-10 w-32 bg-gray-700 rounded"></div>
@@ -522,76 +313,81 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
             </div>
           ) : (
             <>
-              <button className="btn btn-primary" onClick={openModal}>
+              <button 
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium shadow-md hover:-translate-y-0.5 transition-transform"
+                onClick={openModal}
+              >
                 <MdEdit size={18} />
                 Edit Profile
               </button>
-              <button className="btn btn-secondary">
+              <button 
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#38a169] to-[#68d391] text-white text-sm font-medium shadow-md hover:-translate-y-0.5 transition-transform"
+              >
                 <MdPreview size={18} />
                 Preview Resume
               </button>
             </>
           )}
         </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+          {isLoading ? (
+            <>
+              <div className="animate-pulse">
+                <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
+                <div className="h-8 w-full bg-gray-700 rounded"></div>
+              </div>
+              <div className="animate-pulse">
+                <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
+                <div className="h-8 w-full bg-gray-700 rounded"></div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-[#1a202c] rounded-xl p-6 border border-white/10 transition-transform hover:-translate-y-1">
+                <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
+                  <h2 className="text-[#63b3ed] text-lg font-semibold break-words flex-1 min-w-0">Profile Completion</h2>
+                  <span className="text-white text-lg font-bold">{profileCompletion}%</span>
+                </div>
+                <div className="h-2 bg-[#2d3748] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#3182ce] to-[#4facfe] rounded-full transition-all duration-1500"
+                    style={{ width: `${profileCompletion}%` }}
+                  ></div>
+                </div>
+                <p className="text-[#a0aec0] text-sm mt-4 leading-relaxed">
+                  Complete your profile information to improve visibility and opportunities.
+                </p>
+              </div>
+
+              <div className="bg-[#1a202c] rounded-xl p-6 border border-white/10 transition-transform hover:-translate-y-1">
+                <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
+                  <h2 className="text-[#63b3ed] text-lg font-semibold break-words flex-1 min-w-0">ATS Score</h2>
+                  <span className="text-white text-lg font-bold">{atsScore}%</span>
+                </div>
+                <div className="h-2 bg-[#2d3748] rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-[#38a169] to-[#68d391] rounded-full transition-all duration-1500"
+                    style={{ width: `${atsScore}%` }}
+                  ></div>
+                </div>
+                <p className="text-[#a0aec0] text-sm mt-4 leading-relaxed">
+                  Your resume's compatibility score with Applicant Tracking Systems.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
+      <ProfilePictureModal
+        isOpen={isProfilePictureModalOpen}
+        onClose={() => setIsProfilePictureModalOpen(false)}
+        currentImage={profileImage || `https://avatar.iran.liara.run/public/boy?username=${userDetails?.username}`}
+        onImageUpdate={handleProfilePictureUpdate}
+        handleDelete={handleProfilePictureDelete}
+      />
 
-      <div className="metrics-grid">
-        {isLoading ? (
-          <>
-            <div className="metric-card animate-pulse">
-              <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
-              <div className="h-8 w-full bg-gray-700 rounded"></div>
-            </div>
-            <div className="metric-card animate-pulse">
-              <div className="h-6 w-40 bg-gray-700 rounded mb-4"></div>
-              <div className="h-8 w-full bg-gray-700 rounded"></div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="metric-card">
-              <div className="metric-header">
-                <h2 className="metric-title">Profile Completion</h2>
-                <span className="metric-value">{profileCompletion}%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress-fill completion" style={{ width: `${profileCompletion}%` }} />
-              </div>
-              <div className="metric-details">
-            Complete your profile information to improve visibility and opportunities.
-          </div>
-            </div>
-            <div className="metric-card">
-              <div className="metric-header">
-                <h2 className="metric-title">ATS Score</h2>
-                <span className="metric-value">{atsScore}%</span>
-              </div>
-              <div className="progress-bar">
-                <div className="progress-fill ats" style={{ width: `${atsScore}%` }} />
-              </div>
-              <div className="metric-details">
-            Your resume's compatibility score with Applicant Tracking Systems.
-          </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* <div className="pdf-preview">
-        {isLoading ? (
-          <div className="animate-pulse">
-            <div className="h-96 bg-gray-700 rounded"></div>
-          </div>
-        ) : (
-          <PDFResume userDetails={userDetails} eduDetails={eduDetails} />
-        )}
-      </div> */}
-
-
-  
-     
-  
       {modalOpen && (
         <Modal
           updateAvatar={updateAvatar}
@@ -599,7 +395,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
           currentAvatar={avatarUrl.current}
         />
       )}
-  
+
       <ModalContact isOpen={isModalOpen} closeModal={closeModal} />
     </div>
   );

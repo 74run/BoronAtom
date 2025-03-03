@@ -304,303 +304,58 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
   };
 
   return (
-    <div className="education-container">
-      <style>
-        {`
-          .education-container {
-            background-color: rgba(0, 3, 8, 0.45);
-            border-radius: 12px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .education-card {
-            background-color: #1a202c;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #4a5568;
-            transition: all 0.2s ease;
-          }
-
-          .education-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-
-          .school-name {
-            color: #63b3ed;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-          }
-
-          .education-info {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-
-          .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-          }
-
-          .input-field:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-          .select-field {
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            width: 100%;
-            margin-bottom: 1rem;
-          }
-
-          .date-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
-          }
-
-          .date-label {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-          }
-
-          .btn-group {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-          }
-
-          .btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .btn:hover {
-            transform: translateY(-1px);
-          }
-
-          .btn-primary {
-            background: linear-gradient(to right, #3182ce, #4facfe);
-            color: white;
-          }
-
-          .btn-success {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .btn-danger {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .btn-secondary {
-            background-color: #4a5568;
-            color: white;
-          }
-
-          .present-toggle {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-          }
-
-          .present-toggle.active {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .present-toggle.inactive {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .include-toggle {
-            background: none;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-
-          .include-toggle.included {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .include-toggle.excluded {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .university-search {
-            position: relative;
-            margin-bottom: 1rem;
-          }
-
-          .university-input {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.875rem;
-            margin-bottom: 0;
-          }
-
-          .university-input:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-          .university-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            border-radius: 6px;
-            margin-top: 0.25rem;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 50;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .university-option {
-            padding: 0.75rem;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-          }
-
-          .university-option:hover {
-            background-color: #4a5568;
-          }
-
-          .no-results {
-            padding: 0.75rem;
-            color: #a0aec0;
-            text-align: center;
-          }
-
-          .university-dropdown::-webkit-scrollbar {
-            width: 8px;
-          }
-
-          .university-dropdown::-webkit-scrollbar-track {
-            background: #2d3748;
-          }
-
-          .university-dropdown::-webkit-scrollbar-thumb {
-            background-color: #4a5568;
-            border-radius: 4px;
-          }
-        `}
-      </style>
-
-      <h2 className="section-header">Education</h2>
+    <div className="bg-[#000308] bg-opacity-45 rounded-xl p-6 text-white shadow-md">
+      <h2 className="text-lg font-semibold mb-6">Education</h2>
 
       {educations.map((education) => (
-  <div key={education._id} className="education-card">
-    {editData && editData.id === education._id ? (
-      <div className="form-group">
-        <div className="relative w-full">
-          <input
-            type="text"
-            list="universities"
-            className="input-field"
-            placeholder={isLoading ? "Loading universities..." : "Search University"}
-            value={editData.university}
-            onChange={(e) => {
-              const selectedUniversity = universities.find(
-                (uni: University) => uni.name === e.target.value
-              );
+        <div key={education._id} className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
+          {editData && editData.id === education._id ? (
+            <div className="space-y-4">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  list="universities"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+                  placeholder={isLoading ? "Loading universities..." : "Search University"}
+                  value={editData.university}
+                  onChange={(e) => {
+                    const selectedUniversity = universities.find(
+                      (uni: University) => uni.name === e.target.value
+                    );
+                    setEditData({
+                      ...editData,
+                      university: e.target.value,
+                      universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : ''
+                    });
+                  }}
+                  disabled={isLoading}
+                />
+                
+                <input
+                  type="text"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+                  placeholder="University URL"
+                  value={editData.universityUrl}
+                  onChange={(e) => setEditData({ ...editData, universityUrl: e.target.value })}
+                />
 
-              setEditData({
-                ...editData,
-                university: e.target.value,
-                universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : ''
-              });
-            }}
-            disabled={isLoading}
-          />
-          
-          <input
-            type="text"
-            className="input-field"
-            placeholder="University URL"
-            value={editData.universityUrl}
-            onChange={(e) => setEditData({ ...editData, universityUrl: e.target.value })}
-          />
- 
-          <datalist id="universities">
-            {universities.map((university: { name: string, url: string[] }) => (
-              <option 
-                key={university.name} 
-                value={university.name}
-                data-url={university.url[0]} 
-              />
-            ))}
-          </datalist>
-          {error && (
-            <p className="mt-1 text-sm text-red-600">{error}</p>
-          )}
-        </div>
-    
+                <datalist id="universities">
+                  {universities.map((university: { name: string, url: string[] }) => (
+                    <option 
+                      key={university.name} 
+                      value={university.name}
+                      data-url={university.url[0]} 
+                    />
+                  ))}
+                </datalist>
+                {error && (
+                  <p className="mt-1 text-sm text-red-600">{error}</p>
+                )}
+              </div>
 
               <input
                 type="number"
-                className="input-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 placeholder="CGPA"
                 step="0.01"
                 min="0"
@@ -610,7 +365,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               />
 
               <select
-                className="select-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 value={editData.degree}
                 onChange={(e) => setEditData({ ...editData, degree: e.target.value })}
               >
@@ -623,17 +378,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
               <input
                 type="text"
-                className="input-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 placeholder="Major"
                 value={editData.major}
                 onChange={(e) => setEditData({ ...editData, major: e.target.value })}
               />
 
-              <div className="date-grid">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="date-label">Start Date</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({
                       ...editData,
@@ -647,9 +402,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   </select>
                 </div>
                 <div>
-                  <div className="date-label">&nbsp;</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({
                       ...editData,
@@ -665,11 +420,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               </div>
 
               {!editData.isPresent && (
-                <div className="date-grid">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="date-label">End Date</div>
+                    <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
                     <select
-                      className="select-field"
+                      className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                       value={editData.endDate.month}
                       onChange={(e) => setEditData({
                         ...editData,
@@ -683,9 +438,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                     </select>
                   </div>
                   <div>
-                    <div className="date-label">&nbsp;</div>
+                    <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                     <select
-                      className="select-field"
+                      className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                       value={editData.endDate.year}
                       onChange={(e) => setEditData({
                         ...editData,
@@ -702,23 +457,24 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
               )}
 
               <button 
-                className={`present-toggle ${editData.isPresent ? 'active' : 'inactive'}`}
+                className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+                  ${editData.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
                 onClick={handleTogglePresent}
               >
                 <FontAwesomeIcon icon={editData.isPresent ? faToggleOn : faToggleOff} />
                 {editData.isPresent ? "Currently Studying" : "Completed"}
               </button>
 
-              <div className="btn-group">
+              <div className="flex flex-wrap gap-3">
                 <button 
-                  className="btn btn-success"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleUpdate}
                 >
                   <FontAwesomeIcon icon={faSave} />
                   Save Changes
                 </button>
                 <button 
-                  className="btn btn-secondary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleCancelEdit}
                 >
                   <FontAwesomeIcon icon={faTimes} />
@@ -728,54 +484,52 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             </div>
           ) : (
             <>
-              <h3 className="school-name">{education.university}</h3>
-              <div className="education-info">
+              <h3 className="text-[#63b3ed] text-base font-semibold mb-3">{education.university}</h3>
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>Degree:</strong> {education.degree} in {education.major}
               </div>
-              <div className="education-info">
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>GPA:</strong> {education.cgpa}
               </div>
-              <div className="education-info">
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>Duration:</strong> {education.startDate.month} {education.startDate.year} - 
                 {education.isPresent ? " Present" : ` ${education.endDate.month} ${education.endDate.year}`}
               </div>
               {education.universityUrl && (
-                <div className="education-info">
-                  <strong>University URL:</strong> <a href={education.universityUrl} target="_blank" rel="noopener noreferrer">{education.universityUrl}</a>
+                <div className="text-[#a0aec0] text-sm mb-2">
+                  <strong>University URL:</strong> <a href={education.universityUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">{education.universityUrl}</a>
                 </div>
               )}
 
-              <div className="btn-group">
+              <div className="flex flex-wrap gap-3 mt-4">
                 <button 
-                  className="btn btn-primary"
-                  onClick={() =>
-                    handleEditClick(
-                      education._id,
-                      education.university,
-                      education.cgpa,
-                      education.degree,
-                      education.major,
-                      education.startDate,
-                      education.endDate,
-                      education.universityUrl,
-                      education.includeInResume,
-                      education.isPresent || false
-                    )}
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+                  onClick={() => handleEditClick(
+                    education._id,
+                    education.university,
+                    education.cgpa,
+                    education.degree,
+                    education.major,
+                    education.startDate,
+                    education.endDate,
+                    education.universityUrl,
+                    education.includeInResume,
+                    education.isPresent || false
+                  )}
                 >
                   <FontAwesomeIcon icon={faEdit} />
                   Edit
                 </button>
-                
                 <button 
-                  className={`include-toggle ${education.includeInResume ? 'included' : 'excluded'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium hover:-translate-y-0.5 transition-transform
+                    ${education.includeInResume ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
                   onClick={() => handleToggleInclude(education._id)}
                 >
                   <FontAwesomeIcon icon={education.includeInResume ? faToggleOn : faToggleOff} />
                   {education.includeInResume ? "Included" : "Excluded"}
                 </button>
-
                 <button 
-                  className="btn btn-danger"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={() => handleDelete(education._id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
@@ -789,58 +543,57 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
       {/* Add Education Form */}
       {isAdding && (
-        <div className="education-card">
-          <div className="form-group">
-          <div className="university-search">
-          <input
-  type="text"
-  list="universities"
-  className="input-field"
-  placeholder={isLoading ? "Loading universities..." : "Search University"}
-  value={newEducation.university}
-  onChange={(e) => {
-    const selectedUniversity = universities.find(
-      (uni: University) => uni.name === e.target.value
-    );
+        <div className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568]">
+          <div className="space-y-4">
+            <div className="relative w-full">
+              <input
+                type="text"
+                list="universities"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+                placeholder={isLoading ? "Loading universities..." : "Search University"}
+                value={newEducation.university}
+                onChange={(e) => {
+                  const selectedUniversity = universities.find(
+                    (uni: University) => uni.name === e.target.value
+                  );
+                  setNewEducation({
+                    ...newEducation,
+                    university: e.target.value,
+                    universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : '', // Use first URL or empty string
+                  });
+                }}
+                disabled={isLoading}
+              />
+              
+              <input
+                type="text"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
+                placeholder="University URL"
+                value={newEducation.universityUrl}
+                onChange={(e) => setNewEducation({ 
+                  ...newEducation, 
+                  universityUrl: e.target.value 
+                })}
+              />
+              
+              <datalist id="universities">
+                {universities.map((university: { name: string, url: string[] }) => (
+                  <option 
+                    key={university.name} 
+                    value={university.name}
+                    data-url={university.url[0]}
+                  />
+                ))}
+              </datalist>
 
-    setNewEducation({
-      ...newEducation,
-      university: e.target.value,
-      universityUrl: selectedUniversity ? selectedUniversity.url[0] || '' : '', // Use first URL or empty string
-    });
-  }}
-  disabled={isLoading}
-/>
-  
-  <input
-    type="text"
-    className="input-field"
-    placeholder="University URL"
-    value={newEducation.universityUrl}
-    onChange={(e) => setNewEducation({ 
-      ...newEducation, 
-      universityUrl: e.target.value 
-    })}
-  />
-  
-  <datalist id="universities">
-    {universities.map((university: { name: string, url: string[] }) => (
-      <option 
-        key={university.name} 
-        value={university.name}
-        data-url={university.url[0]}
-      />
-    ))}
-  </datalist>
-
-  {error && (
-    <p className="mt-1 text-sm text-red-600">{error}</p>
-  )}
-</div>
+              {error && (
+                <p className="mt-1 text-sm text-red-600">{error}</p>
+              )}
+            </div>
 
             <input
               type="number"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="CGPA"
               step="0.01"
               min="0"
@@ -850,7 +603,7 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             />
 
             <select
-              className="select-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               value={newEducation.degree}
               onChange={(e) => setNewEducation({ ...newEducation, degree: e.target.value })}
             >
@@ -863,17 +616,17 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Major"
               value={newEducation.major}
               onChange={(e) => setNewEducation({ ...newEducation, major: e.target.value })}
             />
 
-            <div className="date-grid">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="date-label">Start Date</div>
+                <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
                 <select
-                  className="select-field"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                   value={newEducation.startDate.month}
                   onChange={(e) => setNewEducation({
                     ...newEducation,
@@ -887,9 +640,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                 </select>
               </div>
               <div>
-                <div className="date-label">&nbsp;</div>
+                <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                 <select
-                  className="select-field"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                   value={newEducation.startDate.year}
                   onChange={(e) => setNewEducation({
                     ...newEducation,
@@ -905,11 +658,11 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             </div>
 
             {!newEducation.isPresent && (
-              <div className="date-grid">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="date-label">End Date</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={newEducation.endDate.month}
                     onChange={(e) => setNewEducation({
                       ...newEducation,
@@ -924,9 +677,9 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
                   </select>
                 </div>
                 <div>
-                  <div className="date-label">&nbsp;</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={newEducation.endDate.year}
                     onChange={(e) => setNewEducation({
                       ...newEducation,
@@ -944,23 +697,24 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
             )}
 
             <button 
-              className={`present-toggle ${newEducation.isPresent ? 'active' : 'inactive'}`}
+              className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+                ${newEducation.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
               onClick={handleTogglePresent}
             >
               <FontAwesomeIcon icon={newEducation.isPresent ? faToggleOn : faToggleOff} />
               {newEducation.isPresent ? "Currently Studying" : "Completed"}
             </button>
 
-            <div className="btn-group">
+            <div className="flex flex-wrap gap-3">
               <button 
-                className="btn btn-success"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={handleSaveClick}
               >
                 <FontAwesomeIcon icon={faSave} />
                 Save
               </button>
               <button 
-                className="btn btn-secondary"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={() => setIsAdding(false)}
               >
                 <FontAwesomeIcon icon={faTimes} />
@@ -973,12 +727,8 @@ const EducationSection: React.FC<EducationProps> = ({ Educations, UserDetail, on
 
       {!isAdding && (
         <button 
-          className="btn btn-primary"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2 mt-4 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
           onClick={handleAddClick}
-          style={{ 
-            width: '100%',
-            marginTop: educations.length > 0 ? '1rem' : '0'
-          }}
         >
           <FontAwesomeIcon icon={faPlus} />
           Add Education

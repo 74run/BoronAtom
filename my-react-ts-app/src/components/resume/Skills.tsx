@@ -199,208 +199,8 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="skills-container">
-      <style>
-        {`
-          .skills-container {
-            background-color: rgba(0, 3, 8, 0.45);
-            border-radius: 12px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .section-header {
-            color: #63b3ed;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-          }
-
-          .skill-card {
-            background-color: #1a202c;
-            border-radius: 8px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            border: 1px solid #4a5568;
-            transition: all 0.2s ease;
-            position: relative;
-          }
-
-          .skill-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-
-          .drag-handle {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: #4a5568;
-            cursor: grab;
-          }
-
-          .drag-handle:active {
-            cursor: grabbing;
-          }
-
-          .domain-name {
-            color: #63b3ed;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-          }
-
-          .skill-name {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-          }
-
-          .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-          }
-
-          .input-field:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-          .btn-group {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-          }
-
-          .btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .btn:hover {
-            transform: translateY(-1px);
-          }
-
-          .btn-primary {
-            background: linear-gradient(to right, #3182ce, #4facfe);
-            color: white;
-          }
-
-          .btn-success {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .btn-danger {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .btn-secondary {
-            background-color: #4a5568;
-            color: white;
-          }
-
-          .include-toggle {
-            background: none;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-
-          .include-toggle.included {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .include-toggle.excluded {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .move-buttons {
-            position: absolute;
-            right: 3rem;
-            top: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-          }
-
-          .move-btn {
-            padding: 0.25rem;
-            background: none;
-            border: none;
-            color: #4a5568;
-            cursor: pointer;
-            transition: color 0.2s ease;
-          }
-
-          .move-btn:hover:not(:disabled) {
-            color: #63b3ed;
-          }
-
-          .move-btn:disabled {
-            color: #2d3748;
-            cursor: not-allowed;
-          }
-
-          .loading-dots {
-            display: flex;
-            gap: 4px;
-          }
-
-          .dot {
-            width: 6px;
-            height: 6px;
-            background-color: white;
-            border-radius: 50%;
-            animation: dot-flashing 1s infinite linear alternate;
-          }
-
-          .dot:nth-child(2) { animation-delay: 0.2s; }
-          .dot:nth-child(3) { animation-delay: 0.4s; }
-
-          @keyframes dot-flashing {
-            0% { opacity: 0.2; }
-            100% { opacity: 1; }
-          }
-
-          @media (max-width: 640px) {
-            .btn-group {
-              flex-direction: column;
-            }
-            
-            .btn {
-              width: 100%;
-            }
-          }
-        `}
-      </style>
-
-      <h2 className="section-header">Skills</h2>
+    <div className="bg-opacity-45 bg-[#000308] rounded-xl p-6 text-white shadow-md">
+      <h2 className="text-[#63b3ed] text-lg font-semibold mb-6">Skills</h2>
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="skills">
@@ -412,38 +212,37 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className="skill-card"
-                      style={{
-                        ...provided.draggableProps.style,
-                        backgroundColor: snapshot.isDragging ? '#4a5568' : '#1a202c',
-                      }}
+                      className={`bg-[#1a202c] rounded-lg p-5 mb-4 border border-[#4a5568] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg relative ${
+                        snapshot.isDragging ? 'bg-[#4a5568]' : ''
+                      }`}
+                      style={provided.draggableProps.style}
                     >
                       {editData && editData.id === skill._id ? (
                         <div className="edit-form">
                           <input
                             type="text"
-                            className="input-field"
+                            className="w-full p-3 rounded-md bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                             placeholder="Domain"
                             value={editData.domain}
                             onChange={(e) => setEditData({ ...editData, domain: e.target.value })}
                           />
                           <input
                             type="text"
-                            className="input-field"
+                            className="w-full p-3 rounded-md bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                             placeholder="Skill Name"
                             value={editData.name}
                             onChange={(e) => setEditData({ ...editData, name: e.target.value })}
                           />
-                          <div className="btn-group">
+                          <div className="flex gap-3 flex-wrap">
                             <button 
-                              className="btn btn-success"
+                              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                               onClick={handleUpdate}
                             >
                               <FontAwesomeIcon icon={faSave} />
                               Update
                             </button>
                             <button 
-                              className="btn btn-secondary"
+                              className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                               onClick={handleCancelEdit}
                             >
                               <FontAwesomeIcon icon={faTimes} />
@@ -453,53 +252,48 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
                         </div>
                       ) : (
                         <>
-                          <div {...provided.dragHandleProps} className="drag-handle">
+                          <div {...provided.dragHandleProps} className="absolute top-4 right-4 text-[#4a5568] cursor-grab active:cursor-grabbing">
                             <FontAwesomeIcon icon={faGripVertical} />
                           </div>
-                          <h3 className="domain-name">{skill.domain}</h3>
-                          <p className="skill-name">{skill.name}</p>
-                          <div className="btn-group">
+                          <h3 className="text-[#63b3ed] text-base font-semibold mb-2">{skill.domain}</h3>
+                          <p className="text-[#a0aec0] text-xs mb-4">{skill.name}</p>
+                          <div className="flex gap-3 flex-wrap">
                             <button 
-                              className="btn btn-primary"
-                              onClick={() =>
-                                handleEditClick(
-                                  skill._id,
-                                  skill.domain,
-                                  skill.name,
-                                  skill.includeInResume
-                                )
-                              }
+                              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+                              onClick={() => handleEditClick(skill._id, skill.domain, skill.name, skill.includeInResume)}
                             >
                               <FontAwesomeIcon icon={faEdit} />
                               Edit
                             </button>
-                           
                             <button 
-                              className={`include-toggle ${skill.includeInResume ? 'included' : 'excluded'}`}
+                              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium hover:-translate-y-0.5 transition-transform ${
+                                skill.includeInResume 
+                                  ? 'bg-gradient-to-r from-green-600 to-green-400' 
+                                  : 'bg-gradient-to-r from-red-600 to-red-400'
+                              } text-white`}
                               onClick={() => handleToggleInclude(skill._id)}
                             >
                               <FontAwesomeIcon icon={skill.includeInResume ? faToggleOn : faToggleOff} />
                               {skill.includeInResume ? 'Included' : 'Excluded'}
                             </button>
-
                             <button 
-                              className="btn btn-danger"
+                              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                               onClick={() => handleDelete(skill._id)}
                             >
                               <FontAwesomeIcon icon={faTrash} />
                               Delete
                             </button>
                           </div>
-                          <div className="move-buttons">
+                          <div className="absolute right-12 top-4 flex flex-col gap-1">
                             <button 
-                              className="move-btn"
+                              className={`p-1 text-[#4a5568] hover:text-[#63b3ed] transition-colors ${index === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
                               onClick={() => moveSkillUp(index)}
                               disabled={index === 0}
                             >
                               <FontAwesomeIcon icon={faArrowUp} />
                             </button>
                             <button 
-                              className="move-btn"
+                              className={`p-1 text-[#4a5568] hover:text-[#63b3ed] transition-colors ${index === skills.length - 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
                               onClick={() => moveSkillDown(index)}
                               disabled={index === skills.length - 1}
                             >
@@ -519,32 +313,32 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
       </DragDropContext>
 
       {isAdding && (
-        <div className="skill-card">
+        <div className="bg-[#1a202c] rounded-lg p-5 mb-4 border border-[#4a5568]">
           <input
             type="text"
-            className="input-field"
+            className="w-full p-3 rounded-md bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
             placeholder="Domain Name"
             value={newSkill.domain}
             onChange={(e) => setNewSkill({ ...newSkill, domain: e.target.value })}
           />
           <input
             type="text"
-            className="input-field"
+            className="w-full p-3 rounded-md bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
             placeholder="Skill Name"
             value={newSkill.name}
             onChange={(e) => setNewSkill({ ...newSkill, name: e.target.value })}
           />
-          <div className="btn-group">
+          <div className="flex gap-3 flex-wrap">
             <button 
-              className="btn btn-primary"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium disabled:opacity-50"
               onClick={handleAISuggestions}
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="loading-dots">
-                  <div className="dot" />
-                  <div className="dot" />
-                  <div className="dot" />
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-[dot-flashing_1s_infinite_linear_alternate]" />
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-[dot-flashing_1s_infinite_linear_alternate_0.2s]" />
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-[dot-flashing_1s_infinite_linear_alternate_0.4s]" />
                 </div>
               ) : (
                 <>
@@ -554,14 +348,14 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
               )}
             </button>
             <button 
-              className="btn btn-success"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium"
               onClick={handleSaveClick}
             >
               <FontAwesomeIcon icon={faSave} />
               Save
             </button>
             <button 
-              className="btn btn-secondary"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium"
               onClick={() => setIsAdding(false)}
             >
               <FontAwesomeIcon icon={faTimes} />
@@ -573,9 +367,8 @@ const Skills: React.FC<SkillsProps> = ({ Skills, onEdit, onDelete }) => {
 
       {!isAdding && (
         <button 
-          className="btn btn-primary"
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium w-full mt-4"
           onClick={handleAddClick}
-          style={{ width: '100%', marginTop: skills.length > 0 ? '1rem' : '0' }}
         >
           <FontAwesomeIcon icon={faPlus} />
           Add Skill
