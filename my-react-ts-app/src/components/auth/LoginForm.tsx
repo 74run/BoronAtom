@@ -124,8 +124,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black">
       <Navbar />
       
-      <div className="container mx-auto px-4 pt-20 pb-12">
-        <div className="max-w-md mx-auto">
+      <div className="container mx-auto px-4 pt-20 pb-12 flex items-center justify-center min-h-[calc(100vh-80px)]">
+        <div className="max-w-md w-full">
           <div className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-xl p-8 border border-gray-700">
             <div className="mb-8 text-center">
               <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
@@ -135,20 +135,20 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin }) => {
             {/* Social Login Buttons */}
             <div className="space-y-3 mb-8">
               <button
-                 onClick={handleGoogleSignIn}
+                onClick={handleGoogleSignIn}
                 className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors duration-200 group"
               >
                 <FcGoogle className="w-5 h-5" />
                 <span className="text-gray-300 group-hover:text-white">Continue with Google</span>
               </button>
               
-              <button
+              {/* <button
                 onClick={handleLinkedInLogin}
                 className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-gray-600 rounded-lg hover:bg-gray-700/50 transition-colors duration-200 group"
               >
                 <FaLinkedin className="w-5 h-5 text-[#0A66C2]" />
                 <span className="text-gray-300 group-hover:text-white">Continue with LinkedIn</span>
-              </button>
+              </button> */}
             </div>
 
             {/* <div className="relative mb-8">

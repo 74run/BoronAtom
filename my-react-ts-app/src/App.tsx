@@ -11,14 +11,15 @@ import Portfolio from './components/Portfolio/portfolio';
 import { useParams } from 'react-router-dom';
 import Subscription from './components/auth/Subscription';
 import TemplatesPage from './components/Temp/TemplatesPage';
-import ResumeBuilder from './components/profile-photo/AIResumeGenerate';
+// import ResumeBuilder from './components/profile-photo/AIResumeGenerate';
 import { ThemeProvider } from "./components/ThemeProvider";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import LandingPage from './components/LandingPage';
+import LandingPage from './components/landing/LandingPage';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { useUserId } from './components/useUserId';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import ResumeBuilder from './components/chatResume/resume-builder';
 
 const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -66,6 +67,7 @@ const App: React.FC = () => {
           <Route path="/verifyOTP" element={<VerifyOTP />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/templates" element={<TemplatesPage />} />
+          <Route path="/resumebuilder" element={<ResumeBuilder />} />
 
           {/* Protected Routes */}
           <Route 

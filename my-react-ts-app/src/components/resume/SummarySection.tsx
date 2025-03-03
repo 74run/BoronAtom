@@ -202,147 +202,12 @@ const handleGenerateTextClick = () => {
 
 
   return (
-    <div className="summary-container">
-      <style>
-        {`
-          .summary-container {
-            background-color: rgba(0, 3, 8, 0.45);
-            border-radius: 12px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .summary-header {
-            color: #63b3ed;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
-
-          .summary-card {
-            background-color: #1a202c;
-            border-radius: 8px;
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-            border: 1px solid #4a5568;
-            transition: all 0.2s ease;
-          }
-
-          .summary-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-
-          .summary-content {
-            color: #e2e8f0;
-            font-size: 0.75rem;
-            line-height: 1.6;
-            margin-bottom: 1rem;
-          }
-
-          .btn-group {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-          }
-
-
-          .btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .btn:hover {
-            transform: translateY(-1px);
-          }
-
-          .btn-primary {
-            background-color: #3182ce;
-            color: white;
-          }
-
-          .btn-secondary {
-            background-color: #4a5568;
-            color: white;
-          }
-
-          .btn-danger {
-            background-color: #e53e3e;
-            color: white;
-          }
-
-          .btn-success {
-            background-color: #38a169;
-            color: white;
-          }
-
-          .textarea-field {
-            width: 100%;
-            min-height: 120px;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            resize: vertical;
-            margin-bottom: 1rem;
-          }
-
-          .textarea-field:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-          .loading-dots {
-            display: flex;
-            gap: 4px;
-          }
-
-          .section-header {
-            color: #63b3ed;
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-          }
-
-
-          .dot {
-            width: 6px;
-            height: 6px;
-            background-color: white;
-            border-radius: 50%;
-            animation: dot-flashing 1s infinite linear alternate;
-          }
-
-          .dot:nth-child(2) { animation-delay: 0.2s; }
-          .dot:nth-child(3) { animation-delay: 0.4s; }
-
-          @keyframes dot-flashing {
-            0% { opacity: 0.2; }
-            100% { opacity: 1; }
-          }
-        `}
-      </style>
-
-      <div className="section-header">
+    <div className="bg-[#000308] bg-opacity-45 rounded-xl p-6 text-white shadow-md">
+      <div className="text-[#63b3ed] text-lg font-semibold mb-6 flex justify-between items-center">
         <span>Summary</span>
         {!isAdding && summarys.length === 0 && (
           <button 
-            className="btn btn-primary"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
             onClick={handleAddClick}
           >
             <FontAwesomeIcon icon={faPlus} />
@@ -352,26 +217,26 @@ const handleGenerateTextClick = () => {
       </div>
 
       {summarys.map((summary) => (
-        <div key={summary._id} className="summary-card">
+        <div key={summary._id} className="bg-[#1a202c] rounded-lg p-5 mb-4 border border-[#4a5568] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg">
           {editData && editData.id === summary._id ? (
             <>
               <textarea
-                className="textarea-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[120px] resize-y mb-4 focus:outline-none focus:border-[#63b3ed]"
                 value={editData.content}
                 onChange={(e) => setEditData({ ...editData, content: e.target.value })}
                 placeholder="Enter your professional summary..."
               />
-              <div className="btn-group">
+              <div className="flex flex-wrap gap-3">
                 <button 
-                  className="btn btn-primary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
                   onClick={handleGenerateTextClick}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <div className="loading-dots">
-                      <div className="dot" />
-                      <div className="dot" />
-                      <div className="dot" />
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
                     </div>
                   ) : (
                     <>
@@ -381,14 +246,14 @@ const handleGenerateTextClick = () => {
                   )}
                 </button>
                 <button 
-                  className="btn btn-success"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleUpdate}
                 >
                   <FontAwesomeIcon icon={faSave} />
                   Save
                 </button>
                 <button 
-                  className="btn btn-secondary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleCancelClick}
                 >
                   <FontAwesomeIcon icon={faTimes} />
@@ -398,18 +263,18 @@ const handleGenerateTextClick = () => {
             </>
           ) : (
             <>
-              <div className="summary-content">{summary.content}</div>
+              <div className="text-[#e2e8f0] text-sm leading-relaxed mb-4">{summary.content}</div>
               {!viewOnly && (
-                <div className="btn-group">
+                <div className="flex flex-wrap gap-3">
                   <button 
-                    className="btn btn-primary"
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                     onClick={() => handleEditClick(summary._id, summary.content)}
                   >
                     <FontAwesomeIcon icon={faEdit} />
                     Edit
                   </button>
                   <button 
-                    className="btn btn-danger"
+                    className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                     onClick={() => handleDelete(summary._id)}
                   >
                     <FontAwesomeIcon icon={faTrash} />
@@ -423,24 +288,24 @@ const handleGenerateTextClick = () => {
       ))}
 
       {isAdding && (
-        <div className="summary-card">
+        <div className="bg-[#1a202c] rounded-lg p-5 mb-4 border border-[#4a5568]">
           <textarea
-            className="textarea-field"
+            className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[120px] resize-y mb-4 focus:outline-none focus:border-[#63b3ed]"
             value={newSummary.content}
             onChange={(e) => setNewSummary({ ...newSummary, content: e.target.value })}
             placeholder="Enter your professional summary..."
           />
-          <div className="btn-group">
+          <div className="flex flex-wrap gap-3">
             <button 
-              className="btn btn-primary"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
               onClick={handleGenerateTextClick}
               disabled={isLoading}
             >
               {isLoading ? (
-                <div className="loading-dots">
-                  <div className="dot" />
-                  <div className="dot" />
-                  <div className="dot" />
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
                 </div>
               ) : (
                 <>
@@ -450,14 +315,14 @@ const handleGenerateTextClick = () => {
               )}
             </button>
             <button 
-              className="btn btn-success"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
               onClick={handleSaveClick}
             >
               <FontAwesomeIcon icon={faSave} />
               Save
             </button>
             <button 
-              className="btn btn-secondary"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
               onClick={() => setIsAdding(false)}
             >
               <FontAwesomeIcon icon={faTimes} />

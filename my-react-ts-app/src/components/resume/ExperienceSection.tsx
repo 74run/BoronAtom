@@ -409,365 +409,16 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
   );
 
   return (
-    <div className="experience-container">
-      <style>
-        {`
-          .experience-container {
-            background-color: rgba(0, 3, 8, 0.45);
-            border-radius: 12px;
-            padding: 1.5rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          }
-
-          .section-header {
-            color: #63b3ed;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-          }
-
-          .experience-card {
-            background-color: #1a202c;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border: 1px solid #4a5568;
-            transition: all 0.2s ease;
-            position: relative;
-          }
-
-          .experience-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          }
-
-          .job-title {
-            color: #63b3ed;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-          }
-
-          .company-info {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-          }
-
-          
-          .description-box {
-            background-color: #2d3748;
-            border-radius: 6px;
-            padding: 1rem;
-            margin: 1rem 0;
-            border: 1px solid #4a5568;
-            color: #e2e8f0;
-            font-size: 0.75rem;
-            line-height: 1.6;
-            white-space: pre-wrap;
-          }
-          .form-group {
-            margin-bottom: 1rem;
-          }
-
-          .input-field {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            margin-bottom: 1rem;
-          }
-
-          .input-field:focus {
-            outline: none;
-            border-color: #63b3ed;
-          }
-
-          .date-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1rem;
-          }
-
-          .date-label {
-            color: #a0aec0;
-            font-size: 0.75rem;
-            margin-bottom: 0.5rem;
-          }
-
-          .select-field {
-            padding: 0.75rem;
-            border-radius: 6px;
-            background-color: #2d3748;
-            border: 1px solid #4a5568;
-            color: white;
-            font-size: 0.75rem;
-            width: 100%;
-          }
-
-          .btn-group {
-            display: flex;
-            gap: 0.75rem;
-            margin-top: 1rem;
-            flex-wrap: wrap;
-          }
-
-          .btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .btn:hover {
-            transform: translateY(-1px);
-          }
-
-         .btn-primary {
-            background: linear-gradient(to right, #3182ce, #4facfe);
-            color: white;
-          }
-
-          .btn-danger {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-
-.btn-success {
-  background: linear-gradient(to right, #38a169, #68d391);
-  color: white;
-}
-
-  .btn-secondary {
-            background-color: #4a5568;
-            color: white;
-          }
-
-          
-          .btn-ai {
-            background: linear-gradient(to right, #17a2b8, #4fc3f7);
-            color: white;
-          }
-          .present-toggle {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: background-color 0.2s ease;
-          }
-
-          .present-toggle.active {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .present-toggle.inactive {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }
-
-          .include-toggle {
-            background: none;
-            border: none;
-            padding: 0.75rem 1rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-          }
-
-  .include-toggle.included {
-            background: linear-gradient(to right, #38a169, #68d391);
-            color: white;
-          }
-
-          .include-toggle.excluded {
-            background: linear-gradient(to right, #e53e3e, #fc8181);
-            color: white;
-          }de-toggle:hover {
-  transform: scale(1.05);
-  opacity: 0.9;
-}
-
-
-          .move-buttons {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            gap: 0.5rem;
-          }
-
-          .move-btn {
-            padding: 0.5rem;
-            border-radius: 4px;
-            background-color: #4a5568;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-          }
-
-          .move-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-          }
-
-          .move-btn:not(:disabled):hover {
-            background-color: #3182ce;
-          }
-
-          .toggle-btn {
-          width: 100%;
-          padding: 0.75rem;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          border: none;
-          cursor: pointer;
-          margin-bottom: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-        }
-
-        .toggle-btn.active {
-          background-color: #38a169;
-          color: white;
-        }
-
-        .toggle-btn.inactive {
-          background-color: #4a5568;
-          color: white;
-        }
-
-        
-
-          .loading-dots {
-            display: flex;
-            gap: 4px;
-          }
-
-          .dot {
-            width: 6px;
-            height: 6px;
-            background-color: white;
-            border-radius: 50%;
-            animation: dot-flashing 1s infinite linear alternate;
-          }
-
-          .dot:nth-child(2) { animation-delay: 0.2s; }
-          .dot:nth-child(3) { animation-delay: 0.4s; }
-
-          @keyframes dot-flashing {
-            0% { opacity: 0.2; }
-            100% { opacity: 1; }
-          }
-
-          @media (max-width: 640px) {
-            .btn-group {
-              flex-direction: column;
-            }
-            
-            .btn {
-              width: 100%;
-            }
-          }
-
-          .bold-text {
-            color: #63b3ed;
-            font-weight: 600;
-          }
-
-          
-
-      
-         
-
-
-
-  ./* Button container for view mode */
-.actions-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  justify-content: flex-start;
-}
-
-@media (max-width: 640px) {
-  .actions-group {
-    flex-direction: column;
-  }
-  
-  .actions-group button {
-    width: 100%;
-  }
-}
-
-.btn-ai {
-  background: linear-gradient(to right, #17a2b8, #4fc3f7);
-  color: white;
-}
-
-.bold-button {
-  position: absolute; /* Change from fixed to absolute */
-  background: linear-gradient(to right, #3182ce, #4facfe);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem;
-  cursor: pointer;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
-}
-
-.bold-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-          
-        `}
-      </style>
-
-      <h2 className="section-header">Experience</h2>
+    <div className="bg-[#000308] bg-opacity-45 rounded-xl p-6 text-white shadow-md">
+      <h2 className="text-[#63b3ed] text-lg font-semibold mb-6">Experience</h2>
 
       {experiences.map((experience, index) => (
-        <div key={experience._id} className="experience-card">
+        <div key={experience._id} className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg relative">
           {editData && editData.id === experience._id ? (
-            <div className="form-group">
+            <div className="space-y-4">
               <input
                 type="text"
-                className="input-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 placeholder="Job Title"
                 value={editData.jobTitle}
                 onChange={(e) => setEditData({ ...editData, jobTitle: e.target.value })}
@@ -775,7 +426,7 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
               <input
                 type="text"
-                className="input-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 placeholder="Company"
                 value={editData.company}
                 onChange={(e) => setEditData({ ...editData, company: e.target.value })}
@@ -783,17 +434,17 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
               <input
                 type="text"
-                className="input-field"
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
                 placeholder="Location"
                 value={editData.location}
                 onChange={(e) => setEditData({ ...editData, location: e.target.value })}
               />
 
-              <div className="date-grid">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="date-label">Start Date</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={editData.startDate.month}
                     onChange={(e) => setEditData({
                       ...editData,
@@ -807,9 +458,9 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                   </select>
                 </div>
                 <div>
-                  <div className="date-label">&nbsp;</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={editData.startDate.year}
                     onChange={(e) => setEditData({
                       ...editData,
@@ -825,11 +476,11 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
               </div>
 
               {!editData.isPresent && (
-                <div className="date-grid">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <div className="date-label">End Date</div>
+                    <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
                     <select
-                      className="select-field"
+                      className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                       value={editData.endDate.month}
                       onChange={(e) => setEditData({
                         ...editData,
@@ -843,9 +494,9 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                     </select>
                   </div>
                   <div>
-                    <div className="date-label">&nbsp;</div>
+                    <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                     <select
-                      className="select-field"
+                      className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                       value={editData.endDate.year}
                       onChange={(e) => setEditData({
                         ...editData,
@@ -862,7 +513,8 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
               )}
 
               <button 
-                className={`present-toggle ${editData.isPresent ? 'active' : 'inactive'}`}
+                className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+                  ${editData.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
                 onClick={handleTogglePresent}
               >
                 <FontAwesomeIcon icon={editData.isPresent ? faToggleOn : faToggleOff} />
@@ -870,26 +522,25 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
               </button>
 
               <textarea
-  className="input-field"
-  placeholder="Job Description"
-  value={editData.description}
-  onChange={handleEditDescriptionChange}
-  onSelect={() => handleSelection(true)}
-  ref={editTextareaRef}
-  style={{ minHeight: "150px" }}
-/>
+                ref={editTextareaRef}
+                className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[150px] focus:outline-none focus:border-[#63b3ed]"
+                placeholder="Job Description"
+                value={editData.description}
+                onChange={handleEditDescriptionChange}
+                onSelect={() => handleSelection(true)}
+              />
 
-              <div className="btn-group">
+              <div className="flex flex-wrap gap-3">
                 <button 
-                  className="btn btn-primary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
                   onClick={() => handleGenerateDescription(editData.jobTitle)}
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <div className="loading-dots">
-                      <div className="dot" />
-                      <div className="dot" />
-                      <div className="dot" />
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                      <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
                     </div>
                   ) : (
                     <>
@@ -898,60 +549,50 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                     </>
                   )}
                 </button>
-
                 <button 
-                  className="btn btn-success"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleUpdate}
                 >
                   <FontAwesomeIcon icon={faSave} />
                   Save Changes
                 </button>
-
                 <button 
-                  className="btn btn-secondary"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={handleCancelEdit}
                 >
                   <FontAwesomeIcon icon={faTimes} />
                   Cancel
                 </button>
-
-                {showBoldButton && (
-  <BoldButton
-    onClick={() => applyBold(editData !== null)}
-    style={{
-      top: buttonPosition.top,
-      left: buttonPosition.left,
-    }}
-  />
-)}
               </div>
             </div>
           ) : (
             <>
-              <h3 className="job-title">{experience.jobTitle}</h3>
-              <div className="company-info">
+              <h3 className="text-[#63b3ed] text-base font-semibold mb-3">{experience.jobTitle}</h3>
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>Company:</strong> {experience.company}
               </div>
-              <div className="company-info">
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>Location:</strong> {experience.location}
               </div>
-              <div className="company-info">
+              <div className="text-[#a0aec0] text-sm mb-2">
                 <strong>Duration:</strong> {experience.startDate.month} {experience.startDate.year} - 
                 {experience.isPresent ? " Present" : ` ${experience.endDate.month} ${experience.endDate.year}`}
               </div>
-    
-              <div className="description-box">{experience.description.split("**").map((part, index) =>
-    index % 2 === 1 ? (
-      <b key={index} style={{ color: "#00d084", fontWeight: 600 }}>{part}</b> // Bold content
-    ) : (
-      <span key={index}>{part}</span> // Regular content
-    )
-  )}</div>
 
-              <div className="btn-group">
+              <div className="bg-[#2d3748] rounded-lg p-4 my-4 border border-[#4a5568] text-[#e2e8f0] text-sm leading-relaxed whitespace-pre-wrap">
+                {experience.description.split("**").map((part, index) =>
+                  index % 2 === 1 ? (
+                    <b key={index} className="text-[#00d084] font-semibold">{part}</b>
+                  ) : (
+                    <span key={index}>{part}</span>
+                  )
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-3">
                 <button 
-                  className="btn btn-primary"
-                  onClick={() =>  handleEditClick(
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
+                  onClick={() => handleEditClick(
                     experience._id,
                     experience.jobTitle,
                     experience.company,
@@ -966,17 +607,16 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                   <FontAwesomeIcon icon={faEdit} />
                   Edit
                 </button>
-
                 <button 
-                  className={`include-toggle ${experience.includeInResume ? 'included' : 'excluded'}`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium hover:-translate-y-0.5 transition-transform
+                    ${experience.includeInResume ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
                   onClick={() => handleToggleInclude(experience._id)}
                 >
                   <FontAwesomeIcon icon={experience.includeInResume ? faToggleOn : faToggleOff} />
                   {experience.includeInResume ? "Included" : "Excluded"}
                 </button>
-
                 <button 
-                  className="btn btn-danger"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-red-600 to-red-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                   onClick={() => handleDelete(experience._id)}
                 >
                   <FontAwesomeIcon icon={faTrash} />
@@ -984,16 +624,16 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                 </button>
               </div>
 
-              <div className="move-buttons">
+              <div className="absolute right-4 top-4 flex gap-1">
                 <button 
-                  className="move-btn"
+                  className="p-2 rounded bg-[#4a5568] text-white hover:bg-[#3182ce] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => moveExperienceUp(index)}
                   disabled={index === 0}
                 >
                   <FontAwesomeIcon icon={faArrowUp} />
                 </button>
                 <button 
-                  className="move-btn"
+                  className="p-2 rounded bg-[#4a5568] text-white hover:bg-[#3182ce] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => moveExperienceDown(index)}
                   disabled={index === experiences.length - 1}
                 >
@@ -1006,11 +646,11 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
       ))}
 
       {isAdding && (
-        <div className="experience-card">
-          <div className="form-group">
+        <div className="bg-[#1a202c] rounded-lg p-6 mb-4 border border-[#4a5568]">
+          <div className="space-y-4">
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Job Title"
               value={newExperience.jobTitle}
               onChange={(e) => setNewExperience({ ...newExperience, jobTitle: e.target.value })}
@@ -1018,7 +658,7 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Company"
               value={newExperience.company}
               onChange={(e) => setNewExperience({ ...newExperience, company: e.target.value })}
@@ -1026,17 +666,17 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
             <input
               type="text"
-              className="input-field"
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm mb-4 focus:outline-none focus:border-[#63b3ed]"
               placeholder="Location"
               value={newExperience.location}
               onChange={(e) => setNewExperience({ ...newExperience, location: e.target.value })}
             />
 
-            <div className="date-grid">
+            <div className="grid grid-cols-2 gap-4">
               <div>
-                <div className="date-label">Start Date</div>
+                <div className="text-[#a0aec0] text-sm mb-2">Start Date</div>
                 <select
-                  className="select-field"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                   value={newExperience.startDate.month}
                   onChange={(e) => setNewExperience({
                     ...newExperience,
@@ -1050,9 +690,9 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                 </select>
               </div>
               <div>
-                <div className="date-label">&nbsp;</div>
+                <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                 <select
-                  className="select-field"
+                  className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                   value={newExperience.startDate.year}
                   onChange={(e) => setNewExperience({
                     ...newExperience,
@@ -1068,11 +708,11 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
             </div>
 
             {!newExperience.isPresent && (
-              <div className="date-grid">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="date-label">End Date</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">End Date</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={newExperience.endDate.month}
                     onChange={(e) => setNewExperience({
                       ...newExperience,
@@ -1086,9 +726,9 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                   </select>
                 </div>
                 <div>
-                  <div className="date-label">&nbsp;</div>
+                  <div className="text-[#a0aec0] text-sm mb-2">&nbsp;</div>
                   <select
-                    className="select-field"
+                    className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm"
                     value={newExperience.endDate.year}
                     onChange={(e) => setNewExperience({
                       ...newExperience,
@@ -1105,7 +745,8 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
             )}
 
             <button 
-              className={`present-toggle ${newExperience.isPresent ? 'active' : 'inactive'}`}
+              className={`w-full p-3 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200
+                ${newExperience.isPresent ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} text-white`}
               onClick={() => setNewExperience({ ...newExperience, isPresent: !newExperience.isPresent })}
             >
               <FontAwesomeIcon icon={newExperience.isPresent ? faToggleOn : faToggleOff} />
@@ -1113,26 +754,25 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
             </button>
 
             <textarea
-  className="input-field"
-  placeholder="Job Description"
-  value={newExperience.description}
-  onChange={handleDescriptionChange}
-  onSelect={() => handleSelection(false)}
-  ref={newTextareaRef}
-  style={{ minHeight: "150px" }}
-/>
+              ref={newTextareaRef}
+              className="w-full p-3 rounded-lg bg-[#2d3748] border border-[#4a5568] text-white text-sm min-h-[150px] focus:outline-none focus:border-[#63b3ed]"
+              placeholder="Job Description"
+              value={newExperience.description}
+              onChange={handleDescriptionChange}
+              onSelect={() => handleSelection(false)}
+            />
 
-            <div className="btn-group">
+            <div className="flex flex-wrap gap-3">
               <button 
-                className="btn btn-primary"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-[#17a2b8] to-[#4fc3f7] text-white text-sm font-medium disabled:opacity-50 hover:-translate-y-0.5 transition-transform"
                 onClick={() => handleGenerateDescription(newExperience.jobTitle)}
                 disabled={isLoading}
               >
                 {isLoading ? (
-                  <div className="loading-dots">
-                    <div className="dot" />
-                    <div className="dot" />
-                    <div className="dot" />
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-100"></div>
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse delay-200"></div>
                   </div>
                 ) : (
                   <>
@@ -1141,32 +781,20 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
                   </>
                 )}
               </button>
-
               <button 
-                className="btn btn-success"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-gradient-to-r from-green-600 to-green-400 text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={handleSaveClick}
               >
                 <FontAwesomeIcon icon={faSave} />
                 Save
               </button>
-
               <button 
-                className="btn btn-secondary"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-[#4a5568] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
                 onClick={() => setIsAdding(false)}
               >
                 <FontAwesomeIcon icon={faTimes} />
                 Cancel
               </button>
-
-              {showBoldButton && (
-  <BoldButton
-    onClick={() => applyBold(editData !== null)}
-    style={{
-      top: buttonPosition.top,
-      left: buttonPosition.left,
-    }}
-  />
-)}
             </div>
           </div>
         </div>
@@ -1174,15 +802,24 @@ const newTextareaRef = useRef<HTMLTextAreaElement>(null);
 
       {!isAdding && (
         <button 
-          className="btn btn-primary"
+          className="flex items-center justify-center gap-2 w-full px-4 py-2 mt-4 rounded-md bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white text-sm font-medium hover:-translate-y-0.5 transition-transform"
           onClick={handleAddClick}
-          style={{ 
-            width: '100%',
-            marginTop: experiences.length > 0 ? '1rem' : '0'
-          }}
         >
           <FontAwesomeIcon icon={faPlus} />
           Add Experience
+        </button>
+      )}
+
+      {showBoldButton && (
+        <button
+          className="absolute bg-gradient-to-r from-[#3182ce] to-[#4facfe] text-white border-none rounded px-2 py-1 cursor-pointer z-50 flex items-center gap-2 shadow-md hover:-translate-y-0.5 transition-transform"
+          onClick={() => applyBold(editData !== null)}
+          style={{
+            top: buttonPosition.top,
+            left: buttonPosition.left,
+          }}
+        >
+          <FontAwesomeIcon icon={faBold} /> Bold
         </button>
       )}
     </div>

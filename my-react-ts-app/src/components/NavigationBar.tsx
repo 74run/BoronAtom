@@ -143,13 +143,13 @@ const Navbar: React.FC<NavbarProps> = () => {
         AI Cover Letter
       </Link>
 
-      <Link 
+      {/* <Link 
         to={`/ai-portfolio/${userID}`} 
         className={`nav-link ${location.pathname === `/ai-portfolio/${userID}` ? 'active' : ''}`}
       >
         <FontAwesomeIcon icon={faBriefcase} className="icon" />
         AI Portfolio
-      </Link>
+      </Link> */}
 
       <div className="profile-section">
         <div className="profile-dropdown" ref={dropdownRef}>
@@ -249,14 +249,14 @@ const Navbar: React.FC<NavbarProps> = () => {
         <span>AI Cover Letter</span>
       </Link>
 
-      <Link 
+      {/* <Link 
         to={`/ai-portfolio/${userID}`} 
         className="mobile-nav-item"
         onClick={() => setMobileMenuOpen(false)}
       >
         <FontAwesomeIcon icon={faBriefcase} />
         <span>AI Portfolio</span>
-      </Link>
+      </Link> */}
 
       <Link 
         to="/settings" 
