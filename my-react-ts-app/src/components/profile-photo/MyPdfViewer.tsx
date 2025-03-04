@@ -1,11 +1,10 @@
-
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FaFilePdf, FaEye, FaLeaf } from 'react-icons/fa';
 
-
 import React, { useRef, useState, useEffect } from "react";
 import { Leaf } from 'lucide-react';
+import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 
 interface UserDetails {
     firstName: string;
@@ -15,76 +14,126 @@ interface UserDetails {
     // Add other fields as needed
   }
 
+interface DateObject {
+  month: string;
+  year: string;
+}
+
+interface Experience {
+  jobTitle: string;
+  company: string;
+  location: string;
+  startDate?: DateObject;
+  endDate?: DateObject;
+  description: string;
+  isPresent?: boolean;
+}
+
+interface Education {
+  university: string;
+  degree: string;
+  major: string;
+  cgpa: string;
+  startDate?: DateObject;
+  endDate?: DateObject;
+  isPresent?: boolean;
+}
+
+interface Project {
+  name: string;
+  startDate?: DateObject;
+  endDate?: DateObject;
+  skills: string;
+  description: string;
+  isPresent?: boolean;
+}
+
+interface Involvement {
+  organization: string;
+  role: string;
+  startDate?: DateObject;
+  endDate?: DateObject;
+  description: string;
+  isPresent?: boolean;
+}
+
 interface EduDetails {
-    education: Array<{
-      university: string;
-      cgpa: string;
-      degree: string;
-      major: string;
-      startDate: { month: string; year: string };
-      endDate: { month: string; year: string };
-      includeInResume: boolean;
-      isPresent?: boolean;
-    }>;
-    experience: Array<{
-      jobTitle: string;
+  education: Array<{
+    university: string;
+    cgpa: string;
+    degree: string;
+    major: string;
+    startDate: DateObject;
+    endDate: DateObject;
+    includeInResume: boolean;
+    isPresent?: boolean;
+  }>;
+  experience: Array<{
+    jobTitle: string;
     company: string;
     location: string;
-    startDate: { month: string; year: string };
-    endDate: { month: string; year: string };
+    startDate: DateObject;
+    endDate: DateObject;
     description: string;
     includeInResume: boolean;
     isPresent?: boolean;
-    }>
-    summary: Array<{
-        content: string;
-      
-    }>
-    project: Array<{
-      name: string;
-      startDate: { month: string; year: string };
-      endDate: { month: string; year: string };
-      skills: string;
-      description: string;
-      includeInResume: boolean;
-      isPresent?: boolean;
-    }>
-
-    involvement: Array<{
+  }>;
+  summary: Array<{
+    content: string;
+  }>;
+  project: Array<{
+    name: string;
+    startDate: DateObject;
+    endDate: DateObject;
+    skills: string;
+    description: string;
+    includeInResume: boolean;
+    isPresent?: boolean;
+  }>;
+  involvement: Array<{
     organization: string;
     role: string;
-    startDate: { month: string; year: string };
-    endDate: { month: string; year: string };
+    startDate: DateObject;
+    endDate: DateObject;
     description: string;
     includeInResume: boolean;
     isPresent?: boolean;
-    }>
-    certification: Array<{
+  }>;
+  certification: Array<{
     name: string;
     issuedBy: string;
-    issuedDate: { month: string; year: string };
-    expirationDate: { month: string; year: string };
+    issuedDate: DateObject;
+    expirationDate: DateObject;
     url: string;
     includeInResume: boolean;
-    }>
-    skills: Array<{
-      domain: string;
-      name: string;
-      includeInResume: boolean;
-    }>
-    contact: Array<{
-      name: string;
-      email: string;
-      phoneNumber: string;
-      linkedIn: string;
-    }>
-  }
+  }>;
+  skills: Array<{
+    domain: string;
+    name: string;
+    includeInResume: boolean;
+  }>;
+  contact: Array<{
+    name: string;
+    email: string;
+    phoneNumber: string;
+    linkedIn: string;
+  }>;
+}
 
 interface PDFGeneratorProps {
   userDetails: UserDetails | null;
   eduDetails: EduDetails | null;
 }
 
+const formatDate = (date: DateObject | undefined, isPresent?: boolean): string => {
+  if (isPresent) return 'Present';
+  if (!date) return 'N/A';
+  
+  // Ensure both month and year exist
+  if (!date.month || !date.year) return 'N/A';
+  
+  return `${date.month} ${date.year}`.trim();
+};
 
 const PDFResume: React.FC<PDFGeneratorProps> = () => {
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
@@ -112,7 +161,7 @@ const PDFResume: React.FC<PDFGeneratorProps> = () => {
       axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/EduDetails/${userID}`)
         .then(response => {
           if (response.data && response.data.success) {
-            
+            console.log('Fetched edu details:', response.data.user);
             setEduDetails(response.data.user);
           } else {
             console.error('Error fetching user details:', response.data.message);
@@ -154,6 +203,12 @@ function convertToLatex(description: string): string {
     
 
     
+const formatDateForLatex = (date?: DateObject, isPresent?: boolean): string => {
+  if (isPresent) return 'Present';
+  if (!date || !date.month || !date.year) return 'N/A';
+  return `${date.month}/${date.year}`;
+};
+
 const previewPdf = async () => {
   try {
     const userResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/userprofile/details/${userID}`);
@@ -186,35 +241,37 @@ const previewPdf = async () => {
 
     const educationSection = educations.length > 0 ? `
   \\header{Education}
-  ${educations.map(education => `
-    \\school{${education.university}}{${education.degree}}{
-      Graduation: ${education.isPresent ? 'Present' : `${education.endDate.month}/${education.endDate.year}`}
-    }{\\textit{${education.major} \\labelitemi GPA: ${education.cgpa}}}
-  `).join("\n")}
+  ${educations.map(education => {
+    const endDateStr = formatDateForLatex(education.endDate, education.isPresent);
+
+    return `
+      \\school{${education.university}}{${education.degree}}{
+        Graduation: ${endDateStr}
+      }{\\textit{${education.major} \\labelitemi GPA: ${education.cgpa}}}
+    `;
+  }).join("\n")}
 ` : '';
 
 const experienceSection = experiences.length > 0 ? `
   \\header{Experience}
   ${experiences.map(experience => {
-    const latexDescription = convertToLatex(experience.description); // Convert description to LaTeX
+    const latexDescription = convertToLatex(experience.description || '');
+    const startDateStr = formatDateForLatex(experience.startDate);
+    const endDateStr = formatDateForLatex(experience.endDate, experience.isPresent);
 
     return `
       \\employer{${convertToLatex(experience.jobTitle)}}{--${convertToLatex(experience.company)}}{
-        ${experience.startDate.month}/${experience.startDate.year} -- ${
-          experience.isPresent ? 'Present' : `${experience.endDate.month}/${experience.endDate.year}`
-        }
+        ${startDateStr} -- ${endDateStr}
       }{${convertToLatex(experience.location)}}
-      ${
-        experience.description && experience.description.trim() !== '' ? `
+      ${experience.description ? `
         \\begin{bullet-list-minor}
           ${latexDescription
-            .split('*')  // Split by '*'
-            .slice(1)  // Ignore the first empty item, if any
-            .map(part => `\\item ${part.trim()}`)  // Create LaTeX items
+            .split('*')
+            .slice(1)
+            .map(part => `\\item ${part.trim()}`)
             .join('\n')}
         \\end{bullet-list-minor}
-        ` : ''
-      }
+      ` : ''}
     `;
   }).join('\n')}
 ` : '';
@@ -224,19 +281,19 @@ const experienceSection = experiences.length > 0 ? `
 const projectSection = projects.length > 0 ? `
   \\header{Projects}
   ${projects.map(project => {
-    const latexDescription = convertToLatex(project.description); // Convert description to LaTeX
+    const latexDescription = convertToLatex(project.description || '');
+    const startDateStr = formatDateForLatex(project.startDate);
+    const endDateStr = formatDateForLatex(project.endDate, project.isPresent);
 
     return `
       \\project{${convertToLatex(project.name)}}{${convertToLatex(project.skills)}}{
-        ${project.startDate.month}/${project.startDate.year} -- ${
-          project.isPresent ? 'Present' : `${project.endDate.month}/${project.endDate.year}`
-        }
+        ${startDateStr} -- ${endDateStr}
       }{
         \\begin{bullet-list-minor}
           ${latexDescription
-            .split('*')  // Now split the LaTeX-converted description by '*'
-            .slice(1)  // Ignore the first empty item, if any
-            .map(part => `\\item ${part.trim()}`)  // Create LaTeX items
+            .split('*')
+            .slice(1)
+            .map(part => `\\item ${part.trim()}`)
             .join('\n')} 
         \\end{bullet-list-minor}
       }
@@ -247,21 +304,31 @@ const projectSection = projects.length > 0 ? `
 
     const certificationSection = certifications.length > 0 ? `
       \\header{Certifications}
-      ${certifications.map(certification => `
-        \\begin{bullet-list-major}
-          \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${certification.issuedDate.month}/${certification.issuedDate.year} -- ${certification.expirationDate.month}/${certification.expirationDate.year}
-        \\end{bullet-list-major}
-      `).join("\n")}
+      ${certifications.map(certification => {
+        const issuedDateStr = formatDateForLatex(certification.issuedDate);
+        const expirationDateStr = formatDateForLatex(certification.expirationDate);
+
+        return `
+          \\begin{bullet-list-major}
+            \\item \\textbf{${certification.name}} \\labelitemi ${certification.issuedBy} \\hfill ${issuedDateStr} -- ${expirationDateStr}
+          \\end{bullet-list-major}
+        `;
+      }).join("\n")}
     ` : '';
 
     const involvementSection = involvements.length > 0 ? `
     \\header{Involvements}
-    ${involvements.map(involvement => `
-      \\begin{bullet-list-major}
-        \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${involvement.startDate.month}/${involvement.startDate.year} -- ${involvement.isPresent ? 'Present' : `${involvement.endDate.month}/${involvement.endDate.year}`}
-        ${involvement.description.split('*').slice(1).map(part => `\\newline -{${part.trim()}}`).join('')}
-      \\end{bullet-list-major}
-    `).join("\n")}
+    ${involvements.map(involvement => {
+      const startDateStr = formatDateForLatex(involvement.startDate);
+      const endDateStr = formatDateForLatex(involvement.endDate, involvement.isPresent);
+
+      return `
+        \\begin{bullet-list-major}
+          \\item \\textbf{${involvement.role}} \\labelitemi ${involvement.organization} \\hfill ${startDateStr} -- ${endDateStr}
+          ${(involvement.description || '').split('*').slice(1).map(part => `\\newline -{${part.trim()}}`).join('')}
+        \\end{bullet-list-major}
+      `;
+    }).join("\n")}
   ` : '';
 
 

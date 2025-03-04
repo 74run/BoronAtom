@@ -54,6 +54,10 @@
 
     "google-auth-library": "^9.15.1",
 
+    "groq": "^3.77.2",
+
+    "groq-sdk": "^0.15.0",
+
     "jsonwebtoken": "^9.0.2",
 
     "latex.js": "^0.12.6",
