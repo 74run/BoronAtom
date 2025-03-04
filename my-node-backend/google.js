@@ -43,7 +43,7 @@ router.post('/generate-resume/:userID/optimize', async (req, res) => {
     }
 
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 
     // Create prompt for GPT
@@ -131,7 +131,7 @@ router.post('/generate-project-description/:userID/:projectName', async (req, re
     }
 
 
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 
     // Create a prompt using the project data
@@ -216,8 +216,8 @@ router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Experience not found' });
     }
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using the experience data
     const prompt = `Write a 4 job description points for the role "${experience.jobTitle}". The role involved working at ${experience.company} in ${experience.location} with responsibilities including ${experience.description}.
@@ -257,8 +257,8 @@ router.get('/generate-involvement-description/:userID/:organization/:role', asyn
       return res.status(404).json({ success: false, message: 'Involvement not found' });
     }
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using the involvement data
     const prompt = `Write a 4 description points for the role of "${involvement.role}" at "${involvement.organization}". The role involved the following activities: ${involvement.description}. 
@@ -292,8 +292,8 @@ router.get('/generate/:userID', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using user data
     const prompt = `Write a short 50 words Resume summary based on experience: ${user.experience}, projects: ${user.project}, education: ${user.education} and skills: ${user.skills}`;
@@ -324,8 +324,8 @@ router.get('/generate/:userID/skills', async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using user data
     const prompt = `Generate one new skill domain and their associated skills based on the following user information:
@@ -378,8 +378,8 @@ user.summary.forEach((summary, index) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using user data
     const prompt = `Your task is to help build a resume that is tailored to a specific job description, with the goal of achieving a high ATS (Applicant Tracking System) score. To do this, you will need to modify the summary, education, experience, projects, certificates, and involvements sections of the resume to align with the job description. Consider all the factors that influence the ATS score and aim to create the perfect resume for the job.
@@ -544,7 +544,7 @@ const parseWithGemini = async (extractedText) => {
       Please proceed to fill the form using the structured resume data provided.
     `;
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();
@@ -864,8 +864,8 @@ router.post('/generate-cover-letter/:userID', async (req, res) => {
     // const projectText = projects.map(proj => proj.title).join(', ');
     // const skillsText = skills.map(skill => skill.name).join(', ');
 
-    // For text-only input, use the gemini-pro model
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // For text-only input, use the gemini-1.5-pro model
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Create a prompt using user data
     const prompt = `Write a professional cover letter for a job application. Do not include personal contact details of the user like name, address, phone number, or email. Do not even give the boxes to fill.
