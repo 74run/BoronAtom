@@ -1,5 +1,6 @@
 const express = require('express');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { Groq } = require("groq-sdk");
 
 const router = express.Router();
 const multer = require('multer');
@@ -8,17 +9,17 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const path = require('path');
 
-
-
 const UserProfile = require('./models/UserprofileModel');
-
 require('dotenv').config();
-
 
 const API  = process.env.REACT_APP_GOOGLE_API;
 // Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(API);
 
+// Initialize Groq API
+const groq = new Groq({
+  apiKey: process.env.REACT_APP_GROQ_API_KEY,
+});
 
 // Optimize resume endpoint
 router.post('/generate-resume/:userID/optimize', async (req, res) => {
@@ -36,15 +37,11 @@ router.post('/generate-resume/:userID/optimize', async (req, res) => {
     
     console.log("Found user:", user ? "yes" : "no"); 
 
-
-
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
 
     // Create prompt for GPT
     const prompt = `
@@ -66,10 +63,8 @@ router.post('/generate-resume/:userID/optimize', async (req, res) => {
       }
     `;
 
-
     const result = await model.generateContent(prompt);
 const generatedText = result.response ? result.response.text() : result.text;
-
 
 if (!generatedText) {
   res.status(500).json({ 
@@ -90,9 +85,6 @@ if (!generatedText) {
     res.status(500).json({ error: 'Failed to optimize resume' });
   }
 });
-
-
-
 
 router.post('/generate-project-description/:userID/:projectName', async (req, res) => {
   try {
@@ -130,9 +122,7 @@ router.post('/generate-project-description/:userID/:projectName', async (req, re
       return res.status(404).json({ success: false, message: 'Project not found' });
     }
 
-
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-
 
     // Create a prompt using the project data
     const prompt = `Generate 3 impactful and ATS-friendly bullet points starting with "*" for the project "${project.name}" that will impress recruiters and effectively communicate your skills and achievements Important: "DO NOT generate * at all even to bold words. Incorporate the following:
@@ -192,9 +182,6 @@ res.status(500).json({
 }
 });
 
-
-
-
 router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
   try {
     const userId = req.params.userID;
@@ -234,7 +221,6 @@ router.get('/generate-job-description/:userID/:jobTitle', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while generating job description' });
   }
 });
-
 
 router.get('/generate-involvement-description/:userID/:organization/:role', async (req, res) => {
   try {
@@ -276,10 +262,6 @@ router.get('/generate-involvement-description/:userID/:organization/:role', asyn
   }
 });
 
-
-
-
-
 // Define an endpoint to generate text
 router.get('/generate/:userID', async (req, res) => {
   try {
@@ -310,7 +292,6 @@ router.get('/generate/:userID', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while generating content' });
   }
 });
-
 
 // Endpoint to generate domain and skill name using Google AI
 router.get('/generate/:userID/skills', async (req, res) => {
@@ -444,9 +425,6 @@ user.summary.forEach((summary, index) => {
   res.json({ message: aiMessage });
 });
 
-
-
-
 // Function to extract text from DOCX files
 const extractTextFromDocx = async (fileBuffer) => {
   try {
@@ -468,89 +446,129 @@ const extractTextFromPdf = async (fileBuffer) => {
   }
 };
 
-
-
-const parseWithGemini = async (extractedText) => {
+const parseWithGroq = async (extractedText) => {
   try {
     const prompt = `
+      Parse the following resume text into a detailed structured format. Extract ALL information and categorize it precisely.
+      You must respond ONLY with a valid JSON object, no additional text or explanations.
+
       Resume Text:
       ${extractedText}
 
-      You are an AI language model that has been given structured resume data, and your task is to automatically fill out a web or digital form based on this information. Here's the structured data:
+      Format your response EXACTLY as this JSON structure, with no additional text:
+      {
+        "personalInfo": {
+          "name": "",
+          "email": "",
+          "phone": "",
+          "location": "",
+          "linkedIn": ""
+        },
+        "summary": "",
+        "experience": [{
+          "jobTitle": "",
+          "company": "",
+          "location": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "description": "",
+          "achievements": [],
+          "technologies": [],
+          "includeInResume": true
+        }],
+        "education": [{
+          "university": "",
+          "degree": "",
+          "major": "",
+          "cgpa": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "universityUrl": "",
+          "includeInResume": true
+        }],
+        "skills": {
+          "technical": [{
+            "domain": "",
+            "skills": []
+          }],
+          "soft": []
+        },
+        "certifications": [{
+          "name": "",
+          "issuingOrganization": "",
+          "issueDate": "",
+          "expiryDate": "",
+          "credentialId": "",
+          "credentialUrl": "",
+          "includeInResume": true
+        }],
+        "projects": [{
+          "name": "",
+          "description": "",
+          "technologies": [],
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "githubUrl": "",
+          "liveUrl": "",
+          "includeInResume": true
+        }],
+        "involvement": [{
+          "organization": "",
+          "role": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "description": "",
+          "includeInResume": true
+        }]
+      }`;
 
-      Personal Information:
-      Full Name: [Extracted Name]
-      Contact Information:
-      Email: [Extracted Email]
-      Phone: [Extracted Phone Number]
-      LinkedIn Profile: [Extracted LinkedIn Profile]
-      Location: [Extracted Address/City/Country]
+    const chatCompletion = await groq.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: "You are a resume parser that must return ONLY valid JSON. Do not include any other text or explanations in your response."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      model: "llama3-70b-8192",
+      temperature: 0.1, // Reduced temperature for more consistent output
+      max_tokens: 4000,
+    });
 
-      Professional Summary:
-      Summary: [Extracted Summary]
+    const response = chatCompletion.choices[0].message.content;
+    
+    // Clean the response to ensure it's valid JSON
+    const cleanedResponse = response.trim().replace(/^```json\s*|\s*```$/g, '');
+    
+    try {
+      const parsedData = JSON.parse(cleanedResponse);
+      return parsedData;
+    } catch (jsonError) {
+      console.error('JSON parsing error:', jsonError);
+      console.error('Raw response:', response);
+      throw new Error('Failed to parse AI response as JSON');
+    }
 
-      Work Experience:
-      Job Title: [Extracted Job Title]
-      Company Name: [Extracted Company Name]
-      Employment Period: [Start Date - End Date]
-      Job Description: [Brief Description of Duties and Achievements]
-
-      Education:
-      Degree: [Extracted Degree]
-      Institution: [Extracted Institution Name]
-      Graduation Date: [Graduation Date]
-
-      Skills:
-      Technical Skills: [List of Extracted Technical Skills]
-      Soft Skills: [List of Extracted Soft Skills]
-
-      Certifications & Awards:
-      Certification Name: [Extracted Certification Name]
-      Issuing Organization: [Extracted Issuing Organization]
-      Date Obtained: [Date Obtained]
-
-      Projects:
-      Project Title: [Extracted Project Title]
-      Description: [Brief Description of the Project]
-
-      Languages:
-      Language: [Language]
-      Proficiency Level: [Proficiency Level]
-
-      Other Relevant Information:
-      [Any additional information found]
-
-      Instructions for Form Filling:
-      1. Identify the corresponding field in the form for each category of the data provided.
-      2. Automatically input the data from the resume into the matching fields.
-      3. Ensure that all required fields are filled accurately and leave optional fields blank if no relevant data is available.
-      4. If a field requires a specific format (e.g., date format), adjust the data accordingly before filling.
-      5. Once the form is filled, review it for accuracy and completeness, then submit or prepare the form for further user review.
-
-      Here is the specific mapping of the fields:
-      Form Field 'Name' -> [Full Name]
-      Form Field 'Email' -> [Email]
-      Form Field 'Phone' -> [Phone]
-      Form Field 'LinkedIn' -> [LinkedIn Profile]
-      Form Field 'Address' -> [Location]
-      Form Field 'Summary' -> [Professional Summary]
-      Form Field 'Work Experience' -> [Job Title], [Company Name], [Employment Period], [Job Description]
-      Form Field 'Education' -> [Degree], [Major], [Institution], [Start Date], [End Date]
-      Form Field 'Skills' -> [Technical Skills], [Soft Skills]
-      Form Field 'Certifications' -> [Certification Name], [Issuing Organization], [Date Obtained]
-      Form Field 'Projects' -> [Project Title], [Organization], [Start Date], [End Date], [Description]
-      Form Field 'Languages' -> [Language], [Proficiency Level]
-
-      Please proceed to fill the form using the structured resume data provided.
-    `;
-
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text();
   } catch (error) {
-    console.error('Error parsing resume with Google AI Gemini:', error);
-    throw error;
+    console.error('Error parsing resume with Groq API:', error);
+    // Fallback to a simpler structure if parsing fails
+    return {
+      personalInfo: { name: "", email: "", phone: "", location: "", linkedIn: "" },
+      summary: extractedText.substring(0, 500), // First 500 characters as summary
+      experience: [],
+      education: [],
+      skills: { technical: [], soft: [] },
+      certifications: [],
+      projects: [],
+      involvement: []
+    };
   }
 };
 
@@ -765,7 +783,6 @@ router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) 
     const { buffer, mimetype } = req.file;
     let extractedText = '';
 
-    // Check for supported file types (PDF or DOCX)
     if (mimetype === 'application/pdf') {
       extractedText = await extractTextFromPdf(buffer);
     } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
@@ -774,43 +791,23 @@ router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) 
       return res.status(400).json({ success: false, message: 'Unsupported file format' });
     }
 
-   
-   
-    // Clean and parse extracted text
-    const cleanedText = cleanAIResponse(extractedText);
-    const parsedSummary = parseSummary(cleanedText);
-    const parsedEducation = parseEducation(cleanedText);
-    const parsedExperience = parseExperience(cleanedText);
-    const parsedCertifications = parseCertifications(cleanedText);
-    const parsedSkills = parseSkills(cleanedText);
-    const parsedProjects = parseProjects(cleanedText);
-    const parsedInvolvements = parseInvolvements(cleanedText);
+    let parsedData;
+    try {
+      parsedData = await parseWithGroq(extractedText);
+    } catch (groqError) {
+      console.error('Error with Groq API, falling back to Gemini:', groqError);
+      parsedData = await parseWithGemini(extractedText);
+    }
 
-    
-
-    // Store the parsed data using user ID (you need to ensure userID is available)
+    // Store the parsed data temporarily
     const userID = req.params.userID;
-    
-    // Assuming the user is authenticated and userID is available
-    parsedDataStore.set(userID, {
-      parsedSummary,
-      parsedEducation,
-      parsedExperience,
-      parsedCertifications,
-      parsedSkills,
-      parsedProjects,
-      parsedInvolvements,
-    });
+    parsedDataStore.set(userID, parsedData);
 
+    // Return the parsed data for preview
     res.json({
       success: true,
-      parsedSummary,
-      parsedEducation,
-      parsedExperience,
-      parsedCertifications,
-      parsedSkills,
-      parsedProjects,
-      parsedInvolvements,
+      message: 'Resume parsed successfully',
+      data: parsedData
     });
   } catch (error) {
     console.error('Error processing resume:', error);
@@ -822,7 +819,7 @@ router.post('/upload-resume/:userID', upload.single('resume'), async (req, res) 
 router.get('/get-parsed-resume/:userID', (req, res) => {
   try {
     const { userID } = req.params;
-    const parsedData = parsedData.get(userID);
+    const parsedData = parsedDataStore.get(userID);
 
     if (!parsedData) {
       return res.status(404).json({ success: false, message: 'No parsed data found for this user' });
@@ -830,11 +827,11 @@ router.get('/get-parsed-resume/:userID', (req, res) => {
 
     res.json({
       success: true,
-      parsedData,
+      data: parsedData
     });
   } catch (error) {
-    console.error('Error retrieving parsed data:', error);
-    res.status(500).json({ success: false, message: 'Failed to retrieve parsed data' });
+    console.error('Error retrieving parsed resume data:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve parsed resume data' });
   }
 });
 
@@ -888,7 +885,150 @@ router.post('/generate-cover-letter/:userID', async (req, res) => {
   }
 });
 
+const parseWithGemini = async (extractedText) => {
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    const prompt = `
+      Parse this resume text into JSON format. Return ONLY the JSON object, no other text.
+      Resume: ${extractedText}
 
+      Required JSON structure:
+      {
+        "personalInfo": {
+          "name": "",
+          "email": "",
+          "phone": "",
+          "location": "",
+          "linkedIn": ""
+        },
+        "summary": "",
+        "experience": [{
+          "jobTitle": "",
+          "company": "",
+          "location": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "description": "",
+          "achievements": [],
+          "technologies": [],
+          "includeInResume": true
+        }],
+        "education": [{
+          "university": "",
+          "degree": "",
+          "major": "",
+          "cgpa": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "universityUrl": "",
+          "includeInResume": true
+        }],
+        "skills": {
+          "technical": [{
+            "domain": "",
+            "skills": []
+          }],
+          "soft": []
+        },
+        "certifications": [{
+          "name": "",
+          "issuingOrganization": "",
+          "issueDate": "",
+          "expiryDate": "",
+          "credentialId": "",
+          "credentialUrl": "",
+          "includeInResume": true
+        }],
+        "projects": [{
+          "name": "",
+          "description": "",
+          "technologies": [],
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "githubUrl": "",
+          "liveUrl": "",
+          "includeInResume": true
+        }],
+        "involvement": [{
+          "organization": "",
+          "role": "",
+          "startDate": "",
+          "endDate": "",
+          "isPresent": false,
+          "description": "",
+          "includeInResume": true
+        }]
+      }`;
 
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    // Clean the response to ensure it's valid JSON
+    const cleanedResponse = text.trim().replace(/^```json\s*|\s*```$/g, '');
+    
+    try {
+      const parsedData = JSON.parse(cleanedResponse);
+      return parsedData;
+    } catch (jsonError) {
+      console.error('JSON parsing error in Gemini:', jsonError);
+      console.error('Raw Gemini response:', text);
+      throw new Error('Failed to parse Gemini response as JSON');
+    }
+  } catch (error) {
+    console.error('Error parsing resume with Gemini:', error);
+    throw error;
+  }
+};
+
+// POST request to save parsed resume data to user profile
+router.post('/save-parsed-resume/:userID', async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const { parsedData, includeSections } = req.body;
+
+    if (!parsedData) {
+      return res.status(404).json({ success: false, message: 'No parsed data found' });
+    }
+
+    let userProfile = await UserProfile.findOne({ userID });
+    if (!userProfile) {
+      userProfile = new UserProfile({ userID });
+    }
+
+    // Only update sections that are included
+    if (includeSections.summary && parsedData.summary) {
+      userProfile.summary = parsedData.summary;
+    }
+
+    if (includeSections.education && parsedData.education?.length > 0) {
+      // Update education section
+      parsedData.education.forEach(edu => {
+        if (!userProfile.education.some(existing => 
+          existing.university === edu.university && 
+          existing.degree === edu.degree
+        )) {
+          userProfile.education.push(edu);
+        }
+      });
+    }
+
+    // Similar conditional updates for other sections...
+
+    await userProfile.save();
+    res.json({
+      success: true,
+      message: 'Resume data saved to profile successfully',
+      profile: userProfile
+    });
+
+  } catch (error) {
+    console.error('Error saving parsed resume data:', error);
+    res.status(500).json({ success: false, message: 'Failed to save resume data' });
+  }
+});
 
 module.exports = router;

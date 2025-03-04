@@ -3,10 +3,11 @@ import { Pencil } from "react-bootstrap-icons";
 import Modal from "../profile-photo/Model";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { MdEdit, MdPreview } from 'react-icons/md';
+import { MdEdit, MdPreview, MdUploadFile } from 'react-icons/md';
 import ModalContact from "../profile-photo/ModalContact";
 import PDFResume from '../profile-photo/MyPdfViewer';
 import ProfilePictureModal from './ProfilePictureModal';
+import UploadResume from './UploadResume';
 
 interface UserDetails {
   firstName: string;
@@ -104,6 +105,7 @@ const Profile: React.FC<ProfileProps> = () => {
   const [atsScore, setAtsScore] = useState(0); // ATS score
 
   const [isProfilePictureModalOpen, setIsProfilePictureModalOpen] = useState(false);
+  const [isUploadResumeModalOpen, setIsUploadResumeModalOpen] = useState(false);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -310,6 +312,7 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
             <div className="animate-pulse flex gap-4">
               <div className="h-10 w-32 bg-gray-700 rounded"></div>
               <div className="h-10 w-32 bg-gray-700 rounded"></div>
+              <div className="h-10 w-32 bg-gray-700 rounded"></div>
             </div>
           ) : (
             <>
@@ -325,6 +328,13 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
               >
                 <MdPreview size={18} />
                 Preview Resume
+              </button>
+              <button 
+                className="flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#805ad5] to-[#b794f4] text-white text-sm font-medium shadow-md hover:-translate-y-0.5 transition-transform"
+                onClick={() => setIsUploadResumeModalOpen(true)}
+              >
+                <MdUploadFile size={18} />
+                Upload Resume
               </button>
             </>
           )}
@@ -397,6 +407,12 @@ const dataURLtoFile = (dataurl: string, filename: string) => {
       )}
 
       <ModalContact isOpen={isModalOpen} closeModal={closeModal} />
+
+      <UploadResume 
+        userID={userID} 
+        isOpen={isUploadResumeModalOpen}
+        onClose={() => setIsUploadResumeModalOpen(false)}
+      />
     </div>
   );
 
