@@ -7,7 +7,6 @@ import logo from './images/small-logo.png';
 import axios from 'axios';
 import { useUserId } from './useUserId';
 import ReactMarkdown from 'react-markdown';
-import './MarkdownStyles.css';
 
 // Define the Message interface
 interface Message {
@@ -432,7 +431,17 @@ Certifications: ${certifications || "None provided"}`;
                       <div className={message.role === 'assistant' ? "" : "text-xs leading-relaxed"}>
                         {message.role === 'assistant' ? (
                           <div className="markdown-content">
-                            <ReactMarkdown>
+                            <ReactMarkdown components={{
+                              p: ({node, ...props}: any) => <p className="text-white text-xs leading-relaxed mb-2" {...props} />,
+                              h1: ({node, ...props}: any) => <h1 className="text-white text-xs font-bold mb-2" {...props} />,
+                              h2: ({node, ...props}: any) => <h2 className="text-white text-xs font-bold mb-2" {...props} />,
+                              h3: ({node, ...props}: any) => <h3 className="text-white text-xs font-bold mb-2" {...props} />,
+                              ul: ({node, ...props}: any) => <ul className="text-white text-xs list-disc pl-4 mb-2" {...props} />,
+                              ol: ({node, ...props}: any) => <ol className="text-white text-xs list-decimal pl-4 mb-2" {...props} />,
+                              li: ({node, ...props}: any) => <li className="text-white text-xs mb-1" {...props} />,
+                              a: ({node, ...props}: any) => <a className="text-blue-300 hover:text-blue-200 underline" {...props} />,
+                              code: ({node, ...props}: any) => <code className="bg-white/10 px-1 py-0.5 rounded font-mono text-xs" {...props} />
+                            }}>
                               {message.content}
                             </ReactMarkdown>
                           </div>
